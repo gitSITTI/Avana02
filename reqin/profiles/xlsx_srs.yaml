@@ -1,0 +1,12 @@
+# Confirmed by a human for the fixture workbook tests/fixtures/reqs.xlsx (sheet "Requirements").
+profile: xlsx-srs
+adapter: tabular
+namespace: DEMO-SRS          # keep stable across re-imports: it is part of every MID
+containers: [Requirements]   # the Cover sheet is not requirements
+fields:
+  uid:          {from: "Req #"}
+  text:         {from: "Requirement Text"}
+  rationale:    {from: "Why"}
+  verification: {from: "V Method", map: {T: Test, A: Analysis, I: Inspection, D: Demonstration}}
+  allocation:   {from: "Subsystem"}
+  owner:        {from: "IPT"}

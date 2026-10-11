@@ -1,0 +1,17 @@
+.git
+.cache
+**/__pycache__
+**/*.egg-info
+**/node_modules
+excalidraw_generator/bundle.js
+excalidraw_generator/out
+*.png
+# real data must never enter an image build context
+data
+private
+exports
+**/*.mdzip
+**/*.reqif
+**/*.reqifz
+**/*.kpar
+**/*.sysml

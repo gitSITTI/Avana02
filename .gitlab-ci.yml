@@ -1,0 +1,85 @@
+# Requirements Consolidator: CI.
+# Every command below is also a `make` target and was run locally before this file was written.
+# THIS FILE has not been run on a GitLab runner. Expect to adjust image names for your runner's registry access.
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never                      # one pipeline per push, not two
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_TAG
+
+stages: [guard, test, boards, image]
+
+variables:
+  # Behind a firewall? Set PYTHON_IMAGE to your internal mirror (and PIP_INDEX_URL to your PyPI mirror) in Settings > CI/CD > Variables.
+  PYTHON_IMAGE: "docker.io/library/python"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+.python:
+  image: "$PYTHON_IMAGE:3.12-slim"
+  cache:
+    key: pip-$CI_COMMIT_REF_SLUG
+    paths: [.cache/pip]
+
+# 1. Real program data must never reach the repo. See tools/check_no_real_data.py.
+#    Optional: define a CI/CD variable FORBIDDEN_TERMS (one regex per line: program code names, part-number or
+#    document-number patterns) to also scan text files. Keep that list out of the repo. Without it, only the structure checks run,
+#    and the job log says so.
+guard:no-real-data:
+  extends: .python
+  stage: guard
+  script:
+    - pip install pytest
+    - python -m pytest -q tools
+    - python tools/check_no_real_data.py
+
+# 2. The input layer. 83 required checks + 1 optional (skipped here: no LibreOffice in this image, and that is expected).
+test:reqin:
+  extends: .python
+  stage: test
+  image: "$PYTHON_IMAGE:$PY-slim"
+  parallel:
+    matrix:
+      - PY: ["3.11", "3.13"]
+  script:
+    - cd reqin
+    - pip install ".[test]"
+    - python -m pytest -q -rs --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: reqin/report.xml
+
+# 3. The Excalidraw boards are generated. They must rebuild byte-for-byte from the committed code and be structurally valid.
+#    Fails if someone edits a board by hand, or changes the generator without regenerating the boards.
+boards:rebuild-identical:
+  extends: .python
+  stage: boards
+  script:
+    - cd excalidraw_generator
+    - python build_all.py --check --out ../excalidraw
+    - python validate.py ../excalidraw/*.excalidraw
+
+# 4. Container image (Podman). Manual by default because it needs a runner that allows building images.
+#    Make it automatic by deleting the `when: manual` / `allow_failure` lines.
+image:build:
+  stage: image
+  image: quay.io/podman/stable
+  variables:
+    STORAGE_DRIVER: vfs
+    BUILDAH_ISOLATION: chroot
+    IMAGE: "$CI_REGISTRY_IMAGE/reqin:$CI_COMMIT_SHORT_SHA"
+  rules:
+    - if: $CI_REGISTRY && ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG)
+      when: manual
+      allow_failure: true
+  script:
+    - podman build --target test -t "$IMAGE-test" -f Containerfile .      # runs the tests inside the build
+    - podman build -t "$IMAGE" -f Containerfile .
+    - podman run --rm "$IMAGE" --help
+    - echo "$CI_REGISTRY_PASSWORD" | podman login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - podman push "$IMAGE"

@@ -1,0 +1,11 @@
+# DOORS "export to CSV/Excel" with the standard DOORS attributes. Headings (no Object Text) are filtered, by choice.
+# DOORS attribute names are the standard built-ins; your module may add more (verify against your own export).
+profile: doors-csv
+adapter: tabular
+namespace: DEMO-DOORS
+where:
+  Object Text: {not_empty: true}
+fields:
+  uid:          {from: ["Object Identifier", "Absolute Number"]}
+  text:         {from: "Object Text", strip_markup: true}
+  verification: {from: "Verification Method"}

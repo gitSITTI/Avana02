@@ -1,0 +1,25 @@
+[project]
+name = "reqin"
+version = "0.1.0"
+description = "Input-agnostic requirement ingestion: adapters + canonical model + declarative mapping"
+requires-python = ">=3.11"
+dependencies = ["pyyaml", "openpyxl", "reqif", "sqlalchemy", "python-docx", "pdfplumber"]
+
+[project.optional-dependencies]
+test = ["pytest", "reportlab"]
+
+[project.scripts]
+reqin = "reqin.cli:main"
+
+[project.entry-points."reqin.adapters"]
+# third-party packages add their adapter here:  myadapter = "my_pkg.adapter"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

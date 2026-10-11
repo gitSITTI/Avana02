@@ -1,0 +1,37 @@
+# ---- REAL DATA: never commit. CI also enforces this (tools/check_no_real_data.py). ----
+*.mdzip
+*.reqif
+*.reqifz
+*.kpar
+*.sysml
+*.xmi
+*.xlsx
+*.xlsm
+*.csv
+*.docx
+*.pdf
+*.db
+*.sqlite
+*.sqlite3
+data/
+private/
+exports/
+.forbidden-terms
+# The one allowed place, and only with an entry in APPROVALS.md:
+!reqin/tests/fixtures_approved/
+!reqin/tests/fixtures_approved/**
+
+# ---- build output ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+.cache/
+node_modules/
+excalidraw_generator/bundle.js
+excalidraw_generator/out/
+*.png
+report.xml
+.env

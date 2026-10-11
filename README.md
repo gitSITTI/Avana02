@@ -1,0 +1,62 @@
+# Requirements Consolidator
+
+An app concept for opening large SysML v2 / MSOSA requirement projects, finding near-duplicate requirements mechanically first and with AI late, showing metrics for both, and treating everything as a human-verifiable draft reviewed through four lenses (SE, PE, UX, NU) before it feeds document authoring.
+
+This repository holds the research, the design boards, the generator that makes them, and the first working code (the input layer).
+
+| Folder | What it is |
+|---|---|
+| `docs/Requirements comparison app research.md` | The research report. Appendix A = how the app reads any input. Appendix B = how the Excalidraw boards were made. |
+| `reqin/` | **Working code.** Reads SysML v2, ReqIF (MSOSA / DOORS), Excel/CSV, SQL, Word and PDF into one canonical model. `INPUT_LAYER.md` is the design. |
+| `excalidraw/` | Ten Excalidraw boards: storyboard, wireframes, flows, UI kit, scale, lenses, group decisions, assistant, pipelines, any-input. **Generated; do not edit by hand.** |
+| `excalidraw_generator/` | The Python that produces the boards, with `EXCALIDRAW_GUIDE.md` (recipes, definition of done, prompts for an agent). |
+| `tools/` | `check_no_real_data.py`, the tripwire that keeps real program data out of the repo. |
+| `Containerfile`, `.gitlab-ci.yml`, `Makefile` | Podman/Docker image and CI. `make check` runs what CI runs. |
+
+## Quick start
+
+```bash
+python3 -m venv .venv && . .venv/bin/activate
+pip install -e "reqin[test]"
+make check          # guard + 83 tests + rebuild all ten boards and confirm they are identical
+```
+
+Try the CLI on your own export (read-only; the source file is never modified):
+
+```bash
+reqin sniff    export.reqif
+reqin propose  export.xlsx > profile.yaml     # a PROPOSED mapping: edit it, it is not trusted until you do
+reqin import   export.xlsx --profile profile.yaml --out reqs.jsonl
+```
+
+In a container (nothing from the host is writable except what you mount; no network needed for file sources):
+
+```bash
+make image
+podman run --rm --network=none --userns=keep-id --user "$(id -u):$(id -g)" \
+  -v "$PWD/exports:/data:ro,Z" -v "$PWD/out:/out:Z" requirements-consolidator/reqin:dev \
+  import /data/export.reqif --out /out/reqs.jsonl
+```
+
+## Real program data
+
+**Do not commit real requirements, exports or models.** Not in `data/`, not "temporarily", not in a branch.
+`.gitignore` blocks the usual file types, and CI job `guard:no-real-data` fails the pipeline if one gets in anyway.
+The single exception is `reqin/tests/fixtures_approved/`, for anonymised excerpts that your security / export-control reviewer has approved, each recorded in `APPROVALS.md`.
+To also scan for your own program code names and number patterns, set a CI/CD variable `FORBIDDEN_TERMS` (one regex per line). Keep that list out of the repo.
+
+## What has and has not been checked
+
+| Checked | How |
+|---|---|
+| `reqin`: 83 required checks pass | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git |
+| Boards rebuild byte-for-byte; structurally valid | `make boards`, clean environment, standard library only |
+| Guard trips on what it should | 7 tests, including the real-export file types, data folders, size and missing approval entries |
+| `.gitlab-ci.yml` | Passes yamllint and the vendored GitLab CI JSON schema; each job's commands were run locally. **The file itself has not run on a GitLab runner.** |
+| **Not checked** | The `Containerfile` has not been built (no container engine daemon was available where it was written). Reading real MSOSA, DOORS or SysML v2 exports: all fixtures are synthetic. Opening the boards in the live Excalidraw app. Python 3.10 (not supported; 3.11+ is). |
+
+## Next steps (not done)
+
+1. Add one anonymised real export per source under `reqin/tests/fixtures_approved/` and run the conformance suite on it. This is the first check that matters.
+2. Build the comparison engine (stages 2 to 9 in the report), then a gold set to measure it.
+3. A backend and the real UI, replacing the interactive prototype.

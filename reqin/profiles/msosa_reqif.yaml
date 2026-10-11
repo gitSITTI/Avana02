@@ -1,0 +1,11 @@
+# ReqIF exported from MSOSA (Cameo Requirements Modeler) or DOORS. Attribute names vary by export:
+# run `reqin discover <file>` first, then edit the names below to match what YOUR file calls them.
+profile: msosa-reqif
+adapter: reqif
+namespace: DEMO-MSOSA
+containers: [Requirement]    # spec object types that are requirements; headings are not
+fields:
+  uid:          {from: ["ReqIF.ForeignID", "ReqIF.Name"]}
+  text:         {from: ["ReqIF.Text", "Text"], strip_markup: true}
+  rationale:    {from: "Rationale"}
+  verification: {from: "Verification Method"}
