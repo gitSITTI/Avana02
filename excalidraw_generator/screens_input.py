@@ -53,7 +53,7 @@ def i2_map_any(d, ox, oy):
     s.t(384, 104, 'Source: reqs.xlsx · sheet "Requirements" (Cover sheet skipped)', fs=10, color=DARK)
     s.card(40, 136, 620, 380)
     s.caps(56, 148, 'MAPPING PROFILE  xlsx-srs   (saved with the project, replayed on re-import)')
-    rows = [['Requirement ID', 'Req #', 'REQ-FCS-0101', ('Medium', AMBER_BG), 'Change'],
+    rows = [['Requirement ID', 'Req #', 'REQ-FCS-0101', ('High', GREEN_BG), 'Change'],
             ['Statement', 'Requirement Text', 'The Flight Control…', ('High', GREEN_BG), 'Change'],
             ['Rationale', 'Why', 'Bounds ground-station…', ('Medium', AMBER_BG), 'Change'],
             ['Verification', 'V Method  (T→Test, A→Analysis)', 'T', ('High', GREEN_BG), 'Change'],
@@ -61,7 +61,7 @@ def i2_map_any(d, ox, oy):
             ['Owner', 'IPT', 'FCS team', ('Medium', AMBER_BG), 'Change'],
             ['Baseline', 'not found: empty slot', '—', ('Low', RED_BG), 'Choose']]
     table(s, 56, 172, [120, 170, 150, 70, 80], ['SLOT', 'SOURCE FIELD', 'SAMPLE', 'LABEL', ''], rows, fs=10, bold_first=True, minh=34)
-    s.t(56, 460, 'Why Medium: the column name matches (Req #) or the values look right, but nobody has confirmed it. Exact = copied from a field you chose.', fs=9, color=SOFT)
+    s.t(56, 460, 'Exact = copied from a field you chose. High / Medium / Low = how sure the proposal is (Why, Subsystem and IPT are Medium). None of them means checked.', fs=9, color=SOFT)
     s.t(56, 478, 'Every source field you do not map is kept under "other fields", never discarded.', fs=9, color=SOFT)
     s.card(680, 136, 280, 380)
     s.caps(696, 148, 'DRY-RUN REPORT')

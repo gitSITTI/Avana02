@@ -1,0 +1,101 @@
+
+<!-- ========== OPEN ========== -->
+<sc-if value="{{isOpen}}" hint-placeholder-val="{{ true }}">
+<div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:32px;box-sizing:border-box">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center"><div style="width:12px;height:12px;border:2px solid #FFFFFF;box-sizing:border-box"></div></div>
+    <div style="font-weight:700;font-size:16px;letter-spacing:.01em">Requirements Consolidator</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66;border:1px solid #BAC3CA;padding:2px 8px;border-radius:4px">PROTOTYPE · SAMPLE DATA ONLY</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:780px">
+    <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:40px;line-height:1.15;letter-spacing:-.01em;text-wrap:balance">Open a requirements project</h1>
+    <p style="margin:0;font-size:17px;line-height:1.5;color:#3C4852;max-width:700px;text-wrap:pretty">Bring in requirements from a SysML v2 model, a ReqIF export from MSOSA or DOORS, a spreadsheet, a database query, or a Word or PDF document, from a few hundred to 1,500 requirements. The app says what it recognised and how far to trust what it read, before you go on. Every suggestion stays a draft until the reviewers your policy requires have signed it off.</p>
+  </div>
+  <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between">
+      <h2 style="margin:0;§CAP§font-weight:500">SIGNED IN AS</h2>
+      <span style="font-size:13px;color:#4F5B66">Your login decides your lens. In this prototype you can switch person to see each view.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:8px">
+      <sc-for list="{{people}}" as="p" hint-placeholder-count="6">
+        <button class="card-btn" onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="{{p.style}}">
+          <span style="font-weight:600">{{p.name}}</span>
+          <span style="font-size:12px;color:#4F5B66">{{p.role}} · {{p.lens}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="border:2px dashed #8C98A3;border-radius:8px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <h2 style="margin:0;§CAP§font-weight:500">DROP A FILE, PASTE A MODEL ADDRESS, OR CONNECT A DATABASE</h2>
+      <p style="margin:0;color:#3C4852;max-width:760px">Prototype: nothing is read from your computer here. Try a sample file and see what the app would say.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <span style="font-size:13px;color:#4F5B66">Sample files:</span>
+      <sc-for list="{{files}}" as="f" hint-placeholder-count="6">
+        <button class="card-btn" onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="{{f.style}}">{{f.name}}</button>
+      </sc-for>
+    </div>
+    <div aria-live="polite" style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;min-height:44px;background:#F7F9FA;border:1px solid #D5DADE;border-radius:6px;padding:8px 12px">
+      <sc-if value="{{dropEmpty}}" hint-placeholder-val="{{ true }}"><span style="color:#4F5B66">Recognised: nothing yet. Pick a sample file above.</span></sc-if>
+      <sc-if value="{{dropShown}}" hint-placeholder-val="{{ false }}">
+        <span style="font-weight:600">Recognised: {{dropRec}}</span>
+        <span style="{{dropTrustStyle}}">{{dropTrustName}}</span>
+      </sc-if>
+      <sc-if value="{{dropUsable}}" hint-placeholder-val="{{ false }}"><button onClick="{{useDrop}}" style="margin-left:auto;§PRI§">Use this</button></sc-if>
+    </div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+    <div style="flex:2 1 600px;min-width:0;display:flex;flex-direction:column;gap:12px">
+      <h2 style="margin:0;§CAP§font-weight:500">OR CHOOSE A SOURCE</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:12px">
+        <sc-for list="{{sources}}" as="s" hint-placeholder-count="6">
+          <button class="card-btn" onClick="{{s.pick}}" style="{{s.style}}">
+            <span style="font-weight:600;font-size:16px">{{s.title}}</span>
+            <span><span style="{{s.trustStyle}}">{{s.tier}}</span></span>
+            <span style="color:#3C4852">{{s.body}}</span>
+            <span style="font-size:12px;color:#4F5B66">{{s.note}}</span>
+            <span style="margin-top:auto;font-weight:600;color:var(--accent);text-decoration:underline">{{s.btn}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{mdzipHelp}}" hint-placeholder-val="{{ false }}">
+        <div style="§CARD§padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-left:4px solid #A15C00">
+          <div style="font-weight:600">MSOSA project files (.mdzip) are not read directly yet</div>
+          <div style="color:#3C4852">In MSOSA, export ReqIF with the Cameo Requirements Modeler, then open that file. It is the documented route and keeps stable IDs and links.</div>
+          <button onClick="{{useReqif}}" style="align-self:flex-start;§BTN§">Open the ReqIF route instead</button>
+        </div>
+      </sc-if>
+      <div style="font-size:13px;color:#3C4852;display:flex;flex-direction:column;gap:6px">
+        <div style="font-weight:600">Trust level, in words (it stays on every record later as a badge)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 14px">
+          <sc-for list="{{trustLegend}}" as="t" hint-placeholder-count="4"><span style="display:inline-flex;gap:6px;align-items:center"><span style="{{t.style}}">{{t.name}}</span>{{t.means}}</span></sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <h2 style="margin:0;§CAP§font-weight:500">RECENT PROJECTS</h2>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{recents}}" as="r" hint-placeholder-count="2">
+            <button class="card-btn" onClick="{{r.pick}}" style="text-align:left;§CARD§padding:12px 16px;display:flex;flex-direction:column;gap:2px;cursor:pointer;min-height:44px">
+              <span style="font-weight:600">{{r.name}}</span>
+              <span style="font-size:12px;color:#4F5B66">{{r.src}} · opens a synthetic sample in this prototype</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-weight:600;font-size:15px">First time here?</div>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:#3C4852">
+          <li><b>Draft</b> means suggested, not approved. Your source model is never changed from this screen.</li>
+          <li><b>Lenses</b> are four reviewer points of view: systems, process, UI/UX and new user. Your login gives you one.</li>
+          <li><b>Guards</b> are plain code checks that block any suggestion that changes a number, unit, shall/should or a not.</li>
+          <li><b>Pilot first.</b> On the next screen you can review one allocation before the whole project.</li>
+        </ul>
+        <button onClick="{{openSample}}" style="align-self:flex-start;§PRI§">Open the sample project as {{meName}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>

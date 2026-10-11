@@ -1,0 +1,75 @@
+
+      <!-- ===== OVERVIEW ===== -->
+      <sc-if value="{{isOverview}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Overview</h1>
+          <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">{{overviewLine}}</p>
+        </div>
+        <sc-if value="{{showHint}}" hint-placeholder-val="{{ true }}">
+        <div style="§CARD§padding:16px 20px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-start">
+          <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px">
+            <div style="font-weight:600;font-size:15px">New here? Three things to do on each cluster</div>
+            <div style="color:#3C4852">A cluster is a small group of requirements that look alike. You decide what happens to each one.</div>
+          </div>
+          <ol style="flex:2 1 360px;margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;color:#2A353F">
+            <li><b>Read</b> the wordings side by side. Coloured words are numbers, units, shall/should and not.</li>
+            <li><b>Check the guards.</b> A red guard means the suggestion changes something that matters.</li>
+            <li><b>Decide</b> in the Resolve panel, then the lenses the policy requires sign off before anything is approved.</li>
+          </ol>
+          <button onClick="{{dismissHint}}" style="§BTN§">Hide this</button>
+        </div>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:stretch">
+          <div style="flex:1 1 300px;§CARD§padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:space-between">
+            <div>
+              <div style="font-size:64px;line-height:1;font-weight:600;letter-spacing:-.02em">{{openCount}}</div>
+              <div style="font-size:16px;color:#2A353F;margin-top:6px">{{forMe}}</div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <button onClick="{{startReview}}" style="§PRI§padding:0 18px;font-size:15px">Start with the safest cluster</button>
+              <button onClick="{{openMap}}" style="§BTN§">See all requirements on a map</button>
+            </div>
+          </div>
+          <div style="flex:2 1 460px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px">
+            <sc-for list="{{lanes}}" as="l" hint-placeholder-count="3">
+              <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:8px">
+                <span style="{{l.badge}}">{{l.name}}</span>
+                <div style="font-size:28px;font-weight:600;line-height:1">{{l.n}} <span style="font-size:14px;font-weight:400;color:#4F5B66">of {{l.of}} undecided</span></div>
+                <div style="color:#3C4852;font-size:13px">{{l.sub}}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{tryGroupShown}}" hint-placeholder-val="{{ true }}">
+        <div style="background:#F1F6FF;border:1px solid #9DB8E8;border-radius:8px;padding:14px 20px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between">
+          <div style="flex:1 1 380px"><b>Try a six-member group.</b> CL-050 holds six retention wordings (30, 60, 90 and 365 days, plus two that cannot be ranked). Pick most stringent, least stringent, median, one member, your own wording or the AI draft, and watch the preview, guards and sign-offs change.</div>
+          <button onClick="{{tryGroup}}" style="§PRI§">Open CL-050</button>
+        </div>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <div style="flex:3 1 460px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="§CAP§">HOW THE LIST NARROWED</div>
+            <sc-for list="{{funnel}}" as="f" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="flex:0 0 210px;color:#2A353F">{{f.label}}</div>
+                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
+                  <div style="{{f.bar}}"></div>
+                  <span style="font-variant-numeric:tabular-nums;font-weight:600">{{f.value}}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:2 1 320px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="§CAP§">SIGN-OFF BY LENS</div>
+            <sc-for list="{{signoffMeters}}" as="s" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">{{s.name}}</span><span style="color:#4F5B66;font-variant-numeric:tabular-nums">{{s.label}}</span></div>
+                <div style="height:8px;background:#CDE2FB;border-radius:4px;overflow:hidden"><div style="{{s.fill}}"></div></div>
+              </div>
+            </sc-for>
+            <div style="color:#4F5B66;font-size:13px">A cluster is <b>approved</b> when every lens its policy requires has signed. Which lenses that is depends on the lane and on whether new wording is introduced. See Sign-off policy.</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>

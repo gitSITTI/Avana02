@@ -1,0 +1,60 @@
+
+      <!-- ===== METHODS AND METRICS ===== -->
+      <sc-if value="{{isMethods}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Methods and metrics</h1>
+          <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">Every suggestion source is scored the same way, so the mechanical methods and the AI can be compared fairly.</p>
+        </div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Illustrative numbers.</b> No gold set of human-labelled pairs exists yet, so the accuracy figures below are placeholders that show the layout. The "This session", "Guards" and "Progress by lane" panels are computed live from the 252 clusters and from what you do in the sample.</div>
+        <div style="background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;overflow:hidden">
+          <div style="padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66;border-bottom:1px solid #D5DADE">EACH SOURCE, SIDE BY SIDE (SAMPLE VALUES)</div>
+          <div style="overflow-x:auto"><div style="min-width:760px">
+            <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,1.4fr) 90px 80px;gap:12px;padding:8px 16px;font-size:12px;color:#4F5B66;border-bottom:1px solid #E3E7EA">
+              <div>Source</div><div>Precision (95% range)</div><div>Recall</div><div>Calibration error</div><div>Pairs scored</div>
+            </div>
+            <sc-for list="{{sources2}}" as="s" hint-placeholder-count="7">
+              <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,1.4fr) 90px 80px;gap:12px;padding:10px 16px;align-items:center;border-bottom:1px solid #E3E7EA">
+                <div style="display:flex;align-items:center;gap:8px;font-weight:600"><span style="{{s.shape}}"></span>{{s.name}}</div>
+                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{s.pBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{s.p}}</span><span style="font-size:11px;color:#4F5B66">{{s.range}}</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{s.rBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{s.r}}</span></div>
+                <div style="font-variant-numeric:tabular-nums">{{s.ece}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{s.n}}</div>
+              </div>
+            </sc-for>
+          </div></div>
+          <div style="padding:10px 16px;font-size:13px;color:#3C4852;display:flex;flex-wrap:wrap;gap:6px 16px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:#34424F;display:inline-block"></span>Mechanical</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>AI</span><span>The AI judge scored few pairs, so its range is wide. Read the range, not just the number.</span></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">MECHANICAL AGAINST AI (SAMPLE VALUES)</div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+              <sc-for list="{{cont}}" as="c" hint-placeholder-count="4"><div style="border:1px solid #BAC3CA;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;font-weight:600;line-height:1.1">{{c.n}}</span><span style="font-weight:600">{{c.label}}</span><span style="font-size:12px;color:#4F5B66">{{c.sub}}</span></div></sc-for>
+            </div>
+            <div style="color:#3C4852;font-size:13px">Agreement between the two (kappa) is 0.58. That is not accuracy: both can miss the same thing, such as units that convert to each other. Pairs where they disagree are the most useful ones to label next.</div>
+          </div>
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">HOW OFTEN PEOPLE ACCEPT, BY CONFIDENCE (SAMPLE VALUES)</div>
+            <sc-for list="{{acc}}" as="a" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px"><div style="flex:0 0 110px;font-size:13px">{{a.bin}}</div><div style="flex:1;min-width:0;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{a.bar}}"></div></div><div style="flex:0 0 44px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums">{{a.v}}</div></div>
+            </sc-for>
+            <div style="color:#3C4852;font-size:13px">Acceptance alone can flatter the AI, because people tend to agree with it. The check is the planted wrong suggestions: 0 of 6 were accepted.</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">THIS SESSION (LIVE)</div>
+            <sc-for list="{{live}}" as="l" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+          </div>
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">GUARDS (LIVE FROM THE SAMPLE)</div>
+            <sc-for list="{{guardStats}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+          </div>
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">PROGRESS BY LANE (LIVE)</div>
+            <sc-for list="{{laneStats}}" as="l" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+            <div style="color:#4F5B66;font-size:13px">The pilot answers a question these numbers cannot yet: how many minutes a reviewer really needs per cluster in each lane. Use that to plan the full run.</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>

@@ -10,6 +10,7 @@ This repository holds the research, the design boards, the generator that makes 
 | `reqin/` | **Working code.** Reads SysML v2, ReqIF (MSOSA / DOORS), Excel/CSV, SQL, Word and PDF into one canonical model. `INPUT_LAYER.md` is the design. |
 | `excalidraw/` | Ten Excalidraw boards: storyboard, wireframes, flows, UI kit, scale, lenses, group decisions, assistant, pipelines, any-input. **Generated; do not edit by hand.** |
 | `excalidraw_generator/` | The Python that produces the boards, with `EXCALIDRAW_GUIDE.md` (recipes, definition of done, prompts for an agent). |
+| `prototype/` | Clickable prototype of the screens (one page, built from `parts/`). Open and Import screens show real `reqin` output; everything else is synthetic. See `prototype/README.md`. |
 | `tools/` | `check_no_real_data.py`, the tripwire that keeps real program data out of the repo. |
 | `Containerfile`, `.gitlab-ci.yml`, `Makefile` | Podman/Docker image and CI. `make check` runs what CI runs. |
 
@@ -18,7 +19,7 @@ This repository holds the research, the design boards, the generator that makes 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e "reqin[test]"
-make check          # guard + 83 tests + rebuild all ten boards and confirm they are identical
+make check          # guard + 83 tests + rebuild all ten boards and the prototype page, confirm they are identical
 ```
 
 Try the CLI on your own export (read-only; the source file is never modified):
@@ -51,6 +52,7 @@ To also scan for your own program code names and number patterns, set a CI/CD va
 |---|---|
 | `reqin`: 83 required checks pass | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git |
 | Boards rebuild byte-for-byte; structurally valid | `make boards`, clean environment, standard library only |
+| Prototype | Committed page equals a fresh build; static check resolves every template hole across about 1,000 states (0 issues); 39 browser checks pass at 1440 and 390 px from a clean `npm ci`; older flow scripts give identical output to the previous published version. A deliberate break makes both CI jobs fail. |
 | Guard trips on what it should | 7 tests, including the real-export file types, data folders, size and missing approval entries |
 | `.gitlab-ci.yml` | Passes yamllint and the vendored GitLab CI JSON schema; each job's commands were run locally. **The file itself has not run on a GitLab runner.** |
 | **Not checked** | The `Containerfile` has not been built (no container engine daemon was available where it was written). Reading real MSOSA, DOORS or SysML v2 exports: all fixtures are synthetic. Opening the boards in the live Excalidraw app. Python 3.10 (not supported; 3.11+ is). |

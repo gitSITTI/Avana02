@@ -1,0 +1,41 @@
+
+      <!-- ===== SIGN-OFF POLICY ===== -->
+      <sc-if value="{{isPolicy}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Sign-off policy</h1>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">Four lenses exist, but asking all four to sign every cluster of a 1,000-requirement project is what makes reviews stall. The policy asks for the lenses that matter for each case, and samples the rest on a fixed 20% so the same clusters are always chosen.</p>
+        </div>
+        <div style="§CARD§overflow:hidden">
+          <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">WHO MUST SIGN, BY CASE</div>
+          <div style="overflow-x:auto"><div style="min-width:820px">
+            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr)) minmax(0,2fr);gap:12px;padding:8px 16px;border-bottom:1px solid #D5DADE;font-size:12px;color:#4F5B66;font-weight:600"><span>Case</span><span>Systems</span><span>Process</span><span>UI/UX</span><span>New user</span><span>Notes</span></div>
+            <sc-for list="{{polRows}}" as="r" hint-placeholder-count="7">
+              <div style="display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr)) minmax(0,2fr);gap:12px;padding:10px 16px;border-bottom:1px solid #E3E7EA;align-items:start"><span style="font-weight:600">{{r.a}}</span><span>{{r.b}}</span><span>{{r.c}}</span><span>{{r.d}}</span><span>{{r.e}}</span><span style="font-size:13px;color:#3C4852">{{r.f}}</span></div>
+            </sc-for>
+          </div></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <div style="flex:1 1 400px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="§CAP§">TRY A CASE</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Lane"><sc-for list="{{polLanes}}" as="l" hint-placeholder-count="3"><button onClick="{{l.pick}}" aria-pressed="{{l.pressed}}" style="{{l.style}}">{{l.label}}</button></sc-for></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{polToggles}}" as="t" hint-placeholder-count="3"><button onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button></sc-for></div>
+            <div style="display:flex;flex-direction:column;gap:8px;background:#F4F6F8;border-radius:6px;padding:12px">
+              <div style="font-weight:600">These must sign</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{polOut}}" as="o" hint-placeholder-count="3"><span style="font-size:13px;font-weight:600;padding:3px 10px;border-radius:4px;background:#FFFFFF;border:1px solid #8C98A3">{{o.label}}</span></sc-for></div>
+              <sc-if value="{{polHasSamples}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{polSamples}}" as="o" hint-placeholder-count="1"><div style="font-size:13px;color:#3C4852">Also: {{o.label}}.</div></sc-for></div></sc-if>
+            </div>
+            <div style="font-size:13px;color:#3C4852">{{polNote}}</div>
+          </div>
+          <div style="flex:1 1 400px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="§CAP§">WHEN SEVERAL PEOPLE WORK AT ONCE</div>
+            <sc-for list="{{syncRules}}" as="r" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{r.k}}</span><span style="font-size:13px;color:#3C4852">{{r.v}}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:14px 18px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-weight:600">A note is always required when you</div>
+          <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px"><sc-for list="{{weakRules}}" as="w" hint-placeholder-count="5"><li>{{w.t}}</li></sc-for></ul>
+        </div>
+        <div style="color:#4F5B66;font-size:13px">These are assumptions for the prototype. The right percentages and rules should come from the pilot and from your process owners.</div>
+      </div>
+      </sc-if>

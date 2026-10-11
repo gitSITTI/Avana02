@@ -1,0 +1,61 @@
+
+      <!-- ===== DECISIONS AND AUDIT ===== -->
+      <sc-if value="{{isAudit}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Decisions and audit</h1>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">The ledger lists every decision with its reason, note and who made it, so anyone can review it later. The event chain behind it fingerprints every step, so editing an old entry breaks the chain. Reopening adds a new event; it never deletes one.</p>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Choose a log">
+          <sc-for list="{{logTabs}}" as="t" hint-placeholder-count="2"><button onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button></sc-for>
+        </div>
+
+        <sc-if value="{{isLedger}}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center">
+            <label for="l-filter" style="position:absolute;left:-9999px">Search decisions</label>
+            <input id="l-filter" type="text" value="{{lfilterV}}" onChange="{{onLfilter}}" placeholder="Search cluster, decision, reason, person or note" style="§INP§flex:1 1 320px;max-width:520px">
+            <span style="font-size:13px;color:#4F5B66">{{lInfo}}</span>
+            <span style="display:flex;gap:6px;align-items:center"><span style="font-size:13px;color:#4F5B66">{{lPageText}}</span><button onClick="{{lPrev}}" disabled="{{lPrevDisabled}}" style="§BTN§">Previous</button><button onClick="{{lNext}}" disabled="{{lNextDisabled}}" style="§BTN§">Next</button></span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{lrows}}" as="r" hint-placeholder-count="10">
+              <div style="§CARD§padding:12px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:start">
+                <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700">{{r.cid}}</span><span style="font-weight:600">{{r.title}}</span></div>
+                  <div style="color:#2A353F"><b>{{r.decision}}</b> · {{r.reason}}</div>
+                  <div style="font-size:13px;color:#3C4852">Note: {{r.note}}</div>
+                  <div style="font-size:12px;color:#4F5B66">{{r.by}} · {{r.when}} · {{r.vs}}<sc-if value="{{r.hasShare}}" hint-placeholder-val="{{ false }}"> · AI-origin share: {{r.share}}</sc-if></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+                  <span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;background:#E8F0FD;color:#123C8C">{{r.state}}</span>
+                  <button onClick="{{r.open}}" style="§BTN§min-height:36px;font-size:13px">Open cluster</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isChain}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center">
+            <button onClick="{{verifyChain}}" style="§PRI§">Verify the chain</button>
+            <label style="display:flex;gap:10px;align-items:center;min-height:44px"><input type="checkbox" checked="{{tamper}}" onChange="{{toggleTamper}}" style="width:20px;height:20px;margin:0"> Demo: alter entry 2 after the fact</label>
+            <span style="font-size:13px;color:#4F5B66">{{evNote}}</span>
+          </div>
+          <sc-if value="{{verifyShown}}" hint-placeholder-val="{{ false }}"><div style="{{verifyStyle}}">{{verifyText}}</div></sc-if>
+          <div style="§CARD§overflow:hidden"><div style="overflow-x:auto"><div style="min-width:960px">
+            <div style="display:grid;grid-template-columns:40px 70px 120px 190px minmax(0,1fr) 90px 170px;gap:12px;padding:8px 16px;font-size:12px;color:#4F5B66;border-bottom:1px solid #D5DADE"><div>#</div><div>Time</div><div>Source</div><div>Actor</div><div>Event</div><div>About</div><div>Fingerprint</div></div>
+            <sc-for list="{{eventRows}}" as="e" hint-placeholder-count="6">
+              <div style="{{e.rowStyle}}">
+                <div style="font-family:'IBM Plex Mono',monospace">{{e.seq}}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{e.time}}</div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600"><span style="{{e.shape}}"></span>{{e.kind}}</div>
+                <div>{{e.actor}}</div>
+                <div>{{e.text}}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{e.target}}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4F5B66">{{e.prev}} → {{e.hash}}</div>
+              </div>
+            </sc-for>
+          </div></div></div>
+        </sc-if>
+      </div>
+      </sc-if>

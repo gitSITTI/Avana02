@@ -15,6 +15,7 @@ stages: [guard, test, boards, image]
 variables:
   # Behind a firewall? Set PYTHON_IMAGE to your internal mirror (and PIP_INDEX_URL to your PyPI mirror) in Settings > CI/CD > Variables.
   PYTHON_IMAGE: "docker.io/library/python"
+  NODE_IMAGE: "docker.io/library/node"
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHONDONTWRITEBYTECODE: "1"
@@ -63,6 +64,22 @@ boards:rebuild-identical:
     - cd excalidraw_generator
     - python build_all.py --check --out ../excalidraw
     - python validate.py ../excalidraw/*.excalidraw
+
+# 3b. The interactive prototype is built from parts/. The committed page must equal a fresh build, and every template hole must resolve.
+prototype:build-identical:
+  extends: .python
+  stage: boards
+  script:
+    - cd prototype
+    - python build.py "$CI_PROJECT_DIR/Main.built.dc.html"
+    - cmp "$CI_PROJECT_DIR/Main.built.dc.html" project/Main.dc.html
+
+prototype:verify:
+  stage: boards
+  image: "$NODE_IMAGE:22-slim"
+  script:
+    - cd prototype
+    - node verify.js project/Main.dc.html
 
 # 4. Container image (Podman). Manual by default because it needs a runner that allows building images.
 #    Make it automatic by deleting the `when: manual` / `allow_failure` lines.
