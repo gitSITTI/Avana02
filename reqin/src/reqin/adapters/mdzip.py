@@ -25,6 +25,7 @@ class MdzipAdapter(Adapter):
     fidelity = Fidelity.STRUCTURED
     caps = Caps(structured_ids=True, links=True, hierarchy=True)
     implemented = False
+    maturity = "stub"
 
     def sniff(self, src: Source) -> float:
         if Path(src.uri).suffix.lower() != ".mdzip":

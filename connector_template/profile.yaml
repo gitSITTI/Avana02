@@ -1,0 +1,8 @@
+# The mapping from this connector's raw fields to requirement meaning. A human confirms it; the connector never decides meaning.
+profile: acme
+adapter: acme
+namespace: ACME          # TODO(agent): your project key. Keep it stable across re-imports: it is part of every MID.
+containers: [requirements]
+fields:
+  uid:  {from: "key"}
+  text: {from: "statement", strip_markup: true}

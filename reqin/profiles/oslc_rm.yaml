@@ -1,0 +1,14 @@
+# OSLC RM (IBM DOORS Next, DOORS 9.x via DOORS Web Access, any OSLC RM provider). Connector: oslc_rm.
+# Raw fields are named prefix:property, e.g. dcterms:identifier, dcterms:title, jazz_rm:primaryText, oslc_rm:trackedBy.
+# CONFIRM BEFORE TRUSTING: `reqin sample oslc+https://host/rm/rootservices --opt project="<name>" --opt cookie_env=DNG_COOKIE`
+#   * jazz_rm:primaryText is what I EXPECT DOORS Next to call the requirement's rich text; dcterms:description is the fallback.
+#     If your team writes the statement in the Name instead, add "dcterms:title" as a third source (headings will then come in too:
+#     filter them with `where`).
+#   * dcterms:identifier is the artifact number inside the project. The MID is built from the resource URI, not from this.
+profile: oslc-rm
+adapter: oslc_rm
+namespace: OSLC          # set to your project key; keep it stable across re-imports: it is part of every MID
+containers: [requirements]
+fields:
+  uid:    {from: ["dcterms:identifier"]}
+  text:   {from: ["jazz_rm:primaryText", "dcterms:description"], strip_markup: true}

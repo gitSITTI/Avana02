@@ -1,12 +1,13 @@
 [project]
 name = "reqin"
-version = "0.1.0"
+version = "0.2.0"
 description = "Input-agnostic requirement ingestion: adapters + canonical model + declarative mapping"
 requires-python = ">=3.11"
 dependencies = ["pyyaml", "openpyxl", "reqif", "sqlalchemy", "python-docx", "pdfplumber"]
 
 [project.optional-dependencies]
-test = ["pytest", "reportlab"]
+oslc = ["rdflib>=7"]                 # the DOORS Next / OSLC connector parses RDF
+test = ["pytest", "reportlab", "rdflib>=7", "trustme"]
 
 [project.scripts]
 reqin = "reqin.cli:main"

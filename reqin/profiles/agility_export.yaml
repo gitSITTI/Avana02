@@ -1,0 +1,14 @@
+# Agility EXPORT (xlsx/csv) read by the tabular adapter: the route many teams already use for Agility dashboards.
+# I have NOT seen your export's headers. These are the usual Agility column names; open the file with `reqin discover <file>`
+# and edit `from:` to the exact header text. Every `from` accepts a list: the first non-empty column wins.
+profile: agility-export
+adapter: tabular
+namespace: AGILITY
+fields:
+  uid:    {from: ["Number", "ID", "Item ID", "Key"]}
+  text:   {from: ["Description", "Requirement", "Name", "Title"], strip_markup: true}
+  status: {from: ["Status", "Status.Name", "State"]}
+  owner:  {from: ["Scope", "Scope.Name", "Project", "Team"]}
+  parent: {from: ["Super", "Parent", "Epic", "Feature"]}
+links:
+  - {kind: trace, from: "Dependencies", direction: out}     # upstream: this item depends on those

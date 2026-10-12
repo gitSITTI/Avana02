@@ -1,0 +1,14 @@
+# Digital.ai Agility over the REST Data API (connector: agility). Raw fields are the attribute names you selected, plus AssetType.
+# CONFIRM against your instance first:  reqin sample agility+https://host/Instance --opt token_env=AGILITY_TOKEN
+# Work items are not always requirements. This profile keeps items that have a Description with a modal verb and sends the
+# rest to "rejected" WITH a reason, so you can see what was left out. Loosen or tighten `where` to taste.
+profile: agility-api
+adapter: agility
+namespace: AGILITY       # set to your project key; keep it stable across re-imports: it is part of every MID
+where:
+  Description: {not_empty: true}
+fields:
+  uid:    {from: "Number", why: "Agility's own item number (S-01234, E-00045, B-00012)"}
+  text:   {from: "Description", strip_markup: true, why: "the Description field is HTML"}
+  status: {from: ["Status.Name", "AssetState"], map: {"0": "Future", "64": "Active", "128": "Closed", "200": "Template", "208": "Broken Down", "255": "Deleted"}}
+  owner:  {from: "Scope.Name", why: "the Agility project (Scope) the item belongs to"}

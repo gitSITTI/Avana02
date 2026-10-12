@@ -8,7 +8,6 @@ from make_fixtures import REQS
 from reqin import Profile, Source, ingest
 from reqin.adapter import pick_adapter
 from reqin.adapters.sql import check_query
-from reqin.adapters.sysml_api import SysMLApiAdapter
 from reqin.model import Conf
 from reqin.normalise import extract_slots, normalise_text
 
@@ -130,21 +129,6 @@ def test_mdzip_is_recognised_but_honestly_unimplemented(tmp_path):
         list(ad.read(Source(str(p))))
 
 
-def test_sysml_api_adapter_against_a_fake_server():
-    """ASSUMED JSON key names (see sysml_api.py). This proves paging/filtering/doc-joining logic, NOT the real server's shape."""
-    calls = []
-    els = [
-        {"@id": "e1", "@type": "RequirementDefinition", "declaredName": "Latency", "declaredShortName": "REQ-1"},
-        {"@id": "d1", "@type": "Documentation", "body": "The system shall respond within 5 s.", "owner": {"@id": "e1"}},
-        {"@id": "p1", "@type": "PartUsage", "declaredName": "ignored"},
-    ]
-    ad = SysMLApiAdapter(http_get=lambda url, hdr: calls.append((url, hdr)) or els)
-    src = Source("https://host/api/rest", {"project_id": "P", "token": "T"})
-    r = ingest(src, adapter=ad)
-    assert calls[0][0].endswith("/projects/P/commits/P/elements") and calls[0][1]["Authorization"] == "Bearer T"
-    assert [q.uid for q in r.requirements] == ["REQ-1"] and r.requirements[0].slots.quantities[0]["base_value"] == 5000
-
-
 def test_csv_windows_encoding_semicolons_and_duplicate_headers(tmp_path):
     p = tmp_path / "legacy.csv"
     p.write_bytes("Req ID;Statement;Note;Note\nR-1;The unit shall operate at 85° C – café mode.;first;second\n".encode("cp1252"))
@@ -161,3 +145,10 @@ def test_reqifz_archive_is_read_like_a_reqif(fx, tmp_path):
         f.write(fx["reqif"], "inner/reqs.reqif")
     r = ingest(Source(str(z)), profile=Profile.from_yaml((ROOT / "profiles/msosa_reqif.yaml").read_text()))
     assert len(r.requirements) == 8 and r.report["adapter"] == "reqif"
+
+
+def test_the_no_record_vanishes_check_can_actually_fail():
+    from reqin.ingest import invariant_holds
+    assert invariant_holds(5, 3, 1, {"container not selected: X": 1})
+    assert not invariant_holds(5, 3, 1, {})                  # one record unaccounted for
+    assert not invariant_holds(5, 3, 1, {"row filter (where) did not match": 2})     # more accounted for than read

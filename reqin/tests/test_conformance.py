@@ -121,4 +121,5 @@ def test_nothing_in_the_source_is_lost(key, fx):
 def test_every_registered_adapter_has_a_case_or_is_declared_unimplemented():
     for name, cls in load_adapters().items():
         covered = name in {c[0] for c in CASES.values()}
-        assert covered or getattr(cls, "implemented", True) is False or name == "sysml_api", f"adapter {name} has no conformance case"
+        live = cls.maturity == "fake-server-tested" or not cls.__module__.startswith("reqin.adapters.")   # live + plugins: their own tests
+        assert covered or getattr(cls, "implemented", True) is False or live, f"adapter {name} has no conformance case"

@@ -19,6 +19,8 @@ WORKDIR /opt/reqin
 COPY reqin/pyproject.toml ./pyproject.toml
 COPY reqin/src ./src
 COPY reqin/profiles ./profiles
+COPY reqin/connectors ./connectors
+COPY reqin/CONNECTORS.md ./CONNECTORS.md
 
 FROM base AS test
 COPY reqin/tests ./tests
@@ -34,11 +36,11 @@ RUN python build_all.py --check --out ../excalidraw && python validate.py ../exc
 
 FROM base AS runtime
 ARG EXTRA_PIP=""
-RUN pip install . && if [ -n "$EXTRA_PIP" ]; then pip install $EXTRA_PIP; fi \
+RUN pip install ".[oslc]" && if [ -n "$EXTRA_PIP" ]; then pip install $EXTRA_PIP; fi \
  && useradd --system --uid 10001 --no-create-home --shell /usr/sbin/nologin reqin \
  && mkdir /data && chown 10001 /data
 LABEL org.opencontainers.image.title="reqin" \
-      org.opencontainers.image.description="Reads requirements from SysML v2, ReqIF, Excel/CSV, SQL, Word and PDF into one canonical model. Read-only; makes no network calls unless the source itself is a URL or a remote database."
+      org.opencontainers.image.description="Reads requirements from SysML v2, ReqIF, DOORS Next (OSLC), Agility, Excel/CSV, SQL, Word and PDF into one canonical model. Read-only; makes no network calls unless the source itself is a URL or a remote database."
 USER 10001
 WORKDIR /data
 ENTRYPOINT ["reqin"]

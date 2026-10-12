@@ -10,7 +10,10 @@ What it checks (structure first, because that is what can be checked honestly):
   2. Folders named data/, private/, exports/ are refused.
   3. Files in fixtures_approved/ must each be named in fixtures_approved/APPROVALS.md (who approved, when, ticket).
   4. Any file over 3 MB is refused (database dumps, bundles, node_modules by accident).
-  5. OPTIONAL: your own list of terms (program code names, part-number patterns, document-number prefixes) as regexes.
+  5. ALLOW_FILES: a short list of exact paths that are CODE with a blocked extension (today only the DOORS export script,
+     reqin/connectors/doors9/export_requirements.dxl). Only that exact path is exempt from check 1; the size and term checks
+     still apply to it, and a .dxl anywhere else is still refused.
+  6. OPTIONAL: your own list of terms (program code names, part-number patterns, document-number prefixes) as regexes.
      Keep that list OUT of the repo: pass it as a masked CI variable FORBIDDEN_TERMS (newline-separated) or a local
      file that is git-ignored. If neither is given the script says so; it does not pretend to have scanned for terms.
 
@@ -32,6 +35,9 @@ BLOCKED_EXT = {
     ".xlsx", ".xlsm", ".xls", ".csv", ".tsv", ".docx", ".doc", ".pdf", ".pptx",
     ".db", ".sqlite", ".sqlite3", ".mdb", ".accdb", ".sql", ".dump", ".bak", ".zip", ".7z", ".tar", ".gz",
 }
+# Reviewed code files that happen to carry a blocked extension. Exact repo-relative paths only; never a folder, never a pattern.
+# Adding a path here is a code-review decision: the file must contain a script, not requirements.
+ALLOW_FILES = {"reqin/connectors/doors9/export_requirements.dxl"}
 BLOCKED_DIRS = {"data", "private", "exports"}
 MAX_BYTES = 3 * 1024 * 1024
 SKIP_DIRS = {".git", "node_modules", ".venv", "__pycache__", ".pytest_cache", ".cache"}
@@ -39,8 +45,10 @@ TEXT_EXT = {".md", ".txt", ".py", ".js", ".ts", ".tsx", ".json", ".yaml", ".yml"
 
 
 def list_files(root: Path) -> list[str]:
+    # Tracked AND untracked-but-not-ignored files: a file you have not `git add`ed yet is exactly the one to catch before you do.
     try:
-        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z"], capture_output=True, check=True).stdout
+        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                             capture_output=True, check=True).stdout
         files = [f for f in out.decode().split("\0") if f]
         if files:
             return files
@@ -80,7 +88,7 @@ def scan(root: Path, files: list[str], terms: list[re.Pattern]) -> list[str]:
             if name not in ("README.md", "APPROVALS.md") and name not in approvals_text:
                 problems.append(f"{rel}: not listed in {APPROVALS} (who approved it, when, under what ticket)")
         else:
-            if ext in BLOCKED_EXT:
+            if ext in BLOCKED_EXT and rel not in ALLOW_FILES:
                 problems.append(f"{rel}: file type {ext} may hold real requirements; only {ALLOW_DIR} may contain these, with an entry in APPROVALS.md")
             bad = BLOCKED_DIRS.intersection(parts[:-1])
             if bad:
@@ -88,7 +96,7 @@ def scan(root: Path, files: list[str], terms: list[re.Pattern]) -> list[str]:
         size = p.stat().st_size
         if size > MAX_BYTES:
             problems.append(f"{rel}: {size / 1e6:.1f} MB is over the {MAX_BYTES // (1024 * 1024)} MB limit (database dump? bundle? build output?)")
-        if terms and ext in TEXT_EXT and size <= MAX_BYTES:
+        if terms and (ext in TEXT_EXT or rel in ALLOW_FILES) and size <= MAX_BYTES:
             text = p.read_text(encoding="utf-8", errors="replace")
             for t in terms:
                 m = t.search(text)

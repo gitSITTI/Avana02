@@ -10,6 +10,8 @@
 *.csv
 *.docx
 *.pdf
+*.dxl
+!reqin/connectors/doors9/export_requirements.dxl
 *.db
 *.sqlite
 *.sqlite3

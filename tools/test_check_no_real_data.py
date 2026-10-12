@@ -29,6 +29,36 @@ def test_requirement_export_types_are_refused_outside_the_allowlist(tmp_path):
         assert run(tmp_path, {f"stuff/{name}": b"x"}), name
 
 
+def test_the_one_reviewed_dxl_script_passes_but_every_other_dxl_is_still_refused(tmp_path):
+    script = "reqin/connectors/doors9/export_requirements.dxl"
+    assert script in g.ALLOW_FILES and len(g.ALLOW_FILES) == 1, "the exemption list is meant to stay tiny"
+    assert run(tmp_path, {script: "// DXL export script, no data"}) == []
+    for other in ("reqin/connectors/doors9/other.dxl", "stuff/export_requirements.dxl", "export_requirements.dxl",
+                  "reqin/connectors/doors9/export_requirements.dxl.csv"):
+        assert run(tmp_path, {other: "x"}), other
+
+
+def test_the_exempt_script_is_still_subject_to_size_and_term_checks(tmp_path):
+    script = next(iter(g.ALLOW_FILES))
+    assert any("MB" in p for p in run(tmp_path, {script: b"x" * (g.MAX_BYTES + 1)}))
+    out = run(tmp_path, {script: "// header\nPROJECT-ZEBRA"}, terms=["project-zebra"])
+    assert out and ":2:" in out[0]
+
+
+def test_files_not_yet_added_to_git_are_checked_too(tmp_path):
+    import shutil
+    import subprocess
+    if shutil.which("git") is None:
+        import pytest
+        pytest.skip("git not installed")
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    make(tmp_path, {"README.md": "x", "notes/new_export.csv": "a,b"})
+    assert "notes/new_export.csv" in g.list_files(tmp_path)          # untracked, not ignored
+    (tmp_path / ".gitignore").write_text("ignored/\n")
+    make(tmp_path, {"ignored/x.csv": "a"})
+    assert "ignored/x.csv" not in g.list_files(tmp_path)             # git-ignored files stay out of scope
+
+
 def test_data_folders_are_refused(tmp_path):
     assert run(tmp_path, {"data/notes.md": "x"})
     assert run(tmp_path, {"a/private/notes.txt": "x"})

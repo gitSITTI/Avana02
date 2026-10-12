@@ -3,11 +3,12 @@ CTR ?= $(shell command -v podman 2>/dev/null || command -v docker 2>/dev/null)
 PY  ?= python3
 IMG ?= requirements-consolidator/reqin:dev
 
-.PHONY: help check guard test boards proto proto-test image image-test render
+.PHONY: help check guard test template boards proto proto-test image image-test render
 help:
 	@echo "check       guard + test + boards (what CI runs)"
 	@echo "guard       refuse real-data files (tools/check_no_real_data.py)"
-	@echo "test        reqin tests"
+	@echo "test        reqin tests (file adapters, live connectors against fakes, HTTP kit, watch mode)"
+	@echo "template    the connector template's own tests, in a throwaway virtualenv (.cache/tpl-venv)"
 	@echo "boards      rebuild all Excalidraw boards and confirm they match the committed ones"
 	@echo "proto       rebuild the prototype page, confirm it matches the committed one, run the static check"
 	@echo "proto-test  prototype browser tests (needs npm, Playwright for Python, Chromium)"
@@ -15,7 +16,7 @@ help:
 	@echo "image-test  build the test stage (runs the tests inside the container)"
 	@echo "render      boards -> PNG in excalidraw_generator/out (needs node + Playwright; see EXCALIDRAW_GUIDE.md)"
 
-check: guard test boards proto
+check: guard test template boards proto
 
 guard:
 	$(PY) -m pytest -q tools
@@ -23,6 +24,13 @@ guard:
 
 test:
 	cd reqin && $(PY) -m pytest -q -rs
+
+# Runs in a throwaway virtualenv under .cache/ so the template's entry point never lands in your own environment.
+template:
+	rm -rf .cache/tpl-venv && $(PY) -m venv .cache/tpl-venv
+	.cache/tpl-venv/bin/pip install -q -e "reqin[test]" -e connector_template
+	.cache/tpl-venv/bin/python -m pytest -q connector_template/tests
+	.cache/tpl-venv/bin/reqin connectors | grep -E "^acme "
 
 boards:
 	cd excalidraw_generator && $(PY) build_all.py --check --out ../excalidraw && $(PY) validate.py ../excalidraw/*.excalidraw

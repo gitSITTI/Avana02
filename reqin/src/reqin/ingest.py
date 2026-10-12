@@ -119,6 +119,8 @@ def ingest(src: Source, profile: Profile | None = None, adapter: Adapter | None 
     unresolved = sum(1 for l in links if l.target_mid is None)
     if unresolved:
         warnings.append(f"{unresolved} links point outside this import (kept by UID)")
+    if not raws:
+        warnings.append("the source produced NO records: check the options and the profile. For a live connector run `reqin sample` to see what it can see")
     if adapter.fidelity.value == "extracted":
         warnings.append("records were EXTRACTED from prose: every one needs human verification against its locator")
 
@@ -130,9 +132,14 @@ def ingest(src: Source, profile: Profile | None = None, adapter: Adapter | None 
         "filtered_out": dict(filtered), "links": len(links), "coverage": dict(coverage),
         "confidence": {k: dict(v) for k, v in conf_count.items()},
         "unclaimed_fields": sorted(seen_keys - claimed_keys), "warnings": warnings,
-        "invariant_ok": len(raws) == len(reqs) + len(rejected) + sum(filtered.values()),
+        "invariant_ok": invariant_holds(len(raws), len(reqs), len(rejected), filtered),
     }
     return IngestResult(requirements=reqs, links=links, rejected=rejected, report=report)
+
+
+def invariant_holds(raw: int, kept: int, rejected: int, filtered: dict[str, int]) -> bool:
+    """Every raw record ends up kept, rejected (with a reason) or filtered (with a reason). Nothing vanishes."""
+    return raw == kept + rejected + sum(filtered.values())
 
 
 def _links_from_column(lr: LinkRule, reqs: list[Requirement], raws: list[RawRecord], uid_to_mid: dict[str, str]) -> list[Link]:

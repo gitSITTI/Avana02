@@ -38,7 +38,8 @@ guard:no-real-data:
     - python -m pytest -q tools
     - python tools/check_no_real_data.py
 
-# 2. The input layer. 83 required checks + 1 optional (skipped here: no LibreOffice in this image, and that is expected).
+# 2. The input layer: file adapters, live connectors against in-memory fakes, the shared HTTP kit against real local servers, watch mode.
+#    One optional check (PDF made by LibreOffice) is skipped here: no LibreOffice in this image, and that is expected.
 test:reqin:
   extends: .python
   stage: test
@@ -54,6 +55,15 @@ test:reqin:
     when: always
     reports:
       junit: reqin/report.xml
+
+# 2b. The connector template must keep working as shipped: a new connector starts from it.
+test:connector-template:
+  extends: .python
+  stage: test
+  script:
+    - pip install -e "reqin[test]" -e connector_template
+    - python -m pytest -q connector_template/tests
+    - reqin connectors | grep -E "^acme "
 
 # 3. The Excalidraw boards are generated. They must rebuild byte-for-byte from the committed code and be structurally valid.
 #    Fails if someone edits a board by hand, or changes the generator without regenerating the boards.

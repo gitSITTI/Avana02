@@ -1,0 +1,23 @@
+[project]
+name = "reqin-acme"                     # TODO(agent): rename (keep the reqin- prefix so it is easy to find)
+version = "0.1.0"
+description = "Template connector for reqin: a paged, read-only JSON API"
+requires-python = ">=3.11"
+dependencies = ["reqin"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+# This line is how reqin finds your connector: after `pip install`, the app and the CLI see it. Nothing in reqin changes.
+[project.entry-points."reqin.adapters"]
+acme = "reqin_acme.adapter"             # TODO(agent): <your name> = "<your package>.adapter"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

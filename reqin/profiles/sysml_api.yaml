@@ -1,0 +1,13 @@
+# SysML v2 Systems Modeling API (Teamwork Cloud / Magic Collaboration Studio, SysON, Pilot Implementation).
+# The connector emits one record per RequirementDefinition / RequirementUsage with these raw fields:
+#   shortName (declaredShortName), name (declaredName), kind (@type), doc (Documentation bodies joined), owner (id), prop.* (other plain properties)
+# CONFIRM BEFORE TRUSTING: run `reqin sample sysml+https://... --opt project_name=...` and check these names against what your
+# server really returns. If your organisation keeps the human requirement ID somewhere else (a metadata attribute, the qualified
+# name), change the uid rule below. Nothing in the connector needs to change.
+profile: sysml-api
+adapter: sysml_api
+namespace: SYSML          # set to your project key and keep it stable across re-imports: it is part of every MID
+containers: [requirements]
+fields:
+  uid:  {from: ["shortName", "name"], why: "declaredShortName is the human ID in most models; declaredName is the fallback"}
+  text: {from: "doc", strip_markup: true, why: "requirement text lives in Documentation elements owned by the requirement"}

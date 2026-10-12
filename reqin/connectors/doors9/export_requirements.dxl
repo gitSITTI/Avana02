@@ -1,0 +1,97 @@
+// =====================================================================================================================
+// reqin / DOORS 9.x  --  READ-ONLY export of ONE module to a CSV that reqin reads with profiles/doors_csv.yaml
+//
+// STATUS: UNTESTED INSIDE DOORS. This file has never been run in DOORS (no DOORS exists where it was written). It is built
+//         from patterns in public DXL examples (jazz.net/dxl: Stream out = write(path); out << ...; close(out);
+//         for o in m do { ... o."Absolute Number" ... o."Object Text" }). DXL is strict: expect to fix a compile error or
+//         two the first time you run it. The Python side (reading this CSV shape) IS tested: tests/test_doors9.py.
+//
+// RUN:  DOORS > Tools > Edit DXL..., paste this file, set the TODO(agent) values below, Run.
+//
+// READ-ONLY: it opens the module with read() (not edit/share), loops the objects and writes a text file.
+//            It never saves, deletes, creates or modifies anything in DOORS. tests/test_doors9.py scans this file for such calls.
+//
+// OUTPUT COLUMNS (must match what profiles/doors_csv.yaml reads):
+//   Absolute Number, Object Identifier, Object Level, Object Heading, Object Text, Verification Method
+// Heading rows have no Object Text; the profile rejects them WITH a reason, so you can see what was skipped.
+// =====================================================================================================================
+pragma encoding, "UTF-8"
+
+// TODO(agent) 1: full DOORS path of the module, exactly as the DOORS explorer shows it.
+const string modulePath = "/PROJECT/FOLDER/Module"
+
+// TODO(agent) 2: where to write. With Citrix / remote DOORS this path is on the machine RUNNING DOORS, not your desktop.
+const string outPath = "C:\\Temp\\reqin_doors_export.csv"
+
+// Write one CSV field: always quoted, quotes doubled, line breaks kept (the CSV reader handles them).
+void putField(Stream out, string s)
+{
+    int i
+    out << "\""
+    for (i = 0; i < length(s); i++)
+    {
+        string c = s[i:i]
+        if (c == "\"") out << "\"\""
+        else out << c
+    }
+    out << "\""
+}
+
+void comma(Stream out)
+{
+    out << ","
+}
+
+// TODO(agent) 3: EXTRA COLUMNS. One extra attribute = one line in HEADER and one pair of lines in writeRow() below.
+//   The attribute must exist in this module under exactly that name, or DOORS stops with an error: run it once with only the
+//   standard columns, then add yours one at a time. Typical: "Rationale", "Allocation", "Status", "Source".
+const string HEADER = "Absolute Number,Object Identifier,Object Level,Object Heading,Object Text,Verification Method\n"
+
+void writeRow(Stream out, Object o)
+{
+    putField(out, o."Absolute Number" "")
+    comma(out)
+    putField(out, o."Object Identifier" "")
+    comma(out)
+    putField(out, level(o) "")
+    comma(out)
+    putField(out, o."Object Heading" "")
+    comma(out)
+    putField(out, o."Object Text" "")
+    comma(out)
+    putField(out, o."Verification Method" "")
+    out << "\n"
+}
+
+// TODO(agent) 4 (optional): LINKS. Not done here because link syntax is the part most likely to differ per site. Add a column
+//   "Links" holding the identifiers of the objects this one links TO (loop the outgoing links of o), then add to
+//   profiles/doors_csv.yaml:   links: [{kind: trace, from: "Links", direction: out}]
+//   Look at jazz.net/dxl for "outgoing links" examples before writing it.
+
+Module m = read(modulePath, false)
+if (null m)
+{
+    print "reqin: cannot open " modulePath " (wrong path, or this account cannot read it)\n"
+}
+else
+{
+    Stream out = write(outPath)
+    if (null out)
+    {
+        print "reqin: cannot write " outPath "\n"
+    }
+    else
+    {
+        out << HEADER
+        Object o
+        int n = 0
+        for o in m do
+        {
+            writeRow(out, o)
+            n++
+        }
+        close(out)
+        print "reqin: wrote " n " objects to " outPath "\n"
+    }
+    close(m)
+}

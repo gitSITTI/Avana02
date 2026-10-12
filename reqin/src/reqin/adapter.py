@@ -57,6 +57,16 @@ class Adapter(ABC):
     name: str = ""
     fidelity: Fidelity = Fidelity.TABULAR
     caps: Caps = Caps()
+    # How far this adapter has been proven. Shown by `reqin connectors` so nobody mistakes a fake-server test for a live one:
+    #   fixture-tested      read synthetic files that mimic the real format
+    #   fake-server-tested  talked to an in-memory fake of the server's documented API; NOT yet run against a real server
+    #   live-verified       a person ran it against the real system and the result was checked (set only by that person)
+    #   stub                declared but not implemented
+    maturity: str = "fixture-tested"
+
+    def audit(self) -> list:
+        """Requests a live connector made during the last run (method, URL without secrets, status, bytes). Files: none."""
+        return []
 
     @abstractmethod
     def sniff(self, src: Source) -> float:
@@ -87,7 +97,7 @@ def register(cls: type[Adapter]) -> type[Adapter]:
 
 def load_adapters() -> dict[str, type[Adapter]]:
     """Built-ins plus any third-party package that declares the 'reqin.adapters' entry-point group."""
-    for mod in ("tabular", "reqif_adapter", "sysml_text", "sysml_api", "sql", "docx_adapter", "pdf_adapter", "mdzip"):
+    for mod in ("tabular", "reqif_adapter", "sysml_text", "sysml_api", "oslc_rm", "agility", "sql", "docx_adapter", "pdf_adapter", "mdzip"):
         importlib.import_module(f"reqin.adapters.{mod}")
     for ep in importlib.metadata.entry_points(group="reqin.adapters"):
         ep.load()  # importing registers it
