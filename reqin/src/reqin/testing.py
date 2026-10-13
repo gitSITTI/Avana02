@@ -5,7 +5,7 @@
 * FakeTransport stands in for a server. It only has `get`, so a connector tested with it cannot write; every
   request it receives is recorded in `.requests`.
 * check_adapter runs the same properties the built-in conformance suite checks, against any adapter and source:
-  nothing silently dropped, text verbatim, identity and provenance, deterministic, nothing lost, source untouched.
+  nothing silently dropped, the result is a valid GUI dataset, text verbatim, identity and provenance, deterministic, nothing lost, source untouched.
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from typing import Any, Callable, Iterable
 
 from .adapter import Adapter, Source
 from .connect import Response
+from .dataset import validate_result
 from .ingest import ingest
 from .mapping import Profile, propose_profile
 from .normalise import normalise_text
@@ -86,6 +87,9 @@ def check_adapter(make_adapter: Callable[[], Adapter], src: Source, profile: Pro
     r = ingest(src, profile=profile, adapter=a1)
     # 1. nothing is dropped silently, and counts are what the fixture says
     assert r.report["invariant_ok"], r.report
+    # the result must also be a dataset the GUI can read (GUI_CONTRACT.md): the same checker `reqin check-dataset` runs
+    contract = validate_result(r)
+    assert not contract, contract[:5]
     # ...and do not take the pipeline's word for it: count the raw records straight from a fresh adapter.
     raw_n = sum(1 for x in make_adapter().read(src) if hasattr(x, "fields"))
     assert raw_n == r.report["raw_records"] == len(r.requirements) + len(r.rejected) + sum(r.report["filtered_out"].values()), \

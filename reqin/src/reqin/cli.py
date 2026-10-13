@@ -1,6 +1,8 @@
-"""reqin  sniff | discover | propose | import | sample | connectors | watch
+"""reqin  sniff | discover | propose | import | sample | connectors | watch | check-dataset | make-datasets
 
-  sniff / discover / propose / import   the four steps the app's Import screen performs
+  sniff / discover / propose / import   the four steps the app's Import screen performs (import --out-dir DIR writes the dataset the GUI reads)
+  check-dataset DIR                      is this folder a valid dataset under GUI_CONTRACT.md? what is in it?
+  make-datasets DIR                      write the fourteen test datasets (F1-F14) a screen must pass
   sample                                 look at what a connector sees (first page only) so you can tune options and profile names
   connectors                             list every adapter with its maturity (fixture-tested / fake-server-tested / live-verified / stub)
   watch                                  re-ingest a folder of exports when they change; never writes to that folder
@@ -92,6 +94,44 @@ def _cmd_sample(a) -> int:
     return 0
 
 
+def _cmd_check_dataset(a) -> int:
+    from .dataset import check_dataset, describe
+    ds, problems = check_dataset(a.dir)
+    info = None if problems else describe(ds)             # a summary of a broken dataset would be a guess
+    if a.json:
+        print(json.dumps({"valid": not problems, "problems": problems, "describe": info}, indent=2, ensure_ascii=False))
+        return 1 if problems else 0
+    if problems:
+        print(f"NOT a valid dataset: {a.dir}  ({len(problems)} problem(s))")
+        for x in problems[:30]:
+            print("  -", x)
+        if len(problems) > 30:
+            print(f"  ... and {len(problems) - 30} more")
+        return 1
+    print(f"ok: {a.dir} follows the contract")
+    for k, v in (info or {}).items():
+        print(f"  {k:<42} {v}")
+    return 0
+
+
+def _cmd_make_datasets(a) -> int:
+    from .contract_datasets import build_all, validate_all
+    try:
+        index = build_all(a.dir, a.only.split(",") if a.only else None, a.size)
+    except ValueError as e:
+        print(f"make-datasets: {e}", file=sys.stderr)
+        return 2
+    print(f"{'id':<4} {'name':<22} {'requirements':>12} {'rejected':>8} {'links':>6}  folder")
+    for e in index:
+        x = e["expect"]
+        print(f"{e['id']:<4} {e['name']:<22} {x['requirements']:>12} {x['rejected']:>8} {x['links']:>6}  {', '.join(e['folders'])}")
+    bad = {f: p for f, p in validate_all(a.dir).items() if p}
+    for f, p in bad.items():
+        print(f"INVALID {f}: {p[:3]}", file=sys.stderr)
+    print(f"\n{len(index)} datasets and index.json written to {a.dir}; every one passes the contract check." if not bad else f"\n{len(bad)} dataset(s) FAILED the check (a bug in reqin).")
+    return 1 if bad else 0
+
+
 def _cmd_watch(a) -> int:
     from .watch import Watcher, WatchError, load_rules
     try:
@@ -127,10 +167,18 @@ def main(argv: list[str] | None = None) -> int:
         if name == "import":
             p.add_argument("--profile", help="confirmed profile YAML; omit to use a PROPOSED one")
             p.add_argument("--out", help="write requirements as JSON lines")
+            p.add_argument("--out-dir", metavar="DIR", help="write the whole dataset the GUI reads (requirements, links, rejected, report, manifest) into DIR, then check it against the contract")
         if name == "sample":
             p.add_argument("-n", type=int, default=3, help="how many raw records to show")
             p.add_argument("--full", action="store_true", help="read everything, not just the first page")
     sub.add_parser("connectors", help="list adapters and how far each has been proven")
+    cd = sub.add_parser("check-dataset", help="is this folder a valid dataset under GUI_CONTRACT.md, and what does it contain?")
+    cd.add_argument("dir")
+    cd.add_argument("--json", action="store_true", help="machine-readable result")
+    md = sub.add_parser("make-datasets", help="write the fourteen test datasets (F1-F14) a requirements screen must pass")
+    md.add_argument("dir")
+    md.add_argument("--only", help="comma-separated ids, e.g. F1,F6,F12")
+    md.add_argument("--size", type=int, default=50_000, help="requirements in the large dataset F9 (default 50000)")
     w = sub.add_parser("watch", help="re-ingest a folder of exports when they change (never writes to that folder)")
     w.add_argument("dir")
     w.add_argument("--out", required=True, help="where results go (must be OUTSIDE the watched folder)")
@@ -144,6 +192,10 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "connectors":
         return _cmd_connectors()
+    if a.cmd == "check-dataset":
+        return _cmd_check_dataset(a)
+    if a.cmd == "make-datasets":
+        return _cmd_make_datasets(a)
     if a.cmd == "watch":
         return _cmd_watch(a)
     if a.cmd == "sample":
@@ -167,6 +219,21 @@ def main(argv: list[str] | None = None) -> int:
                 with open(a.out, "w", encoding="utf-8") as f:
                     for q in res.requirements:
                         f.write(json.dumps(asdict(q), default=str) + "\n")
+            if a.out_dir:
+                from .dataset import DatasetError, validate_dataset, write_dataset
+                try:
+                    folder = write_dataset(res, a.out_dir)
+                except DatasetError as e:
+                    print(f"dataset not written: {e}", file=sys.stderr)
+                    return 2
+                problems = validate_dataset(folder)
+                print(f"dataset written to {folder}: {len(res.requirements)} requirements, {len(res.links)} links, {len(res.rejected)} rejected; "
+                      + ("it follows the contract." if not problems else f"IT DOES NOT FOLLOW THE CONTRACT ({len(problems)} problem(s)):"), file=sys.stderr)
+                for x in problems[:20]:
+                    print("  -", x, file=sys.stderr)
+                if problems:
+                    _write_audit(ad, getattr(a, "audit", None))
+                    return 1
     except ConnectError as e:
         print(f"connector error: {e}", file=sys.stderr)
         _write_audit(ad, getattr(a, "audit", None))

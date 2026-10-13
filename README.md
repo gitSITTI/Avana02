@@ -7,7 +7,7 @@ This repository holds the research, the design boards, the generator that makes 
 | Folder | What it is |
 |---|---|
 | `docs/Requirements comparison app research.md` | The research report. Appendix A = how the app reads any input. Appendix B = how the Excalidraw boards were made. |
-| `reqin/` | **Working code.** Reads SysML v2 (files and REST), ReqIF (MSOSA / DOORS), DOORS Next (OSLC), Digital.ai Agility, Excel/CSV, SQL, Word and PDF into one canonical model; can watch a folder of exports. `INPUT_LAYER.md` is the design, `CONNECTORS.md` is how to finish and write connectors. |
+| `reqin/` | **Working code.** Reads SysML v2 (files and REST), ReqIF (MSOSA / DOORS), DOORS Next (OSLC), Digital.ai Agility, Excel/CSV, SQL, Word and PDF into one canonical model; can watch a folder of exports. `INPUT_LAYER.md` is the design, `CONNECTORS.md` is how to finish and write connectors, `GUI_CONTRACT.md` is what any screen may rely on (one dataset folder, never a file) plus the 14 datasets it must pass. |
 | `connector_template/` | A working, tested starting point for your own connector, with five `TODO(agent)` seams and a ready prompt for an agent. Installs as its own package. |
 | `excalidraw/` | Ten Excalidraw boards: storyboard, wireframes, flows, UI kit, scale, lenses, group decisions, assistant, pipelines, any-input. **Generated; do not edit by hand.** |
 | `excalidraw_generator/` | The Python that produces the boards, with `EXCALIDRAW_GUIDE.md` (recipes, definition of done, prompts for an agent). |
@@ -20,7 +20,7 @@ This repository holds the research, the design boards, the generator that makes 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e "reqin[test]"
-make check          # guard + 172 reqin tests + the connector template + rebuild all ten boards and the prototype page, confirm they are identical
+make check          # guard + 223 reqin tests + the connector template + rebuild all ten boards and the prototype page, confirm they are identical
 ```
 
 Try the CLI on your own export (read-only; the source file is never modified):
@@ -51,8 +51,8 @@ To also scan for your own program code names and number patterns, set a CI/CD va
 
 | Checked | How |
 |---|---|
-| `reqin`: 172 required checks pass (+1 optional with LibreOffice) | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git. The connector template's 9 tests pass as shipped. |
-| The live connectors' tests bite | 21 deliberate breaks (a leaked secret, a redirect to another host, TLS off, a write verb, paging that stops after page one, caches removed, settle time ignored, a `delete` in the DOORS script ...): 18 caught at once, 3 exposed missing tests, which were added and are now caught |
+| `reqin`: 223 required checks pass (+1 optional with LibreOffice) | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git. The connector template's 9 tests pass as shipped. |
+| The live connectors' tests bite | 21 deliberate breaks (a leaked secret, a redirect to another host, TLS off, a write verb, paging that stops after page one, caches removed, settle time ignored, a `delete` in the DOORS script ...): 18 caught at once, 3 exposed missing tests, which were added and are now caught. 20 more on the dataset layer: all caught |
 | Boards rebuild byte-for-byte; structurally valid | `make boards`, clean environment, standard library only |
 | Prototype | Committed page equals a fresh build; static check resolves every template hole across about 1,000 states (0 issues); 39 browser checks pass at 1440 and 390 px from a clean `npm ci`; older flow scripts give identical output to the previous published version. A deliberate break makes both CI jobs fail. |
 | Guard trips on what it should | 10 tests, including the real-export file types, data folders, size, missing approval entries, files not yet added to git, and that only the one reviewed DOORS script is exempt |

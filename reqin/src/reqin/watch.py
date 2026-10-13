@@ -7,6 +7,8 @@ Guarantees (each is tested in tests/test_watch.py):
 * A file is read only after it has been quiet for `settle` seconds, so a half-copied export is never ingested.
 * A file is re-ingested only when its content hash changed. A file that failed is not retried until it changes (no hot loop).
 * Every run says what changed since the last one: requirements added / removed / changed (by stable MID and fingerprint).
+* Each ingest is written as a complete dataset folder (<out>/<file>/<sha12>/: requirements, links, rejected, report, manifest) that
+  `reqin check-dataset` can verify and the GUI can read; `latest.json` points at the newest one.
 * Prose formats (docx, pdf) are never picked up by accident: they need an explicit rule, because their records must be verified by a person.
 * Symlinks, hidden files and editor/office lock files (~$x.xlsx, .x.swp) are ignored.
 """
@@ -17,13 +19,14 @@ import hashlib
 import json
 import os
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Iterator
 
 import yaml
 
 from .adapter import Source, pick_adapter
+from .dataset import validate_dataset, write_dataset
 from .ingest import ingest
 from .mapping import Profile
 
@@ -178,17 +181,20 @@ class Watcher:
                                           "changed": sum(1 for m in now.keys() & old.keys() if now[m] != old[m]),
                                           "unchanged": sum(1 for m in now.keys() & old.keys() if now[m] == old[m])}
         folder = self.out / _safe(rel)
-        jl = "".join(json.dumps(asdict(q), default=str, sort_keys=True) + "\n" for q in res.requirements)
+        ds_dir = write_dataset(res, folder / sha[:12])
+        problems = validate_dataset(ds_dir)
         report = {"file": rel, "sha256": sha, "adapter": adapter.name, "ingested_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self.clock())),
-                  "diff_since_previous": diff, "report": res.report}
-        _atomic_write(folder / f"{sha[:12]}.jsonl", jl)
+                  "diff_since_previous": diff, "contract_problems": problems[:20], "report": res.report}
         _atomic_write(folder / f"{sha[:12]}.report.json", json.dumps(report, indent=1, default=str, sort_keys=True))
-        _atomic_write(folder / "latest.json", json.dumps({"sha256": sha, "requirements": f"{sha[:12]}.jsonl", "report": f"{sha[:12]}.report.json"}, indent=1))
+        _atomic_write(folder / "latest.json", json.dumps({"sha256": sha, "dataset": sha[:12], "requirements": f"{sha[:12]}/requirements.jsonl",
+                                                          "report": f"{sha[:12]}.report.json"}, indent=1))
         _atomic_write(sp, json.dumps(now, sort_keys=True))
         self.state["files"][rel] = {"sha": sha, "size": st.st_size, "status": "ok", "requirements": len(res.requirements),
                                     "rejected": len(res.rejected), "ingested_at": report["ingested_at"]}
         detail = {"sha": sha[:12], "adapter": adapter.name, "requirements": len(res.requirements), "rejected": len(res.rejected),
                   "profile_proposed": res.report["profile_proposed"], "warnings": len(res.report["warnings"])}
+        if problems:
+            detail["contract_problems"] = len(problems)          # the dataset was written, but it does not follow GUI_CONTRACT.md: say so loudly
         if diff:
             detail.update({k: diff[k] for k in ("added", "removed", "changed")})
         else:
