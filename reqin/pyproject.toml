@@ -3,6 +3,8 @@ name = "reqin"
 version = "0.2.0"
 description = "Input-agnostic requirement ingestion: adapters + canonical model + declarative mapping"
 requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 dependencies = ["pyyaml", "openpyxl", "reqif", "sqlalchemy", "python-docx", "pdfplumber"]
 
 [project.optional-dependencies]
@@ -16,7 +18,7 @@ reqin = "reqin.cli:main"
 # third-party packages add their adapter here:  myadapter = "my_pkg.adapter"
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

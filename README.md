@@ -64,3 +64,11 @@ To also scan for your own program code names and number patterns, set a CI/CD va
 1. Add one anonymised real export per source under `reqin/tests/fixtures_approved/` and run the conformance suite on it. This is the first check that matters.
 2. Build the comparison engine (stages 2 to 9 in the report), then a gold set to measure it.
 3. A backend and the real UI, replacing the interactive prototype.
+
+## License and contributing
+
+Apache License 2.0: see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). Copyright 2026 gitSITTI. One file is not covered: `prototype/project/support.js` is a bundled copy of React (MIT), listed with its licence in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+This is a research prototype and comes **as is**, without warranty (see sections 7 and 8 of the licence). Read "What has and has not been checked" above before relying on it: no connector has been run against a real MSOSA, Teamwork Cloud, DOORS or Agility system.
+
+Contributions are accepted under the same licence. Never commit real requirements, exports or models; the guard described above exists to stop that, and a pull request that trips it will not be merged.

@@ -22,6 +22,7 @@ COPY reqin/profiles ./profiles
 COPY reqin/connectors ./connectors
 COPY reqin/CONNECTORS.md ./CONNECTORS.md
 COPY reqin/GUI_CONTRACT.md ./GUI_CONTRACT.md
+COPY reqin/LICENSE reqin/NOTICE ./
 
 FROM base AS test
 COPY reqin/tests ./tests
