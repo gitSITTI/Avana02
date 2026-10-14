@@ -1,0 +1,146 @@
+      <!-- ===== RESULTS AND GRADE ===== -->
+      <sc-if value="{{isResults}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Results and grade</h1>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">How the consolidated set compares with the original requirements, and a grade you can defend because every point of it can be traced to a decision. {{rLine}}</p>
+        </div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>The rule behind the grade is a proposal.</b> The five parts, their weights and the letter bands are written out below so your team can change them before anyone relies on them. {{resultsSample}}</div>
+
+        <section aria-labelledby="rs-grade" style="§CARD§padding:20px;display:flex;flex-wrap:wrap;gap:24px 36px;align-items:flex-start">
+          <div style="flex:0 1 300px;display:flex;flex-direction:column;gap:14px;min-width:0">
+            <h2 id="rs-grade" style="margin:0;font-size:18px;font-weight:700">{{gBandName}}</h2>
+            <div style="display:flex;gap:18px;align-items:center">
+              <div role="img" aria-label="{{gAria}}" style="{{gBox}}">{{gLetter}}</div>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums">{{gScore}}</span><span style="color:#3C4852">{{gOut}}</span></div>
+            </div>
+            <div role="group" aria-label="Letter bands" style="display:flex;gap:6px">
+              <sc-for list="{{bands}}" as="b" hint-placeholder-count="5"><div style="{{b.style}}"><span style="font-weight:700;font-size:15px">{{b.letter}}</span><span style="font-size:11px">{{b.range}}</span></div></sc-for>
+            </div>
+            <div style="color:#2A353F;font-size:13px">{{gProvText}}</div>
+            <sc-if value="{{gHasCap}}" hint-placeholder-val="{{ false }}"><div style="background:#FDE3E0;border:1px solid #A6261E;color:#7A1510;border-radius:8px;padding:8px 12px;font-size:13px">{{gCapText}}</div></sc-if>
+          </div>
+          <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column">
+            <h2 style="margin:0 0 4px;font-size:16px;font-weight:700">How the grade is made</h2>
+            <sc-for list="{{parts}}" as="p" hint-placeholder-count="5">
+              <div role="group" aria-label="{{p.aria}}" style="display:flex;flex-direction:column;gap:5px;padding:10px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:600">{{p.name}}</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap"><b>{{p.pts}}</b> of {{p.weight}} points</span></div>
+                <div style="height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{p.fill}}"></div></div>
+                <div style="font-size:13px;color:#2A353F">{{p.detail}}</div>
+                <div style="font-size:12px;color:#54626F">{{p.plain}}</div>
+              </div>
+            </sc-for>
+            <div style="border-top:1px solid var(--line);padding-top:10px;font-size:12px;color:#54626F">{{gFormula}}</div>
+          </div>
+        </section>
+
+        <section aria-labelledby="rs-before" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 id="rs-before" style="margin:0;font-size:18px;font-weight:700">The original set against the consolidated set</h2>
+            <div style="font-size:13px;color:#3C4852">Requirement counts, not quality. Fewer is only better if nothing that mattered was lost, which is what the grade above checks.</div>
+          </div>
+          <sc-for list="{{ba}}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font-weight:600">{{r.label}}</div>
+              <div style="display:flex;align-items:center;gap:12px;min-width:0"><div style="flex:1;min-width:0"><div style="{{r.bar}}"></div></div><span style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;flex:none;min-width:64px;text-align:right">{{r.value}}</span></div>
+              <div style="font-size:12px;color:#54626F">{{r.sub}}</div>
+            </div>
+          </sc-for>
+          <div style="font-size:13px;color:#2A353F;border-top:1px solid var(--line);padding-top:10px">{{baNote}}</div>
+        </section>
+
+        <section aria-labelledby="rs-dest" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 id="rs-dest" style="margin:0;font-size:18px;font-weight:700">Where each original requirement ended up</h2>
+            <div style="font-size:13px;color:#3C4852">All {{destTotal}} originals, each in exactly one place.</div>
+          </div>
+          <div role="img" aria-label="Where the originals ended up, as one bar. The list below gives every number." style="display:flex;gap:2px;width:100%">
+            <sc-for list="{{destBar}}" as="s" hint-placeholder-count="6"><div title="{{s.title}}" style="{{s.style}}"></div></sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{dest}}" as="d" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:20px minmax(0,1fr) 70px 50px;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--hair)">
+                <span style="{{d.swatch}};margin-top:3px"></span>
+                <span style="display:flex;flex-direction:column"><span style="font-weight:600">{{d.label}}</span><span style="font-size:12px;color:#54626F">{{d.note}}</span></span>
+                <span style="font-variant-numeric:tabular-nums;font-weight:700;text-align:right">{{d.n}}</span>
+                <span style="font-variant-numeric:tabular-nums;color:#3C4852;text-align:right">{{d.pct}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section aria-labelledby="rs-rise" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:6px">
+          <h2 id="rs-rise" style="margin:0;font-size:18px;font-weight:700">What would raise the grade</h2>
+          <div style="font-size:13px;color:#3C4852">Largest first. The points are the most each could add, if all of it were fixed.</div>
+          <sc-if value="{{noRise}}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#2A353F">Nothing is holding the grade down. Every part is at its full weight.</div></sc-if>
+          <sc-for list="{{rise}}" as="x" hint-placeholder-count="4">
+            <div style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:flex-start;justify-content:space-between;padding:12px 0;border-top:1px solid var(--hair)">
+              <div style="flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:3px">
+                <div style="font-weight:600">{{x.title}}</div>
+                <div style="font-size:13px;color:#2A353F">{{x.text}}</div>
+                <sc-if value="{{x.hasIds}}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px">
+                    <sc-for list="{{x.ids}}" as="i" hint-placeholder-count="3"><button onClick="{{i.open}}" style="§BTN§min-height:44px;font-family:var(--mono);font-size:13px">{{i.id}}</button></sc-for>
+                    <sc-if value="{{x.hasMore}}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#54626F">{{x.more}}</span></sc-if>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:160px">
+                <span style="font-weight:700;font-variant-numeric:tabular-nums">{{x.gain}}</span>
+                <sc-if value="{{x.hasBtn}}" hint-placeholder-val="{{ false }}"><button onClick="{{x.go}}" style="§BTN§">{{x.btn}}</button></sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </section>
+
+        <section aria-labelledby="rs-alloc" style="§CARD§overflow:hidden">
+          <div style="padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="rs-alloc" style="margin:0;font-size:18px;font-weight:700">Each part of the system, graded on its own</h2>
+            <div style="font-size:13px;color:#3C4852">A dashed box means the grade is provisional. “Not graded” means nothing is decided there yet.</div>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:760px">
+            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 70px minmax(0,1.3fr) 110px 110px 84px 110px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+              <div>Allocation</div><div>Originals</div><div>Clusters decided</div><div>After so far</div><div>If all suggestions taken</div><div>Grade</div><div></div>
+            </div>
+            <sc-for list="{{byAlloc}}" as="a" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 70px minmax(0,1.3fr) 110px 110px 84px 110px;gap:12px;padding:10px 20px;align-items:center;border-bottom:1px solid var(--hair);font-variant-numeric:tabular-nums">
+                <div style="font-weight:600">{{a.name}}</div>
+                <div>{{a.n}}</div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span>{{a.decided}}</span><div style="height:8px;background:#DCE7F7;border-radius:4px;overflow:hidden"><div style="{{a.decidedBar}}"></div></div></div>
+                <div>{{a.after}}</div><div>{{a.projected}}</div>
+                <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start"><span style="{{a.letterStyle}}">{{a.letter}}</span><span style="font-size:12px;color:#54626F">{{a.score}}</span></div>
+                <div><button onClick="{{a.open}}" style="§BTN§min-height:40px;font-size:13px">Open queue</button></div>
+              </div>
+            </sc-for>
+          </div></div>
+        </section>
+
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <section aria-labelledby="rs-cuts" style="flex:3 1 460px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:6px">
+            <h2 id="rs-cuts" style="margin:0;font-size:18px;font-weight:700">The biggest reductions so far</h2>
+            <div style="font-size:13px;color:#3C4852">Clusters where several wordings became fewer. The wording shown is the one that stays.</div>
+            <sc-if value="{{noCuts}}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#2A353F">No merge has been recorded yet.</div></sc-if>
+            <sc-for list="{{cuts}}" as="x" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:4px;padding:10px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between;align-items:baseline"><span><b style="font-family:var(--mono)">{{x.id}}</b> {{x.title}}</span><span style="font-size:13px;color:#3C4852">{{x.change}}</span></div>
+                <div style="font-family:var(--serif);font-size:15px;line-height:1.5;color:#2A353F">{{x.text}}</div>
+                <div><button onClick="{{x.open}}" style="§BTN§min-height:40px;font-size:13px">Open the cluster</button></div>
+              </div>
+            </sc-for>
+          </section>
+          <section aria-labelledby="rs-checks" style="flex:2 1 320px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:6px">
+            <h2 id="rs-checks" style="margin:0;font-size:18px;font-weight:700">Checks</h2>
+            <sc-for list="{{checks}}" as="k" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:4px;padding:10px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;gap:8px;align-items:flex-start;justify-content:space-between"><span style="font-weight:600">{{k.label}}</span><span style="{{k.style}}">{{k.chip}}</span></div>
+                <div style="font-size:13px;color:#2A353F">{{k.detail}}</div>
+              </div>
+            </sc-for>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+              <button onClick="{{toMetrics}}" style="§BTN§">See what the AI adds</button>
+              <button onClick="{{toExport}}" style="§BTN§">Go to export</button>
+            </div>
+          </section>
+        </div>
+      </div>
+      </sc-if>

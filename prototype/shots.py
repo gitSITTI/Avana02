@@ -92,6 +92,14 @@ with session(1440, 900) as (pg, errs):
                         ("Export to documents", "13_export_to_documents.png")):
         nav(pg, label)
         shot(pg, name, full=True)
+    nav(pg, "Results and grade")
+    shot(pg, "17_results_and_grade.png", full=True)
+    pg.fill("#top-search", "CL-001"); settle(pg)                       # a cluster sent to a teammate, waiting for the answer
+    pg.get_by_role("button", name="CL-001").first.click(); settle(pg)
+    pg.locator("#snd-toggle").click(); settle(pg, 200)
+    pg.fill("#snd-note", "Please check the unit on M2."); settle(pg, 200)
+    pg.locator("#snd-send").click(); settle(pg, 500)
+    shot(pg, "18_hand_off_waiting.png", full=True)
     print("console problems:", [e for e in errs if "ERR_FAILED" not in e] or "none")
 
 # ---- phone, 390 px wide
@@ -105,6 +113,10 @@ with session(390, 844) as (pg, errs):
     pg.get_by_role("button", name="Open CL-050").click(); settle(pg, 600)
     p = OUT / "16_phone_six_wordings.png"                  # the whole page is the queue first; this one picture is just the group card
     pg.locator('section[aria-labelledby="grp-h"]').screenshot(path=str(p))
+    shrink(p, 390); print(f"{p.name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
+    pg.locator(".nav-btn", has_text="Results and grade").first.click(); settle(pg, 500)
+    p = OUT / "19_phone_results.png"                       # the grade card: the letter, the bands and the five parts
+    pg.locator('section[aria-labelledby="rs-grade"]').screenshot(path=str(p))
     shrink(p, 390); print(f"{p.name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
     print("console problems (phone):", [e for e in errs if "ERR_FAILED" not in e] or "none")
 

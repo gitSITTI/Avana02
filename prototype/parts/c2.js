@@ -16,10 +16,14 @@
       let status = STATUS_LABEL[x.st];
       if (x.st === 'review' || x.st === 'decided') status += ' · ' + x.q.have.length + ' of ' + x.q.slots.length;
       if (x.st === 'claimed') status = 'Claimed by ' + cl.by.split(' ')[0];
+      const hd = handOf(S, c.id), hdTo = hd && hd.status !== 'closed' ? PEOPLE.find((p) => p.k === hd.to) : null;
+      let statusStyle = CHIP + STATUS_STYLE[x.st];
+      if (hdTo && hd.status === 'waiting') { status = (hd.ask === 'decide' ? 'Handed to ' : 'Waiting on ') + hdTo.name.split(' ')[0]; statusStyle = CHIP + STATUS_STYLE.claimed; }
+      else if (hdTo && hd.status !== 'waiting') { status = (hd.status === 'agreed' ? 'Agreed by ' : 'Sent back by ') + hdTo.name.split(' ')[0]; statusStyle = CHIP + (hd.status === 'agreed' ? STATUS_STYLE.approved : STATUS_STYLE.stale); }
       const on = c.id === sel;
       return {
         id: c.id, title: c.title, lane: 'Lane ' + c.lane, laneStyle: this.laneBadge(c.lane).replace('align-self:flex-start;', ''), rel: REL_LABEL[c.rel], relStyle: CHIP + REL_STYLE[c.rel],
-        status, statusStyle: CHIP + STATUS_STYLE[x.st], size: ms.length + ' members' + (spreadOf(c, ms) ? ' · ' + spreadOf(c, ms) : ''),
+        status, statusStyle, size: ms.length + ' members' + (spreadOf(c, ms) ? ' · ' + spreadOf(c, ms) : ''),
         current: on ? 'true' : 'false',
         pick: () => this.setState({ selected: c.id, just: '', openVer: Object.assign({}, S.openVer, { [c.id]: S.liveVer[c.id] || 0 }) }),
         style: 'text-align:left;display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:8px;cursor:pointer;min-height:44px;background:' + (on ? '#F1F6FF' : '#FFFFFF') + ';border:' + (on ? '2px solid var(--accent)' : '1px solid #BAC3CA')
@@ -171,16 +175,16 @@
     const faded = 'color:#5A6672;';
     const refBg = 'background:color-mix(in srgb,var(--accent) 6%,#FFFFFF);';
     const cellOuter = (span, bg) => 'grid-column:span ' + span + ';display:flex;align-items:center;padding:8px 3px;border-bottom:1px solid #E7ECF1;' + bg;
+    const disp = dispositionsOf(S, c, ms, res, ev, dec);
     const rowHead = (m, isRef) => {
       const r = rk.find((x) => x.m === m);
       const rankText = !r ? 'Cannot be ranked' : m.id === strictId && rk.length > 1 && rk[0].r !== rk[rk.length - 1].r ? 'Strictest' : m.id === weakId && rk.length > 1 && rk[0].r !== rk[rk.length - 1].r ? 'Weakest' : 'Ranked';
-      const covered = dec ? dec.covers.indexOf(m.id) >= 0 : false, kept = dec ? dec.kept.indexOf(m.id) >= 0 : false;
-      const survives = !dec && res.outcome === 'merge' && ev.chosen === m;
+      const survives = disp.by[m.id].kind === 'keep';
       const label = 'M' + (mi(m) + 1);
       return {
         label, id: m.id, owner: m.owner, verif: m.verif, isRef, notRef: !isRef, refAria: 'Use as reference: ' + label, peelAria: 'Peel out ' + label,
         rankText, rankStyle: CHIP + (rankText === 'Strictest' ? 'background:#E1F2E7;color:#14502B;' : rankText === 'Weakest' ? 'background:#FFF0D2;color:#6B3D00;' : rankText === 'Cannot be ranked' ? 'background:#F4F6F8;color:#4F5B66;border:1px dashed #6B7782;' : 'background:#E4E9ED;color:#2F3B46;'),
-        tag: survives ? 'Survives' : covered ? 'Covered' : kept ? 'Kept separate' : '', hasTag: survives || covered || kept, tagStyle: CHIP + (survives ? 'background:#12171C;color:#FFFFFF;' : 'background:#E8F0FD;color:#123C8C;'),
+        disp: disp.by[m.id].label, dispStyle: disp.by[m.id].style, dispWhy: disp.by[m.id].why, hasWhy: !!disp.by[m.id].why,
         setRef: () => this.setState({ ref: Object.assign({}, S.ref, { [cid]: m.id }) }),
         canPeel: actor && !dec && ms.length > 2 && c.members.length > 2,
         peel: () => this.setState({ peeled: Object.assign({}, S.peeled, { [cid]: (S.peeled[cid] || []).concat([m.id]) }), ref: Object.assign({}, S.ref, { [cid]: S.ref[cid] === m.id ? null : S.ref[cid] }), events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Peeled ' + m.id + ' out of the group (it does not belong)', cid) }),
@@ -262,12 +266,13 @@
     const avail = strategyAvail(S, c, ms, rk);
     const outcomes = c.actions.map(([k, label]) => ({ label, on: res.outcome === k, pressed: res.outcome === k ? 'true' : 'false', pick: () => setRes({ outcome: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (res.outcome === k ? 600 : 500) + ';border:' + (res.outcome === k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (res.outcome === k ? '#F1F6FF' : '#FFFFFF') + ';' }));
     const merging = res.outcome === 'merge';
-    const strats = STRATS.map((s) => ({
+    const stratsAll = STRATS.map((s) => ({
       k: s.k, name: s.name, sub: s.sub, on: res.strat === s.k, pressed: res.strat === s.k ? 'true' : 'false', disabled: !!avail[s.k], why: avail[s.k], hasWhy: !!avail[s.k],
       pick: () => setRes(s.k === 'own' && !res.own ? { strat: s.k, ownSeed: '', own: strictId ? ms.find((m) => m.id === strictId).text : ms[0].text } : s.k === 'ai' && !res.aiText ? { strat: s.k, aiText: c.aiDraft } : { strat: s.k }),
       markStyle: { sq: MARK.mech[1], ci: MARK.human[1], di: MARK.ai[1] }[s.mark] + ';flex:none;margin-top:4px',
       style: 'text-align:left;display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:8px 12px;border-radius:6px;cursor:pointer;border:' + (res.strat === s.k ? '2px solid var(--accent)' : '1px solid #BAC3CA') + ';background:' + (res.strat === s.k ? '#F1F6FF' : '#FFFFFF') + ';'
     }));
+    const strats = stratsAll.filter((x) => x.k !== 'ai'), aiStrat = stratsAll.find((x) => x.k === 'ai');
     const memberOpts = ms.map((m, i) => ({ v: m.id, t: 'M' + (i + 1) + ' · ' + m.id + ' · ' + (m.v !== null && m.v !== undefined ? fmtVal(c, m.v) : m.cond || 'no number') }));
     const sideOpts = ev.sideOpts.map((o) => ({ label: o.label + ' (' + (o.m.v !== null ? fmtVal(c, o.m.v) : o.m.id) + ')', pressed: res.side === o.k ? 'true' : 'false', pick: () => setRes({ side: o.k }), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:600;border:' + (res.side === o.k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (res.side === o.k ? '#F1F6FF' : '#FFFFFF') + ';' }));
     const aiTextNow = res.aiText || c.aiDraft || '';
@@ -295,8 +300,16 @@
     const rguards = ev.guards.map((g) => ({ name: g.name, note: g.note, isPass: g.st === 'pass', isWarn: g.st === 'warn', isFail: g.st === 'block', isInfo: g.st === 'info', tag: { pass: 'Pass', warn: 'Warning', block: 'Blocks', info: 'Note' }[g.st], tagStyle: 'font-size:12px;font-weight:600;color:' + { pass: '#14502B', warn: '#6B3D00', block: '#7A1510', info: '#10337F' }[g.st] + ';' }));
     const gSummary = ev.blocks ? ev.blocks + ' blocking' : ev.warns ? ev.warns + ' warning' + (ev.warns > 1 ? 's' : '') : 'all clear';
     const fcSlots = SLOT_KEYS.filter((k) => forecast[k] !== 'none').map((k) => ({ label: SLOT_NAME[k] + (forecast[k] === 'sample' ? ' (sampled)' : '') }));
+    const aiRelWord = String(c.ai.verdict || '').split(/[ (]/)[0];
+    const aiAfter = hideAI ? 'The AI answer stays hidden until you record your own first impression above.'
+      : c.ai.mode === 'none' ? 'The AI was not used on this group. The mechanical methods decided the suggestion.'
+      : c.ai.mode === 'judge' ? (aiRelWord === c.rel ? 'After the mechanical steps, the AI reads this group as ' + (REL_LABEL[c.rel] || c.rel).toLowerCase() + ' too, so the two agree.' : 'The mechanical methods say ' + (REL_LABEL[c.rel] || c.rel).toLowerCase() + ' and the AI says ' + (REL_LABEL[aiRelWord] || aiRelWord).toLowerCase() + '. Look at that difference before you choose.')
+      : !c.aiDraft ? 'The AI declined to draft wording for this group.'
+      : merging && ev.text && !ev.err ? (ev.text === c.aiDraft ? 'The AI draft is word for word what your current choice keeps.' : 'The AI draft differs from your current choice in ' + Math.round(editRatio(ev.text, c.aiDraft) * 100) + '% of its words.') : 'The AI drafted merged wording. Choose merge to compare it with your choice.';
+    const mechSummary = merging && !ev.err ? disp.headline + ' · guards: ' + gSummary : disp.headline || 'Choose what happens to these requirements.';
     const rp = {
       decided: !!dec, undecided: !dec,
+      aiStrat, aiAfter, mechSummary,
       outcomes, showStrats: merging && !dec, strats,
       showMember: merging && res.strat === 'member', memberOpts, memberV: res.member || ms[0].id, onMember: (e) => setRes({ member: e.target.value }),
       showSide: merging && res.strat === 'median' && sideOpts.length > 0, sideOpts,
@@ -312,7 +325,7 @@
       recordLabel: 'Record decision', recordDisabled: !!why || !actor, recordWhy: why || (actor ? 'Ready. Recording saves revision R3 and starts the sign-offs.' : ''),
       record: () => this.record(c),
       skip: () => this.nextForMe(),
-      decLines: dec ? [['Decision', describeDec(dec)], ['Result', dec.text ? '“' + dec.text + '”' : 'No wording change'], ['Reason', (REASON_NAME[dec.reason] || dec.reason) + ' (' + dec.reason + ')'], ['Note', dec.note || 'None'], ['By', dec.by + ' · ' + (dec.lens || '') + ' · ' + dec.at], ['Against the AI', dec.vs], ['Covers', dec.covers.length ? dec.covers.join(', ') : '—'], ['Kept separate', dec.kept.length ? dec.kept.join(', ') : '—']].concat(dec.share ? [['AI-origin share', dec.share.bucket + (dec.share.pct ? ' · ' + dec.share.pct + '% changed' : '')]] : []).concat(dec.dissent ? [['Dissent kept', dec.dissent]] : []).map(([k, v]) => ({ k, v })) : [],
+      decLines: dec ? [['Decision', describeDec(dec)], ['Result', dec.text ? '“' + dec.text + '”' : 'No wording change'], ['Reason', (REASON_NAME[dec.reason] || dec.reason) + ' (' + dec.reason + ')'], ['Note', dec.note || 'None'], ['By', dec.by + ' · ' + (dec.lens || '') + ' · ' + dec.at], ['Against the AI', dec.vs], ['Covers', dec.covers.length ? dec.covers.join(', ') : '—'], ['Kept separate', dec.kept.length ? dec.kept.join(', ') : '—']].concat(dec.share ? [['AI-origin share', dec.share.bucket + (dec.share.pct ? ' · ' + dec.share.pct + '% changed' : '')]] : []).concat(dec.dissent ? [['Dissent kept', dec.dissent]] : []).concat(dec.checkedBy ? [['Second opinion', 'Checked by ' + dec.checkedBy]] : []).concat(dec.handedFrom ? [['Handed over by', dec.handedFrom]] : []).concat(dec.reviewedBy && dec.reviewedBy.length ? [['Reviewed by', dec.reviewedBy.join(', ')]] : []).map(([k, v]) => ({ k, v })) : [],
       reopenV: res.reopen, onReopen: (e) => setRes({ reopen: e.target.value }), reopenDisabled: res.reopen.trim().length < 12 || !actor,
       doReopen: () => this.setState({ dec: Object.assign({}, S.dec, { [cid]: null }), sign: Object.assign({}, S.sign, { [cid]: {} }), res: Object.assign({}, S.res, { [cid]: { reason: 'R-OTH' } }), events: this.mk(S.events, 'human', P.name + ' · ' + (P.lens || ''), 'Reopened a decision. Reason: ' + res.reopen.trim(), cid), ...this.bump(S, cid), just: '' }),
       aiHint: hideAI ? 'The AI answer is hidden until you record your first impression above.' : c.ai.mode === 'none' ? 'No AI was used on this group.' : c.ai.mode === 'draft' ? 'The AI drafted merged wording (shown in the AI card).' : 'The AI judged this group ' + c.ai.verdict + ' (' + c.ai.conf + '%). It cannot decide for you.'
@@ -330,6 +343,79 @@
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    /* hand-off to a teammate: ask for a second opinion, hand the decision over, or ask for a review of a decision */
+    const pBy = (k) => PEOPLE.find((p) => p.k === k) || { k, name: k, lens: '' };
+    const hand = handOf(S, cid), live = hand && hand.status !== 'closed' ? hand : null;
+    const first = (p) => p.name.split(' ')[0];
+    const lowerFirst = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+    const lensTxt = (p) => (p.lens ? SLOT_NAME[p.lens] : 'no lens');
+    const sendF = Object.assign({ open: false, to: '', ask: 'check', note: '' }, S.sendF[cid] || {});
+    const setSend = (o) => this.setState({ sendF: Object.assign({}, S.sendF, { [cid]: Object.assign({}, sendF, o) }) });
+    const mates = PEOPLE.filter((p) => p.k !== P.k && p.role !== 'observer');
+    const needLens = ['PE', 'UX', 'NU', 'SE'].find((k) => forecast[k] === 'req' && k !== P.lens);
+    const suggested = (mates.find((p) => p.lens === needLens) || mates[0]).k;
+    const toK = mates.some((p) => p.k === sendF.to) ? sendF.to : suggested;
+    const askNow = dec ? 'review' : sendF.ask === 'decide' ? 'decide' : 'check';
+    const sendNote = sendF.note.trim();
+    const sendOk = sendNote.length >= 12;
+    const blockedState = st === 'stale' || st === 'dispute' || st === 'siblings' || st === 'oversized';
+    const draftText = dec ? describeDec(dec) + ' · reason ' + dec.reason : (c.actions.find((a) => a[0] === res.outcome) || [0, res.outcome])[1] + (merging && !ev.err ? ' · ' + disp.headline : '') + (res.reason ? ' · reason ' + res.reason : ' · no reason chosen yet');
+    const logHand = (text) => this.mk(S.events, 'human', P.name + ' · ' + (P.lens || ''), text, cid);
+    const putHand = (h, extra) => Object.assign({ hand: Object.assign({}, S.hand, { [cid]: h }) }, extra || {});
+    const doSend = () => {
+      const to = pBy(toK);
+      this.setState(putHand({ from: P.k, to: toK, ask: askNow, note: sendNote, at: TODAY, status: 'waiting', reply: '', draft: draftText, outcome: dec ? '' : res.outcome, strat: dec ? '' : (res.strat || '') }, { sendF: Object.assign({}, S.sendF, { [cid]: { open: false, to: '', ask: 'check', note: '' } }), events: logHand('Sent to ' + to.name + ' (' + lensTxt(to) + '): ' + lowerFirst(ASK_LABEL[askNow]) + '. Message: ' + sendNote) }));
+    };
+    const replyText = (S.replyNote[cid] || '').trim();
+    const replyOk = replyText.length >= 12;
+    const setReply = (e) => this.setState({ replyNote: Object.assign({}, S.replyNote, { [cid]: e.target.value }) });
+    const answer = (status, text) => {
+      const from = live ? pBy(live.from) : { name: '' };
+      const extra = { replyNote: Object.assign({}, S.replyNote, { [cid]: '' }), events: logHand(text + (replyText ? ' Comment: ' + replyText : '')) };
+      if (status === 'agreed' && live.ask === 'review' && dec) extra.dec = Object.assign({}, S.dec, { [cid]: Object.assign({}, dec, { reviewedBy: (dec.reviewedBy || []).concat([P.name]) }) });
+      this.setState(putHand(Object.assign({}, live, { status, reply: replyText, repliedAt: TODAY }), extra));
+    };
+    const closeHand = (why, text) => this.setState(putHand(Object.assign({}, live, { status: 'closed', closedWith: why }), { events: logHand(text) }));
+    const hv = { show: false, style: '', title: '', lines: [], canReply: false, replyV: S.replyNote[cid] || '', onReply: setReply, replyHelp: '', actions: [] };
+    if (live) {
+      const fromP = pBy(live.from), toP = pBy(live.to), mine = live.to === P.k, mineSent = live.from === P.k;
+      const tone = (t) => this.banner(t, '', [], []).style;
+      const sameAsAsked = live.outcome === undefined || live.outcome === '' || (live.outcome === res.outcome && (res.outcome !== 'merge' || live.strat === (res.strat || '')));
+      const act = (label, fn, o) => Object.assign({ label, onClick: fn, disabled: false, primary: false }, o || {});
+      const ln = (a) => a.filter(Boolean).map((t) => ({ t }));
+      hv.show = true;
+      if (live.status === 'waiting' && mineSent) {
+        Object.assign(hv, { style: tone('claim'), title: 'Waiting on ' + toP.name + ' (' + lensTxt(toP) + ')', lines: ln(['You asked: ' + lowerFirst(ASK_LABEL[live.ask]) + '. Sent ' + live.at + '.', 'Your message: “' + live.note + '”', 'Your draft: ' + live.draft, 'Deciding is paused here until they answer or you withdraw the request.']), actions: [act('Withdraw the request', () => closeHand('withdrawn', 'Withdrew the request to ' + toP.name), {})] });
+      } else if (live.status === 'waiting' && mine) {
+        const ask = live.ask;
+        Object.assign(hv, { style: tone('claim'), canReply: true, replyHelp: ask === 'decide' ? 'To hand it back, write at least 12 characters about why.' : 'A comment is optional when you agree, and needed (12 characters) to send it back.' });
+        hv.title = fromP.name + (ask === 'check' ? ' asked for your second opinion' : ask === 'decide' ? ' handed this to you to decide' : ' asked you to review this decision');
+        hv.lines = ln(['Their message: “' + live.note + '”', (ask === 'review' ? 'Their decision: ' : 'Their draft: ') + live.draft, ask === 'decide' ? 'You can decide in the Resolve panel. Recording closes this request.' : '']);
+        if (ask === 'check') hv.actions = [act('Agree with the draft', () => answer('agreed', 'Agreed with ' + first(fromP) + '\'s draft.'), { primary: true }), act('Send it back', () => answer('returned', 'Sent it back to ' + first(fromP) + '.'), { disabled: !replyOk })];
+        else if (ask === 'review') hv.actions = [act('Looks right', () => answer('agreed', 'Reviewed ' + first(fromP) + '\'s decision: looks right.'), { primary: true }), act('Send it back', () => answer('returned', 'Sent the decision back to ' + first(fromP) + '.'), { disabled: !replyOk })];
+        else hv.actions = [act('Hand it back', () => answer('returned', 'Handed the decision back to ' + first(fromP) + '.'), { disabled: !replyOk })];
+      } else if (live.status === 'waiting') {
+        Object.assign(hv, { style: tone('info'), title: 'Waiting on ' + toP.name, lines: ln([fromP.name + ' asked: ' + lowerFirst(ASK_LABEL[live.ask]) + '.']) });
+      } else if (mineSent) {
+        const ok = live.status === 'agreed';
+        Object.assign(hv, { style: tone(ok ? 'ok' : 'warn'), title: toP.name + (ok ? ' agreed' : ' sent it back'), lines: ln([live.reply ? '“' + live.reply + '”' : 'No comment.', ok && live.ask === 'check' ? (sameAsAsked ? 'You can record your decision now. It will be saved as checked by ' + first(toP) + '. Recording closes this notice.' : 'You have changed your choice since ' + first(toP) + ' agreed, so recording it will not count as checked by ' + first(toP) + '. Choose what they agreed to if you want it to count, or drop their answer.') : '']), actions: ok ? (live.ask === 'check' ? (sameAsAsked ? [] : [act('Drop their answer', () => closeHand('dropped', 'Dropped the answer from ' + toP.name + ' because the choice changed'))]) : [act('Got it', () => closeHand('seen', 'Saw the answer from ' + toP.name))]) : [act('Got it', () => closeHand('seen', 'Saw the answer from ' + toP.name)), act('Send to someone else', () => { closeHand('seen', 'Saw the answer from ' + toP.name); setSend({ open: true }); })] });
+      } else {
+        Object.assign(hv, { style: tone('info'), title: toP.name + (live.status === 'agreed' ? ' agreed' : ' sent it back') + ' to ' + fromP.name, lines: ln([live.reply ? '“' + live.reply + '”' : '']) });
+      }
+      hv.hasLines = hv.lines.length > 0;
+      hv.actions = hv.actions.map((a) => Object.assign({ style: 'min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:600;' + (a.primary ? 'background:#12171C;color:#FFFFFF;border:0;' : 'background:#FFFFFF;border:1px solid #6B7782;color:#12171C;') }, a));
+    } else { hv.hasLines = false; }
+    const snd = {
+      show: !!actor && !blockedState && (!dec ? true : !!decidedOK) && !live,
+      open: !!sendF.open, openPressed: sendF.open ? 'true' : 'false', toggle: () => setSend({ open: !sendF.open }),
+      title: dec ? 'Ask a teammate to review' : 'Send to a teammate',
+      help: dec ? 'Sign-off still comes from the lenses the policy names. A review you ask for here is advice, and it is kept with the decision.' : 'Use this when you want another pair of eyes before you record, or when someone else should decide.',
+      toV: toK, onTo: (e) => setSend({ to: e.target.value }), toOpts: mates.map((p) => ({ v: p.k, t: p.name + ' · ' + lensTxt(p) + (p.k === suggested ? ' (suggested)' : '') })),
+      asks: dec ? [] : ['check', 'decide'].map((k) => ({ label: ASK_LABEL[k], pressed: askNow === k ? 'true' : 'false', pick: () => setSend({ ask: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (askNow === k ? 600 : 500) + ';border:' + (askNow === k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (askNow === k ? '#F1F6FF' : '#FFFFFF') + ';' })),
+      hasAsks: !dec, noteV: sendF.note, onNote: (e) => setSend({ note: e.target.value }),
+      noteHelp: sendOk ? 'Your draft choice goes with the message, so they see what you were about to do.' : 'Write at least 12 characters: what you want them to look at.',
+      sendLabel: 'Send to ' + first(pBy(toK)), sendDisabled: !sendOk, send: doSend
     };
     /* assemble */
     const status = STATUS_LABEL[st] + (q ? ' · ' + q.have.length + ' of ' + q.slots.length + ' signed' : '');
@@ -353,7 +439,9 @@
         hasProposal: !!ai.proposal, proposalLabel: ai.mode === 'draft' ? 'AI-drafted merged wording' : 'AI-suggested handling', proposalText: ai.proposal,
         whyOpen: S.why[cid] ? 'true' : 'false', whyOpenBool: !!S.why[cid], record: record.map(([k, v]) => ({ k, v }))
       },
-      lp, sg: sgv, rp, ch
+      lp, sg: sgv, rp, ch,
+      disp: { headline: disp.headline, stateLabel: dec ? 'Recorded' : 'If you record this', hasHeadline: !!disp.headline },
+      hd: hv, snd
     };
   }
   nextForMe() {
@@ -373,5 +461,13 @@
     revs.push({ rev: 'R3', how: 'human', text: ev.text, by: P.name, at: TODAY, note: res.note.trim() });
     const merged = res.outcome === 'merge';
     const dec = { outcome: res.outcome, strategy: merged ? res.strat : '', member: res.member, text: merged ? ev.text : '', newWording: merged && ev.newWording, weakening: merged && ev.weakening, covers: merged ? ev.covers : [], kept: merged ? ev.kept : [], reason: res.reason, note: res.note.trim(), by: P.name, lens: P.lens, at: TODAY, rev: 'R3', vs: vsAI(c, res), share, revs, ownFrom: merged && res.strat === 'own' && res.ownSeed ? 'assistant' : '' };
-    this.setState({ dec: Object.assign({}, S.dec, { [c.id]: dec }), sign: Object.assign({}, S.sign, { [c.id]: {} }), just: c.id, events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Decision: ' + describeDec(dec).toLowerCase() + ' · reason ' + dec.reason + (dec.note ? ' · note recorded' : ''), c.id), ...this.bump(S, c.id) });
+    const hd = handOf(S, c.id), pName = (k) => (PEOPLE.find((p) => p.k === k) || {}).name;
+    let handPatch = {};
+    if (hd && hd.status !== 'closed') {
+      const asked = hd.outcome === undefined || hd.outcome === '' || (hd.outcome === res.outcome && (res.outcome !== 'merge' || hd.strat === (res.strat || '')));
+      if (hd.status === 'agreed' && hd.ask === 'check' && hd.from === P.k && asked) dec.checkedBy = pName(hd.to);
+      if (hd.ask === 'decide' && hd.to === P.k) dec.handedFrom = pName(hd.from);
+      handPatch = { hand: Object.assign({}, S.hand, { [c.id]: Object.assign({}, hd, { status: 'closed', closedWith: 'decided' }) }) };
+    }
+    this.setState({ ...handPatch, dec: Object.assign({}, S.dec, { [c.id]: dec }), sign: Object.assign({}, S.sign, { [c.id]: {} }), just: c.id, events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Decision: ' + describeDec(dec).toLowerCase() + ' · reason ' + dec.reason + (dec.note ? ' · note recorded' : ''), c.id), ...this.bump(S, c.id) });
   }

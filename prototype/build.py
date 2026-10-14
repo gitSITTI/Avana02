@@ -36,9 +36,11 @@ ICONS = {
  'check': '<path d="m4.5 10.5 3.5 3.5 7.5-8"/>',
  'eye': '<path d="M2.5 10S5 5 10 5s7.5 5 7.5 5-2.5 5-7.5 5-7.5-5-7.5-5z"/><circle cx="10" cy="10" r="2.2"/>',
  'network': '<rect x="3" y="3.5" width="14" height="9" rx="2"/><path d="M7.5 16.5h5M10 12.5v4"/>',
+ 'medal': '<circle cx="10" cy="7.8" r="4.6"/><path d="m7.6 11.6-1.3 5.4 3.7-2.1 3.7 2.1-1.3-5.4"/>',
+ 'send': '<path d="M17 3 9 11M17 3l-5 14-3-6-6-3z"/>',
  'edit': '<path d="m12.5 4.5 3 3M4 16l.7-3.3L13 4.4a1.4 1.4 0 0 1 2 0l.6.6a1.4 1.4 0 0 1 0 2L7.3 15.3z"/>',
 }
-NAV_ICONS = ['home', 'queue', 'table', 'chart', 'flask', 'clock', 'shield', 'export']
+NAV_ICONS = ['home', 'queue', 'table', 'chart', 'medal', 'flask', 'clock', 'shield', 'export']
 def svg(name, size=18):
     return '<svg width="%s" height="%s" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none">%s</svg>' % (size, size, ICONS[name])
 def nav_icons(v):
@@ -51,7 +53,7 @@ def expand(t):
     return t
 markup = ''.join(open(f).read() for f in sorted(glob.glob(os.path.join(P, 'm', '*.html'))))
 markup = expand(markup)
-js_order = ['data1', 'data2', 'data3', 'logic1', 'misc', 'logic2']
+js_order = ['data1', 'data2', 'data3', 'data4', 'logic1', 'misc', 'logic2', 'logic3']
 js = '\n'.join(open(os.path.join(P, n + '.js')).read() for n in js_order)
 cls = 'class Component extends DCLogic {\n' + '\n'.join(open(os.path.join(P, n + '.js')).read() for n in ['c1', 'c2', 'c3']) + '}\n'
 props = '{"accent":{"editor":"color","default":"#1A4DB5","options":["#1A4DB5","#0B6E6E","#7A3E00","#2F3B46"]},"showHints":{"editor":"boolean","default":true}}'

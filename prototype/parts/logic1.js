@@ -340,6 +340,12 @@ function vsAI(c, res) {
 }
 function canRecord(S, c, ev, res, st, person, blindPending) {
   if (person.role === 'observer') return 'Observers can read but not decide.';
+  const hd = handOf(S, c.id), hdName = hd ? (PEOPLE.find((p) => p.k === hd.to) || {}).name : '';
+  if (hd && hd.status === 'waiting' && !decOf(S, c.id)) {
+    if (hd.from === person.k) return 'Waiting on ' + hdName + '. Withdraw the request to decide now.';
+    if (hd.to === person.k && hd.ask === 'check') return 'Answer the request for a second opinion above first.';
+    if (hd.to !== person.k) return 'This was sent to ' + hdName + ' and is waiting on them.';
+  }
   if (S.preview) return 'You are previewing another lens. Switch back to decide.';
   if ((S.liveVer[c.id] || 0) > (S.openVer[c.id] || 0)) return 'This cluster changed after you opened it. Reload it first so you decide on what is current.';
   if (st === 'stale') return 'The source changed after the last decision. Reopen it first.';
@@ -360,3 +366,90 @@ function describeDec(dec) {
   if (dec.outcome === 'merge' && dec.strategy) return 'Merged · ' + STRATS.find((s) => s.k === dec.strategy).short;
   return base;
 }
+
+/* ---------- what happens to each wording, and why ----------
+   One pure function used by the review screen (a preview while you choose, the record afterwards), by the results page and by the checks.
+   Every reason is built from the comparison itself (rank, value, strategy), never from the AI. */
+const DISP_STYLE = {
+  keep: 'background:#12171C;color:#FFFFFF;',
+  merged: 'background:#E8F0FD;color:#123C8C;border:1px solid #9DB8E8;',
+  separate: 'background:#FFFFFF;color:#2F3B46;border:1px dashed #6B7782;',
+  linked: 'background:#EDE8F8;color:#3A2A80;border:1px solid #C4B6EC;',
+  escalated: 'background:#FFF0D2;color:#6B3D00;border:1px solid #E5C87A;',
+  superseded: 'background:#F4F6F8;color:#4F5B66;border:1px solid #B9C3CD;',
+  pending: 'background:#FFFFFF;color:#4F5B66;border:1px dashed #B9C3CD;'
+};
+function valTxt(c, m) {
+  if (c.kind === 'modal') return '“' + (modalOf(m.text) || 'no modal verb') + '”';
+  if (c.kind === 'subs') return m.xr + (m.xr === 1 ? ' clause' : ' clauses');
+  return m.v !== null && m.v !== undefined ? fmtVal(c, m.v) : (m.cond || 'no number');
+}
+function dispositionsOf(S, c, ms, res, ev, dec) {
+  const by = {}, lab = (m) => 'M' + (c.members.indexOf(m) + 1);
+  const put = (m, kind, label, why) => { by[m.id] = { kind, label, why, style: CHIP + DISP_STYLE[kind] }; };
+  const outcome = dec ? dec.outcome : res.outcome;
+  const param = (c.param || 'value').toLowerCase();
+  const out = { by, kinds: { keep: 0, merged: 0, separate: 0, linked: 0, escalated: 0, superseded: 0, pending: 0 }, newWording: false, remain: ms.length, headline: '', survivor: '' };
+  const tally = () => { ms.forEach((m) => { out.kinds[by[m.id].kind]++; }); };
+  const n = ms.length;
+  if (outcome === 'merge') {
+    if (!dec && (ev.err || !ev.covers.length)) {
+      ms.forEach((m) => put(m, 'pending', 'Not chosen yet', 'Choose which wording survives.'));
+      out.headline = 'Choose which wording survives to see what happens to each one.'; tally(); return out;
+    }
+    const covers = dec ? dec.covers : ev.covers, kept = dec ? dec.kept : ev.kept;
+    const nw = dec ? !!dec.newWording : !!ev.newWording;
+    const strat = dec ? dec.strategy : res.strat;
+    const sv = nw ? null : (dec ? (ms.find((m) => m.text === dec.text) || ms.find((m) => m.id === dec.member) || null) : ev.chosen);
+    out.newWording = nw; out.survivor = sv ? sv.id : '';
+    const rks = ms.map((m) => rankOf(S, c, m)).filter((r) => r !== null);
+    const allSame = rks.length > 1 && rks.every((r) => Math.abs(r - rks[0]) < 1e-9);
+    ms.forEach((m) => {
+      if (kept.indexOf(m.id) >= 0 || covers.indexOf(m.id) < 0) { put(m, 'separate', 'Stays separate', 'Cannot be ranked against the others (' + valTxt(c, m) + '). It is linked as related, not merged.'); return; }
+      if (sv && m === sv) {
+        const why = allSame ? 'Same ' + param + ' as the others (' + valTxt(c, m) + '). Its wording is kept word for word.'
+          : strat === 'least' ? 'Weakest ranked wording (' + valTxt(c, m) + '). Chosen on purpose, so this loosens the requirement.'
+          : strat === 'median' ? 'The middle ranked wording (' + valTxt(c, m) + ').'
+          : strat === 'member' ? 'Picked by hand (' + valTxt(c, m) + '). Its wording is kept word for word.'
+          : strat === 'stringent' ? 'Strictest wording that can be ranked (' + valTxt(c, m) + ').'
+          : 'Its wording is kept word for word.';
+        put(m, 'keep', 'Keep', why); return;
+      }
+      if (!sv) { put(m, 'merged', 'Replaced', 'Covered by the ' + (strat === 'ai' ? 'AI draft' : 'new wording') + '. Its ' + param + ' (' + valTxt(c, m) + ') was checked against the new text.'); return; }
+      const rm = rankOf(S, c, m), rs = rankOf(S, c, sv);
+      const why = rm === null || rs === null ? 'Covered by ' + lab(sv) + '.'
+        : Math.abs(rm - rs) < 1e-9 ? 'Same ' + param + ' (' + valTxt(c, m) + '), different words. Covered by ' + lab(sv) + '.'
+        : rm < rs ? 'Looser (' + valTxt(c, m) + '). ' + lab(sv) + ' already meets it, so nothing is lost.'
+        : 'Stricter (' + valTxt(c, m) + ') than the survivor. Merging loosens the requirement: it needs the owners, the PE and a note.';
+      put(m, 'merged', 'Merged into ' + lab(sv), why);
+    });
+    tally();
+    out.remain = out.kinds.keep + out.kinds.separate + (nw ? 1 : 0);
+    const merged = out.kinds.merged;
+    out.headline = (sv ? 'Keep ' + lab(sv) + ' (' + valTxt(c, sv) + ')' : 'New wording replaces ' + merged) + (sv ? ' · ' + merged + ' merged into it' : '') + (out.kinds.separate ? ' · ' + out.kinds.separate + ' stay separate' : '');
+    return out;
+  }
+  if (outcome === 'supersede') {
+    const rks = ms.map((m) => rankOf(S, c, m));
+    const top = rks.some((r) => r !== null) ? Math.max.apply(null, rks.filter((r) => r !== null)) : null;
+    let kept = false;
+    ms.forEach((m, i) => {
+      const keepIt = top !== null ? rks[i] === top && !kept : i === 0;
+      if (keepIt) { kept = true; put(m, 'keep', 'Keep', 'It contains the other wording and adds more (' + valTxt(c, m) + '). Its ID and links stay.'); }
+      else put(m, 'superseded', 'Superseded', 'Contained in the kept requirement. This one is marked superseded; its ID and links stay.');
+    });
+    tally(); out.remain = out.kinds.keep; out.headline = 'Keep ' + out.kinds.keep + ' · ' + out.kinds.superseded + ' superseded'; return out;
+  }
+  const owners = ms.map((m) => m.owner).filter((x, i, a) => a.indexOf(x) === i);
+  if (outcome === 'reject') ms.forEach((m) => put(m, 'separate', 'Stays separate', 'Not a duplicate: the suggestion is closed and nothing changes.'));
+  else if (outcome === 'link') ms.forEach((m) => put(m, 'linked', 'Kept and linked', 'Both stay. A “variant of” link joins them; nothing is merged.'));
+  else if (outcome === 'escalate') ms.forEach((m) => put(m, 'escalated', 'Waiting for ' + (owners.length > 1 ? 'the owners' : 'the owner'), 'No change until ' + joinOr(owners) + (owners.length > 1 ? ' answer.' : ' answers.')));
+  else ms.forEach((m) => put(m, 'pending', 'Not chosen yet', ''));
+  tally();
+  out.headline = outcome === 'reject' ? 'None merged · all ' + n + ' stay separate' : outcome === 'link' ? 'None merged · all ' + n + ' kept and linked' : outcome === 'escalate' ? 'No change yet · the owners are asked' : '';
+  return out;
+}
+
+/* ---------- hand-offs to a teammate ---------- */
+function handOf(S, cid) { return S.hand[cid] || null; }
+const ASK_LABEL = { check: 'A second opinion before I record', decide: 'Please decide this one', review: 'Please review this decision' };

@@ -437,13 +437,13 @@ button:disabled{cursor:not-allowed;opacity:.55}
     </div>
     <div class="ws-navlist">
       <sc-for list="{{navTop}}" as="n" hint-placeholder-count="3">
-        <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}"><sc-if value="{{n.icHome}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/></svg></sc-if><sc-if value="{{n.icQueue}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/></svg></sc-if><sc-if value="{{n.icTable}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/></svg></sc-if><sc-if value="{{n.icChart}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/></svg></sc-if><sc-if value="{{n.icFlask}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/></svg></sc-if><sc-if value="{{n.icClock}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></sc-if><sc-if value="{{n.icShield}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/></svg></sc-if><sc-if value="{{n.icExport}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/></svg></sc-if><span>{{n.label}}</span><sc-if value="{{n.hasCount}}" hint-placeholder-val="{{ false }}"><span class="nav-count">{{n.count}}</span></sc-if></button>
+        <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}"><sc-if value="{{n.icHome}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/></svg></sc-if><sc-if value="{{n.icQueue}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/></svg></sc-if><sc-if value="{{n.icTable}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/></svg></sc-if><sc-if value="{{n.icChart}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/></svg></sc-if><sc-if value="{{n.icMedal}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="7.8" r="4.6"/><path d="m7.6 11.6-1.3 5.4 3.7-2.1 3.7 2.1-1.3-5.4"/></svg></sc-if><sc-if value="{{n.icFlask}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/></svg></sc-if><sc-if value="{{n.icClock}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></sc-if><sc-if value="{{n.icShield}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/></svg></sc-if><sc-if value="{{n.icExport}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/></svg></sc-if><span>{{n.label}}</span><sc-if value="{{n.hasCount}}" hint-placeholder-val="{{ false }}"><span class="nav-count">{{n.count}}</span></sc-if></button>
       </sc-for>
       <div class="nav-group">
         <button class="nav-ghead" onClick="{{toggleProg}}" aria-expanded="{{progExp}}"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="m7.5 4.5 5.5 5.5-5.5 5.5"/></svg><span>Progress and evidence</span></button>
         <div class="nav-kids" data-open="{{progExp}}">
           <sc-for list="{{navProg}}" as="n" hint-placeholder-count="3">
-            <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}"><sc-if value="{{n.icHome}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/></svg></sc-if><sc-if value="{{n.icQueue}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/></svg></sc-if><sc-if value="{{n.icTable}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/></svg></sc-if><sc-if value="{{n.icChart}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/></svg></sc-if><sc-if value="{{n.icFlask}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/></svg></sc-if><sc-if value="{{n.icClock}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></sc-if><sc-if value="{{n.icShield}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/></svg></sc-if><sc-if value="{{n.icExport}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/></svg></sc-if><span>{{n.label}}</span></button>
+            <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}"><sc-if value="{{n.icHome}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/></svg></sc-if><sc-if value="{{n.icQueue}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/></svg></sc-if><sc-if value="{{n.icTable}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/></svg></sc-if><sc-if value="{{n.icChart}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/></svg></sc-if><sc-if value="{{n.icMedal}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="7.8" r="4.6"/><path d="m7.6 11.6-1.3 5.4 3.7-2.1 3.7 2.1-1.3-5.4"/></svg></sc-if><sc-if value="{{n.icFlask}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/></svg></sc-if><sc-if value="{{n.icClock}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></sc-if><sc-if value="{{n.icShield}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/></svg></sc-if><sc-if value="{{n.icExport}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/></svg></sc-if><span>{{n.label}}</span></button>
           </sc-for>
         </div>
       </div>
@@ -451,7 +451,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
         <button class="nav-ghead" onClick="{{toggleOut}}" aria-expanded="{{outExp}}"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="m7.5 4.5 5.5 5.5-5.5 5.5"/></svg><span>Policy and output</span></button>
         <div class="nav-kids" data-open="{{outExp}}">
           <sc-for list="{{navOut}}" as="n" hint-placeholder-count="2">
-            <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}"><sc-if value="{{n.icHome}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/></svg></sc-if><sc-if value="{{n.icQueue}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/></svg></sc-if><sc-if value="{{n.icTable}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/></svg></sc-if><sc-if value="{{n.icChart}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/></svg></sc-if><sc-if value="{{n.icFlask}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/></svg></sc-if><sc-if value="{{n.icClock}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></sc-if><sc-if value="{{n.icShield}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/></svg></sc-if><sc-if value="{{n.icExport}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/></svg></sc-if><span>{{n.label}}</span></button>
+            <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}"><sc-if value="{{n.icHome}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/></svg></sc-if><sc-if value="{{n.icQueue}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/></svg></sc-if><sc-if value="{{n.icTable}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/></svg></sc-if><sc-if value="{{n.icChart}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/></svg></sc-if><sc-if value="{{n.icMedal}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="7.8" r="4.6"/><path d="m7.6 11.6-1.3 5.4 3.7-2.1 3.7 2.1-1.3-5.4"/></svg></sc-if><sc-if value="{{n.icFlask}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/></svg></sc-if><sc-if value="{{n.icClock}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></sc-if><sc-if value="{{n.icShield}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/></svg></sc-if><sc-if value="{{n.icExport}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/></svg></sc-if><span>{{n.label}}</span></button>
           </sc-for>
         </div>
       </div>
@@ -666,6 +666,10 @@ button:disabled{cursor:not-allowed;opacity:.55}
           <button onClick="{{tryGroup}}" style="min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;">Open CL-050</button>
         </div>
         </sc-if>
+        <div style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:8px;padding:12px 20px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between">
+          <div style="flex:1 1 380px">{{gradeLine}}</div>
+          <button onClick="{{openResults}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;">See results and grade</button>
+        </div>
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
           <div style="flex:3 1 460px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
             <div style="font-size:13px;font-weight:600;color:#54626F;">How the list narrowed</div>
@@ -758,6 +762,20 @@ button:disabled{cursor:not-allowed;opacity:.55}
             </sc-for>
           </sc-if>
 
+          <sc-if value="{{hd.show}}" hint-placeholder-val="{{ false }}">
+            <div role="status" aria-label="Request to a teammate" style="{{hd.style}}">
+              <div style="font-weight:700">{{hd.title}}</div>
+              <sc-if value="{{hd.hasLines}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:3px"><sc-for list="{{hd.lines}}" as="l" hint-placeholder-count="3"><div>{{l.t}}</div></sc-for></div></sc-if>
+              <sc-if value="{{hd.canReply}}" hint-placeholder-val="{{ false }}">
+                <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Your comment
+                  <textarea id="hd-reply" value="{{hd.replyV}}" onChange="{{hd.onReply}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
+                </label>
+                <div style="font-size:13px">{{hd.replyHelp}}</div>
+              </sc-if>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{hd.actions}}" as="a" hint-placeholder-count="2"><button onClick="{{a.onClick}}" disabled="{{a.disabled}}" style="{{a.style}}">{{a.label}}</button></sc-for></div>
+            </div>
+          </sc-if>
+
           <div style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center">
               <span style="font-family:var(--mono);font-weight:600">{{d.id}}</span>
@@ -800,6 +818,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
               <span style="padding:0 7px;border-radius:6px;border:1px dashed #8C98A3;color:#5A6672;text-decoration:line-through">missing here</span>
               <span style="color:#5A6672">grey words match the reference</span>
             </div>
+            <sc-if value="{{disp.hasHeadline}}" hint-placeholder-val="{{ true }}"><div style="margin:0 20px 10px;padding:8px 12px;border-radius:8px;background:#F4F6F8;display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;font-size:13px"><b>{{disp.stateLabel}}:</b><span>{{disp.headline}}</span></div></sc-if>
             <div>
               <sc-for list="{{mrows}}" as="m" hint-placeholder-count="4">
                 <div class="cmp-row" data-ref="{{m.refStr}}" style="{{m.rowBg}}">
@@ -809,7 +828,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
                       <span style="font-family:var(--mono);font-size:13px;font-weight:500"><span class="sr">{{m.label}} </span>{{m.id}}</span>
                       <sc-if value="{{m.isRef}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--accent);color:#FFFFFF">Reference</span></sc-if>
                       <span style="{{m.rankStyle}}">{{m.rankText}}</span>
-                      <sc-if value="{{m.hasTag}}" hint-placeholder-val="{{ false }}"><span style="{{m.tagStyle}}">{{m.tag}}</span></sc-if>
+                      <span style="{{m.dispStyle}}">{{m.disp}}</span>
                       <span style="font-size:12px;color:var(--slate)">{{m.owner}} · {{m.verif}}</span>
                       <span style="margin-left:auto;display:flex;flex-wrap:wrap;gap:6px">
                         <sc-if value="{{m.notRef}}" hint-placeholder-val="{{ true }}"><button class="ghost-btn" onClick="{{m.setRef}}" aria-label="{{m.refAria}}">Use as reference</button></sc-if>
@@ -823,6 +842,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
                       <span style="font-weight:600;color:#2A353F">{{m.summary}}</span>
                       <sc-for list="{{m.changes}}" as="x" hint-placeholder-count="3"><span class="chg-chip" title="{{x.title}}"><i style="{{x.bar}}"></i><span>{{x.text}}</span></span></sc-for>
                     </div>
+                    <sc-if value="{{m.hasWhy}}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:#2A353F"><b>Why:</b> {{m.dispWhy}}</div></sc-if>
                   </div>
                 </div>
               </sc-for>
@@ -1007,13 +1027,13 @@ button:disabled{cursor:not-allowed;opacity:.55}
 
           <sc-if value="{{rp.undecided}}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;gap:6px">
-              <div style="font-weight:600">1 · What do you decide?</div>
+              <div style="font-weight:600">1 · What happens to these requirements?</div>
               <sc-for list="{{rp.outcomes}}" as="o" hint-placeholder-count="4"><button onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">{{o.label}}</button></sc-for>
             </div>
 
             <sc-if value="{{rp.showStrats}}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;flex-direction:column;gap:6px">
-                <div style="font-weight:600">2 · Which wording survives?</div>
+                <div style="font-weight:600">2 · Which wording survives? Mechanical choices first</div>
                 <sc-for list="{{rp.strats}}" as="s" hint-placeholder-count="6">
                   <div style="display:flex;flex-direction:column;gap:4px">
                     <button onClick="{{s.pick}}" aria-pressed="{{s.pressed}}" disabled="{{s.disabled}}" style="{{s.style}}">
@@ -1039,6 +1059,16 @@ button:disabled{cursor:not-allowed;opacity:.55}
                   <textarea value="{{rp.ownV}}" onChange="{{rp.onOwn}}" rows="4" style="font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
                 </label>
               </sc-if>
+              <div style="display:flex;flex-direction:column;gap:6px;border-top:1px dashed #B9C3CD;padding-top:10px">
+                <div style="font-weight:600">Optional · still unsure? Ask the AI last</div>
+                <div style="font-size:13px;color:#3C4852">So far: {{rp.mechSummary}}</div>
+                <div style="font-size:13px;color:#3C4852">{{rp.aiAfter}}</div>
+                <button onClick="{{rp.aiStrat.pick}}" aria-pressed="{{rp.aiStrat.pressed}}" disabled="{{rp.aiStrat.disabled}}" style="{{rp.aiStrat.style}}">
+                  <span style="{{rp.aiStrat.markStyle}}"></span>
+                  <span style="display:flex;flex-direction:column"><span style="font-weight:600">{{rp.aiStrat.name}}</span><span style="font-size:12px;color:#4F5B66">{{rp.aiStrat.sub}} Every guard still runs on its text.</span></span>
+                </button>
+                <sc-if value="{{rp.aiStrat.hasWhy}}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#6B3D00;padding-left:4px">{{rp.aiStrat.why}}</div></sc-if>
+              </div>
               <sc-if value="{{rp.showAI}}" hint-placeholder-val="{{ false }}">
                 <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">AI draft (you can edit it)
                   <textarea value="{{rp.aiV}}" onChange="{{rp.onAiText}}" rows="4" style="font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px;border:1px solid #8B1F6B;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400;background:#FCF6FA"></textarea>
@@ -1091,6 +1121,28 @@ button:disabled{cursor:not-allowed;opacity:.55}
               <button onClick="{{rp.skip}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;">Skip</button>
             </div>
             <div style="font-size:12px;color:#4F5B66">{{rp.recordWhy}}</div>
+          </sc-if>
+
+          <sc-if value="{{snd.show}}" hint-placeholder-val="{{ false }}">
+            <div style="border-top:1px solid #E3E7EA;padding-top:12px;display:flex;flex-direction:column;gap:10px">
+              <button id="snd-toggle" onClick="{{snd.toggle}}" aria-expanded="{{snd.openPressed}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;align-self:flex-start;display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M17 3 9 11M17 3l-5 14-3-6-6-3z"/></svg>{{snd.title}}</button>
+              <sc-if value="{{snd.open}}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:10px;background:#F8FAFB;border:1px solid var(--line);border-radius:8px;padding:12px">
+                  <div style="font-size:13px;color:#3C4852">{{snd.help}}</div>
+                  <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Send to
+                    <select id="snd-to" value="{{snd.toV}}" onChange="{{snd.onTo}}" style="min-height:44px;padding:0 12px;border:1px solid #8C98A3;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;width:100%;font-weight:400"><sc-for list="{{snd.toOpts}}" as="o" hint-placeholder-count="4"><option value="{{o.v}}">{{o.t}}</option></sc-for></select>
+                  </label>
+                  <sc-if value="{{snd.hasAsks}}" hint-placeholder-val="{{ true }}">
+                    <div role="group" aria-label="What you need from them" style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{snd.asks}}" as="o" hint-placeholder-count="2"><button onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">{{o.label}}</button></sc-for></div>
+                  </sc-if>
+                  <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Message
+                    <textarea id="snd-note" value="{{snd.noteV}}" onChange="{{snd.onNote}}" rows="3" placeholder="What should they look at?" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
+                  </label>
+                  <div style="font-size:12px;color:#4F5B66">{{snd.noteHelp}}</div>
+                  <button id="snd-send" onClick="{{snd.send}}" disabled="{{snd.sendDisabled}}" style="min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;align-self:flex-start">{{snd.sendLabel}}</button>
+                </div>
+              </sc-if>
+            </div>
           </sc-if>
         </aside>
       </div>
@@ -1206,62 +1258,315 @@ button:disabled{cursor:not-allowed;opacity:.55}
         </div>
       </div>
       </sc-if>
+      <!-- ===== RESULTS AND GRADE ===== -->
+      <sc-if value="{{isResults}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Results and grade</h1>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">How the consolidated set compares with the original requirements, and a grade you can defend because every point of it can be traced to a decision. {{rLine}}</p>
+        </div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>The rule behind the grade is a proposal.</b> The five parts, their weights and the letter bands are written out below so your team can change them before anyone relies on them. {{resultsSample}}</div>
 
+        <section aria-labelledby="rs-grade" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-wrap:wrap;gap:24px 36px;align-items:flex-start">
+          <div style="flex:0 1 300px;display:flex;flex-direction:column;gap:14px;min-width:0">
+            <h2 id="rs-grade" style="margin:0;font-size:18px;font-weight:700">{{gBandName}}</h2>
+            <div style="display:flex;gap:18px;align-items:center">
+              <div role="img" aria-label="{{gAria}}" style="{{gBox}}">{{gLetter}}</div>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums">{{gScore}}</span><span style="color:#3C4852">{{gOut}}</span></div>
+            </div>
+            <div role="group" aria-label="Letter bands" style="display:flex;gap:6px">
+              <sc-for list="{{bands}}" as="b" hint-placeholder-count="5"><div style="{{b.style}}"><span style="font-weight:700;font-size:15px">{{b.letter}}</span><span style="font-size:11px">{{b.range}}</span></div></sc-for>
+            </div>
+            <div style="color:#2A353F;font-size:13px">{{gProvText}}</div>
+            <sc-if value="{{gHasCap}}" hint-placeholder-val="{{ false }}"><div style="background:#FDE3E0;border:1px solid #A6261E;color:#7A1510;border-radius:8px;padding:8px 12px;font-size:13px">{{gCapText}}</div></sc-if>
+          </div>
+          <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column">
+            <h2 style="margin:0 0 4px;font-size:16px;font-weight:700">How the grade is made</h2>
+            <sc-for list="{{parts}}" as="p" hint-placeholder-count="5">
+              <div role="group" aria-label="{{p.aria}}" style="display:flex;flex-direction:column;gap:5px;padding:10px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:600">{{p.name}}</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap"><b>{{p.pts}}</b> of {{p.weight}} points</span></div>
+                <div style="height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{p.fill}}"></div></div>
+                <div style="font-size:13px;color:#2A353F">{{p.detail}}</div>
+                <div style="font-size:12px;color:#54626F">{{p.plain}}</div>
+              </div>
+            </sc-for>
+            <div style="border-top:1px solid var(--line);padding-top:10px;font-size:12px;color:#54626F">{{gFormula}}</div>
+          </div>
+        </section>
+
+        <section aria-labelledby="rs-before" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 id="rs-before" style="margin:0;font-size:18px;font-weight:700">The original set against the consolidated set</h2>
+            <div style="font-size:13px;color:#3C4852">Requirement counts, not quality. Fewer is only better if nothing that mattered was lost, which is what the grade above checks.</div>
+          </div>
+          <sc-for list="{{ba}}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="font-weight:600">{{r.label}}</div>
+              <div style="display:flex;align-items:center;gap:12px;min-width:0"><div style="flex:1;min-width:0"><div style="{{r.bar}}"></div></div><span style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;flex:none;min-width:64px;text-align:right">{{r.value}}</span></div>
+              <div style="font-size:12px;color:#54626F">{{r.sub}}</div>
+            </div>
+          </sc-for>
+          <div style="font-size:13px;color:#2A353F;border-top:1px solid var(--line);padding-top:10px">{{baNote}}</div>
+        </section>
+
+        <section aria-labelledby="rs-dest" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 id="rs-dest" style="margin:0;font-size:18px;font-weight:700">Where each original requirement ended up</h2>
+            <div style="font-size:13px;color:#3C4852">All {{destTotal}} originals, each in exactly one place.</div>
+          </div>
+          <div role="img" aria-label="Where the originals ended up, as one bar. The list below gives every number." style="display:flex;gap:2px;width:100%">
+            <sc-for list="{{destBar}}" as="s" hint-placeholder-count="6"><div title="{{s.title}}" style="{{s.style}}"></div></sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{dest}}" as="d" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:20px minmax(0,1fr) 70px 50px;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--hair)">
+                <span style="{{d.swatch}};margin-top:3px"></span>
+                <span style="display:flex;flex-direction:column"><span style="font-weight:600">{{d.label}}</span><span style="font-size:12px;color:#54626F">{{d.note}}</span></span>
+                <span style="font-variant-numeric:tabular-nums;font-weight:700;text-align:right">{{d.n}}</span>
+                <span style="font-variant-numeric:tabular-nums;color:#3C4852;text-align:right">{{d.pct}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section aria-labelledby="rs-rise" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:6px">
+          <h2 id="rs-rise" style="margin:0;font-size:18px;font-weight:700">What would raise the grade</h2>
+          <div style="font-size:13px;color:#3C4852">Largest first. The points are the most each could add, if all of it were fixed.</div>
+          <sc-if value="{{noRise}}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#2A353F">Nothing is holding the grade down. Every part is at its full weight.</div></sc-if>
+          <sc-for list="{{rise}}" as="x" hint-placeholder-count="4">
+            <div style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:flex-start;justify-content:space-between;padding:12px 0;border-top:1px solid var(--hair)">
+              <div style="flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:3px">
+                <div style="font-weight:600">{{x.title}}</div>
+                <div style="font-size:13px;color:#2A353F">{{x.text}}</div>
+                <sc-if value="{{x.hasIds}}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px">
+                    <sc-for list="{{x.ids}}" as="i" hint-placeholder-count="3"><button onClick="{{i.open}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;min-height:44px;font-family:var(--mono);font-size:13px">{{i.id}}</button></sc-for>
+                    <sc-if value="{{x.hasMore}}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#54626F">{{x.more}}</span></sc-if>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:160px">
+                <span style="font-weight:700;font-variant-numeric:tabular-nums">{{x.gain}}</span>
+                <sc-if value="{{x.hasBtn}}" hint-placeholder-val="{{ false }}"><button onClick="{{x.go}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;">{{x.btn}}</button></sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </section>
+
+        <section aria-labelledby="rs-alloc" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;overflow:hidden">
+          <div style="padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="rs-alloc" style="margin:0;font-size:18px;font-weight:700">Each part of the system, graded on its own</h2>
+            <div style="font-size:13px;color:#3C4852">A dashed box means the grade is provisional. “Not graded” means nothing is decided there yet.</div>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:760px">
+            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 70px minmax(0,1.3fr) 110px 110px 84px 110px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+              <div>Allocation</div><div>Originals</div><div>Clusters decided</div><div>After so far</div><div>If all suggestions taken</div><div>Grade</div><div></div>
+            </div>
+            <sc-for list="{{byAlloc}}" as="a" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 70px minmax(0,1.3fr) 110px 110px 84px 110px;gap:12px;padding:10px 20px;align-items:center;border-bottom:1px solid var(--hair);font-variant-numeric:tabular-nums">
+                <div style="font-weight:600">{{a.name}}</div>
+                <div>{{a.n}}</div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span>{{a.decided}}</span><div style="height:8px;background:#DCE7F7;border-radius:4px;overflow:hidden"><div style="{{a.decidedBar}}"></div></div></div>
+                <div>{{a.after}}</div><div>{{a.projected}}</div>
+                <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start"><span style="{{a.letterStyle}}">{{a.letter}}</span><span style="font-size:12px;color:#54626F">{{a.score}}</span></div>
+                <div><button onClick="{{a.open}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;min-height:40px;font-size:13px">Open queue</button></div>
+              </div>
+            </sc-for>
+          </div></div>
+        </section>
+
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <section aria-labelledby="rs-cuts" style="flex:3 1 460px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:6px">
+            <h2 id="rs-cuts" style="margin:0;font-size:18px;font-weight:700">The biggest reductions so far</h2>
+            <div style="font-size:13px;color:#3C4852">Clusters where several wordings became fewer. The wording shown is the one that stays.</div>
+            <sc-if value="{{noCuts}}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#2A353F">No merge has been recorded yet.</div></sc-if>
+            <sc-for list="{{cuts}}" as="x" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:4px;padding:10px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between;align-items:baseline"><span><b style="font-family:var(--mono)">{{x.id}}</b> {{x.title}}</span><span style="font-size:13px;color:#3C4852">{{x.change}}</span></div>
+                <div style="font-family:var(--serif);font-size:15px;line-height:1.5;color:#2A353F">{{x.text}}</div>
+                <div><button onClick="{{x.open}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;min-height:40px;font-size:13px">Open the cluster</button></div>
+              </div>
+            </sc-for>
+          </section>
+          <section aria-labelledby="rs-checks" style="flex:2 1 320px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:6px">
+            <h2 id="rs-checks" style="margin:0;font-size:18px;font-weight:700">Checks</h2>
+            <sc-for list="{{checks}}" as="k" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:4px;padding:10px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;gap:8px;align-items:flex-start;justify-content:space-between"><span style="font-weight:600">{{k.label}}</span><span style="{{k.style}}">{{k.chip}}</span></div>
+                <div style="font-size:13px;color:#2A353F">{{k.detail}}</div>
+              </div>
+            </sc-for>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+              <button onClick="{{toMetrics}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;">See what the AI adds</button>
+              <button onClick="{{toExport}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;">Go to export</button>
+            </div>
+          </section>
+        </div>
+      </div>
+      </sc-if>
       <!-- ===== METHODS AND METRICS ===== -->
       <sc-if value="{{isMethods}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:24px">
         <div style="display:flex;flex-direction:column;gap:6px">
           <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Methods and metrics</h1>
-          <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">Every suggestion source is scored the same way, so the mechanical methods and the AI can be compared fairly.</p>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">How well each way of working finds the right pairs, and what the AI adds when it comes after the mechanical steps or before them. Every source is scored the same way, so the comparison is fair.</p>
         </div>
-        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Illustrative numbers.</b> No gold set of human-labelled pairs exists yet, so the accuracy figures below are placeholders that show the layout. The "This session", "Guards" and "Progress by lane" panels are computed live from the 252 clusters and from what you do in the sample.</div>
-        <div style="background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;overflow:hidden">
-          <div style="padding:12px 16px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66;border-bottom:1px solid #D5DADE">EACH SOURCE, SIDE BY SIDE (SAMPLE VALUES)</div>
-          <div style="overflow-x:auto"><div style="min-width:760px">
-            <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,1.4fr) 90px 80px;gap:12px;padding:8px 16px;font-size:12px;color:#4F5B66;border-bottom:1px solid #E3E7EA">
-              <div>Source</div><div>Precision (95% range)</div><div>Recall</div><div>Calibration error</div><div>Pairs scored</div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Sample values.</b> No gold set of human-labelled pairs exists yet, so every score on this page except the “This session” blocks is a placeholder that shows the layout. They are not measurements. Ranges will be shown once there are enough labelled pairs.</div>
+
+        <section aria-labelledby="mt-arms" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;overflow:hidden">
+          <div style="padding:16px 20px 4px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="mt-arms" style="margin:0;font-size:18px;font-weight:700">Four ways of working, side by side</h2>
+            <div style="font-size:13px;color:#3C4852">Across all {{goldPairs}} labelled pairs (sample). The score balances precision (of the pairs it suggested, how many were right) and recall (of the real duplicates, how many it found).</div>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:900px">
+            <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 74px 74px 96px 80px 96px 90px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
+              <div>Way of working</div><div>Score</div><div>Precision</div><div>Recall</div><div>Wrong suggestions</div><div>Missed pairs</div><div>Reviewer minutes per cluster</div><div>AI calls</div>
             </div>
-            <sc-for list="{{sources2}}" as="s" hint-placeholder-count="7">
-              <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,1.4fr) 90px 80px;gap:12px;padding:10px 16px;align-items:center;border-bottom:1px solid #E3E7EA">
-                <div style="display:flex;align-items:center;gap:8px;font-weight:600"><span style="{{s.shape}}"></span>{{s.name}}</div>
-                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{s.pBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{s.p}}</span><span style="font-size:11px;color:#4F5B66">{{s.range}}</span></div>
-                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{s.rBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{s.r}}</span></div>
-                <div style="font-variant-numeric:tabular-nums">{{s.ece}}</div>
-                <div style="font-variant-numeric:tabular-nums">{{s.n}}</div>
+            <sc-for list="{{arms}}" as="a" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 74px 74px 96px 80px 96px 90px;gap:12px;padding:12px 20px;align-items:center;border-bottom:1px solid var(--hair)">
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="{{a.shape}};flex:none;margin-top:6px"></span><span style="display:flex;flex-direction:column"><span style="font-weight:600">{{a.name}}</span><span style="font-size:12px;color:#54626F">{{a.sub}}</span></span></div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{a.fBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:700">{{a.f}}</span></div>
+                  <div style="font-size:12px;color:#3C4852;display:flex;flex-wrap:wrap;gap:4px 8px"><span>{{a.change}}</span><sc-if value="{{a.best}}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;color:#12171C">· highest score</span></sc-if></div>
+                </div>
+                <div style="font-variant-numeric:tabular-nums">{{a.p}}</div><div style="font-variant-numeric:tabular-nums">{{a.r}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{a.fp}}</div><div style="font-variant-numeric:tabular-nums">{{a.fn}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{a.mins}}</div>
+                <div style="font-variant-numeric:tabular-nums;display:flex;flex-direction:column"><span>{{a.calls}}</span><span style="font-size:12px;color:#54626F">{{a.aiMin}}</span></div>
               </div>
             </sc-for>
           </div></div>
-          <div style="padding:10px 16px;font-size:13px;color:#3C4852;display:flex;flex-wrap:wrap;gap:6px 16px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:#34424F;display:inline-block"></span>Mechanical</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>AI</span><span>The AI judge scored few pairs, so its range is wide. Read the range, not just the number.</span></div>
-        </div>
+          <div style="padding:14px 20px;font-size:13px;color:#2A353F;border-top:1px solid var(--line);background:#F8FAFB">{{reading}}</div>
+        </section>
+
+        <section aria-labelledby="mt-ladder" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;overflow:hidden">
+          <div style="padding:16px 20px 4px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="mt-ladder" style="margin:0;font-size:18px;font-weight:700">Each mechanical method, then with the AI</h2>
+            <div style="font-size:13px;color:#3C4852">The same candidate pairs, scored on their own and then with the AI judging them after, or proposing them first.</div>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:900px">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) 74px 74px minmax(0,1.5fr) minmax(0,1.2fr) minmax(0,1.2fr) 80px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
+              <div>Method</div><div>Precision</div><div>Recall</div><div>Score on its own</div><div>With AI after</div><div>With AI before</div><div>Pairs scored</div>
+            </div>
+            <sc-for list="{{ladder}}" as="l" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:minmax(0,2fr) 74px 74px minmax(0,1.5fr) minmax(0,1.2fr) minmax(0,1.2fr) 80px;gap:12px;padding:10px 20px;align-items:center;border-bottom:1px solid var(--hair);{{l.rowStyle}}">
+                <div style="display:flex;align-items:center;gap:8px;{{l.nameStyle}}"><span style="width:9px;height:9px;background:#34424F;display:inline-block;flex:none"></span>{{l.name}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{l.p}}</div><div style="font-variant-numeric:tabular-nums">{{l.r}}</div>
+                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{l.fBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{l.f}}</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-variant-numeric:tabular-nums;font-weight:600">{{l.fa}}</span><span style="font-size:12px;color:#3C4852">{{l.da}}</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-variant-numeric:tabular-nums;font-weight:600">{{l.fb}}</span><span style="font-size:12px;color:#3C4852">{{l.db}}</span></div>
+                <div style="font-variant-numeric:tabular-nums">{{l.n}}</div>
+              </div>
+            </sc-for>
+          </div></div>
+        </section>
+
+        <section aria-labelledby="mt-cats" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;overflow:hidden">
+          <div style="padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="mt-cats" style="margin:0;font-size:18px;font-weight:700">Which categories score best, with and without AI</h2>
+            <div style="font-size:13px;color:#3C4852">One row per kind of requirement. The square is the score without AI. The diamond is the score with the AI {{armShort}} the mechanical steps.</div>
+          </div>
+          <div style="padding:4px 20px 12px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center">
+            <div role="group" aria-label="Where the AI runs" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:13px;font-weight:600">Compare with</span>
+              <sc-for list="{{armBtns}}" as="b" hint-placeholder-count="2"><button onClick="{{b.pick}}" aria-pressed="{{b.pressed}}" style="{{b.style}}">{{b.label}}</button></sc-for>
+            </div>
+            <div role="group" aria-label="Order the categories" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:13px;font-weight:600">Order by</span>
+              <sc-for list="{{sortBtns}}" as="b" hint-placeholder-count="3"><button onClick="{{b.pick}}" aria-pressed="{{b.pressed}}" style="{{b.style}}">{{b.label}}</button></sc-for>
+            </div>
+            <button id="mt-table" onClick="{{toggleTable}}" aria-pressed="{{tablePressed}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;min-height:40px;margin-left:auto;font-size:13px">{{tableLabel}}</button>
+          </div>
+          <div style="padding:0 20px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px">
+            <div style="border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;font-weight:600;color:#54626F">Best without AI</div>
+              <sc-for list="{{topWithout}}" as="t" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px"><span>{{t.rank}}. {{t.name}}</span><span style="font-variant-numeric:tabular-nums;font-weight:600">{{t.v}}</span></div></sc-for>
+            </div>
+            <div style="border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;font-weight:600;color:#54626F">Best with AI ({{armShort}} the mechanical steps)</div>
+              <sc-for list="{{topWith}}" as="t" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px"><span>{{t.rank}}. {{t.name}}</span><span style="font-variant-numeric:tabular-nums;font-weight:600">{{t.v}}</span></div></sc-for>
+            </div>
+          </div>
+          <sc-if value="{{showChart}}" hint-placeholder-val="{{ true }}">
+          <div style="border-top:1px solid var(--line);padding:12px 20px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px">
+            <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:#34424F;display:inline-block"></span>Without AI</span>
+            <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>With AI</span>
+            <span style="color:#54626F">Score from 0.5 to 1.0</span>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:720px;padding:0 20px 8px">
+            <div style="display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(0,3fr) 120px;gap:14px;align-items:end;padding:6px 0;font-size:12px;color:#54626F">
+              <span></span>
+              <span style="display:flex;justify-content:space-between;font-variant-numeric:tabular-nums"><span>0.5</span><span>0.6</span><span>0.7</span><span>0.8</span><span>0.9</span><span>1.0</span></span>
+              <span>Change</span>
+            </div>
+            <sc-for list="{{catRows}}" as="r" hint-placeholder-count="15">
+              <div role="group" aria-label="{{r.aria}}" style="display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(0,3fr) 120px;gap:14px;align-items:center;padding:8px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span style="font-weight:600">{{r.name}}</span>
+                  <span style="font-size:12px;color:#54626F">{{r.sub}}</span>
+                  <span style="display:flex;flex-wrap:wrap;gap:4px">
+                    <sc-if value="{{r.bestWithout}}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:#E4E9ED;color:#2F3B46">best without AI</span></sc-if>
+                    <sc-if value="{{r.bestWith}}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:#F6E4EF;color:#6A1650">best with AI</span></sc-if>
+                    <sc-if value="{{r.few}}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;border:1px dashed #6B7782;color:#3C4852">few pairs</span></sc-if>
+                  </span>
+                </div>
+                <div aria-hidden="true" style="position:relative;height:30px;background:linear-gradient(to right,#E7ECF1 1px,transparent 1px) 0 0/20% 100%;border-right:1px solid #E7ECF1">
+                  <span style="position:absolute;top:50%;height:3px;background:#B9C3CD;transform:translateY(-50%);{{r.line}}"></span>
+                  <span style="position:absolute;top:50%;width:12px;height:12px;background:#34424F;transform:translate(-50%,-50%);{{r.sq}}"></span>
+                  <span style="position:absolute;top:50%;width:11px;height:11px;background:#8B1F6B;transform:translate(-50%,-50%) rotate(45deg);{{r.dm}}"></span>
+                </div>
+                <div style="display:flex;flex-direction:column;font-variant-numeric:tabular-nums"><span style="font-weight:700">{{r.delta}}</span><span style="font-size:12px;color:#3C4852">{{r.without}} to {{r.withAI}}</span></div>
+              </div>
+            </sc-for>
+          </div></div>
+          </sc-if>
+          <sc-if value="{{showTable}}" hint-placeholder-val="{{ false }}">
+          <div style="overflow-x:auto;border-top:1px solid var(--line)"><div style="min-width:860px">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 70px repeat(3,64px) repeat(3,64px) 80px;gap:10px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
+              <div>Category</div><div>Clusters</div><div>Pairs</div><div>Precision without</div><div>Recall without</div><div>Score without</div><div>Precision with</div><div>Recall with</div><div>Score with</div><div>Change</div>
+            </div>
+            <sc-for list="{{catRows}}" as="r" hint-placeholder-count="15">
+              <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 70px repeat(3,64px) repeat(3,64px) 80px;gap:10px;padding:8px 20px;align-items:center;border-bottom:1px solid var(--hair);font-variant-numeric:tabular-nums">
+                <div style="font-weight:600">{{r.name}}</div><div>{{r.nCl}}</div><div>{{r.g}}</div>
+                <div>{{r.p0}}</div><div>{{r.r0}}</div><div style="font-weight:700">{{r.without}}</div>
+                <div>{{r.p1}}</div><div>{{r.r1}}</div><div style="font-weight:700">{{r.withAI}}</div>
+                <div style="font-weight:700">{{r.delta}}</div>
+              </div>
+            </sc-for>
+          </div></div>
+          </sc-if>
+          <div style="border-top:1px solid var(--line);padding:12px 20px 16px;display:flex;flex-direction:column;gap:4px;font-size:13px;color:#2A353F;background:#F8FAFB">
+            <sc-for list="{{catNotes}}" as="n" hint-placeholder-count="3"><div>{{n.t}}</div></sc-for>
+          </div>
+        </section>
+
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">MECHANICAL AGAINST AI (SAMPLE VALUES)</div>
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Mechanical against AI (sample values)</h2>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
-              <sc-for list="{{cont}}" as="c" hint-placeholder-count="4"><div style="border:1px solid #BAC3CA;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;font-weight:600;line-height:1.1">{{c.n}}</span><span style="font-weight:600">{{c.label}}</span><span style="font-size:12px;color:#4F5B66">{{c.sub}}</span></div></sc-for>
+              <sc-for list="{{cont}}" as="c" hint-placeholder-count="4"><div style="border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;font-weight:600;line-height:1.1">{{c.n}}</span><span style="font-weight:600">{{c.label}}</span><span style="font-size:12px;color:#54626F">{{c.sub}}</span></div></sc-for>
             </div>
             <div style="color:#3C4852;font-size:13px">Agreement between the two (kappa) is 0.58. That is not accuracy: both can miss the same thing, such as units that convert to each other. Pairs where they disagree are the most useful ones to label next.</div>
           </div>
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">HOW OFTEN PEOPLE ACCEPT, BY CONFIDENCE (SAMPLE VALUES)</div>
+          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">How often people accept, by confidence (sample values)</h2>
             <sc-for list="{{acc}}" as="a" hint-placeholder-count="4">
-              <div style="display:flex;align-items:center;gap:10px"><div style="flex:0 0 110px;font-size:13px">{{a.bin}}</div><div style="flex:1;min-width:0;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{a.bar}}"></div></div><div style="flex:0 0 44px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums">{{a.v}}</div></div>
+              <div style="display:flex;align-items:center;gap:10px"><div style="flex:0 0 110px;font-size:13px">{{a.bin}}</div><div style="flex:1;min-width:0;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{a.bar}}"></div></div><div style="flex:0 0 44px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600">{{a.v}}</div></div>
             </sc-for>
             <div style="color:#3C4852;font-size:13px">Acceptance alone can flatter the AI, because people tend to agree with it. The check is the planted wrong suggestions: 0 of 6 were accepted.</div>
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">THIS SESSION (LIVE)</div>
-            <sc-for list="{{live}}" as="l" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+          <div style="flex:1 1 320px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">This session (live)</h2>
+            <sc-for list="{{live}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
           </div>
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">GUARDS (LIVE FROM THE SAMPLE)</div>
-            <sc-for list="{{guardStats}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+          <div style="flex:1 1 320px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Guards (live from the sample)</h2>
+            <sc-for list="{{guardStats}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
           </div>
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">PROGRESS BY LANE (LIVE)</div>
-            <sc-for list="{{laneStats}}" as="l" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
-            <div style="color:#4F5B66;font-size:13px">The pilot answers a question these numbers cannot yet: how many minutes a reviewer really needs per cluster in each lane. Use that to plan the full run.</div>
+          <div style="flex:1 1 320px;min-width:0;background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Progress by lane (live)</h2>
+            <sc-for list="{{laneStats}}" as="l" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+            <div style="color:#54626F;font-size:13px">The pilot answers a question these numbers cannot yet: how many minutes a reviewer really needs per cluster in each lane. Use that to plan the full run.</div>
           </div>
         </div>
       </div>
@@ -1483,7 +1788,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 const DEFAULTS = {
   view: 'open', source: 'sample', scope: 'all', person: 'sam', preview: '', hint: true, glossary: false, navClosed: {}, homeOpen: { 0: true },
   selected: 'CL-001', blind: null, blindDone: {}, events: [], verified: '', fmt: 'sphinx', tamper: false, published: false, baseId: 'DRAFT-0001',
-  dec: {}, sign: {}, objections: {}, adjud: {}, res: {}, why: {}, ref: {}, alignOpen: false, peeled: {}, claims: {}, openVer: {}, liveVer: {}, dirs: {}, stale: {}, sib: {},
+  dec: {}, sign: {}, objections: {}, adjud: {}, res: {}, why: {}, ref: {}, alignOpen: false, hand: {}, sendF: {}, replyNote: {}, metArm: 'after', metSort: 'gain', metTable: false, peeled: {}, claims: {}, openVer: {}, liveVer: {}, dirs: {}, stale: {}, sib: {},
   qTab: 'me', qLane: '', qStatus: '', qAlloc: '', qSearch: '', qPage: 0,
   xFilter: 'all', xAlloc: '', xPick: '', xPage: 0, lpage: 0, lfilter: '', logTab: 'ledger',
   chatOpen: false, chat: {}, chatInput: '', lensNote: {}, polLane: 'B', polNew: false, polCross: false, polBase: false, scopeChoice: 'all', pilotAlloc: 'Mission Computer', just: '', adjNote: {}, sibNote: {},
@@ -2059,6 +2364,49 @@ const REQS = (() => {
 })();
 const REQ_BY = Object.fromEntries(REQS.map((r) => [r.id, r]));
 
+
+/* ---------- sample scores for the Methods and metrics page ----------
+   There is no gold set of human-labelled pairs yet, so EVERY number in this file is a made-up placeholder that shows the layout and the
+   questions the page will answer once real labels exist. Nothing here is measured. The page says so.
+   CAT_SCORES rows: [category key (a cluster's famKey), name, gold pairs, then [precision, recall] for four ways of working:
+   mechanical only, mechanical then AI, AI then mechanical, AI only]. */
+const CAT_SCORES = [
+  ['resp', 'Response time', 142, [0.92, 0.88], [0.94, 0.88], [0.91, 0.90], [0.86, 0.89]],
+  ['hb', 'Heartbeat interval', 118, [0.93, 0.89], [0.95, 0.89], [0.92, 0.91], [0.88, 0.90]],
+  ['boot', 'Start-up time', 96, [0.90, 0.86], [0.93, 0.86], [0.90, 0.88], [0.84, 0.87]],
+  ['ret', 'Data retention', 131, [0.91, 0.85], [0.94, 0.86], [0.90, 0.88], [0.85, 0.88]],
+  ['rate', 'Update rate', 109, [0.92, 0.87], [0.94, 0.87], [0.91, 0.89], [0.86, 0.88]],
+  ['avail', 'Availability', 74, [0.89, 0.82], [0.92, 0.83], [0.86, 0.85], [0.78, 0.86]],
+  ['mass', 'Mass limit', 158, [0.95, 0.90], [0.96, 0.90], [0.94, 0.91], [0.90, 0.91]],
+  ['acc', 'Position accuracy', 88, [0.91, 0.84], [0.92, 0.84], [0.89, 0.86], [0.82, 0.87]],
+  ['temp', 'Operating temperature', 103, [0.90, 0.85], [0.92, 0.85], [0.88, 0.88], [0.83, 0.88]],
+  ['cap', 'Storage capacity', 117, [0.92, 0.86], [0.94, 0.87], [0.91, 0.88], [0.86, 0.88]],
+  ['modal', 'Shall or should', 64, [0.74, 0.66], [0.88, 0.72], [0.84, 0.78], [0.80, 0.80]],
+  ['clauses', 'One contains the other', 79, [0.68, 0.52], [0.81, 0.74], [0.78, 0.76], [0.72, 0.80]],
+  ['cond', 'Different conditions', 58, [0.70, 0.60], [0.84, 0.72], [0.79, 0.74], [0.73, 0.77]],
+  ['neg', 'Required or prohibited', 41, [0.88, 0.70], [0.90, 0.80], [0.80, 0.84], [0.66, 0.85]],
+  ['bus', 'Conflicting values', 49, [0.90, 0.84], [0.90, 0.84], [0.81, 0.86], [0.70, 0.84]]
+];
+const ARM_KEYS = ['mech', 'after', 'before', 'ai'];
+const ARM_COL = { mech: 3, after: 4, before: 5, ai: 6 };
+const ARM_INFO = {
+  mech: { name: 'Mechanical only', sub: 'Text, keyword and meaning scores, combined. No AI.', mark: 'mech' },
+  after: { name: 'Mechanical, then AI', sub: 'The AI re-reads only what the mechanical steps flagged.', mark: 'ai' },
+  before: { name: 'AI, then mechanical', sub: 'The AI proposes pairs first; the mechanical steps check them.', mark: 'ai' },
+  ai: { name: 'AI only', sub: 'No mechanical steps. Shown for comparison; the app does not work this way.', mark: 'ai' }
+};
+/* effort and cost are sample figures too: reviewer minutes per cluster, AI calls (three runs per item), AI compute minutes on the local model */
+const ARM_OPS = { mech: { mins: 4.6, calls: 0, aiMin: 0 }, after: { mins: 3.9, calls: 663, aiMin: 22 }, before: { mins: 4.4, calls: 11712, aiMin: 410 }, ai: { mins: 5.3, calls: 11712, aiMin: 410 } };
+/* the mechanical methods one at a time: [name, precision, recall, [precision, recall] with AI after, [precision, recall] with AI before, pairs scored]
+   The last row is the combined score, which is the "Mechanical only" way of working above (its numbers are taken from the table of categories). */
+const LADDER = [
+  ['Text match (fuzzy)', 0.61, 0.48, [0.79, 0.49], [0.66, 0.61], 3904],
+  ['Keyword overlap (TF-IDF)', 0.58, 0.52, [0.77, 0.53], [0.64, 0.63], 3904],
+  ['Embedding model A', 0.71, 0.84, [0.86, 0.84], [0.74, 0.86], 1126],
+  ['Embedding model B', 0.69, 0.81, [0.85, 0.81], [0.72, 0.84], 1126],
+  ['Cross-encoder re-score', 0.78, 0.76, [0.88, 0.76], [0.80, 0.80], 1126]
+];
+
 /* ---------- wording tokens (diff and highlight) ---------- */
 const SLOT_STYLE = {
   num: 'background:#FFE0AD;color:#3F2400;box-shadow:inset 0 -2px 0 #B35A00;',
@@ -2401,6 +2749,12 @@ function vsAI(c, res) {
 }
 function canRecord(S, c, ev, res, st, person, blindPending) {
   if (person.role === 'observer') return 'Observers can read but not decide.';
+  const hd = handOf(S, c.id), hdName = hd ? (PEOPLE.find((p) => p.k === hd.to) || {}).name : '';
+  if (hd && hd.status === 'waiting' && !decOf(S, c.id)) {
+    if (hd.from === person.k) return 'Waiting on ' + hdName + '. Withdraw the request to decide now.';
+    if (hd.to === person.k && hd.ask === 'check') return 'Answer the request for a second opinion above first.';
+    if (hd.to !== person.k) return 'This was sent to ' + hdName + ' and is waiting on them.';
+  }
   if (S.preview) return 'You are previewing another lens. Switch back to decide.';
   if ((S.liveVer[c.id] || 0) > (S.openVer[c.id] || 0)) return 'This cluster changed after you opened it. Reload it first so you decide on what is current.';
   if (st === 'stale') return 'The source changed after the last decision. Reopen it first.';
@@ -2421,6 +2775,93 @@ function describeDec(dec) {
   if (dec.outcome === 'merge' && dec.strategy) return 'Merged · ' + STRATS.find((s) => s.k === dec.strategy).short;
   return base;
 }
+
+/* ---------- what happens to each wording, and why ----------
+   One pure function used by the review screen (a preview while you choose, the record afterwards), by the results page and by the checks.
+   Every reason is built from the comparison itself (rank, value, strategy), never from the AI. */
+const DISP_STYLE = {
+  keep: 'background:#12171C;color:#FFFFFF;',
+  merged: 'background:#E8F0FD;color:#123C8C;border:1px solid #9DB8E8;',
+  separate: 'background:#FFFFFF;color:#2F3B46;border:1px dashed #6B7782;',
+  linked: 'background:#EDE8F8;color:#3A2A80;border:1px solid #C4B6EC;',
+  escalated: 'background:#FFF0D2;color:#6B3D00;border:1px solid #E5C87A;',
+  superseded: 'background:#F4F6F8;color:#4F5B66;border:1px solid #B9C3CD;',
+  pending: 'background:#FFFFFF;color:#4F5B66;border:1px dashed #B9C3CD;'
+};
+function valTxt(c, m) {
+  if (c.kind === 'modal') return '“' + (modalOf(m.text) || 'no modal verb') + '”';
+  if (c.kind === 'subs') return m.xr + (m.xr === 1 ? ' clause' : ' clauses');
+  return m.v !== null && m.v !== undefined ? fmtVal(c, m.v) : (m.cond || 'no number');
+}
+function dispositionsOf(S, c, ms, res, ev, dec) {
+  const by = {}, lab = (m) => 'M' + (c.members.indexOf(m) + 1);
+  const put = (m, kind, label, why) => { by[m.id] = { kind, label, why, style: CHIP + DISP_STYLE[kind] }; };
+  const outcome = dec ? dec.outcome : res.outcome;
+  const param = (c.param || 'value').toLowerCase();
+  const out = { by, kinds: { keep: 0, merged: 0, separate: 0, linked: 0, escalated: 0, superseded: 0, pending: 0 }, newWording: false, remain: ms.length, headline: '', survivor: '' };
+  const tally = () => { ms.forEach((m) => { out.kinds[by[m.id].kind]++; }); };
+  const n = ms.length;
+  if (outcome === 'merge') {
+    if (!dec && (ev.err || !ev.covers.length)) {
+      ms.forEach((m) => put(m, 'pending', 'Not chosen yet', 'Choose which wording survives.'));
+      out.headline = 'Choose which wording survives to see what happens to each one.'; tally(); return out;
+    }
+    const covers = dec ? dec.covers : ev.covers, kept = dec ? dec.kept : ev.kept;
+    const nw = dec ? !!dec.newWording : !!ev.newWording;
+    const strat = dec ? dec.strategy : res.strat;
+    const sv = nw ? null : (dec ? (ms.find((m) => m.text === dec.text) || ms.find((m) => m.id === dec.member) || null) : ev.chosen);
+    out.newWording = nw; out.survivor = sv ? sv.id : '';
+    const rks = ms.map((m) => rankOf(S, c, m)).filter((r) => r !== null);
+    const allSame = rks.length > 1 && rks.every((r) => Math.abs(r - rks[0]) < 1e-9);
+    ms.forEach((m) => {
+      if (kept.indexOf(m.id) >= 0 || covers.indexOf(m.id) < 0) { put(m, 'separate', 'Stays separate', 'Cannot be ranked against the others (' + valTxt(c, m) + '). It is linked as related, not merged.'); return; }
+      if (sv && m === sv) {
+        const why = allSame ? 'Same ' + param + ' as the others (' + valTxt(c, m) + '). Its wording is kept word for word.'
+          : strat === 'least' ? 'Weakest ranked wording (' + valTxt(c, m) + '). Chosen on purpose, so this loosens the requirement.'
+          : strat === 'median' ? 'The middle ranked wording (' + valTxt(c, m) + ').'
+          : strat === 'member' ? 'Picked by hand (' + valTxt(c, m) + '). Its wording is kept word for word.'
+          : strat === 'stringent' ? 'Strictest wording that can be ranked (' + valTxt(c, m) + ').'
+          : 'Its wording is kept word for word.';
+        put(m, 'keep', 'Keep', why); return;
+      }
+      if (!sv) { put(m, 'merged', 'Replaced', 'Covered by the ' + (strat === 'ai' ? 'AI draft' : 'new wording') + '. Its ' + param + ' (' + valTxt(c, m) + ') was checked against the new text.'); return; }
+      const rm = rankOf(S, c, m), rs = rankOf(S, c, sv);
+      const why = rm === null || rs === null ? 'Covered by ' + lab(sv) + '.'
+        : Math.abs(rm - rs) < 1e-9 ? 'Same ' + param + ' (' + valTxt(c, m) + '), different words. Covered by ' + lab(sv) + '.'
+        : rm < rs ? 'Looser (' + valTxt(c, m) + '). ' + lab(sv) + ' already meets it, so nothing is lost.'
+        : 'Stricter (' + valTxt(c, m) + ') than the survivor. Merging loosens the requirement: it needs the owners, the PE and a note.';
+      put(m, 'merged', 'Merged into ' + lab(sv), why);
+    });
+    tally();
+    out.remain = out.kinds.keep + out.kinds.separate + (nw ? 1 : 0);
+    const merged = out.kinds.merged;
+    out.headline = (sv ? 'Keep ' + lab(sv) + ' (' + valTxt(c, sv) + ')' : 'New wording replaces ' + merged) + (sv ? ' · ' + merged + ' merged into it' : '') + (out.kinds.separate ? ' · ' + out.kinds.separate + ' stay separate' : '');
+    return out;
+  }
+  if (outcome === 'supersede') {
+    const rks = ms.map((m) => rankOf(S, c, m));
+    const top = rks.some((r) => r !== null) ? Math.max.apply(null, rks.filter((r) => r !== null)) : null;
+    let kept = false;
+    ms.forEach((m, i) => {
+      const keepIt = top !== null ? rks[i] === top && !kept : i === 0;
+      if (keepIt) { kept = true; put(m, 'keep', 'Keep', 'It contains the other wording and adds more (' + valTxt(c, m) + '). Its ID and links stay.'); }
+      else put(m, 'superseded', 'Superseded', 'Contained in the kept requirement. This one is marked superseded; its ID and links stay.');
+    });
+    tally(); out.remain = out.kinds.keep; out.headline = 'Keep ' + out.kinds.keep + ' · ' + out.kinds.superseded + ' superseded'; return out;
+  }
+  const owners = ms.map((m) => m.owner).filter((x, i, a) => a.indexOf(x) === i);
+  if (outcome === 'reject') ms.forEach((m) => put(m, 'separate', 'Stays separate', 'Not a duplicate: the suggestion is closed and nothing changes.'));
+  else if (outcome === 'link') ms.forEach((m) => put(m, 'linked', 'Kept and linked', 'Both stay. A “variant of” link joins them; nothing is merged.'));
+  else if (outcome === 'escalate') ms.forEach((m) => put(m, 'escalated', 'Waiting for ' + (owners.length > 1 ? 'the owners' : 'the owner'), 'No change until ' + joinOr(owners) + (owners.length > 1 ? ' answer.' : ' answers.')));
+  else ms.forEach((m) => put(m, 'pending', 'Not chosen yet', ''));
+  tally();
+  out.headline = outcome === 'reject' ? 'None merged · all ' + n + ' stay separate' : outcome === 'link' ? 'None merged · all ' + n + ' kept and linked' : outcome === 'escalate' ? 'No change yet · the owners are asked' : '';
+  return out;
+}
+
+/* ---------- hand-offs to a teammate ---------- */
+function handOf(S, cid) { return S.hand[cid] || null; }
+const ASK_LABEL = { check: 'A second opinion before I record', decide: 'Please decide this one', review: 'Please review this decision' };
 
 const TODAY = '10 Oct';
 const SCOPE_CACHE = {};
@@ -2659,6 +3100,73 @@ function intentOf(t) {
   return '';
 }
 
+
+/* ---------- results: the consolidated set set against the original, and a grade ----------
+   Everything here is computed from the decisions in the project (the seeded ones from teammates, which are sample data, and yours).
+   The grading rule is a proposal for the team to agree, not a standard. The weights and bands are written out on the page. */
+const GRADE_PARTS = [
+  { k: 'cover', name: 'Accounted for', weight: 20, plain: 'Every original requirement is kept, merged into a named survivor, or has a recorded reason. Requirements in clusters nobody has decided yet are not accounted for.' },
+  { k: 'oblig', name: 'Obligations preserved', weight: 30, plain: 'No merge loosens a number, unit, shall or condition unless the owners and the process engineer have signed it.' },
+  { k: 'sign', name: 'Signed off', weight: 20, plain: 'Every lens the sign-off policy requires has signed the decision.' },
+  { k: 'why', name: 'The why is written down', weight: 15, plain: 'The decision carries a note saying why, as well as a reason code.' },
+  { k: 'second', name: 'A second pair of eyes', weight: 15, plain: 'Someone other than the person who decided has signed, checked or reviewed it.' }
+];
+const GRADE_BANDS = [[90, 'A'], [80, 'B'], [70, 'C'], [60, 'D'], [0, 'F']];
+const GRADE_ORDER = ['A', 'B', 'C', 'D', 'F'];
+function letterOf(score) { return GRADE_BANDS.find((b) => score >= b[0])[1]; }
+const COUNTED = ['decided', 'review', 'approved', 'siblings'];   // a decision under dispute or gone stale does not count until it is settled
+/* alloc: '' for everything in scope, or one allocation name */
+function resultsOf(S, infos, alloc) {
+  const U = universe(S);
+  const reqs = U.reqs.filter((r) => !alloc || r.alloc === alloc);
+  const sel = infos.filter((x) => !alloc || x.c.alloc === alloc);
+  const R = { n: reqs.length, clusters: sel.length, decided: 0, kinds: { asis: 0, keep: 0, merged: 0, separate: 0, linked: 0, escalated: 0, superseded: 0, waiting: 0 }, after: 0, projected: 0, newWord: 0, mergeN: 0, unprotected: 0, signN: 0, signDone: 0, why: 0, second: 0, waitingClusters: 0, noWhy: 0, noSecond: 0, notSigned: 0, cuts: [], ids: { cover: [], oblig: [], sign: [], why: [], second: [] } };
+  let inCl = 0, peeledN = 0;
+  sel.forEach((x) => {
+    const c = x.c, ms = membersOf(S, c);
+    inCl += c.members.length; peeledN += c.members.length - ms.length;
+    const dec = x.dec && COUNTED.indexOf(x.st) >= 0 ? x.dec : null;
+    if (dec) {
+      const d = dispositionsOf(S, c, ms, {}, {}, dec);
+      ms.forEach((m) => { const k = d.by[m.id].kind; R.kinds[k === 'pending' ? 'waiting' : k]++; });
+      R.after += d.remain; R.projected += d.remain; R.decided++; if (d.newWording) R.newWord++;
+      if (dec.outcome === 'merge') { R.mergeN++; if (dec.weakening && !(x.q.sg.OWN && x.q.sg.PE)) { R.unprotected++; R.ids.oblig.push(c.id); } }
+      R.signN++; if (x.q.done) R.signDone++; else { R.notSigned++; R.ids.sign.push(c.id); }
+      if (dec.note && dec.note.trim().length >= 12) R.why++; else { R.noWhy++; R.ids.why.push(c.id); }
+      const others = Object.keys(x.q.sg).filter((k) => x.q.sg[k] && x.q.sg[k].by !== dec.by);
+      if (others.length || dec.checkedBy || (dec.reviewedBy && dec.reviewedBy.length)) R.second++; else { R.noSecond++; R.ids.second.push(c.id); }
+      if (d.kinds.merged > 0) R.cuts.push({ id: c.id, title: c.title, from: ms.length, to: d.remain, text: dec.text || (ms.find((m) => m.id === d.survivor) || ms[0]).text, gone: d.kinds.merged });
+    } else {
+      R.kinds.waiting += ms.length; R.after += ms.length; R.waitingClusters++; R.ids.cover.push(c.id);
+      const res = resOf(S, c), ev = evaluate(S, c, ms, res), d = dispositionsOf(S, c, ms, res, ev, null);
+      R.projected += d.remain;
+    }
+  });
+  R.kinds.asis = R.n - inCl + peeledN; R.after += R.kinds.asis; R.projected += R.kinds.asis;
+  const val = {
+    cover: R.n ? (R.n - R.kinds.waiting) / R.n : 0,
+    oblig: R.mergeN ? 1 - R.unprotected / R.mergeN : 1,
+    sign: R.decided ? R.signDone / R.signN : 0,
+    why: R.decided ? R.why / R.decided : 0,
+    second: R.decided ? R.second / R.decided : 0
+  };
+  const nf = (x) => x.toLocaleString('en-US');
+  const detail = {
+    cover: nf(R.n - R.kinds.waiting) + ' of ' + nf(R.n) + ' requirements accounted for',
+    oblig: R.mergeN ? (R.mergeN - R.unprotected) + ' of ' + R.mergeN + ' merges keep every obligation' : 'No merge recorded yet',
+    sign: R.signDone + ' of ' + R.signN + ' decisions fully signed',
+    why: R.why + ' of ' + R.decided + ' decisions have a note',
+    second: R.second + ' of ' + R.decided + ' had another person’s eyes on them'
+  };
+  const parts = GRADE_PARTS.map((p) => ({ k: p.k, name: p.name, weight: p.weight, plain: p.plain, v: val[p.k], pts: p.weight * val[p.k], gap: p.weight * (1 - val[p.k]), detail: detail[p.k] }));
+  const score = parts.reduce((s, p) => s + p.pts, 0);
+  let letter = letterOf(score), capped = false;
+  if (R.unprotected > 0 && GRADE_ORDER.indexOf(letter) < GRADE_ORDER.indexOf('C')) { letter = 'C'; capped = true; }
+  R.parts = parts; R.score = score; R.letter = letter; R.capped = capped; R.graded = R.decided > 0;
+  R.provisional = R.clusters ? R.decided / R.clusters < 0.9 : true;
+  return R;
+}
+
 class Component extends DCLogic {
   get S() { return Object.assign({}, DEFAULTS, this.state || {}); }
   person(S) { return PEOPLE.find((p) => p.k === S.person) || PEOPLE[0]; }
@@ -2678,7 +3186,12 @@ class Component extends DCLogic {
     const st = statusOf(S, c), dec = decOf(S, c.id);
     let me = false, wait = false, q = null;
     if (dec) q = signState(S, c, dec);
-    if (P.role !== 'observer') {
+    const hd = handOf(S, c.id);
+    const handled = !!hd && hd.status !== 'closed' && (hd.to === P.k || hd.from === P.k) && P.role !== 'observer';
+    if (handled) {
+      const mineToAnswer = hd.to === P.k && hd.status === 'waiting', backToMe = hd.from === P.k && hd.status !== 'waiting';
+      me = mineToAnswer || backToMe; wait = hd.from === P.k && hd.status === 'waiting';
+    } else if (P.role !== 'observer') {
       if (st === 'open' || st === 'claimed') me = lens === 'SE';
       else if (dec && (st === 'decided' || st === 'review')) {
         const own = dec.by === P.name;
@@ -2870,8 +3383,8 @@ class Component extends DCLogic {
   valsShell(S) {
     const P = this.person(S), lead = P.role === 'lead';
     const nMe = this.openCount(S);
-    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', methods: 'icFlask', audit: 'icClock', policy: 'icShield', export: 'icExport' };
-    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', methods: 'Methods and metrics', audit: 'Decisions and audit', policy: 'Sign-off policy', export: 'Export to documents' };
+    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', results: 'icMedal', methods: 'icFlask', audit: 'icClock', policy: 'icShield', export: 'icExport' };
+    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', results: 'Results and grade', methods: 'Methods and metrics', audit: 'Decisions and audit', policy: 'Sign-off policy', export: 'Export to documents' };
     const item = (k) => {
       const o = { label: NAME[k], onClick: () => this.setState({ view: k }), current: S.view === k ? 'page' : 'false', hasCount: k === 'review', count: String(nMe) };
       Object.keys(IC).forEach((j) => { o[IC[j]] = j === k; });
@@ -2895,7 +3408,7 @@ class Component extends DCLogic {
     const qFirst = (v) => (typeof v === 'string' ? v : '');
     return {
       projectName: 'Reference air vehicle', scopeTxt, pageName: NAME[S.view] || 'Home',
-      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'methods', 'audit'].map(item), navOut: ['policy', 'export'].map(item),
+      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'results', 'methods', 'audit'].map(item), navOut: ['policy', 'export'].map(item),
       progExp: progOpen ? 'true' : 'false', outExp: outOpen ? 'true' : 'false',
       toggleProg: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { prog: progOpen }) }),
       toggleOut: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { out: outOpen }) }),
@@ -2997,7 +3510,9 @@ class Component extends DCLogic {
       startReview: () => { const first = infos.find((x) => x.me) || infos.find((x) => !x.dec) || infos[0]; this.setState({ view: 'review', selected: first.c.id, qTab: 'me', qPage: 0 }); },
       tryGroup: () => this.setState({ view: 'review', selected: 'CL-050', qTab: 'all', qSearch: '', qLane: '', qStatus: '', qAlloc: '' }),
       tryGroupShown: S.scope === 'all' || S.scope === 'Data Recorder',
-      openMap: () => this.setState({ view: 'explorer' })
+      openMap: () => this.setState({ view: 'explorer' }),
+      gradeLine: (() => { const R = resultsOf(S, infos, ''); return R.graded ? 'Grade so far: ' + R.letter + ' (' + (Math.round(R.score * 10) / 10).toFixed(1) + ' of 100)' + (R.provisional ? ', provisional.' : '.') + ' ' + R.decided + ' of ' + R.clusters + ' clusters have a decision that counts.' : 'No grade yet. Record a decision and the set is graded against the original.'; })(),
+      openResults: () => this.setState({ view: 'results' })
     };
   }
 
@@ -3019,10 +3534,14 @@ class Component extends DCLogic {
       let status = STATUS_LABEL[x.st];
       if (x.st === 'review' || x.st === 'decided') status += ' · ' + x.q.have.length + ' of ' + x.q.slots.length;
       if (x.st === 'claimed') status = 'Claimed by ' + cl.by.split(' ')[0];
+      const hd = handOf(S, c.id), hdTo = hd && hd.status !== 'closed' ? PEOPLE.find((p) => p.k === hd.to) : null;
+      let statusStyle = CHIP + STATUS_STYLE[x.st];
+      if (hdTo && hd.status === 'waiting') { status = (hd.ask === 'decide' ? 'Handed to ' : 'Waiting on ') + hdTo.name.split(' ')[0]; statusStyle = CHIP + STATUS_STYLE.claimed; }
+      else if (hdTo && hd.status !== 'waiting') { status = (hd.status === 'agreed' ? 'Agreed by ' : 'Sent back by ') + hdTo.name.split(' ')[0]; statusStyle = CHIP + (hd.status === 'agreed' ? STATUS_STYLE.approved : STATUS_STYLE.stale); }
       const on = c.id === sel;
       return {
         id: c.id, title: c.title, lane: 'Lane ' + c.lane, laneStyle: this.laneBadge(c.lane).replace('align-self:flex-start;', ''), rel: REL_LABEL[c.rel], relStyle: CHIP + REL_STYLE[c.rel],
-        status, statusStyle: CHIP + STATUS_STYLE[x.st], size: ms.length + ' members' + (spreadOf(c, ms) ? ' · ' + spreadOf(c, ms) : ''),
+        status, statusStyle, size: ms.length + ' members' + (spreadOf(c, ms) ? ' · ' + spreadOf(c, ms) : ''),
         current: on ? 'true' : 'false',
         pick: () => this.setState({ selected: c.id, just: '', openVer: Object.assign({}, S.openVer, { [c.id]: S.liveVer[c.id] || 0 }) }),
         style: 'text-align:left;display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:8px;cursor:pointer;min-height:44px;background:' + (on ? '#F1F6FF' : '#FFFFFF') + ';border:' + (on ? '2px solid var(--accent)' : '1px solid #BAC3CA')
@@ -3174,16 +3693,16 @@ class Component extends DCLogic {
     const faded = 'color:#5A6672;';
     const refBg = 'background:color-mix(in srgb,var(--accent) 6%,#FFFFFF);';
     const cellOuter = (span, bg) => 'grid-column:span ' + span + ';display:flex;align-items:center;padding:8px 3px;border-bottom:1px solid #E7ECF1;' + bg;
+    const disp = dispositionsOf(S, c, ms, res, ev, dec);
     const rowHead = (m, isRef) => {
       const r = rk.find((x) => x.m === m);
       const rankText = !r ? 'Cannot be ranked' : m.id === strictId && rk.length > 1 && rk[0].r !== rk[rk.length - 1].r ? 'Strictest' : m.id === weakId && rk.length > 1 && rk[0].r !== rk[rk.length - 1].r ? 'Weakest' : 'Ranked';
-      const covered = dec ? dec.covers.indexOf(m.id) >= 0 : false, kept = dec ? dec.kept.indexOf(m.id) >= 0 : false;
-      const survives = !dec && res.outcome === 'merge' && ev.chosen === m;
+      const survives = disp.by[m.id].kind === 'keep';
       const label = 'M' + (mi(m) + 1);
       return {
         label, id: m.id, owner: m.owner, verif: m.verif, isRef, notRef: !isRef, refAria: 'Use as reference: ' + label, peelAria: 'Peel out ' + label,
         rankText, rankStyle: CHIP + (rankText === 'Strictest' ? 'background:#E1F2E7;color:#14502B;' : rankText === 'Weakest' ? 'background:#FFF0D2;color:#6B3D00;' : rankText === 'Cannot be ranked' ? 'background:#F4F6F8;color:#4F5B66;border:1px dashed #6B7782;' : 'background:#E4E9ED;color:#2F3B46;'),
-        tag: survives ? 'Survives' : covered ? 'Covered' : kept ? 'Kept separate' : '', hasTag: survives || covered || kept, tagStyle: CHIP + (survives ? 'background:#12171C;color:#FFFFFF;' : 'background:#E8F0FD;color:#123C8C;'),
+        disp: disp.by[m.id].label, dispStyle: disp.by[m.id].style, dispWhy: disp.by[m.id].why, hasWhy: !!disp.by[m.id].why,
         setRef: () => this.setState({ ref: Object.assign({}, S.ref, { [cid]: m.id }) }),
         canPeel: actor && !dec && ms.length > 2 && c.members.length > 2,
         peel: () => this.setState({ peeled: Object.assign({}, S.peeled, { [cid]: (S.peeled[cid] || []).concat([m.id]) }), ref: Object.assign({}, S.ref, { [cid]: S.ref[cid] === m.id ? null : S.ref[cid] }), events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Peeled ' + m.id + ' out of the group (it does not belong)', cid) }),
@@ -3265,12 +3784,13 @@ class Component extends DCLogic {
     const avail = strategyAvail(S, c, ms, rk);
     const outcomes = c.actions.map(([k, label]) => ({ label, on: res.outcome === k, pressed: res.outcome === k ? 'true' : 'false', pick: () => setRes({ outcome: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (res.outcome === k ? 600 : 500) + ';border:' + (res.outcome === k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (res.outcome === k ? '#F1F6FF' : '#FFFFFF') + ';' }));
     const merging = res.outcome === 'merge';
-    const strats = STRATS.map((s) => ({
+    const stratsAll = STRATS.map((s) => ({
       k: s.k, name: s.name, sub: s.sub, on: res.strat === s.k, pressed: res.strat === s.k ? 'true' : 'false', disabled: !!avail[s.k], why: avail[s.k], hasWhy: !!avail[s.k],
       pick: () => setRes(s.k === 'own' && !res.own ? { strat: s.k, ownSeed: '', own: strictId ? ms.find((m) => m.id === strictId).text : ms[0].text } : s.k === 'ai' && !res.aiText ? { strat: s.k, aiText: c.aiDraft } : { strat: s.k }),
       markStyle: { sq: MARK.mech[1], ci: MARK.human[1], di: MARK.ai[1] }[s.mark] + ';flex:none;margin-top:4px',
       style: 'text-align:left;display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:8px 12px;border-radius:6px;cursor:pointer;border:' + (res.strat === s.k ? '2px solid var(--accent)' : '1px solid #BAC3CA') + ';background:' + (res.strat === s.k ? '#F1F6FF' : '#FFFFFF') + ';'
     }));
+    const strats = stratsAll.filter((x) => x.k !== 'ai'), aiStrat = stratsAll.find((x) => x.k === 'ai');
     const memberOpts = ms.map((m, i) => ({ v: m.id, t: 'M' + (i + 1) + ' · ' + m.id + ' · ' + (m.v !== null && m.v !== undefined ? fmtVal(c, m.v) : m.cond || 'no number') }));
     const sideOpts = ev.sideOpts.map((o) => ({ label: o.label + ' (' + (o.m.v !== null ? fmtVal(c, o.m.v) : o.m.id) + ')', pressed: res.side === o.k ? 'true' : 'false', pick: () => setRes({ side: o.k }), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:600;border:' + (res.side === o.k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (res.side === o.k ? '#F1F6FF' : '#FFFFFF') + ';' }));
     const aiTextNow = res.aiText || c.aiDraft || '';
@@ -3298,8 +3818,16 @@ class Component extends DCLogic {
     const rguards = ev.guards.map((g) => ({ name: g.name, note: g.note, isPass: g.st === 'pass', isWarn: g.st === 'warn', isFail: g.st === 'block', isInfo: g.st === 'info', tag: { pass: 'Pass', warn: 'Warning', block: 'Blocks', info: 'Note' }[g.st], tagStyle: 'font-size:12px;font-weight:600;color:' + { pass: '#14502B', warn: '#6B3D00', block: '#7A1510', info: '#10337F' }[g.st] + ';' }));
     const gSummary = ev.blocks ? ev.blocks + ' blocking' : ev.warns ? ev.warns + ' warning' + (ev.warns > 1 ? 's' : '') : 'all clear';
     const fcSlots = SLOT_KEYS.filter((k) => forecast[k] !== 'none').map((k) => ({ label: SLOT_NAME[k] + (forecast[k] === 'sample' ? ' (sampled)' : '') }));
+    const aiRelWord = String(c.ai.verdict || '').split(/[ (]/)[0];
+    const aiAfter = hideAI ? 'The AI answer stays hidden until you record your own first impression above.'
+      : c.ai.mode === 'none' ? 'The AI was not used on this group. The mechanical methods decided the suggestion.'
+      : c.ai.mode === 'judge' ? (aiRelWord === c.rel ? 'After the mechanical steps, the AI reads this group as ' + (REL_LABEL[c.rel] || c.rel).toLowerCase() + ' too, so the two agree.' : 'The mechanical methods say ' + (REL_LABEL[c.rel] || c.rel).toLowerCase() + ' and the AI says ' + (REL_LABEL[aiRelWord] || aiRelWord).toLowerCase() + '. Look at that difference before you choose.')
+      : !c.aiDraft ? 'The AI declined to draft wording for this group.'
+      : merging && ev.text && !ev.err ? (ev.text === c.aiDraft ? 'The AI draft is word for word what your current choice keeps.' : 'The AI draft differs from your current choice in ' + Math.round(editRatio(ev.text, c.aiDraft) * 100) + '% of its words.') : 'The AI drafted merged wording. Choose merge to compare it with your choice.';
+    const mechSummary = merging && !ev.err ? disp.headline + ' · guards: ' + gSummary : disp.headline || 'Choose what happens to these requirements.';
     const rp = {
       decided: !!dec, undecided: !dec,
+      aiStrat, aiAfter, mechSummary,
       outcomes, showStrats: merging && !dec, strats,
       showMember: merging && res.strat === 'member', memberOpts, memberV: res.member || ms[0].id, onMember: (e) => setRes({ member: e.target.value }),
       showSide: merging && res.strat === 'median' && sideOpts.length > 0, sideOpts,
@@ -3315,7 +3843,7 @@ class Component extends DCLogic {
       recordLabel: 'Record decision', recordDisabled: !!why || !actor, recordWhy: why || (actor ? 'Ready. Recording saves revision R3 and starts the sign-offs.' : ''),
       record: () => this.record(c),
       skip: () => this.nextForMe(),
-      decLines: dec ? [['Decision', describeDec(dec)], ['Result', dec.text ? '“' + dec.text + '”' : 'No wording change'], ['Reason', (REASON_NAME[dec.reason] || dec.reason) + ' (' + dec.reason + ')'], ['Note', dec.note || 'None'], ['By', dec.by + ' · ' + (dec.lens || '') + ' · ' + dec.at], ['Against the AI', dec.vs], ['Covers', dec.covers.length ? dec.covers.join(', ') : '—'], ['Kept separate', dec.kept.length ? dec.kept.join(', ') : '—']].concat(dec.share ? [['AI-origin share', dec.share.bucket + (dec.share.pct ? ' · ' + dec.share.pct + '% changed' : '')]] : []).concat(dec.dissent ? [['Dissent kept', dec.dissent]] : []).map(([k, v]) => ({ k, v })) : [],
+      decLines: dec ? [['Decision', describeDec(dec)], ['Result', dec.text ? '“' + dec.text + '”' : 'No wording change'], ['Reason', (REASON_NAME[dec.reason] || dec.reason) + ' (' + dec.reason + ')'], ['Note', dec.note || 'None'], ['By', dec.by + ' · ' + (dec.lens || '') + ' · ' + dec.at], ['Against the AI', dec.vs], ['Covers', dec.covers.length ? dec.covers.join(', ') : '—'], ['Kept separate', dec.kept.length ? dec.kept.join(', ') : '—']].concat(dec.share ? [['AI-origin share', dec.share.bucket + (dec.share.pct ? ' · ' + dec.share.pct + '% changed' : '')]] : []).concat(dec.dissent ? [['Dissent kept', dec.dissent]] : []).concat(dec.checkedBy ? [['Second opinion', 'Checked by ' + dec.checkedBy]] : []).concat(dec.handedFrom ? [['Handed over by', dec.handedFrom]] : []).concat(dec.reviewedBy && dec.reviewedBy.length ? [['Reviewed by', dec.reviewedBy.join(', ')]] : []).map(([k, v]) => ({ k, v })) : [],
       reopenV: res.reopen, onReopen: (e) => setRes({ reopen: e.target.value }), reopenDisabled: res.reopen.trim().length < 12 || !actor,
       doReopen: () => this.setState({ dec: Object.assign({}, S.dec, { [cid]: null }), sign: Object.assign({}, S.sign, { [cid]: {} }), res: Object.assign({}, S.res, { [cid]: { reason: 'R-OTH' } }), events: this.mk(S.events, 'human', P.name + ' · ' + (P.lens || ''), 'Reopened a decision. Reason: ' + res.reopen.trim(), cid), ...this.bump(S, cid), just: '' }),
       aiHint: hideAI ? 'The AI answer is hidden until you record your first impression above.' : c.ai.mode === 'none' ? 'No AI was used on this group.' : c.ai.mode === 'draft' ? 'The AI drafted merged wording (shown in the AI card).' : 'The AI judged this group ' + c.ai.verdict + ' (' + c.ai.conf + '%). It cannot decide for you.'
@@ -3333,6 +3861,79 @@ class Component extends DCLogic {
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    /* hand-off to a teammate: ask for a second opinion, hand the decision over, or ask for a review of a decision */
+    const pBy = (k) => PEOPLE.find((p) => p.k === k) || { k, name: k, lens: '' };
+    const hand = handOf(S, cid), live = hand && hand.status !== 'closed' ? hand : null;
+    const first = (p) => p.name.split(' ')[0];
+    const lowerFirst = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+    const lensTxt = (p) => (p.lens ? SLOT_NAME[p.lens] : 'no lens');
+    const sendF = Object.assign({ open: false, to: '', ask: 'check', note: '' }, S.sendF[cid] || {});
+    const setSend = (o) => this.setState({ sendF: Object.assign({}, S.sendF, { [cid]: Object.assign({}, sendF, o) }) });
+    const mates = PEOPLE.filter((p) => p.k !== P.k && p.role !== 'observer');
+    const needLens = ['PE', 'UX', 'NU', 'SE'].find((k) => forecast[k] === 'req' && k !== P.lens);
+    const suggested = (mates.find((p) => p.lens === needLens) || mates[0]).k;
+    const toK = mates.some((p) => p.k === sendF.to) ? sendF.to : suggested;
+    const askNow = dec ? 'review' : sendF.ask === 'decide' ? 'decide' : 'check';
+    const sendNote = sendF.note.trim();
+    const sendOk = sendNote.length >= 12;
+    const blockedState = st === 'stale' || st === 'dispute' || st === 'siblings' || st === 'oversized';
+    const draftText = dec ? describeDec(dec) + ' · reason ' + dec.reason : (c.actions.find((a) => a[0] === res.outcome) || [0, res.outcome])[1] + (merging && !ev.err ? ' · ' + disp.headline : '') + (res.reason ? ' · reason ' + res.reason : ' · no reason chosen yet');
+    const logHand = (text) => this.mk(S.events, 'human', P.name + ' · ' + (P.lens || ''), text, cid);
+    const putHand = (h, extra) => Object.assign({ hand: Object.assign({}, S.hand, { [cid]: h }) }, extra || {});
+    const doSend = () => {
+      const to = pBy(toK);
+      this.setState(putHand({ from: P.k, to: toK, ask: askNow, note: sendNote, at: TODAY, status: 'waiting', reply: '', draft: draftText, outcome: dec ? '' : res.outcome, strat: dec ? '' : (res.strat || '') }, { sendF: Object.assign({}, S.sendF, { [cid]: { open: false, to: '', ask: 'check', note: '' } }), events: logHand('Sent to ' + to.name + ' (' + lensTxt(to) + '): ' + lowerFirst(ASK_LABEL[askNow]) + '. Message: ' + sendNote) }));
+    };
+    const replyText = (S.replyNote[cid] || '').trim();
+    const replyOk = replyText.length >= 12;
+    const setReply = (e) => this.setState({ replyNote: Object.assign({}, S.replyNote, { [cid]: e.target.value }) });
+    const answer = (status, text) => {
+      const from = live ? pBy(live.from) : { name: '' };
+      const extra = { replyNote: Object.assign({}, S.replyNote, { [cid]: '' }), events: logHand(text + (replyText ? ' Comment: ' + replyText : '')) };
+      if (status === 'agreed' && live.ask === 'review' && dec) extra.dec = Object.assign({}, S.dec, { [cid]: Object.assign({}, dec, { reviewedBy: (dec.reviewedBy || []).concat([P.name]) }) });
+      this.setState(putHand(Object.assign({}, live, { status, reply: replyText, repliedAt: TODAY }), extra));
+    };
+    const closeHand = (why, text) => this.setState(putHand(Object.assign({}, live, { status: 'closed', closedWith: why }), { events: logHand(text) }));
+    const hv = { show: false, style: '', title: '', lines: [], canReply: false, replyV: S.replyNote[cid] || '', onReply: setReply, replyHelp: '', actions: [] };
+    if (live) {
+      const fromP = pBy(live.from), toP = pBy(live.to), mine = live.to === P.k, mineSent = live.from === P.k;
+      const tone = (t) => this.banner(t, '', [], []).style;
+      const sameAsAsked = live.outcome === undefined || live.outcome === '' || (live.outcome === res.outcome && (res.outcome !== 'merge' || live.strat === (res.strat || '')));
+      const act = (label, fn, o) => Object.assign({ label, onClick: fn, disabled: false, primary: false }, o || {});
+      const ln = (a) => a.filter(Boolean).map((t) => ({ t }));
+      hv.show = true;
+      if (live.status === 'waiting' && mineSent) {
+        Object.assign(hv, { style: tone('claim'), title: 'Waiting on ' + toP.name + ' (' + lensTxt(toP) + ')', lines: ln(['You asked: ' + lowerFirst(ASK_LABEL[live.ask]) + '. Sent ' + live.at + '.', 'Your message: “' + live.note + '”', 'Your draft: ' + live.draft, 'Deciding is paused here until they answer or you withdraw the request.']), actions: [act('Withdraw the request', () => closeHand('withdrawn', 'Withdrew the request to ' + toP.name), {})] });
+      } else if (live.status === 'waiting' && mine) {
+        const ask = live.ask;
+        Object.assign(hv, { style: tone('claim'), canReply: true, replyHelp: ask === 'decide' ? 'To hand it back, write at least 12 characters about why.' : 'A comment is optional when you agree, and needed (12 characters) to send it back.' });
+        hv.title = fromP.name + (ask === 'check' ? ' asked for your second opinion' : ask === 'decide' ? ' handed this to you to decide' : ' asked you to review this decision');
+        hv.lines = ln(['Their message: “' + live.note + '”', (ask === 'review' ? 'Their decision: ' : 'Their draft: ') + live.draft, ask === 'decide' ? 'You can decide in the Resolve panel. Recording closes this request.' : '']);
+        if (ask === 'check') hv.actions = [act('Agree with the draft', () => answer('agreed', 'Agreed with ' + first(fromP) + '\'s draft.'), { primary: true }), act('Send it back', () => answer('returned', 'Sent it back to ' + first(fromP) + '.'), { disabled: !replyOk })];
+        else if (ask === 'review') hv.actions = [act('Looks right', () => answer('agreed', 'Reviewed ' + first(fromP) + '\'s decision: looks right.'), { primary: true }), act('Send it back', () => answer('returned', 'Sent the decision back to ' + first(fromP) + '.'), { disabled: !replyOk })];
+        else hv.actions = [act('Hand it back', () => answer('returned', 'Handed the decision back to ' + first(fromP) + '.'), { disabled: !replyOk })];
+      } else if (live.status === 'waiting') {
+        Object.assign(hv, { style: tone('info'), title: 'Waiting on ' + toP.name, lines: ln([fromP.name + ' asked: ' + lowerFirst(ASK_LABEL[live.ask]) + '.']) });
+      } else if (mineSent) {
+        const ok = live.status === 'agreed';
+        Object.assign(hv, { style: tone(ok ? 'ok' : 'warn'), title: toP.name + (ok ? ' agreed' : ' sent it back'), lines: ln([live.reply ? '“' + live.reply + '”' : 'No comment.', ok && live.ask === 'check' ? (sameAsAsked ? 'You can record your decision now. It will be saved as checked by ' + first(toP) + '. Recording closes this notice.' : 'You have changed your choice since ' + first(toP) + ' agreed, so recording it will not count as checked by ' + first(toP) + '. Choose what they agreed to if you want it to count, or drop their answer.') : '']), actions: ok ? (live.ask === 'check' ? (sameAsAsked ? [] : [act('Drop their answer', () => closeHand('dropped', 'Dropped the answer from ' + toP.name + ' because the choice changed'))]) : [act('Got it', () => closeHand('seen', 'Saw the answer from ' + toP.name))]) : [act('Got it', () => closeHand('seen', 'Saw the answer from ' + toP.name)), act('Send to someone else', () => { closeHand('seen', 'Saw the answer from ' + toP.name); setSend({ open: true }); })] });
+      } else {
+        Object.assign(hv, { style: tone('info'), title: toP.name + (live.status === 'agreed' ? ' agreed' : ' sent it back') + ' to ' + fromP.name, lines: ln([live.reply ? '“' + live.reply + '”' : '']) });
+      }
+      hv.hasLines = hv.lines.length > 0;
+      hv.actions = hv.actions.map((a) => Object.assign({ style: 'min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:600;' + (a.primary ? 'background:#12171C;color:#FFFFFF;border:0;' : 'background:#FFFFFF;border:1px solid #6B7782;color:#12171C;') }, a));
+    } else { hv.hasLines = false; }
+    const snd = {
+      show: !!actor && !blockedState && (!dec ? true : !!decidedOK) && !live,
+      open: !!sendF.open, openPressed: sendF.open ? 'true' : 'false', toggle: () => setSend({ open: !sendF.open }),
+      title: dec ? 'Ask a teammate to review' : 'Send to a teammate',
+      help: dec ? 'Sign-off still comes from the lenses the policy names. A review you ask for here is advice, and it is kept with the decision.' : 'Use this when you want another pair of eyes before you record, or when someone else should decide.',
+      toV: toK, onTo: (e) => setSend({ to: e.target.value }), toOpts: mates.map((p) => ({ v: p.k, t: p.name + ' · ' + lensTxt(p) + (p.k === suggested ? ' (suggested)' : '') })),
+      asks: dec ? [] : ['check', 'decide'].map((k) => ({ label: ASK_LABEL[k], pressed: askNow === k ? 'true' : 'false', pick: () => setSend({ ask: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (askNow === k ? 600 : 500) + ';border:' + (askNow === k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (askNow === k ? '#F1F6FF' : '#FFFFFF') + ';' })),
+      hasAsks: !dec, noteV: sendF.note, onNote: (e) => setSend({ note: e.target.value }),
+      noteHelp: sendOk ? 'Your draft choice goes with the message, so they see what you were about to do.' : 'Write at least 12 characters: what you want them to look at.',
+      sendLabel: 'Send to ' + first(pBy(toK)), sendDisabled: !sendOk, send: doSend
     };
     /* assemble */
     const status = STATUS_LABEL[st] + (q ? ' · ' + q.have.length + ' of ' + q.slots.length + ' signed' : '');
@@ -3356,7 +3957,9 @@ class Component extends DCLogic {
         hasProposal: !!ai.proposal, proposalLabel: ai.mode === 'draft' ? 'AI-drafted merged wording' : 'AI-suggested handling', proposalText: ai.proposal,
         whyOpen: S.why[cid] ? 'true' : 'false', whyOpenBool: !!S.why[cid], record: record.map(([k, v]) => ({ k, v }))
       },
-      lp, sg: sgv, rp, ch
+      lp, sg: sgv, rp, ch,
+      disp: { headline: disp.headline, stateLabel: dec ? 'Recorded' : 'If you record this', hasHeadline: !!disp.headline },
+      hd: hv, snd
     };
   }
   nextForMe() {
@@ -3376,7 +3979,15 @@ class Component extends DCLogic {
     revs.push({ rev: 'R3', how: 'human', text: ev.text, by: P.name, at: TODAY, note: res.note.trim() });
     const merged = res.outcome === 'merge';
     const dec = { outcome: res.outcome, strategy: merged ? res.strat : '', member: res.member, text: merged ? ev.text : '', newWording: merged && ev.newWording, weakening: merged && ev.weakening, covers: merged ? ev.covers : [], kept: merged ? ev.kept : [], reason: res.reason, note: res.note.trim(), by: P.name, lens: P.lens, at: TODAY, rev: 'R3', vs: vsAI(c, res), share, revs, ownFrom: merged && res.strat === 'own' && res.ownSeed ? 'assistant' : '' };
-    this.setState({ dec: Object.assign({}, S.dec, { [c.id]: dec }), sign: Object.assign({}, S.sign, { [c.id]: {} }), just: c.id, events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Decision: ' + describeDec(dec).toLowerCase() + ' · reason ' + dec.reason + (dec.note ? ' · note recorded' : ''), c.id), ...this.bump(S, c.id) });
+    const hd = handOf(S, c.id), pName = (k) => (PEOPLE.find((p) => p.k === k) || {}).name;
+    let handPatch = {};
+    if (hd && hd.status !== 'closed') {
+      const asked = hd.outcome === undefined || hd.outcome === '' || (hd.outcome === res.outcome && (res.outcome !== 'merge' || hd.strat === (res.strat || '')));
+      if (hd.status === 'agreed' && hd.ask === 'check' && hd.from === P.k && asked) dec.checkedBy = pName(hd.to);
+      if (hd.ask === 'decide' && hd.to === P.k) dec.handedFrom = pName(hd.from);
+      handPatch = { hand: Object.assign({}, S.hand, { [c.id]: Object.assign({}, hd, { status: 'closed', closedWith: 'decided' }) }) };
+    }
+    this.setState({ ...handPatch, dec: Object.assign({}, S.dec, { [c.id]: dec }), sign: Object.assign({}, S.sign, { [c.id]: {} }), just: c.id, events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Decision: ' + describeDec(dec).toLowerCase() + ' · reason ' + dec.reason + (dec.note ? ' · note recorded' : ''), c.id), ...this.bump(S, c.id) });
   }
 
   /* ----- all requirements: map, table, one requirement ----- */
@@ -3434,30 +4045,184 @@ class Component extends DCLogic {
       } : { id: '', alloc: '', owner: '', tok: [], stateLabel: '', shape: '', inCluster: false, clusterLine: '', open: () => {}, history: [] }
     };
   }
-  /* ----- methods and metrics (scaled to the project) ----- */
+  /* ----- methods and metrics: sample scores for four ways of working, then by category (see data4.js; nothing here is measured) ----- */
   valsMethods(S) {
-    const MECH = MARK.mech[1], AI = MARK.ai[1];
-    const raw = [
-      ['Text match (fuzzy)', MECH, 0.61, '0.55–0.67', 0.48, 0.21, 3904], ['Keyword overlap (TF-IDF)', MECH, 0.58, '0.52–0.64', 0.52, 0.18, 3904],
-      ['Embedding model A', MECH, 0.71, '0.66–0.76', 0.84, 0.09, 1126], ['Embedding model B', MECH, 0.69, '0.64–0.74', 0.81, 0.11, 1126],
-      ['Cross-encoder re-score', MECH, 0.78, '0.73–0.83', 0.76, 0.07, 1126], ['Combined score', MECH, 0.86, '0.81–0.90', 0.80, 0.04, 1126], ['AI judge', AI, 0.83, '0.74–0.90', 0.71, 0.08, CLUSTERS.filter((c) => c.ai.mode === 'judge').length]
-    ];
-    const bar = (v) => 'height:10px;background:#256ABF;border-radius:0 5px 5px 0;width:' + v * 100 + '%';
-    const sources2 = raw.map(([name, shape, p, range, r, ece, n]) => ({ name, shape, p: p.toFixed(2), range, r: r.toFixed(2), ece: ece.toFixed(2), n: n.toLocaleString('en-US'), pBar: bar(p), rBar: bar(r) }));
+    const f1 = (p, r) => (p + r > 0 ? (2 * p * r) / (p + r) : 0);
+    const f2 = (v) => v.toFixed(2);
+    const sgn = (d) => (Math.abs(d) < 0.005 ? '0.00' : (d > 0 ? '+' : '−') + Math.abs(d).toFixed(2));
+    const dword = (d) => (Math.abs(d) < 0.005 ? 'no change' : d > 0 ? 'higher' : 'lower');
+    const armKey = S.metArm === 'before' ? 'before' : 'after';
+    const sortKey = ['gain', 'with', 'without'].indexOf(S.metSort) >= 0 ? S.metSort : 'gain';
+    const bar = (v) => 'height:10px;background:#2A6FD6;border-radius:0 5px 5px 0;width:' + Math.round(v * 100) + '%';
+    const total = (a) => {
+      let tp = 0, pred = 0, gold = 0;
+      CAT_SCORES.forEach((r) => { const g = r[2], p = r[ARM_COL[a]][0], rc = r[ARM_COL[a]][1], t = rc * g; tp += t; pred += t / p; gold += g; });
+      const P = tp / pred, R = tp / gold;
+      return { P, R, F: f1(P, R), fp: Math.round(pred - tp), fn: Math.round(gold - tp), gold };
+    };
+    const T = {}; ARM_KEYS.forEach((a) => { T[a] = total(a); });
+    const bestF = Math.max.apply(null, ARM_KEYS.map((a) => T[a].F));
+    const shape = (k) => (ARM_INFO[k].mark === 'mech' ? MARK.mech[1] : MARK.ai[1]);
+    const arms = ARM_KEYS.map((a) => ({
+      name: ARM_INFO[a].name, sub: ARM_INFO[a].sub, shape: shape(a), p: f2(T[a].P), r: f2(T[a].R), f: f2(T[a].F), fBar: bar(T[a].F),
+      best: T[a].F === bestF, change: a === 'mech' ? 'baseline' : sgn(T[a].F - T.mech.F) + ' ' + dword(T[a].F - T.mech.F),
+      fp: String(T[a].fp), fn: String(T[a].fn), mins: ARM_OPS[a].mins.toFixed(1), calls: ARM_OPS[a].calls.toLocaleString('en-US'), aiMin: ARM_OPS[a].aiMin ? ARM_OPS[a].aiMin + ' min' : 'none'
+    }));
+    const M = T.mech, A = T.after, B = T.before;
+    const reading = 'In this sample, adding the AI after the mechanical steps moves the score from ' + f2(M.F) + ' to ' + f2(A.F) + ' (' + sgn(A.F - M.F) + ') and cuts wrong suggestions from ' + M.fp + ' to ' + A.fp + ', with ' + ARM_OPS.after.calls.toLocaleString('en-US') + ' AI calls. Running the AI first finds more real pairs (missed: ' + B.fn + ' against ' + M.fn + ') but lets in more wrong ones (' + B.fp + ') and needs about ' + Math.round(ARM_OPS.before.calls / ARM_OPS.after.calls) + ' times the calls.';
+    /* each mechanical method, then with AI after and with AI before */
+    const lad = LADDER.map(([name, p, r, a, b, n]) => ({ name, p, r, a, b, n })).concat([{ name: 'Combined score (the mechanical result above)', p: M.P, r: M.R, a: [A.P, A.R], b: [B.P, B.R], n: 1126, combined: true }]);
+    const ladder = lad.map((x) => {
+      const f0 = f1(x.p, x.r), fa = f1(x.a[0], x.a[1]), fb = f1(x.b[0], x.b[1]);
+      return { name: x.name, p: f2(x.p), r: f2(x.r), f: f2(f0), fBar: bar(f0), fa: f2(fa), da: sgn(fa - f0) + ' ' + dword(fa - f0), fb: f2(fb), db: sgn(fb - f0) + ' ' + dword(fb - f0), n: x.n.toLocaleString('en-US'), rowStyle: x.combined ? 'background:#F4F6F8;' : '', nameStyle: x.combined ? 'font-weight:700;' : 'font-weight:600;' };
+    });
+    /* by category: score without AI and with AI (after or before the mechanical steps) */
+    const col = ARM_COL[armKey];
+    const cats = CAT_SCORES.map((r) => {
+      const w0 = f1(r[3][0], r[3][1]), w1 = f1(r[col][0], r[col][1]), nCl = CLUSTERS.filter((c) => c.famKey === r[0]).length;
+      return { k: r[0], name: r[1], g: r[2], nCl, m: r[3], w: r[col], w0, w1, d: w1 - w0 };
+    });
+    const bestWithout = cats.slice().sort((x, y) => y.w0 - x.w0)[0], bestWith = cats.slice().sort((x, y) => y.w1 - x.w1)[0];
+    const sorted = cats.slice().sort((x, y) => (sortKey === 'with' ? y.w1 - x.w1 : sortKey === 'without' ? y.w0 - x.w0 : y.d - x.d) || (x.name < y.name ? -1 : 1));
+    const pos = (v) => Math.max(0, Math.min(100, ((v - 0.5) / 0.5) * 100));
+    const armName = ARM_INFO[armKey].name.toLowerCase();
+    const catRows = sorted.map((x) => ({
+      name: x.name, sub: x.nCl + ' clusters here · ' + x.g + ' labelled pairs', few: x.g < 60, bestWithout: x === bestWithout, bestWith: x === bestWith,
+      line: 'left:' + Math.min(pos(x.w0), pos(x.w1)).toFixed(1) + '%;width:' + Math.abs(pos(x.w1) - pos(x.w0)).toFixed(1) + '%;',
+      sq: 'left:' + pos(x.w0).toFixed(1) + '%;', dm: 'left:' + pos(x.w1).toFixed(1) + '%;',
+      without: f2(x.w0), withAI: f2(x.w1), delta: sgn(x.d), deltaWord: dword(x.d),
+      aria: x.name + ': ' + f2(x.w0) + ' without AI, ' + f2(x.w1) + ' with AI ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps, ' + dword(x.d) + ' by ' + Math.abs(x.d).toFixed(2) + '.',
+      p0: f2(x.m[0]), r0: f2(x.m[1]), p1: f2(x.w[0]), r1: f2(x.w[1]), nCl: String(x.nCl), g: String(x.g)
+    }));
+    const topN = (key) => cats.slice().sort((x, y) => y[key] - x[key]).slice(0, 3).map((x, i) => ({ rank: String(i + 1), name: x.name, v: f2(x[key]) }));
+    const gain = cats.slice().sort((x, y) => y.d - x.d)[0], lows = cats.filter((x) => x.d < -0.005).sort((x, y) => x.d - y.d);
+    const catNotes = ['The most gained from the AI: ' + gain.name + ' (' + sgn(gain.d) + ').', lows.length ? 'The AI lowers the score in ' + lows.map((x) => x.name + ' (' + sgn(x.d) + ')').join(', ') + ' when it runs ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps.' : 'With the AI running ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps, no category gets worse.', 'Categories with fewer than 60 labelled pairs are marked: their scores can move a lot with a few more labels.'].map((t) => ({ t }));
+    const pill = (on) => 'min-height:40px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#8C98A3') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';color:#12171C;';
+    const armBtns = [['after', 'AI after the mechanical steps'], ['before', 'AI before the mechanical steps']].map(([k, label]) => ({ label, pressed: armKey === k ? 'true' : 'false', style: pill(armKey === k), pick: () => this.setState({ metArm: k }) }));
+    const sortBtns = [['gain', 'Biggest gain from AI'], ['with', 'Best with AI'], ['without', 'Best without AI']].map(([k, label]) => ({ label, pressed: sortKey === k ? 'true' : 'false', style: pill(sortKey === k), pick: () => this.setState({ metSort: k }) }));
+    /* kept from before */
     const cont = [['118', 'Both suggest a merge', 'Strongest candidates'], ['64', 'Mechanical only', 'Check for lookalikes'], ['31', 'AI only', 'Check for invented links'], ['39', 'Neither', 'Left alone']].map(([n, label, sub]) => ({ n, label, sub }));
     const acc = [['Under 0.50', 0.31], ['0.50 to 0.70', 0.52], ['0.70 to 0.90', 0.74], ['Over 0.90', 0.93]].map(([bin, v]) => ({ bin, v: Math.round(v * 100) + '%', bar: bar(v) }));
     const infos = this.allInfos(S), decs = infos.filter((x) => x.dec);
     const followed = decs.filter((x) => x.dec.vs === 'Agreed with AI').length, over = decs.filter((x) => x.dec.vs === 'Overrode AI').length;
     const edited = decs.filter((x) => x.dec.share && x.dec.share.bucket !== 'as-is').length;
     const undone = S.events.filter((e) => /Reopened|Undo/.test(e.text)).length;
-    const live = [['Decisions made', decs.length + ' of ' + infos.length], ['Agreed with the AI', String(followed)], ['Overrode the AI (note required)', String(over)], ['Edited an AI draft', String(edited)], ['Decisions reopened this session', String(undone)]].map(([k, v]) => ({ k, v }));
+    const second = decs.filter((x) => x.dec.checkedBy || (x.dec.reviewedBy && x.dec.reviewedBy.length)).length;
+    const live = [['Decisions made', decs.length + ' of ' + infos.length], ['Agreed with the AI', String(followed)], ['Overrode the AI (note required)', String(over)], ['Edited an AI draft', String(edited)], ['Checked or reviewed by a teammate you asked', String(second)], ['Decisions reopened this session', String(undone)]].map(([k, v]) => ({ k, v }));
     const all = infos.map((x) => x.c.guards).join('').split('');
     const nP = all.filter((x) => x === 'p').length, nW = all.filter((x) => x === 'w').length, nF = all.filter((x) => x === 'f').length;
     const quotes = infos.reduce((n, x) => n + x.c.ai.quotes.length, 0);
     const blocked = infos.filter((x) => x.c.ai.mode === 'judge' && x.c.guards.indexOf('f') >= 0).length;
     const guardStats = [['Checks run', all.length.toLocaleString('en-US')], ['Passed', nP.toLocaleString('en-US') + ' (' + Math.round((nP / all.length) * 100) + '%)'], ['Warnings', String(nW)], ['Blocked a merge', String(nF)], ['AI judgements stopped by a guard', blocked + ' of ' + infos.filter((x) => x.c.ai.mode === 'judge').length], ['Quoted evidence found verbatim', quotes + ' of ' + quotes]].map(([k, v]) => ({ k, v }));
-    const cats = ['A', 'B', 'C'].map((l) => { const g = decs.filter((x) => x.c.lane === l); return { k: 'Lane ' + l + ' decided', v: g.length + ' of ' + infos.filter((x) => x.c.lane === l).length }; });
-    return { sources2, cont, acc, live, guardStats, laneStats: cats };
+    const lanes = ['A', 'B', 'C'].map((l) => { const g = decs.filter((x) => x.c.lane === l); return { k: 'Lane ' + l + ' decided', v: g.length + ' of ' + infos.filter((x) => x.c.lane === l).length }; });
+    return {
+      arms, reading, ladder, catRows, armBtns, sortBtns, armName, armShort: armKey === 'after' ? 'after' : 'before',
+      topWithout: topN('w0'), topWith: topN('w1'), catNotes,
+      showTable: !!S.metTable, showChart: !S.metTable, tableLabel: S.metTable ? 'Show the chart' : 'Show as a table', tablePressed: S.metTable ? 'true' : 'false', toggleTable: () => this.setState({ metTable: !S.metTable }),
+      goldPairs: M.gold.toLocaleString('en-US'),
+      cont, acc, live, guardStats, laneStats: lanes
+    };
+  }
+  /* ----- results and grade: the consolidated set set against the original, computed from the decisions (see logic3.js) ----- */
+  valsResults(S) {
+    const infos = this.allInfos(S), U = universe(S);
+    const R = resultsOf(S, infos, '');
+    const fmt = (n) => n.toLocaleString('en-US');
+    const one = (n) => (Math.round(n * 10) / 10).toFixed(1);
+    const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0) + '%';
+    const goto = (o) => () => this.setState(Object.assign({ view: 'review', qTab: 'all', qSearch: '', qLane: '', qStatus: '', qAlloc: '', qPage: 0, just: '' }, o));
+    const openCl = (cid) => () => this.setState({ view: 'review', selected: cid, qTab: 'all', qSearch: '', just: '', openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) });
+    const graded = R.graded;
+    /* the grade card */
+    const bands = GRADE_BANDS.map(([min, letter], i) => {
+      const hi = i === 0 ? 100 : GRADE_BANDS[i - 1][0] - 1, here = graded && letter === R.letter;
+      return { letter, range: i === GRADE_BANDS.length - 1 ? 'under ' + GRADE_BANDS[i - 1][0] : min + ' to ' + hi, here, style: 'flex:1 1 0;min-width:0;text-align:center;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;gap:0;' + (here ? 'background:#12171C;color:#FFFFFF;border:1px solid #12171C;' : 'background:#FFFFFF;color:#2F3B46;border:1px solid #B9C3CD;') };
+    });
+    const parts = R.parts.map((p) => ({
+      name: p.name, weight: String(p.weight), pts: one(p.pts), detail: p.detail, plain: p.plain,
+      fill: 'height:10px;background:#2A6FD6;border-radius:0 5px 5px 0;width:' + Math.round(p.v * 100) + '%',
+      aria: p.name + ': ' + one(p.pts) + ' of ' + p.weight + ' points.'
+    }));
+    const provText = R.provisional ? 'Provisional. ' + R.decided + ' of ' + R.clusters + ' clusters (' + pct(R.decided, R.clusters) + ') have a decision that counts. The grade can move a lot until at least 90% do.' : 'Final for this scope: ' + R.decided + ' of ' + R.clusters + ' clusters have a decision that counts.';
+    const capText = R.capped ? 'Capped at C. ' + R.unprotected + (R.unprotected === 1 ? ' merge loosens' : ' merges loosen') + ' a requirement without the owners and the process engineer having signed. Fix ' + (R.unprotected === 1 ? 'it' : 'them') + ' to lift the cap.' : R.unprotected ? R.unprotected + (R.unprotected === 1 ? ' merge loosens' : ' merges loosen') + ' a requirement without both signatures. If the grade were above C it would be held at C.' : '';
+    /* original against consolidated */
+    const wMax = Math.max(R.n, 1);
+    const w = (v) => Math.max(1.5, (v / wMax) * 100).toFixed(1) + '%';
+    const ba = [
+      { label: 'Original', value: fmt(R.n), sub: 'requirements read from the sources', bar: 'height:18px;border-radius:0 4px 4px 0;background:#7B8792;width:' + w(R.n) },
+      { label: 'After your decisions so far', value: fmt(R.after), sub: R.n - R.after > 0 ? fmt(R.n - R.after) + ' fewer (' + pct(R.n - R.after, R.n) + ')' : 'no change yet', bar: 'height:18px;border-radius:0 4px 4px 0;background:#2A6FD6;width:' + w(R.after) },
+      { label: 'If every suggestion were taken as it stands', value: fmt(R.projected), sub: R.n - R.projected > 0 ? fmt(R.n - R.projected) + ' fewer (' + pct(R.n - R.projected, R.n) + '). A projection, not a decision.' : 'no reduction', bar: 'height:18px;border-radius:0 4px 4px 0;background:repeating-linear-gradient(45deg,#2A6FD6 0 4px,#CDE2FB 4px 8px);width:' + w(R.projected) }
+    ];
+    /* where each original requirement ended up */
+    const DEST = [
+      ['asis', 'Stays as it is', 'In no cluster. Nothing similar was found, so nothing changes.', 'background:#DCE7F7;border:1px solid #9DB8E8;'],
+      ['keep', 'Kept as the surviving wording', 'The wording that stays, word for word.', DISP_STYLE.keep],
+      ['merged', 'Merged into another', 'Covered by a surviving wording. The old ID stays as an alias.', DISP_STYLE.merged],
+      ['separate', 'Stays separate', 'Cannot be ranked against the others, or the suggestion was rejected.', DISP_STYLE.separate],
+      ['linked', 'Kept and linked', 'Both stay, joined by a “variant of” link.', DISP_STYLE.linked],
+      ['escalated', 'Waiting for the owners', 'Escalated. Nothing changes until they answer.', DISP_STYLE.escalated],
+      ['superseded', 'Superseded', 'Contained in a kept requirement. ID and links stay.', DISP_STYLE.superseded],
+      ['waiting', 'Not decided yet', 'The cluster has no decision, or its decision is stale or disputed.', DISP_STYLE.pending]
+    ];
+    const destAll = DEST.map(([k, label, note, sty]) => ({ k, label, note, n: R.kinds[k], sty }));
+    const total = destAll.reduce((s, d) => s + d.n, 0);
+    const dest = destAll.map((d) => ({ label: d.label, note: d.note, n: fmt(d.n), pct: pct(d.n, R.n), swatch: 'width:16px;height:16px;border-radius:3px;flex:none;box-sizing:border-box;' + d.sty }));
+    const destBar = destAll.filter((d) => d.n > 0).map((d) => ({ title: d.label + ': ' + fmt(d.n) + ' (' + pct(d.n, R.n) + ')', style: 'flex:' + d.n + ' 1 0;min-width:3px;height:26px;box-sizing:border-box;border-radius:3px;' + d.sty }));
+    /* what would raise the grade */
+    const asIds = (ids) => ids.slice(0, 3).map((id) => ({ id, open: openCl(id) }));
+    const gapOf = (k) => R.parts.find((p) => p.k === k).gap;
+    const risePool = [
+      { k: 'cover', n: R.waitingClusters, title: 'Decide the ' + fmt(R.waitingClusters) + (R.waitingClusters === 1 ? ' cluster' : ' clusters') + ' still waiting', text: fmt(R.kinds.waiting) + ' requirements have no destination yet. Their suggestions would bring the set to ' + fmt(R.projected) + '.', btn: 'Show them in the queue', go: goto({ qStatus: 'open' }), ids: [] },
+      { k: 'sign', n: R.notSigned, title: 'Get ' + R.notSigned + (R.notSigned === 1 ? ' decision' : ' decisions') + ' fully signed', text: 'Each is missing a lens that the sign-off policy requires.', btn: 'Show decisions in review', go: goto({ qStatus: 'review' }), ids: R.ids.sign },
+      { k: 'why', n: R.noWhy, title: 'Write the why on ' + R.noWhy + (R.noWhy === 1 ? ' decision' : ' decisions'), text: 'A reason code is not enough. The note says what a person reading the record later needs to know.', btn: '', go: null, ids: R.ids.why },
+      { k: 'second', n: R.noSecond, title: 'Ask a teammate to look at ' + R.noSecond + (R.noSecond === 1 ? ' decision' : ' decisions'), text: 'Only the person who decided has seen these. Open one and use “Send to a teammate”.', btn: '', go: null, ids: R.ids.second },
+      { k: 'oblig', n: R.unprotected, title: 'Settle ' + R.unprotected + (R.unprotected === 1 ? ' merge that loosens' : ' merges that loosen') + ' a requirement', text: 'The owners and the process engineer have not both signed.' + (R.capped ? ' This also lifts the cap at C.' : ''), btn: '', go: null, ids: R.ids.oblig }
+    ];
+    const rise = risePool.filter((x) => x.n > 0).map((x) => Object.assign(x, { gain: '+' + one(gapOf(x.k)) + ' points at most', g: gapOf(x.k) })).sort((a, b) => b.g - a.g).map((x) => ({
+      title: x.title, text: x.text, gain: x.gain, hasBtn: !!x.go, btn: x.btn, go: x.go || (() => {}), ids: asIds(x.ids), hasIds: x.ids.length > 0, more: x.ids.length > 3 ? 'and ' + (x.ids.length - 3) + ' more' : '', hasMore: x.ids.length > 3
+    }));
+    /* by allocation: every allocation graded on its own */
+    const byAlloc = ALLOCS.filter((a) => S.scope === 'all' || a.k === S.scope).map((a) => {
+      const r = resultsOf(S, infos, a.k), g = r.graded;
+      return {
+        name: a.k, n: fmt(r.n), clusters: String(r.clusters), decided: r.decided + ' of ' + r.clusters, decidedBar: 'height:8px;background:#2A6FD6;border-radius:0 4px 4px 0;width:' + (r.clusters ? Math.round((r.decided / r.clusters) * 100) : 0) + '%',
+        after: fmt(r.after), projected: fmt(r.projected), letter: g ? r.letter : 'none', score: g ? one(r.score) : 'not graded', prov: r.provisional && g,
+        letterStyle: 'display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:6px;font-weight:700;font-size:17px;box-sizing:border-box;' + (g ? 'border:2px ' + (r.provisional ? 'dashed' : 'solid') + ' #12171C;color:#12171C;' : 'border:1px dashed #B9C3CD;color:#54626F;font-size:12px;font-weight:600;padding:0 6px;'),
+        open: goto({ qAlloc: a.k })
+      };
+    });
+    /* the biggest reductions so far */
+    const cuts = R.cuts.slice().sort((a, b) => b.gone - a.gone || (a.id < b.id ? -1 : 1)).slice(0, 6).map((x) => ({ id: x.id, title: x.title, change: x.from + ' wordings become ' + x.to, text: x.text, open: openCl(x.id) }));
+    /* checks that should always pass */
+    const adds = total === R.n;
+    const excluded = infos.filter((x) => x.dec && COUNTED.indexOf(x.st) < 0).length;
+    const ready = infos.filter((x) => x.st === 'approved').length;
+    const okChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;';
+    const lookChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;';
+    const infoChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#F4F6F8;color:#2F3B46;border:1px solid #B9C3CD;';
+    const checks = [
+      { chip: adds ? 'Passes' : 'Look at this', style: adds ? okChip : lookChip, label: 'Every original requirement has a destination', detail: 'The destinations above add up to ' + fmt(total) + ' of ' + fmt(R.n) + '. None is lost.' },
+      { chip: R.unprotected ? 'Look at this' : 'Passes', style: R.unprotected ? lookChip : okChip, label: 'No merge loosens a requirement without both signatures', detail: R.mergeN ? (R.mergeN - R.unprotected) + ' of ' + R.mergeN + ' merges are clean.' : 'No merge has been recorded yet.' },
+      { chip: 'For information', style: infoChip, label: 'Stale or disputed decisions are left out of the grade', detail: excluded ? excluded + (excluded === 1 ? ' decision does' : ' decisions do') + ' not count until settled.' : 'None right now.' },
+      { chip: 'For information', style: infoChip, label: 'Approved and ready to export', detail: ready + ' of ' + R.decided + ' decided clusters have every sign-off they need.' }
+    ];
+    const scopeTxt = S.scope === 'all' ? 'the whole project' : S.scope;
+    return {
+      rLine: 'For ' + scopeTxt + ': ' + fmt(R.n) + ' original requirements in ' + R.clusters + ' clusters. ' + R.decided + ' have a decision that counts.',
+      gLetter: graded ? R.letter : '–', gAria: graded ? (R.provisional ? 'Provisional grade ' : 'Grade ') + R.letter : 'No grade yet', gGraded: graded, gUngraded: !graded,
+      gBox: 'width:132px;height:132px;border-radius:16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:84px;line-height:1;font-weight:700;letter-spacing:-.02em;color:#12171C;background:#FFFFFF;flex:none;border:3px ' + (R.provisional || !graded ? 'dashed' : 'solid') + ' #12171C;',
+      gScore: graded ? one(R.score) : 'No score yet', gOut: graded ? 'out of 100' : '',
+      gBandName: graded ? (R.provisional ? 'Provisional grade' : 'Grade') : 'Nothing to grade',
+      gProvText: graded ? provText : 'No cluster has a decision that counts yet. Record one and the grade appears.', gHasCap: !!capText, gCapText: capText, gCapped: R.capped,
+      bands, parts,
+      gFormula: 'Score = ' + GRADE_PARTS.map((p) => p.weight + ' × ' + p.name.toLowerCase()).join(' + ') + '. Each part is a share from 0 to 1, worked out from the decisions. The letter is A from 90, B from 80, C from 70, D from 60, F below that. Any merge that loosens a requirement without the owners and the process engineer caps the letter at C.',
+      ba, baNote: R.projected < R.n ? 'The set shrinks by ' + pct(R.n - R.projected, R.n) + ' if every suggestion is taken as it stands, and every one of those suggestions still needs a decision and its sign-offs. ' + fmt(R.newWord) + ' of the decisions so far introduce new wording.' : 'No reduction is suggested.',
+      dest, destBar, destTotal: fmt(total), destAdds: adds,
+      rise, hasRise: rise.length > 0, noRise: rise.length === 0,
+      byAlloc, cuts, hasCuts: cuts.length > 0, noCuts: cuts.length === 0, checks,
+      toMetrics: () => this.setState({ view: 'methods' }), toExport: () => this.setState({ view: 'export' }), toQueue: goto({}),
+      resultsSample: 'The decisions that came with the sample project were made by sample teammates, so the grade you see before you decide anything is sample data. Your own decisions change it as soon as you record them.'
+    };
   }
   valsGlossary(S) {
     const terms = [
@@ -3631,6 +4396,7 @@ class Component extends DCLogic {
     v.isReview = S.view === 'review';
     v.isExplorer = S.view === 'explorer';
     v.isMethods = S.view === 'methods';
+    v.isResults = S.view === 'results';
     v.isAudit = S.view === 'audit';
     v.isPolicy = S.view === 'policy';
     v.isExport = S.view === 'export';
@@ -3641,6 +4407,7 @@ class Component extends DCLogic {
       if (v.isReview) Object.assign(v, this.valsQueue(S), this.valsDetail(S));
       if (v.isExplorer) Object.assign(v, this.valsExplorer(S));
       if (v.isMethods) Object.assign(v, this.valsMethods(S));
+      if (v.isResults) Object.assign(v, this.valsResults(S));
       if (v.isAudit) Object.assign(v, this.valsAudit(S));
       if (v.isPolicy) Object.assign(v, this.valsPolicy(S));
       if (v.isExport) Object.assign(v, this.valsExport(S));

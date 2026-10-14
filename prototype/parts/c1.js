@@ -16,7 +16,12 @@
     const st = statusOf(S, c), dec = decOf(S, c.id);
     let me = false, wait = false, q = null;
     if (dec) q = signState(S, c, dec);
-    if (P.role !== 'observer') {
+    const hd = handOf(S, c.id);
+    const handled = !!hd && hd.status !== 'closed' && (hd.to === P.k || hd.from === P.k) && P.role !== 'observer';
+    if (handled) {
+      const mineToAnswer = hd.to === P.k && hd.status === 'waiting', backToMe = hd.from === P.k && hd.status !== 'waiting';
+      me = mineToAnswer || backToMe; wait = hd.from === P.k && hd.status === 'waiting';
+    } else if (P.role !== 'observer') {
       if (st === 'open' || st === 'claimed') me = lens === 'SE';
       else if (dec && (st === 'decided' || st === 'review')) {
         const own = dec.by === P.name;
@@ -208,8 +213,8 @@
   valsShell(S) {
     const P = this.person(S), lead = P.role === 'lead';
     const nMe = this.openCount(S);
-    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', methods: 'icFlask', audit: 'icClock', policy: 'icShield', export: 'icExport' };
-    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', methods: 'Methods and metrics', audit: 'Decisions and audit', policy: 'Sign-off policy', export: 'Export to documents' };
+    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', results: 'icMedal', methods: 'icFlask', audit: 'icClock', policy: 'icShield', export: 'icExport' };
+    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', results: 'Results and grade', methods: 'Methods and metrics', audit: 'Decisions and audit', policy: 'Sign-off policy', export: 'Export to documents' };
     const item = (k) => {
       const o = { label: NAME[k], onClick: () => this.setState({ view: k }), current: S.view === k ? 'page' : 'false', hasCount: k === 'review', count: String(nMe) };
       Object.keys(IC).forEach((j) => { o[IC[j]] = j === k; });
@@ -233,7 +238,7 @@
     const qFirst = (v) => (typeof v === 'string' ? v : '');
     return {
       projectName: 'Reference air vehicle', scopeTxt, pageName: NAME[S.view] || 'Home',
-      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'methods', 'audit'].map(item), navOut: ['policy', 'export'].map(item),
+      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'results', 'methods', 'audit'].map(item), navOut: ['policy', 'export'].map(item),
       progExp: progOpen ? 'true' : 'false', outExp: outOpen ? 'true' : 'false',
       toggleProg: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { prog: progOpen }) }),
       toggleOut: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { out: outOpen }) }),
@@ -335,6 +340,8 @@
       startReview: () => { const first = infos.find((x) => x.me) || infos.find((x) => !x.dec) || infos[0]; this.setState({ view: 'review', selected: first.c.id, qTab: 'me', qPage: 0 }); },
       tryGroup: () => this.setState({ view: 'review', selected: 'CL-050', qTab: 'all', qSearch: '', qLane: '', qStatus: '', qAlloc: '' }),
       tryGroupShown: S.scope === 'all' || S.scope === 'Data Recorder',
-      openMap: () => this.setState({ view: 'explorer' })
+      openMap: () => this.setState({ view: 'explorer' }),
+      gradeLine: (() => { const R = resultsOf(S, infos, ''); return R.graded ? 'Grade so far: ' + R.letter + ' (' + (Math.round(R.score * 10) / 10).toFixed(1) + ' of 100)' + (R.provisional ? ', provisional.' : '.') + ' ' + R.decided + ' of ' + R.clusters + ' clusters have a decision that counts.' : 'No grade yet. Record a decision and the set is graded against the original.'; })(),
+      openResults: () => this.setState({ view: 'results' })
     };
   }

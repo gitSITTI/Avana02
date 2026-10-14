@@ -53,30 +53,184 @@
       } : { id: '', alloc: '', owner: '', tok: [], stateLabel: '', shape: '', inCluster: false, clusterLine: '', open: () => {}, history: [] }
     };
   }
-  /* ----- methods and metrics (scaled to the project) ----- */
+  /* ----- methods and metrics: sample scores for four ways of working, then by category (see data4.js; nothing here is measured) ----- */
   valsMethods(S) {
-    const MECH = MARK.mech[1], AI = MARK.ai[1];
-    const raw = [
-      ['Text match (fuzzy)', MECH, 0.61, '0.55–0.67', 0.48, 0.21, 3904], ['Keyword overlap (TF-IDF)', MECH, 0.58, '0.52–0.64', 0.52, 0.18, 3904],
-      ['Embedding model A', MECH, 0.71, '0.66–0.76', 0.84, 0.09, 1126], ['Embedding model B', MECH, 0.69, '0.64–0.74', 0.81, 0.11, 1126],
-      ['Cross-encoder re-score', MECH, 0.78, '0.73–0.83', 0.76, 0.07, 1126], ['Combined score', MECH, 0.86, '0.81–0.90', 0.80, 0.04, 1126], ['AI judge', AI, 0.83, '0.74–0.90', 0.71, 0.08, CLUSTERS.filter((c) => c.ai.mode === 'judge').length]
-    ];
-    const bar = (v) => 'height:10px;background:#256ABF;border-radius:0 5px 5px 0;width:' + v * 100 + '%';
-    const sources2 = raw.map(([name, shape, p, range, r, ece, n]) => ({ name, shape, p: p.toFixed(2), range, r: r.toFixed(2), ece: ece.toFixed(2), n: n.toLocaleString('en-US'), pBar: bar(p), rBar: bar(r) }));
+    const f1 = (p, r) => (p + r > 0 ? (2 * p * r) / (p + r) : 0);
+    const f2 = (v) => v.toFixed(2);
+    const sgn = (d) => (Math.abs(d) < 0.005 ? '0.00' : (d > 0 ? '+' : '−') + Math.abs(d).toFixed(2));
+    const dword = (d) => (Math.abs(d) < 0.005 ? 'no change' : d > 0 ? 'higher' : 'lower');
+    const armKey = S.metArm === 'before' ? 'before' : 'after';
+    const sortKey = ['gain', 'with', 'without'].indexOf(S.metSort) >= 0 ? S.metSort : 'gain';
+    const bar = (v) => 'height:10px;background:#2A6FD6;border-radius:0 5px 5px 0;width:' + Math.round(v * 100) + '%';
+    const total = (a) => {
+      let tp = 0, pred = 0, gold = 0;
+      CAT_SCORES.forEach((r) => { const g = r[2], p = r[ARM_COL[a]][0], rc = r[ARM_COL[a]][1], t = rc * g; tp += t; pred += t / p; gold += g; });
+      const P = tp / pred, R = tp / gold;
+      return { P, R, F: f1(P, R), fp: Math.round(pred - tp), fn: Math.round(gold - tp), gold };
+    };
+    const T = {}; ARM_KEYS.forEach((a) => { T[a] = total(a); });
+    const bestF = Math.max.apply(null, ARM_KEYS.map((a) => T[a].F));
+    const shape = (k) => (ARM_INFO[k].mark === 'mech' ? MARK.mech[1] : MARK.ai[1]);
+    const arms = ARM_KEYS.map((a) => ({
+      name: ARM_INFO[a].name, sub: ARM_INFO[a].sub, shape: shape(a), p: f2(T[a].P), r: f2(T[a].R), f: f2(T[a].F), fBar: bar(T[a].F),
+      best: T[a].F === bestF, change: a === 'mech' ? 'baseline' : sgn(T[a].F - T.mech.F) + ' ' + dword(T[a].F - T.mech.F),
+      fp: String(T[a].fp), fn: String(T[a].fn), mins: ARM_OPS[a].mins.toFixed(1), calls: ARM_OPS[a].calls.toLocaleString('en-US'), aiMin: ARM_OPS[a].aiMin ? ARM_OPS[a].aiMin + ' min' : 'none'
+    }));
+    const M = T.mech, A = T.after, B = T.before;
+    const reading = 'In this sample, adding the AI after the mechanical steps moves the score from ' + f2(M.F) + ' to ' + f2(A.F) + ' (' + sgn(A.F - M.F) + ') and cuts wrong suggestions from ' + M.fp + ' to ' + A.fp + ', with ' + ARM_OPS.after.calls.toLocaleString('en-US') + ' AI calls. Running the AI first finds more real pairs (missed: ' + B.fn + ' against ' + M.fn + ') but lets in more wrong ones (' + B.fp + ') and needs about ' + Math.round(ARM_OPS.before.calls / ARM_OPS.after.calls) + ' times the calls.';
+    /* each mechanical method, then with AI after and with AI before */
+    const lad = LADDER.map(([name, p, r, a, b, n]) => ({ name, p, r, a, b, n })).concat([{ name: 'Combined score (the mechanical result above)', p: M.P, r: M.R, a: [A.P, A.R], b: [B.P, B.R], n: 1126, combined: true }]);
+    const ladder = lad.map((x) => {
+      const f0 = f1(x.p, x.r), fa = f1(x.a[0], x.a[1]), fb = f1(x.b[0], x.b[1]);
+      return { name: x.name, p: f2(x.p), r: f2(x.r), f: f2(f0), fBar: bar(f0), fa: f2(fa), da: sgn(fa - f0) + ' ' + dword(fa - f0), fb: f2(fb), db: sgn(fb - f0) + ' ' + dword(fb - f0), n: x.n.toLocaleString('en-US'), rowStyle: x.combined ? 'background:#F4F6F8;' : '', nameStyle: x.combined ? 'font-weight:700;' : 'font-weight:600;' };
+    });
+    /* by category: score without AI and with AI (after or before the mechanical steps) */
+    const col = ARM_COL[armKey];
+    const cats = CAT_SCORES.map((r) => {
+      const w0 = f1(r[3][0], r[3][1]), w1 = f1(r[col][0], r[col][1]), nCl = CLUSTERS.filter((c) => c.famKey === r[0]).length;
+      return { k: r[0], name: r[1], g: r[2], nCl, m: r[3], w: r[col], w0, w1, d: w1 - w0 };
+    });
+    const bestWithout = cats.slice().sort((x, y) => y.w0 - x.w0)[0], bestWith = cats.slice().sort((x, y) => y.w1 - x.w1)[0];
+    const sorted = cats.slice().sort((x, y) => (sortKey === 'with' ? y.w1 - x.w1 : sortKey === 'without' ? y.w0 - x.w0 : y.d - x.d) || (x.name < y.name ? -1 : 1));
+    const pos = (v) => Math.max(0, Math.min(100, ((v - 0.5) / 0.5) * 100));
+    const armName = ARM_INFO[armKey].name.toLowerCase();
+    const catRows = sorted.map((x) => ({
+      name: x.name, sub: x.nCl + ' clusters here · ' + x.g + ' labelled pairs', few: x.g < 60, bestWithout: x === bestWithout, bestWith: x === bestWith,
+      line: 'left:' + Math.min(pos(x.w0), pos(x.w1)).toFixed(1) + '%;width:' + Math.abs(pos(x.w1) - pos(x.w0)).toFixed(1) + '%;',
+      sq: 'left:' + pos(x.w0).toFixed(1) + '%;', dm: 'left:' + pos(x.w1).toFixed(1) + '%;',
+      without: f2(x.w0), withAI: f2(x.w1), delta: sgn(x.d), deltaWord: dword(x.d),
+      aria: x.name + ': ' + f2(x.w0) + ' without AI, ' + f2(x.w1) + ' with AI ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps, ' + dword(x.d) + ' by ' + Math.abs(x.d).toFixed(2) + '.',
+      p0: f2(x.m[0]), r0: f2(x.m[1]), p1: f2(x.w[0]), r1: f2(x.w[1]), nCl: String(x.nCl), g: String(x.g)
+    }));
+    const topN = (key) => cats.slice().sort((x, y) => y[key] - x[key]).slice(0, 3).map((x, i) => ({ rank: String(i + 1), name: x.name, v: f2(x[key]) }));
+    const gain = cats.slice().sort((x, y) => y.d - x.d)[0], lows = cats.filter((x) => x.d < -0.005).sort((x, y) => x.d - y.d);
+    const catNotes = ['The most gained from the AI: ' + gain.name + ' (' + sgn(gain.d) + ').', lows.length ? 'The AI lowers the score in ' + lows.map((x) => x.name + ' (' + sgn(x.d) + ')').join(', ') + ' when it runs ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps.' : 'With the AI running ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps, no category gets worse.', 'Categories with fewer than 60 labelled pairs are marked: their scores can move a lot with a few more labels.'].map((t) => ({ t }));
+    const pill = (on) => 'min-height:40px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#8C98A3') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';color:#12171C;';
+    const armBtns = [['after', 'AI after the mechanical steps'], ['before', 'AI before the mechanical steps']].map(([k, label]) => ({ label, pressed: armKey === k ? 'true' : 'false', style: pill(armKey === k), pick: () => this.setState({ metArm: k }) }));
+    const sortBtns = [['gain', 'Biggest gain from AI'], ['with', 'Best with AI'], ['without', 'Best without AI']].map(([k, label]) => ({ label, pressed: sortKey === k ? 'true' : 'false', style: pill(sortKey === k), pick: () => this.setState({ metSort: k }) }));
+    /* kept from before */
     const cont = [['118', 'Both suggest a merge', 'Strongest candidates'], ['64', 'Mechanical only', 'Check for lookalikes'], ['31', 'AI only', 'Check for invented links'], ['39', 'Neither', 'Left alone']].map(([n, label, sub]) => ({ n, label, sub }));
     const acc = [['Under 0.50', 0.31], ['0.50 to 0.70', 0.52], ['0.70 to 0.90', 0.74], ['Over 0.90', 0.93]].map(([bin, v]) => ({ bin, v: Math.round(v * 100) + '%', bar: bar(v) }));
     const infos = this.allInfos(S), decs = infos.filter((x) => x.dec);
     const followed = decs.filter((x) => x.dec.vs === 'Agreed with AI').length, over = decs.filter((x) => x.dec.vs === 'Overrode AI').length;
     const edited = decs.filter((x) => x.dec.share && x.dec.share.bucket !== 'as-is').length;
     const undone = S.events.filter((e) => /Reopened|Undo/.test(e.text)).length;
-    const live = [['Decisions made', decs.length + ' of ' + infos.length], ['Agreed with the AI', String(followed)], ['Overrode the AI (note required)', String(over)], ['Edited an AI draft', String(edited)], ['Decisions reopened this session', String(undone)]].map(([k, v]) => ({ k, v }));
+    const second = decs.filter((x) => x.dec.checkedBy || (x.dec.reviewedBy && x.dec.reviewedBy.length)).length;
+    const live = [['Decisions made', decs.length + ' of ' + infos.length], ['Agreed with the AI', String(followed)], ['Overrode the AI (note required)', String(over)], ['Edited an AI draft', String(edited)], ['Checked or reviewed by a teammate you asked', String(second)], ['Decisions reopened this session', String(undone)]].map(([k, v]) => ({ k, v }));
     const all = infos.map((x) => x.c.guards).join('').split('');
     const nP = all.filter((x) => x === 'p').length, nW = all.filter((x) => x === 'w').length, nF = all.filter((x) => x === 'f').length;
     const quotes = infos.reduce((n, x) => n + x.c.ai.quotes.length, 0);
     const blocked = infos.filter((x) => x.c.ai.mode === 'judge' && x.c.guards.indexOf('f') >= 0).length;
     const guardStats = [['Checks run', all.length.toLocaleString('en-US')], ['Passed', nP.toLocaleString('en-US') + ' (' + Math.round((nP / all.length) * 100) + '%)'], ['Warnings', String(nW)], ['Blocked a merge', String(nF)], ['AI judgements stopped by a guard', blocked + ' of ' + infos.filter((x) => x.c.ai.mode === 'judge').length], ['Quoted evidence found verbatim', quotes + ' of ' + quotes]].map(([k, v]) => ({ k, v }));
-    const cats = ['A', 'B', 'C'].map((l) => { const g = decs.filter((x) => x.c.lane === l); return { k: 'Lane ' + l + ' decided', v: g.length + ' of ' + infos.filter((x) => x.c.lane === l).length }; });
-    return { sources2, cont, acc, live, guardStats, laneStats: cats };
+    const lanes = ['A', 'B', 'C'].map((l) => { const g = decs.filter((x) => x.c.lane === l); return { k: 'Lane ' + l + ' decided', v: g.length + ' of ' + infos.filter((x) => x.c.lane === l).length }; });
+    return {
+      arms, reading, ladder, catRows, armBtns, sortBtns, armName, armShort: armKey === 'after' ? 'after' : 'before',
+      topWithout: topN('w0'), topWith: topN('w1'), catNotes,
+      showTable: !!S.metTable, showChart: !S.metTable, tableLabel: S.metTable ? 'Show the chart' : 'Show as a table', tablePressed: S.metTable ? 'true' : 'false', toggleTable: () => this.setState({ metTable: !S.metTable }),
+      goldPairs: M.gold.toLocaleString('en-US'),
+      cont, acc, live, guardStats, laneStats: lanes
+    };
+  }
+  /* ----- results and grade: the consolidated set set against the original, computed from the decisions (see logic3.js) ----- */
+  valsResults(S) {
+    const infos = this.allInfos(S), U = universe(S);
+    const R = resultsOf(S, infos, '');
+    const fmt = (n) => n.toLocaleString('en-US');
+    const one = (n) => (Math.round(n * 10) / 10).toFixed(1);
+    const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0) + '%';
+    const goto = (o) => () => this.setState(Object.assign({ view: 'review', qTab: 'all', qSearch: '', qLane: '', qStatus: '', qAlloc: '', qPage: 0, just: '' }, o));
+    const openCl = (cid) => () => this.setState({ view: 'review', selected: cid, qTab: 'all', qSearch: '', just: '', openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) });
+    const graded = R.graded;
+    /* the grade card */
+    const bands = GRADE_BANDS.map(([min, letter], i) => {
+      const hi = i === 0 ? 100 : GRADE_BANDS[i - 1][0] - 1, here = graded && letter === R.letter;
+      return { letter, range: i === GRADE_BANDS.length - 1 ? 'under ' + GRADE_BANDS[i - 1][0] : min + ' to ' + hi, here, style: 'flex:1 1 0;min-width:0;text-align:center;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;gap:0;' + (here ? 'background:#12171C;color:#FFFFFF;border:1px solid #12171C;' : 'background:#FFFFFF;color:#2F3B46;border:1px solid #B9C3CD;') };
+    });
+    const parts = R.parts.map((p) => ({
+      name: p.name, weight: String(p.weight), pts: one(p.pts), detail: p.detail, plain: p.plain,
+      fill: 'height:10px;background:#2A6FD6;border-radius:0 5px 5px 0;width:' + Math.round(p.v * 100) + '%',
+      aria: p.name + ': ' + one(p.pts) + ' of ' + p.weight + ' points.'
+    }));
+    const provText = R.provisional ? 'Provisional. ' + R.decided + ' of ' + R.clusters + ' clusters (' + pct(R.decided, R.clusters) + ') have a decision that counts. The grade can move a lot until at least 90% do.' : 'Final for this scope: ' + R.decided + ' of ' + R.clusters + ' clusters have a decision that counts.';
+    const capText = R.capped ? 'Capped at C. ' + R.unprotected + (R.unprotected === 1 ? ' merge loosens' : ' merges loosen') + ' a requirement without the owners and the process engineer having signed. Fix ' + (R.unprotected === 1 ? 'it' : 'them') + ' to lift the cap.' : R.unprotected ? R.unprotected + (R.unprotected === 1 ? ' merge loosens' : ' merges loosen') + ' a requirement without both signatures. If the grade were above C it would be held at C.' : '';
+    /* original against consolidated */
+    const wMax = Math.max(R.n, 1);
+    const w = (v) => Math.max(1.5, (v / wMax) * 100).toFixed(1) + '%';
+    const ba = [
+      { label: 'Original', value: fmt(R.n), sub: 'requirements read from the sources', bar: 'height:18px;border-radius:0 4px 4px 0;background:#7B8792;width:' + w(R.n) },
+      { label: 'After your decisions so far', value: fmt(R.after), sub: R.n - R.after > 0 ? fmt(R.n - R.after) + ' fewer (' + pct(R.n - R.after, R.n) + ')' : 'no change yet', bar: 'height:18px;border-radius:0 4px 4px 0;background:#2A6FD6;width:' + w(R.after) },
+      { label: 'If every suggestion were taken as it stands', value: fmt(R.projected), sub: R.n - R.projected > 0 ? fmt(R.n - R.projected) + ' fewer (' + pct(R.n - R.projected, R.n) + '). A projection, not a decision.' : 'no reduction', bar: 'height:18px;border-radius:0 4px 4px 0;background:repeating-linear-gradient(45deg,#2A6FD6 0 4px,#CDE2FB 4px 8px);width:' + w(R.projected) }
+    ];
+    /* where each original requirement ended up */
+    const DEST = [
+      ['asis', 'Stays as it is', 'In no cluster. Nothing similar was found, so nothing changes.', 'background:#DCE7F7;border:1px solid #9DB8E8;'],
+      ['keep', 'Kept as the surviving wording', 'The wording that stays, word for word.', DISP_STYLE.keep],
+      ['merged', 'Merged into another', 'Covered by a surviving wording. The old ID stays as an alias.', DISP_STYLE.merged],
+      ['separate', 'Stays separate', 'Cannot be ranked against the others, or the suggestion was rejected.', DISP_STYLE.separate],
+      ['linked', 'Kept and linked', 'Both stay, joined by a “variant of” link.', DISP_STYLE.linked],
+      ['escalated', 'Waiting for the owners', 'Escalated. Nothing changes until they answer.', DISP_STYLE.escalated],
+      ['superseded', 'Superseded', 'Contained in a kept requirement. ID and links stay.', DISP_STYLE.superseded],
+      ['waiting', 'Not decided yet', 'The cluster has no decision, or its decision is stale or disputed.', DISP_STYLE.pending]
+    ];
+    const destAll = DEST.map(([k, label, note, sty]) => ({ k, label, note, n: R.kinds[k], sty }));
+    const total = destAll.reduce((s, d) => s + d.n, 0);
+    const dest = destAll.map((d) => ({ label: d.label, note: d.note, n: fmt(d.n), pct: pct(d.n, R.n), swatch: 'width:16px;height:16px;border-radius:3px;flex:none;box-sizing:border-box;' + d.sty }));
+    const destBar = destAll.filter((d) => d.n > 0).map((d) => ({ title: d.label + ': ' + fmt(d.n) + ' (' + pct(d.n, R.n) + ')', style: 'flex:' + d.n + ' 1 0;min-width:3px;height:26px;box-sizing:border-box;border-radius:3px;' + d.sty }));
+    /* what would raise the grade */
+    const asIds = (ids) => ids.slice(0, 3).map((id) => ({ id, open: openCl(id) }));
+    const gapOf = (k) => R.parts.find((p) => p.k === k).gap;
+    const risePool = [
+      { k: 'cover', n: R.waitingClusters, title: 'Decide the ' + fmt(R.waitingClusters) + (R.waitingClusters === 1 ? ' cluster' : ' clusters') + ' still waiting', text: fmt(R.kinds.waiting) + ' requirements have no destination yet. Their suggestions would bring the set to ' + fmt(R.projected) + '.', btn: 'Show them in the queue', go: goto({ qStatus: 'open' }), ids: [] },
+      { k: 'sign', n: R.notSigned, title: 'Get ' + R.notSigned + (R.notSigned === 1 ? ' decision' : ' decisions') + ' fully signed', text: 'Each is missing a lens that the sign-off policy requires.', btn: 'Show decisions in review', go: goto({ qStatus: 'review' }), ids: R.ids.sign },
+      { k: 'why', n: R.noWhy, title: 'Write the why on ' + R.noWhy + (R.noWhy === 1 ? ' decision' : ' decisions'), text: 'A reason code is not enough. The note says what a person reading the record later needs to know.', btn: '', go: null, ids: R.ids.why },
+      { k: 'second', n: R.noSecond, title: 'Ask a teammate to look at ' + R.noSecond + (R.noSecond === 1 ? ' decision' : ' decisions'), text: 'Only the person who decided has seen these. Open one and use “Send to a teammate”.', btn: '', go: null, ids: R.ids.second },
+      { k: 'oblig', n: R.unprotected, title: 'Settle ' + R.unprotected + (R.unprotected === 1 ? ' merge that loosens' : ' merges that loosen') + ' a requirement', text: 'The owners and the process engineer have not both signed.' + (R.capped ? ' This also lifts the cap at C.' : ''), btn: '', go: null, ids: R.ids.oblig }
+    ];
+    const rise = risePool.filter((x) => x.n > 0).map((x) => Object.assign(x, { gain: '+' + one(gapOf(x.k)) + ' points at most', g: gapOf(x.k) })).sort((a, b) => b.g - a.g).map((x) => ({
+      title: x.title, text: x.text, gain: x.gain, hasBtn: !!x.go, btn: x.btn, go: x.go || (() => {}), ids: asIds(x.ids), hasIds: x.ids.length > 0, more: x.ids.length > 3 ? 'and ' + (x.ids.length - 3) + ' more' : '', hasMore: x.ids.length > 3
+    }));
+    /* by allocation: every allocation graded on its own */
+    const byAlloc = ALLOCS.filter((a) => S.scope === 'all' || a.k === S.scope).map((a) => {
+      const r = resultsOf(S, infos, a.k), g = r.graded;
+      return {
+        name: a.k, n: fmt(r.n), clusters: String(r.clusters), decided: r.decided + ' of ' + r.clusters, decidedBar: 'height:8px;background:#2A6FD6;border-radius:0 4px 4px 0;width:' + (r.clusters ? Math.round((r.decided / r.clusters) * 100) : 0) + '%',
+        after: fmt(r.after), projected: fmt(r.projected), letter: g ? r.letter : 'none', score: g ? one(r.score) : 'not graded', prov: r.provisional && g,
+        letterStyle: 'display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:6px;font-weight:700;font-size:17px;box-sizing:border-box;' + (g ? 'border:2px ' + (r.provisional ? 'dashed' : 'solid') + ' #12171C;color:#12171C;' : 'border:1px dashed #B9C3CD;color:#54626F;font-size:12px;font-weight:600;padding:0 6px;'),
+        open: goto({ qAlloc: a.k })
+      };
+    });
+    /* the biggest reductions so far */
+    const cuts = R.cuts.slice().sort((a, b) => b.gone - a.gone || (a.id < b.id ? -1 : 1)).slice(0, 6).map((x) => ({ id: x.id, title: x.title, change: x.from + ' wordings become ' + x.to, text: x.text, open: openCl(x.id) }));
+    /* checks that should always pass */
+    const adds = total === R.n;
+    const excluded = infos.filter((x) => x.dec && COUNTED.indexOf(x.st) < 0).length;
+    const ready = infos.filter((x) => x.st === 'approved').length;
+    const okChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;';
+    const lookChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;';
+    const infoChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#F4F6F8;color:#2F3B46;border:1px solid #B9C3CD;';
+    const checks = [
+      { chip: adds ? 'Passes' : 'Look at this', style: adds ? okChip : lookChip, label: 'Every original requirement has a destination', detail: 'The destinations above add up to ' + fmt(total) + ' of ' + fmt(R.n) + '. None is lost.' },
+      { chip: R.unprotected ? 'Look at this' : 'Passes', style: R.unprotected ? lookChip : okChip, label: 'No merge loosens a requirement without both signatures', detail: R.mergeN ? (R.mergeN - R.unprotected) + ' of ' + R.mergeN + ' merges are clean.' : 'No merge has been recorded yet.' },
+      { chip: 'For information', style: infoChip, label: 'Stale or disputed decisions are left out of the grade', detail: excluded ? excluded + (excluded === 1 ? ' decision does' : ' decisions do') + ' not count until settled.' : 'None right now.' },
+      { chip: 'For information', style: infoChip, label: 'Approved and ready to export', detail: ready + ' of ' + R.decided + ' decided clusters have every sign-off they need.' }
+    ];
+    const scopeTxt = S.scope === 'all' ? 'the whole project' : S.scope;
+    return {
+      rLine: 'For ' + scopeTxt + ': ' + fmt(R.n) + ' original requirements in ' + R.clusters + ' clusters. ' + R.decided + ' have a decision that counts.',
+      gLetter: graded ? R.letter : '–', gAria: graded ? (R.provisional ? 'Provisional grade ' : 'Grade ') + R.letter : 'No grade yet', gGraded: graded, gUngraded: !graded,
+      gBox: 'width:132px;height:132px;border-radius:16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:84px;line-height:1;font-weight:700;letter-spacing:-.02em;color:#12171C;background:#FFFFFF;flex:none;border:3px ' + (R.provisional || !graded ? 'dashed' : 'solid') + ' #12171C;',
+      gScore: graded ? one(R.score) : 'No score yet', gOut: graded ? 'out of 100' : '',
+      gBandName: graded ? (R.provisional ? 'Provisional grade' : 'Grade') : 'Nothing to grade',
+      gProvText: graded ? provText : 'No cluster has a decision that counts yet. Record one and the grade appears.', gHasCap: !!capText, gCapText: capText, gCapped: R.capped,
+      bands, parts,
+      gFormula: 'Score = ' + GRADE_PARTS.map((p) => p.weight + ' × ' + p.name.toLowerCase()).join(' + ') + '. Each part is a share from 0 to 1, worked out from the decisions. The letter is A from 90, B from 80, C from 70, D from 60, F below that. Any merge that loosens a requirement without the owners and the process engineer caps the letter at C.',
+      ba, baNote: R.projected < R.n ? 'The set shrinks by ' + pct(R.n - R.projected, R.n) + ' if every suggestion is taken as it stands, and every one of those suggestions still needs a decision and its sign-offs. ' + fmt(R.newWord) + ' of the decisions so far introduce new wording.' : 'No reduction is suggested.',
+      dest, destBar, destTotal: fmt(total), destAdds: adds,
+      rise, hasRise: rise.length > 0, noRise: rise.length === 0,
+      byAlloc, cuts, hasCuts: cuts.length > 0, noCuts: cuts.length === 0, checks,
+      toMetrics: () => this.setState({ view: 'methods' }), toExport: () => this.setState({ view: 'export' }), toQueue: goto({}),
+      resultsSample: 'The decisions that came with the sample project were made by sample teammates, so the grade you see before you decide anything is sample data. Your own decisions change it as soon as you record them.'
+    };
   }
   valsGlossary(S) {
     const terms = [
@@ -250,6 +404,7 @@
     v.isReview = S.view === 'review';
     v.isExplorer = S.view === 'explorer';
     v.isMethods = S.view === 'methods';
+    v.isResults = S.view === 'results';
     v.isAudit = S.view === 'audit';
     v.isPolicy = S.view === 'policy';
     v.isExport = S.view === 'export';
@@ -260,6 +415,7 @@
       if (v.isReview) Object.assign(v, this.valsQueue(S), this.valsDetail(S));
       if (v.isExplorer) Object.assign(v, this.valsExplorer(S));
       if (v.isMethods) Object.assign(v, this.valsMethods(S));
+      if (v.isResults) Object.assign(v, this.valsResults(S));
       if (v.isAudit) Object.assign(v, this.valsAudit(S));
       if (v.isPolicy) Object.assign(v, this.valsPolicy(S));
       if (v.isExport) Object.assign(v, this.valsExport(S));

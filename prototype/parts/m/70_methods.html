@@ -1,59 +1,166 @@
-
       <!-- ===== METHODS AND METRICS ===== -->
       <sc-if value="{{isMethods}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:24px">
         <div style="display:flex;flex-direction:column;gap:6px">
           <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Methods and metrics</h1>
-          <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">Every suggestion source is scored the same way, so the mechanical methods and the AI can be compared fairly.</p>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">How well each way of working finds the right pairs, and what the AI adds when it comes after the mechanical steps or before them. Every source is scored the same way, so the comparison is fair.</p>
         </div>
-        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Illustrative numbers.</b> No gold set of human-labelled pairs exists yet, so the accuracy figures below are placeholders that show the layout. The "This session", "Guards" and "Progress by lane" panels are computed live from the 252 clusters and from what you do in the sample.</div>
-        <div style="background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;overflow:hidden">
-          <div style="padding:12px 16px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66;border-bottom:1px solid #D5DADE">EACH SOURCE, SIDE BY SIDE (SAMPLE VALUES)</div>
-          <div style="overflow-x:auto"><div style="min-width:760px">
-            <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,1.4fr) 90px 80px;gap:12px;padding:8px 16px;font-size:12px;color:#4F5B66;border-bottom:1px solid #E3E7EA">
-              <div>Source</div><div>Precision (95% range)</div><div>Recall</div><div>Calibration error</div><div>Pairs scored</div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Sample values.</b> No gold set of human-labelled pairs exists yet, so every score on this page except the “This session” blocks is a placeholder that shows the layout. They are not measurements. Ranges will be shown once there are enough labelled pairs.</div>
+
+        <section aria-labelledby="mt-arms" style="§CARD§overflow:hidden">
+          <div style="padding:16px 20px 4px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="mt-arms" style="margin:0;font-size:18px;font-weight:700">Four ways of working, side by side</h2>
+            <div style="font-size:13px;color:#3C4852">Across all {{goldPairs}} labelled pairs (sample). The score balances precision (of the pairs it suggested, how many were right) and recall (of the real duplicates, how many it found).</div>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:900px">
+            <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 74px 74px 96px 80px 96px 90px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
+              <div>Way of working</div><div>Score</div><div>Precision</div><div>Recall</div><div>Wrong suggestions</div><div>Missed pairs</div><div>Reviewer minutes per cluster</div><div>AI calls</div>
             </div>
-            <sc-for list="{{sources2}}" as="s" hint-placeholder-count="7">
-              <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,1.4fr) 90px 80px;gap:12px;padding:10px 16px;align-items:center;border-bottom:1px solid #E3E7EA">
-                <div style="display:flex;align-items:center;gap:8px;font-weight:600"><span style="{{s.shape}}"></span>{{s.name}}</div>
-                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{s.pBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{s.p}}</span><span style="font-size:11px;color:#4F5B66">{{s.range}}</span></div>
-                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{s.rBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{s.r}}</span></div>
-                <div style="font-variant-numeric:tabular-nums">{{s.ece}}</div>
-                <div style="font-variant-numeric:tabular-nums">{{s.n}}</div>
+            <sc-for list="{{arms}}" as="a" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 74px 74px 96px 80px 96px 90px;gap:12px;padding:12px 20px;align-items:center;border-bottom:1px solid var(--hair)">
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="{{a.shape}};flex:none;margin-top:6px"></span><span style="display:flex;flex-direction:column"><span style="font-weight:600">{{a.name}}</span><span style="font-size:12px;color:#54626F">{{a.sub}}</span></span></div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{a.fBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:700">{{a.f}}</span></div>
+                  <div style="font-size:12px;color:#3C4852;display:flex;flex-wrap:wrap;gap:4px 8px"><span>{{a.change}}</span><sc-if value="{{a.best}}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;color:#12171C">· highest score</span></sc-if></div>
+                </div>
+                <div style="font-variant-numeric:tabular-nums">{{a.p}}</div><div style="font-variant-numeric:tabular-nums">{{a.r}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{a.fp}}</div><div style="font-variant-numeric:tabular-nums">{{a.fn}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{a.mins}}</div>
+                <div style="font-variant-numeric:tabular-nums;display:flex;flex-direction:column"><span>{{a.calls}}</span><span style="font-size:12px;color:#54626F">{{a.aiMin}}</span></div>
               </div>
             </sc-for>
           </div></div>
-          <div style="padding:10px 16px;font-size:13px;color:#3C4852;display:flex;flex-wrap:wrap;gap:6px 16px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:#34424F;display:inline-block"></span>Mechanical</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>AI</span><span>The AI judge scored few pairs, so its range is wide. Read the range, not just the number.</span></div>
-        </div>
+          <div style="padding:14px 20px;font-size:13px;color:#2A353F;border-top:1px solid var(--line);background:#F8FAFB">{{reading}}</div>
+        </section>
+
+        <section aria-labelledby="mt-ladder" style="§CARD§overflow:hidden">
+          <div style="padding:16px 20px 4px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="mt-ladder" style="margin:0;font-size:18px;font-weight:700">Each mechanical method, then with the AI</h2>
+            <div style="font-size:13px;color:#3C4852">The same candidate pairs, scored on their own and then with the AI judging them after, or proposing them first.</div>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:900px">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) 74px 74px minmax(0,1.5fr) minmax(0,1.2fr) minmax(0,1.2fr) 80px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
+              <div>Method</div><div>Precision</div><div>Recall</div><div>Score on its own</div><div>With AI after</div><div>With AI before</div><div>Pairs scored</div>
+            </div>
+            <sc-for list="{{ladder}}" as="l" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:minmax(0,2fr) 74px 74px minmax(0,1.5fr) minmax(0,1.2fr) minmax(0,1.2fr) 80px;gap:12px;padding:10px 20px;align-items:center;border-bottom:1px solid var(--hair);{{l.rowStyle}}">
+                <div style="display:flex;align-items:center;gap:8px;{{l.nameStyle}}"><span style="width:9px;height:9px;background:#34424F;display:inline-block;flex:none"></span>{{l.name}}</div>
+                <div style="font-variant-numeric:tabular-nums">{{l.p}}</div><div style="font-variant-numeric:tabular-nums">{{l.r}}</div>
+                <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{l.fBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:600">{{l.f}}</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-variant-numeric:tabular-nums;font-weight:600">{{l.fa}}</span><span style="font-size:12px;color:#3C4852">{{l.da}}</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-variant-numeric:tabular-nums;font-weight:600">{{l.fb}}</span><span style="font-size:12px;color:#3C4852">{{l.db}}</span></div>
+                <div style="font-variant-numeric:tabular-nums">{{l.n}}</div>
+              </div>
+            </sc-for>
+          </div></div>
+        </section>
+
+        <section aria-labelledby="mt-cats" style="§CARD§overflow:hidden">
+          <div style="padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
+            <h2 id="mt-cats" style="margin:0;font-size:18px;font-weight:700">Which categories score best, with and without AI</h2>
+            <div style="font-size:13px;color:#3C4852">One row per kind of requirement. The square is the score without AI. The diamond is the score with the AI {{armShort}} the mechanical steps.</div>
+          </div>
+          <div style="padding:4px 20px 12px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center">
+            <div role="group" aria-label="Where the AI runs" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:13px;font-weight:600">Compare with</span>
+              <sc-for list="{{armBtns}}" as="b" hint-placeholder-count="2"><button onClick="{{b.pick}}" aria-pressed="{{b.pressed}}" style="{{b.style}}">{{b.label}}</button></sc-for>
+            </div>
+            <div role="group" aria-label="Order the categories" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:13px;font-weight:600">Order by</span>
+              <sc-for list="{{sortBtns}}" as="b" hint-placeholder-count="3"><button onClick="{{b.pick}}" aria-pressed="{{b.pressed}}" style="{{b.style}}">{{b.label}}</button></sc-for>
+            </div>
+            <button id="mt-table" onClick="{{toggleTable}}" aria-pressed="{{tablePressed}}" style="§BTN§min-height:40px;margin-left:auto;font-size:13px">{{tableLabel}}</button>
+          </div>
+          <div style="padding:0 20px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px">
+            <div style="border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;font-weight:600;color:#54626F">Best without AI</div>
+              <sc-for list="{{topWithout}}" as="t" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px"><span>{{t.rank}}. {{t.name}}</span><span style="font-variant-numeric:tabular-nums;font-weight:600">{{t.v}}</span></div></sc-for>
+            </div>
+            <div style="border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;font-weight:600;color:#54626F">Best with AI ({{armShort}} the mechanical steps)</div>
+              <sc-for list="{{topWith}}" as="t" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px"><span>{{t.rank}}. {{t.name}}</span><span style="font-variant-numeric:tabular-nums;font-weight:600">{{t.v}}</span></div></sc-for>
+            </div>
+          </div>
+          <sc-if value="{{showChart}}" hint-placeholder-val="{{ true }}">
+          <div style="border-top:1px solid var(--line);padding:12px 20px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px">
+            <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:#34424F;display:inline-block"></span>Without AI</span>
+            <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>With AI</span>
+            <span style="color:#54626F">Score from 0.5 to 1.0</span>
+          </div>
+          <div style="overflow-x:auto"><div style="min-width:720px;padding:0 20px 8px">
+            <div style="display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(0,3fr) 120px;gap:14px;align-items:end;padding:6px 0;font-size:12px;color:#54626F">
+              <span></span>
+              <span style="display:flex;justify-content:space-between;font-variant-numeric:tabular-nums"><span>0.5</span><span>0.6</span><span>0.7</span><span>0.8</span><span>0.9</span><span>1.0</span></span>
+              <span>Change</span>
+            </div>
+            <sc-for list="{{catRows}}" as="r" hint-placeholder-count="15">
+              <div role="group" aria-label="{{r.aria}}" style="display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(0,3fr) 120px;gap:14px;align-items:center;padding:8px 0;border-top:1px solid var(--hair)">
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span style="font-weight:600">{{r.name}}</span>
+                  <span style="font-size:12px;color:#54626F">{{r.sub}}</span>
+                  <span style="display:flex;flex-wrap:wrap;gap:4px">
+                    <sc-if value="{{r.bestWithout}}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:#E4E9ED;color:#2F3B46">best without AI</span></sc-if>
+                    <sc-if value="{{r.bestWith}}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:#F6E4EF;color:#6A1650">best with AI</span></sc-if>
+                    <sc-if value="{{r.few}}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;border:1px dashed #6B7782;color:#3C4852">few pairs</span></sc-if>
+                  </span>
+                </div>
+                <div aria-hidden="true" style="position:relative;height:30px;background:linear-gradient(to right,#E7ECF1 1px,transparent 1px) 0 0/20% 100%;border-right:1px solid #E7ECF1">
+                  <span style="position:absolute;top:50%;height:3px;background:#B9C3CD;transform:translateY(-50%);{{r.line}}"></span>
+                  <span style="position:absolute;top:50%;width:12px;height:12px;background:#34424F;transform:translate(-50%,-50%);{{r.sq}}"></span>
+                  <span style="position:absolute;top:50%;width:11px;height:11px;background:#8B1F6B;transform:translate(-50%,-50%) rotate(45deg);{{r.dm}}"></span>
+                </div>
+                <div style="display:flex;flex-direction:column;font-variant-numeric:tabular-nums"><span style="font-weight:700">{{r.delta}}</span><span style="font-size:12px;color:#3C4852">{{r.without}} to {{r.withAI}}</span></div>
+              </div>
+            </sc-for>
+          </div></div>
+          </sc-if>
+          <sc-if value="{{showTable}}" hint-placeholder-val="{{ false }}">
+          <div style="overflow-x:auto;border-top:1px solid var(--line)"><div style="min-width:860px">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 70px repeat(3,64px) repeat(3,64px) 80px;gap:10px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
+              <div>Category</div><div>Clusters</div><div>Pairs</div><div>Precision without</div><div>Recall without</div><div>Score without</div><div>Precision with</div><div>Recall with</div><div>Score with</div><div>Change</div>
+            </div>
+            <sc-for list="{{catRows}}" as="r" hint-placeholder-count="15">
+              <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 70px repeat(3,64px) repeat(3,64px) 80px;gap:10px;padding:8px 20px;align-items:center;border-bottom:1px solid var(--hair);font-variant-numeric:tabular-nums">
+                <div style="font-weight:600">{{r.name}}</div><div>{{r.nCl}}</div><div>{{r.g}}</div>
+                <div>{{r.p0}}</div><div>{{r.r0}}</div><div style="font-weight:700">{{r.without}}</div>
+                <div>{{r.p1}}</div><div>{{r.r1}}</div><div style="font-weight:700">{{r.withAI}}</div>
+                <div style="font-weight:700">{{r.delta}}</div>
+              </div>
+            </sc-for>
+          </div></div>
+          </sc-if>
+          <div style="border-top:1px solid var(--line);padding:12px 20px 16px;display:flex;flex-direction:column;gap:4px;font-size:13px;color:#2A353F;background:#F8FAFB">
+            <sc-for list="{{catNotes}}" as="n" hint-placeholder-count="3"><div>{{n.t}}</div></sc-for>
+          </div>
+        </section>
+
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">MECHANICAL AGAINST AI (SAMPLE VALUES)</div>
+          <div style="flex:1 1 360px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Mechanical against AI (sample values)</h2>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
-              <sc-for list="{{cont}}" as="c" hint-placeholder-count="4"><div style="border:1px solid #BAC3CA;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;font-weight:600;line-height:1.1">{{c.n}}</span><span style="font-weight:600">{{c.label}}</span><span style="font-size:12px;color:#4F5B66">{{c.sub}}</span></div></sc-for>
+              <sc-for list="{{cont}}" as="c" hint-placeholder-count="4"><div style="border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;font-weight:600;line-height:1.1">{{c.n}}</span><span style="font-weight:600">{{c.label}}</span><span style="font-size:12px;color:#54626F">{{c.sub}}</span></div></sc-for>
             </div>
             <div style="color:#3C4852;font-size:13px">Agreement between the two (kappa) is 0.58. That is not accuracy: both can miss the same thing, such as units that convert to each other. Pairs where they disagree are the most useful ones to label next.</div>
           </div>
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">HOW OFTEN PEOPLE ACCEPT, BY CONFIDENCE (SAMPLE VALUES)</div>
+          <div style="flex:1 1 360px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">How often people accept, by confidence (sample values)</h2>
             <sc-for list="{{acc}}" as="a" hint-placeholder-count="4">
-              <div style="display:flex;align-items:center;gap:10px"><div style="flex:0 0 110px;font-size:13px">{{a.bin}}</div><div style="flex:1;min-width:0;height:10px;background:#CDE2FB;border-radius:5px;overflow:hidden"><div style="{{a.bar}}"></div></div><div style="flex:0 0 44px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums">{{a.v}}</div></div>
+              <div style="display:flex;align-items:center;gap:10px"><div style="flex:0 0 110px;font-size:13px">{{a.bin}}</div><div style="flex:1;min-width:0;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{a.bar}}"></div></div><div style="flex:0 0 44px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600">{{a.v}}</div></div>
             </sc-for>
             <div style="color:#3C4852;font-size:13px">Acceptance alone can flatter the AI, because people tend to agree with it. The check is the planted wrong suggestions: 0 of 6 were accepted.</div>
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">THIS SESSION (LIVE)</div>
-            <sc-for list="{{live}}" as="l" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+          <div style="flex:1 1 320px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">This session (live)</h2>
+            <sc-for list="{{live}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
           </div>
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">GUARDS (LIVE FROM THE SAMPLE)</div>
-            <sc-for list="{{guardStats}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+          <div style="flex:1 1 320px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Guards (live from the sample)</h2>
+            <sc-for list="{{guardStats}}" as="l" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
           </div>
-          <div style="flex:1 1 360px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">PROGRESS BY LANE (LIVE)</div>
-            <sc-for list="{{laneStats}}" as="l" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
-            <div style="color:#4F5B66;font-size:13px">The pilot answers a question these numbers cannot yet: how many minutes a reviewer really needs per cluster in each lane. Use that to plan the full run.</div>
+          <div style="flex:1 1 320px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Progress by lane (live)</h2>
+            <sc-for list="{{laneStats}}" as="l" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:6px"><span>{{l.k}}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{l.v}}</span></div></sc-for>
+            <div style="color:#54626F;font-size:13px">The pilot answers a question these numbers cannot yet: how many minutes a reviewer really needs per cluster in each lane. Use that to plan the full run.</div>
           </div>
         </div>
       </div>

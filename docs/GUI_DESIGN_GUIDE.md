@@ -14,9 +14,9 @@ All screens in the pictures use a synthetic sample. Nothing here has been tested
 
 ---
 
-## 1. A tour in six pictures
+## 1. A tour in eight pictures
 
-Each picture is a real screenshot of the prototype. Click one to see it full size. All 16 are in [`images/prototype/`](images/prototype/).
+Each picture is a real screenshot of the prototype. Click one to see it full size. All 19 are in [`images/prototype/`](images/prototype/).
 The prototype bundles its fonts (Public Sans for the interface, Source Serif 4 for requirement wording, JetBrains Mono for IDs; all under the SIL Open Font License), so the pictures show the real typefaces.
 
 **Open: choose where requirements come from.** Six source cards, each with a trust level in words. A drop zone says what a file would be recognised as, before anything is imported.
@@ -34,10 +34,16 @@ The prototype bundles its fonts (Public Sans for the interface, Source Serif 4 f
 **All requirements: a map, not a table.** Each square is a requirement, grouped by what the data says (here, allocation). Faded squares are outside the filter.
 [![All requirements map](images/prototype/09_all_requirements.png)](images/prototype/09_all_requirements.png)
 
-**Methods and metrics: show the numbers for both approaches.** Mechanical and AI methods are scored the same way, side by side, with a banner saying the figures are placeholders until a human-labelled set exists.
+**Methods and metrics: show the numbers for both approaches, and for the order they run in.** Mechanical only, the AI after the mechanical steps, the AI before them and the AI alone are scored the same way, side by side. A second table does the same for each mechanical method, and a third shows which categories of requirement score best with and without the AI. A banner says the figures are placeholders until a human-labelled set exists.
 [![Methods and metrics](images/prototype/10_methods_and_metrics.png)](images/prototype/10_methods_and_metrics.png)
 
-On a phone the side bar becomes a block of buttons at the top and everything else stacks: [Home](images/prototype/15_phone_home.png) and [the six wordings](images/prototype/16_phone_six_wordings.png).
+**Results and grade: does the consolidated set hold up against the original?** A letter with its score, and under it the five parts the score is made of, each with its points and the sentence that says what it checks. Next come the counts (the original, after the decisions so far, and if every suggestion were taken), where each original requirement ended up (all of them add up to the original count), and what would raise the grade, largest first, with a button that opens the clusters concerned. The rule is a proposal and the page says so. A provisional grade has a dashed border until 90 percent of the clusters are decided.
+[![Results and grade](images/prototype/17_results_and_grade.png)](images/prototype/17_results_and_grade.png)
+
+**Sending a cluster to a teammate.** From any cluster you can ask someone for a second opinion before you record, hand them the decision, or ask them to review one you recorded. The sender sees who it is waiting on and recording pauses; the teammate sees what was asked and what the sender was about to do. A "second opinion" only counts as "checked by" if you then record what they agreed to.
+[![A cluster waiting on a teammate](images/prototype/18_hand_off_waiting.png)](images/prototype/18_hand_off_waiting.png)
+
+On a phone the side bar becomes a block of buttons at the top and everything else stacks: [Home](images/prototype/15_phone_home.png), [the six wordings](images/prototype/16_phone_six_wordings.png) and [the grade card](images/prototype/19_phone_results.png).
 
 ---
 
@@ -64,7 +70,8 @@ A person who is not a systems engineer should be able to answer these without he
 | Review queue | What is waiting for me, and what is waiting for others? | 5.2 (lists built from values present) |
 | Cluster review | How do these wordings differ from the reference, and what survives if I merge? | 5.3, 5.8 (text is text) |
 | All requirements | What is in this project, grouped how the data groups it? | 5.2, 5.5 |
-| Methods and metrics | How good is each method, honestly? | 5.4 (nothing hidden) |
+| Methods and metrics | How good is each method, and what does the AI add before or after it? | 5.4 (nothing hidden) |
+| Results and grade | Does the consolidated set hold up against the original, and what would raise the grade? | 5.4 (counts add up) |
 | Decisions and audit | What was decided, by whom, and has anything changed since? | 5.6 (always jump back) |
 | Sign-off policy | Who must sign what, and why? | none: this one is about the process, not the data |
 | Export | What goes into the draft package, and what is left out? | 5.4 |
@@ -82,6 +89,16 @@ A new screen should start from the same question: write the question in the titl
 - **No horizontal page scroll** at 1440, 900 and 390 px. The prototype's browser tests check this on the Open and Import screens; the phone screenshots in `images/prototype/` show the stacked layout for the others, which you should check by eye.
 - **Keep reading text readable.** Statements are shown verbatim, long ones can expand, and the line length stays comfortable (the prototype sets statements in a serif so they read as the document, and the interface around them in a sans; IDs are in a monospace).
 - **Keyboard and focus.** Use real buttons and inputs, never clickable boxes, and keep a visible focus ring (the prototype uses a 3 px outline). Aim for 44 px tall targets. The primary buttons and inputs are 44 px; the side bar items and the search box are 40 px, and the smaller controls (the group headers in the side bar, the top-bar icons, "Use as reference") are 32 to 40 px. The prototype has not been checked control by control. A window that opens over the page (the "Line up the words" sheet) moves focus into itself, keeps Tab inside, closes on Escape and gives focus back.
+
+### Dispositions, and the AI last
+
+A cluster review has to answer "which of these do I keep, and why?" for every member, not only for the one that survives.
+
+- **Every member gets a disposition in words:** Keep, Merged into M4, Stays separate, Kept and linked, Waiting for the owners, Superseded. The line under it says why, built from the comparison itself ("Looser (90 days). M4 already meets it, so nothing is lost").
+- **A preview before, a record after.** The same list appears while you choose ("If you record this") and stays with the decision afterwards.
+- **Mechanical choices first, the AI last and optional.** The Resolve panel is ordered: what happens, which wording (most stringent, least, median, one member's, your own), and only then "Optional · still unsure? Ask the AI last". That step starts by summing up what the mechanical steps already decided. The AI's text goes through the same guards as anyone's.
+- **Say what the grade is made of.** A grade without its arithmetic is an opinion. The results page prints the weights, the bands and the cap rule, and every part links to the clusters that hold it down.
+- **Ask a person, keep the record.** Sending a cluster to a teammate is a message with a purpose (second opinion, please decide, please review), a visible "waiting on" for both people, and an entry in the event chain. It never replaces a required sign-off.
 
 ### Comparing wordings
 

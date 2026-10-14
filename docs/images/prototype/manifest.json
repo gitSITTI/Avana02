@@ -1,5 +1,5 @@
 {
-  "prototype_page": "681d35bb3e0593c34a326591f0c1cadef0a8dfdbbf1de7dae0f8d272a97521c8",
+  "prototype_page": "6acd083728c4d79b846e5cb317bd4526c9172d29863081b35fe2e4c9e7b585b1",
   "screens": [
     "01_open.png",
     "02_import_check_the_mapping.png",
@@ -16,6 +16,9 @@
     "13_export_to_documents.png",
     "14_phone_open.png",
     "15_phone_home.png",
-    "16_phone_six_wordings.png"
+    "16_phone_six_wordings.png",
+    "17_results_and_grade.png",
+    "18_hand_off_waiting.png",
+    "19_phone_results.png"
   ]
 }

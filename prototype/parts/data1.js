@@ -1,7 +1,7 @@
 const DEFAULTS = {
   view: 'open', source: 'sample', scope: 'all', person: 'sam', preview: '', hint: true, glossary: false, navClosed: {}, homeOpen: { 0: true },
   selected: 'CL-001', blind: null, blindDone: {}, events: [], verified: '', fmt: 'sphinx', tamper: false, published: false, baseId: 'DRAFT-0001',
-  dec: {}, sign: {}, objections: {}, adjud: {}, res: {}, why: {}, ref: {}, alignOpen: false, peeled: {}, claims: {}, openVer: {}, liveVer: {}, dirs: {}, stale: {}, sib: {},
+  dec: {}, sign: {}, objections: {}, adjud: {}, res: {}, why: {}, ref: {}, alignOpen: false, hand: {}, sendF: {}, replyNote: {}, metArm: 'after', metSort: 'gain', metTable: false, peeled: {}, claims: {}, openVer: {}, liveVer: {}, dirs: {}, stale: {}, sib: {},
   qTab: 'me', qLane: '', qStatus: '', qAlloc: '', qSearch: '', qPage: 0,
   xFilter: 'all', xAlloc: '', xPick: '', xPage: 0, lpage: 0, lfilter: '', logTab: 'ledger',
   chatOpen: false, chat: {}, chatInput: '', lensNote: {}, polLane: 'B', polNew: false, polCross: false, polBase: false, scopeChoice: 'all', pilotAlloc: 'Mission Computer', just: '', adjNote: {}, sibNote: {},
