@@ -1,0 +1,18 @@
+{
+  "prototype_page": "417f8273ba1d3c3928d81a51fc2f00175f77c85690c1880ae397ee6942f97d6a",
+  "screens": [
+    "01_open.png",
+    "02_import_check_the_mapping.png",
+    "03_overview.png",
+    "04_review_queue.png",
+    "05_cluster_review_low_risk.png",
+    "06_cluster_review_conflict.png",
+    "07_all_requirements.png",
+    "08_methods_and_metrics.png",
+    "09_decisions_and_audit.png",
+    "10_sign_off_policy.png",
+    "11_export_to_documents.png",
+    "12_phone_open.png",
+    "13_phone_overview.png"
+  ]
+}

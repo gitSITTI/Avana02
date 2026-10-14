@@ -37,5 +37,7 @@ node_modules/
 excalidraw_generator/bundle.js
 excalidraw_generator/out/
 *.png
+# the board and screen previews shown in the README are the exception:
+!docs/images/**/*.png
 report.xml
 .env

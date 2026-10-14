@@ -20,7 +20,9 @@ node verify.js project/Main.dc.html       # static check; prints ISSUES 0
 python3 b11.py 1440 && python3 b11.py 390
 ```
 
-CI runs the first two (`prototype:build-identical`, `prototype:verify`). The browser tests are run by hand: `make proto-test`.
+CI runs the first two (GitLab: `prototype:build-identical`, `prototype:verify`; GitHub: the `prototype` job). The browser tests are run by hand: `make proto-test`.
+
+**Fonts and network.** Opened with network access, the page requests IBM Plex Sans, Serif and Mono from Google Fonts (`fonts.googleapis.com`; the request carries no requirement data, but it does tell Google the page was opened). Offline, or on a network that blocks it, the page still works and uses the browser's own fonts. The browser tests and `shots.py` block that request on purpose, so the pictures in `docs/images/prototype/` show the fallback fonts. If your network forbids the request, self-host the fonts (they are under the SIL Open Font License) and change the `<link>` in `parts/m/00_head.html`; that is not done yet.
 
 ## Open and Import screens (board 10, made interactive)
 

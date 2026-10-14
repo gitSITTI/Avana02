@@ -78,7 +78,7 @@ An `.excalidraw` file is JSON: `{"type":"excalidraw","version":2,"source":...,"e
 | `d.connect(a, b, sa='r', sb='l', label=None, dash=, color=, lx=, ly=)` | Elbow arrow from side `sa` (`l r t b`) of shape `a` to side `sb` of `b`, bound to both. |
 | `d.save(path)` | Writes the file. Drops empty unbound text. |
 
-Fonts: `family=1` hand-drawn (titles, annotations, callout captions), `2` clean sans (UI text), `3` monospace (small caps captions, table headers, code-like text). `roughness` is 0 everywhere, so shapes are crisp and only the font is hand-drawn.
+Fonts: `family=1` hand-drawn (titles, annotations, callout captions), `2` clean sans (UI text), `3` monospace (small caps captions, table headers, code-like text). `roughness` is 0 on the wireframes and diagrams, so their shapes are crisp and only the font is hand-drawn. The one exception is the storyboard (board 01), whose figures and speech bubbles use roughness 1 on purpose (`SK` in `sb.py`).
 
 ## 5. The wireframe vocabulary (`wf.Scr`, `wf2`)
 

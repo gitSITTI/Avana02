@@ -4,23 +4,40 @@ An app concept for opening large SysML v2 / MSOSA requirement projects, finding 
 
 This repository holds the research, the design boards, the generator that makes them, and the first working code (the input layer).
 
+## What it looks like
+
+Everything on these screens is a synthetic sample. Click a picture for full size; the guide explains the design: [`docs/GUI_DESIGN_GUIDE.md`](docs/GUI_DESIGN_GUIDE.md). The screenshots were taken offline, so the text is in the browser's fallback fonts (the page asks for IBM Plex from Google Fonts when it has network access).
+
+<a href="docs/images/prototype/01_open.png"><img src="docs/images/prototype/01_open.png" width="32%" alt="Open screen: choose where requirements come from"></a>
+<a href="docs/images/prototype/03_overview.png"><img src="docs/images/prototype/03_overview.png" width="32%" alt="Overview screen: one number and one button"></a>
+<a href="docs/images/prototype/06_cluster_review_conflict.png"><img src="docs/images/prototype/06_cluster_review_conflict.png" width="32%" alt="Cluster review: two wordings side by side"></a>
+
+The ten design boards (Excalidraw files, rendered here because GitHub cannot show them):
+
+| | | | | |
+|---|---|---|---|---|
+| [![01](docs/images/boards/thumbs/01_storyboard.png)](docs/images/boards/01_storyboard.png)<br>Storyboard | [![02](docs/images/boards/thumbs/02_wireframes.png)](docs/images/boards/02_wireframes.png)<br>Wireframes | [![03](docs/images/boards/thumbs/03_system_flows.png)](docs/images/boards/03_system_flows.png)<br>System flows | [![04](docs/images/boards/thumbs/04_ui_kit_and_IA.png)](docs/images/boards/04_ui_kit_and_IA.png)<br>UI kit | [![05](docs/images/boards/thumbs/05_scale_and_multiuser.png)](docs/images/boards/05_scale_and_multiuser.png)<br>Scale |
+| [![06](docs/images/boards/thumbs/06_lens_views.png)](docs/images/boards/06_lens_views.png)<br>Four lenses | [![07](docs/images/boards/thumbs/07_group_and_decisions.png)](docs/images/boards/07_group_and_decisions.png)<br>Group decisions | [![08](docs/images/boards/thumbs/08_assistant.png)](docs/images/boards/08_assistant.png)<br>The assistant | [![09](docs/images/boards/thumbs/09_more_pipelines.png)](docs/images/boards/09_more_pipelines.png)<br>Pipelines | [![10](docs/images/boards/thumbs/10_input_any_source.png)](docs/images/boards/10_input_any_source.png)<br>Any input |
+
 | Folder | What it is |
 |---|---|
 | `docs/Requirements comparison app research.md` | The research report. Appendix A = how the app reads any input. Appendix B = how the Excalidraw boards were made. |
+| `docs/GUI_DESIGN_GUIDE.md`, `docs/images/` | How to design the review screens, how to make the Excalidraw drawings clear and good-looking, and the screenshots and board renders (regenerate with `prototype/shots.py` and `excalidraw_generator/render.py`). |
 | `reqin/` | **Working code.** Reads SysML v2 (files and REST), ReqIF (MSOSA / DOORS), DOORS Next (OSLC), Digital.ai Agility, Excel/CSV, SQL, Word and PDF into one canonical model; can watch a folder of exports. `INPUT_LAYER.md` is the design, `CONNECTORS.md` is how to finish and write connectors, `GUI_CONTRACT.md` is what any screen may rely on (one dataset folder, never a file) plus the 14 datasets it must pass. |
 | `connector_template/` | A working, tested starting point for your own connector, with five `TODO(agent)` seams and a ready prompt for an agent. Installs as its own package. |
 | `excalidraw/` | Ten Excalidraw boards: storyboard, wireframes, flows, UI kit, scale, lenses, group decisions, assistant, pipelines, any-input. **Generated; do not edit by hand.** |
 | `excalidraw_generator/` | The Python that produces the boards, with `EXCALIDRAW_GUIDE.md` (recipes, definition of done, prompts for an agent). |
 | `prototype/` | Clickable prototype of the screens (one page, built from `parts/`). Open and Import screens show real `reqin` output; everything else is synthetic. See `prototype/README.md`. |
-| `tools/` | `check_no_real_data.py`, the tripwire that keeps real program data out of the repo. |
-| `Containerfile`, `.gitlab-ci.yml`, `Makefile` | Podman/Docker image and CI. `make check` runs what CI runs. |
+| `tools/` | `check_no_real_data.py`, the tripwire that keeps real program data out of the repo, and the tests that keep the licence files, the board and screenshot pictures, the Markdown links and the GitHub workflow honest. |
+| `Containerfile`, `.github/workflows/ci.yml`, `.gitlab-ci.yml`, `Makefile` | Podman/Docker image and CI (GitHub Actions and GitLab). `make check` runs what CI runs. |
+| `CONTRIBUTING.md`, `SECURITY.md` | How to change things safely, and how to report a vulnerability privately. |
 
 ## Quick start
 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e "reqin[test]"
-make check          # guard + 223 reqin tests + the connector template + rebuild all ten boards and the prototype page, confirm they are identical
+make check          # guard + 226 reqin tests + the connector template + rebuild all ten boards and the prototype page, confirm they are identical
 ```
 
 Try the CLI on your own export (read-only; the source file is never modified):
@@ -43,20 +60,21 @@ podman run --rm --network=none --userns=keep-id --user "$(id -u):$(id -g)" \
 ## Real program data
 
 **Do not commit real requirements, exports or models.** Not in `data/`, not "temporarily", not in a branch.
-`.gitignore` blocks the usual file types, and CI job `guard:no-real-data` fails the pipeline if one gets in anyway.
+`.gitignore` blocks the usual file types, and the CI guard job (`guard:no-real-data` on GitLab, `guard` on GitHub) fails the pipeline if one gets in anyway.
 The single exception is `reqin/tests/fixtures_approved/`, for anonymised excerpts that your security / export-control reviewer has approved, each recorded in `APPROVALS.md`.
-To also scan for your own program code names and number patterns, set a CI/CD variable `FORBIDDEN_TERMS` (one regex per line). Keep that list out of the repo.
+To also scan for your own program code names and number patterns, set a CI/CD variable (GitLab) or repository secret (GitHub) named `FORBIDDEN_TERMS` (one regex per line). Keep that list out of the repo.
 
 ## What has and has not been checked
 
 | Checked | How |
 |---|---|
-| `reqin`: 223 required checks pass (+1 optional with LibreOffice) | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git. The connector template's 9 tests pass as shipped. |
+| `reqin`: 226 required checks pass (+1 optional with LibreOffice) | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git. The connector template's 9 tests pass as shipped. |
 | The live connectors' tests bite | 21 deliberate breaks (a leaked secret, a redirect to another host, TLS off, a write verb, paging that stops after page one, caches removed, settle time ignored, a `delete` in the DOORS script ...): 18 caught at once, 3 exposed missing tests, which were added and are now caught. 20 more on the dataset layer: all caught |
 | Boards rebuild byte-for-byte; structurally valid | `make boards`, clean environment, standard library only |
 | Prototype | Committed page equals a fresh build; static check resolves every template hole across about 1,000 states (0 issues); 39 browser checks pass at 1440 and 390 px from a clean `npm ci`; older flow scripts give identical output to the previous published version. A deliberate break makes both CI jobs fail. |
 | Guard trips on what it should | 10 tests, including the real-export file types, data folders, size, missing approval entries, files not yet added to git, and that only the one reviewed DOORS script is exempt |
-| `.gitlab-ci.yml` | Passes yamllint and the vendored GitLab CI JSON schema; each job's commands were run locally. **The file itself has not run on a GitLab runner.** |
+| Pictures, links and workflow stay true | 23 more tests in `tools/` (33 in all). Every board picture and the prototype screenshots must have been made from the current board or page; every relative link in the Markdown files must resolve; the licence files must agree; the GitHub workflow must keep a read-only token, pinned actions and no `pull_request_target`, and name only files that exist. Each check was shown to fail on a deliberate break. |
+| `.gitlab-ci.yml`, `.github/workflows/ci.yml` | Both pass yamllint and their platform's JSON schema; the GitHub file also passes `actionlint`. Each job's commands were run locally. **Neither file has run on its platform yet.** |
 | **Not checked** | The `Containerfile` has not been built (no container engine daemon was available where it was written). **Any connector against a real system.** `sysml_api`, `oslc_rm` and `agility` are fake-server-tested only (`reqin connectors` says so); the DOORS 9 script has never run in DOORS; OAuth / form sign-in is not built. Reading real MSOSA, DOORS or SysML v2 exports: all fixtures are synthetic. Opening the boards in the live Excalidraw app. Python 3.10 (not supported; 3.11+ is). |
 
 ## Next steps (not done)
@@ -71,4 +89,4 @@ Apache License 2.0: see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). Copyright 2
 
 This is a research prototype and comes **as is**, without warranty (see sections 7 and 8 of the licence). Read "What has and has not been checked" above before relying on it: no connector has been run against a real MSOSA, Teamwork Cloud, DOORS or Agility system.
 
-Contributions are accepted under the same licence. Never commit real requirements, exports or models; the guard described above exists to stop that, and a pull request that trips it will not be merged.
+Contributions are accepted under the same licence: see [`CONTRIBUTING.md`](CONTRIBUTING.md). Never commit real requirements, exports or models; the guard described above exists to stop that, and a pull request that trips it will not be merged. Report vulnerabilities privately: [`SECURITY.md`](SECURITY.md).

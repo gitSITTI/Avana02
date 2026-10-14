@@ -216,7 +216,7 @@ def build(path):
     s = Scr(d, 0, 90)
     s.r(0, 0, GW, 150, fill='#fff9db', stroke='#fff9db', rounded=False)
     person(s, 60, 24, 'ok', 0.9)
-    s.t(110, 14, 'Persona: Systems analyst (SE&I) on a large airframe program', fs=16, family=1, color=INK)
+    s.t(110, 14, 'Persona: Systems analyst on a large engineering program', fs=16, family=1, color=INK)
     s.t(110, 42, d.wrap('Works from systems v2 and MSoSA models that are online, very large and shared. Wants fewer duplicate requirements without losing a single trace link. Must be able to show a reviewer exactly why every change was made.', 560, 12), fs=12, color=DARK)
     s.t(700, 14, 'Also served', fs=14, family=1, color=RED)
     s.t(700, 38, d.wrap('Process engineer: control and audit.\nUI/UX engineer: clear, consistent screens.\nNew user: nothing assumes prior knowledge.', 340, 12), fs=12, color=DARK)

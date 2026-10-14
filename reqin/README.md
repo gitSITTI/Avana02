@@ -4,7 +4,7 @@ Reference implementation of the design in `INPUT_LAYER.md`. Python 3.11+ (tested
 
 ```bash
 pip install -e ".[test]"          # needs: pyyaml openpyxl reqif sqlalchemy python-docx pdfplumber (+ rdflib for OSLC: the "oslc" extra)
-pytest                            # 223 required checks: conformance x 8 formats, behaviour, downstream, live connectors against fakes,
+pytest                            # 226 required checks: conformance x 8 formats, behaviour, downstream, live connectors against fakes,
                                   # the HTTP kit against real local servers, DOORS script, CLI and watch mode, the dataset layer, docs-match-code
                                   # + 1 optional (PDF made by LibreOffice): skipped, visibly, if `soffice` is not installed
 
