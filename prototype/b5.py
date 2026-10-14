@@ -3,6 +3,7 @@ def bad(errs): return [e for e in errs if 'ERR_FAILED' not in e]
 def enter(pg):
     pg.get_by_role('button', name='Open the sample project').click(); pg.wait_for_timeout(200)
     pg.get_by_role('button', name='Confirm mapping and import').click(); pg.wait_for_timeout(300)
+    pg.locator('.nav-btn', has_text='Overview').first.click(); pg.wait_for_timeout(300)   # the workspace now opens on Home
 def nav(pg, label): pg.locator('nav button', has_text=label).first.click(); pg.wait_for_timeout(400)
 with session(1440, 1000) as (pg, errs):
     enter(pg)

@@ -3,24 +3,24 @@
       <sc-if value="{{isExport}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:20px">
         <div style="display:flex;flex-direction:column;gap:6px">
-          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Export to documents</h1>
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Export to documents</h1>
           <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">Documents are generated from the approved list only, never from copied text. Stale and disputed clusters are held back automatically. This step prepares a draft package. It does not change your source model.</p>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
           <div style="flex:3 1 480px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">CHECK BEFORE YOU PREPARE</div>
+            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">CHECK BEFORE YOU PREPARE</div>
             <div style="display:flex;flex-direction:column;gap:8px">
               <div style="font-weight:600">Approved by every lens its policy requires ({{readyCount}})</div>
               <sc-if value="{{noReady}}" hint-placeholder-val="{{ true }}"><div style="color:#4F5B66">Nothing is approved yet. Decide a cluster in the review queue, then have each lens sign off.</div></sc-if>
               <sc-for list="{{ready}}" as="r" hint-placeholder-count="2">
-                <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;border:1px solid #D5DADE;border-radius:6px;padding:8px 12px"><span><b style="font-family:'IBM Plex Mono',monospace">{{r.id}}</b> {{r.title}} · {{r.decision}}</span><button onClick="{{r.change}}" aria-label="Change {{r.id}}" style="min-height:44px;padding:0 10px;background:transparent;border:0;color:var(--accent);text-decoration:underline;cursor:pointer">Change</button></div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;border:1px solid #D5DADE;border-radius:6px;padding:8px 12px"><span><b style="font-family:var(--mono)">{{r.id}}</b> {{r.title}} · {{r.decision}}</span><button onClick="{{r.change}}" aria-label="Change {{r.id}}" style="min-height:44px;padding:0 10px;background:transparent;border:0;color:var(--accent);text-decoration:underline;cursor:pointer">Change</button></div>
               </sc-for>
               <sc-if value="{{hasMoreReady}}" hint-placeholder-val="{{ false }}"><div style="color:#4F5B66">{{moreReady}}.</div></sc-if>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
               <div style="font-weight:600">Decided, waiting for sign-off ({{waitCount}})</div>
               <sc-for list="{{waiting}}" as="w" hint-placeholder-count="1">
-                <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;background:#FFF0D2;border-radius:6px;padding:8px 12px"><span><b style="font-family:'IBM Plex Mono',monospace">{{w.id}}</b> still needs: {{w.missing}}</span><button onClick="{{w.change}}" style="min-height:44px;padding:0 10px;background:transparent;border:0;color:#10337F;text-decoration:underline;cursor:pointer">Open</button></div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;background:#FFF0D2;border-radius:6px;padding:8px 12px"><span><b style="font-family:var(--mono)">{{w.id}}</b> still needs: {{w.missing}}</span><button onClick="{{w.change}}" style="min-height:44px;padding:0 10px;background:transparent;border:0;color:#10337F;text-decoration:underline;cursor:pointer">Open</button></div>
               </sc-for>
             </div>
             <sc-if value="{{hasMoreWait}}" hint-placeholder-val="{{ false }}"><div style="color:#4F5B66">{{moreWait}} waiting for sign-off.</div></sc-if>
@@ -28,8 +28,8 @@
             <div style="color:#3C4852"><b>{{undecidedCount}}</b> clusters have no decision yet. They are left out of the package.</div>
           </div>
           <div style="flex:2 1 320px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66">PACKAGE</div>
-            <div style="display:flex;flex-direction:column;gap:4px"><label for="base-id" style="font-weight:600">Draft baseline ID</label><input id="base-id" type="text" value="{{baseId}}" onChange="{{onBase}}" style="min-height:44px;padding:0 10px;border:1px solid #8C98A3;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:14px"></div>
+            <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">PACKAGE</div>
+            <div style="display:flex;flex-direction:column;gap:4px"><label for="base-id" style="font-weight:600">Draft baseline ID</label><input id="base-id" type="text" value="{{baseId}}" onChange="{{onBase}}" style="min-height:44px;padding:0 10px;border:1px solid #8C98A3;border-radius:6px;font-family:var(--mono);font-size:14px"></div>
             <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-weight:600;padding:0;margin-bottom:6px">Format</legend>
               <sc-for list="{{formats}}" as="f" hint-placeholder-count="4">
                 <label style="display:flex;gap:10px;align-items:flex-start;min-height:44px"><input type="radio" name="fmt" checked="{{f.on}}" onChange="{{f.pick}}" style="width:20px;height:20px;margin:2px 0 0"><span><span style="font-weight:600">{{f.name}}</span><br><span style="font-size:13px;color:#3C4852">{{f.sub}}</span></span></label>
@@ -42,7 +42,7 @@
         <sc-if value="{{published}}" hint-placeholder-val="{{ false }}">
           <div style="background:#E1F2E7;border:1px solid #1B6B3A;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:8px">
             <div style="font-weight:600;color:#14502B">Draft package prepared for {{baseId}}</div>
-            <div style="color:#14502B">Files: <span style="font-family:'IBM Plex Mono',monospace">{{packageFiles}}</span></div>
+            <div style="color:#14502B">Files: <span style="font-family:var(--mono)">{{packageFiles}}</span></div>
             <div style="color:#14502B">Each entry shows the baseline ID and lists any superseded or alias IDs. Your source model is unchanged.</div>
           </div>
         </sc-if>

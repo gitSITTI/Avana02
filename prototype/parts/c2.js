@@ -118,13 +118,7 @@
     const blindOn = this.blindOn(S);
     const hideAI = blindOn && !dec && !S.blindDone[c.id] && c.ai.mode !== 'none';
     const rk = rankedOf(S, c, ms);
-    const mi = (m) => ms.indexOf(m);
-    let cmp = S.cmp[c.id];
-    if (!cmp || cmp[0] >= ms.length || cmp[1] >= ms.length) cmp = rk.length >= 2 ? [mi(rk[0].m), mi(rk[rk.length - 1].m)] : [0, Math.min(1, ms.length - 1)];
-    if (cmp[0] === cmp[1] && ms.length > 1) cmp = [cmp[0], (cmp[0] + 1) % ms.length];
-    const mA = ms[cmp[0]], mB = ms[cmp[1]];
-    const diff = diffTokens(mA.text, mB.text);
-    const meta = (x, y) => ['owner', 'level', 'verif', 'alloc', 'base'].map((k) => ({ k: { owner: 'Owner', level: 'Level', verif: 'Verification', alloc: 'Allocated to', base: 'Baseline' }[k], v: x[k] + (x[k] !== y[k] ? ' (differs)' : ''), style: x[k] !== y[k] ? 'background:#FFF0D2;color:#6B3D00;padding:0 4px;border-radius:3px;font-weight:600;' : '' }));
+    const mi = (m) => c.members.indexOf(m);
     const q = dec ? signState(S, c, dec) : null;
     const cid = c.id;
     const setRes = (o) => this.setState({ res: Object.assign({}, S.res, { [cid]: Object.assign({}, S.res[cid] || {}, o) }) });
@@ -167,25 +161,51 @@
     const rr = SEED.rerun[cid];
     if (rr && dec && !S.sibNote[cid]) banners.push(this.banner('claim', 'A later AI run arrived as a separate version (' + rr.rev + ')', [rr.note, rr.rev + ': ' + rr.text], [{ label: 'Dismiss', fn: () => this.setState({ sibNote: Object.assign({}, S.sibNote, { [cid]: true }) }), primary: true }]));
     if (S.just === cid && dec) banners.push(this.banner('ok', 'Decision recorded as ' + dec.rev, ['It is a draft until the lenses this cluster needs have signed. Your reason and note are saved with the revision.'], [{ label: 'Next cluster for me', fn: () => this.nextForMe(), primary: true }]));
-    /* members table */
-    const mrows = ms.map((m, i) => {
+    /* the group, every wording measured against one reference */
+    const strictM = rk.length ? rk[0].m : ms[0];
+    const refM = ms.find((m) => m.id === S.ref[cid]) || strictM;
+    const ranked = rk.map((x) => x.m).concat(ms.filter((m) => !rk.some((x) => x.m === m)));
+    const cmpOthers = ranked.filter((m) => m !== refM);
+    const al = alignRows(refM.text, cmpOthers.map((m) => m.text));
+    const kindChip = (k) => 'display:inline-block;width:4px;align-self:stretch;flex:none;background:' + CH_DOT[k] + ';';
+    const faded = 'color:#5A6672;';
+    const refBg = 'background:color-mix(in srgb,var(--accent) 6%,#FFFFFF);';
+    const cellOuter = (span, bg) => 'grid-column:span ' + span + ';display:flex;align-items:center;padding:8px 3px;border-bottom:1px solid #E7ECF1;' + bg;
+    const rowHead = (m, isRef) => {
       const r = rk.find((x) => x.m === m);
       const rankText = !r ? 'Cannot be ranked' : m.id === strictId && rk.length > 1 && rk[0].r !== rk[rk.length - 1].r ? 'Strictest' : m.id === weakId && rk.length > 1 && rk[0].r !== rk[rk.length - 1].r ? 'Weakest' : 'Ranked';
       const covered = dec ? dec.covers.indexOf(m.id) >= 0 : false, kept = dec ? dec.kept.indexOf(m.id) >= 0 : false;
       const survives = !dec && res.outcome === 'merge' && ev.chosen === m;
-      const val = m.v === null || m.v === undefined ? (m.cond || (c.kind === 'modal' ? modalOf(m.text) : c.kind === 'subs' ? (m.xr ? 'with detail' : 'plain') : c.kind === 'confN' ? (negOf(m.text) ? 'prohibits' : 'requires') : 'no number')) : fmtVal(c, m.v) + (m.cond ? ' · ' + m.cond : '');
+      const label = 'M' + (mi(m) + 1);
       return {
-        label: 'M' + (i + 1), id: m.id, owner: m.owner, verif: m.verif, val, rankText, rankStyle: CHIP + (rankText === 'Strictest' ? 'background:#E1F2E7;color:#14502B;' : rankText === 'Weakest' ? 'background:#FFF0D2;color:#6B3D00;' : rankText === 'Cannot be ranked' ? 'background:#F4F6F8;color:#4F5B66;border:1px dashed #6B7782;' : 'background:#E4E9ED;color:#2F3B46;'),
+        label, id: m.id, owner: m.owner, verif: m.verif, isRef, notRef: !isRef, refAria: 'Use as reference: ' + label, peelAria: 'Peel out ' + label,
+        rankText, rankStyle: CHIP + (rankText === 'Strictest' ? 'background:#E1F2E7;color:#14502B;' : rankText === 'Weakest' ? 'background:#FFF0D2;color:#6B3D00;' : rankText === 'Cannot be ranked' ? 'background:#F4F6F8;color:#4F5B66;border:1px dashed #6B7782;' : 'background:#E4E9ED;color:#2F3B46;'),
         tag: survives ? 'Survives' : covered ? 'Covered' : kept ? 'Kept separate' : '', hasTag: survives || covered || kept, tagStyle: CHIP + (survives ? 'background:#12171C;color:#FFFFFF;' : 'background:#E8F0FD;color:#123C8C;'),
-        aOn: cmp[0] === i ? 'true' : 'false', bOn: cmp[1] === i ? 'true' : 'false',
-        pickA: () => this.setState({ cmp: Object.assign({}, S.cmp, { [cid]: [i, cmp[1]] }) }), pickB: () => this.setState({ cmp: Object.assign({}, S.cmp, { [cid]: [cmp[0], i] }) }),
-        aStyle: 'min-width:44px;min-height:44px;border-radius:6px;cursor:pointer;font-weight:700;border:1px solid ' + (cmp[0] === i ? '#12171C' : '#8C98A3') + ';background:' + (cmp[0] === i ? '#12171C' : '#FFFFFF') + ';color:' + (cmp[0] === i ? '#FFFFFF' : '#12171C') + ';',
-        bStyle: 'min-width:44px;min-height:44px;border-radius:6px;cursor:pointer;font-weight:700;border:1px solid ' + (cmp[1] === i ? '#12171C' : '#8C98A3') + ';background:' + (cmp[1] === i ? '#12171C' : '#FFFFFF') + ';color:' + (cmp[1] === i ? '#FFFFFF' : '#12171C') + ';',
+        setRef: () => this.setState({ ref: Object.assign({}, S.ref, { [cid]: m.id }) }),
         canPeel: actor && !dec && ms.length > 2 && c.members.length > 2,
-        peel: () => this.setState({ peeled: Object.assign({}, S.peeled, { [cid]: (S.peeled[cid] || []).concat([m.id]) }), cmp: Object.assign({}, S.cmp, { [cid]: null }), events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Peeled ' + m.id + ' out of the group (it does not belong)', cid) }),
-        rowStyle: 'display:grid;grid-template-columns:34px minmax(0,1fr) 96px;gap:10px;padding:10px 12px;border-bottom:1px solid #E3E7EA;align-items:start;' + (survives ? 'background:#F1F6FF;' : '')
+        peel: () => this.setState({ peeled: Object.assign({}, S.peeled, { [cid]: (S.peeled[cid] || []).concat([m.id]) }), ref: Object.assign({}, S.ref, { [cid]: S.ref[cid] === m.id ? null : S.ref[cid] }), events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Peeled ' + m.id + ' out of the group (it does not belong)', cid) }),
+        refStr: isRef ? 'true' : 'false', rowBg: survives ? 'background:#F1F6FF;' : '', headBg: isRef ? refBg : 'background:#FFFFFF;'
       };
-    });
+    };
+    const summaryOf = (r) => (r.same ? 'Same words as the reference' : r.reworded ? 'Reworded' : r.nChanges + (r.nChanges === 1 ? ' change' : ' changes'));
+    const chipsOf = (r, max) => r.changes.slice(0, max).map((x) => ({ text: x.text, bar: kindChip(x.kind), title: CH_NAME[x.kind] + ': ' + x.text })).concat(r.changes.length > max ? [{ text: '+' + (r.changes.length - max) + ' more', bar: kindChip('other'), title: 'More changes are shown in the wording above' }] : []);
+    const segStyle = (s) => s.same ? faded : s.ghost ? 'padding:0 6px;border-radius:6px;border:1px dashed #8C98A3;color:#5A6672;text-decoration:line-through;font-size:14px;' : CH_STYLE[s.kind] + 'padding:1px 7px;border-radius:6px;font-weight:600;';
+    const refSegs = []; { const toks = refM.text.split(' ').filter(Boolean), ks = kindsOfTokens(toks); let run = []; const flush = () => { if (run.length) { refSegs.push({ t: run.join(' '), style: '', ghost: false, chg: false, title: '' }); run = []; } }; toks.forEach((w, i) => { if (ks[i]) { flush(); refSegs.push({ t: w, style: SLOT_STYLE[ks[i]] + 'padding:1px 7px;border-radius:6px;', ghost: false, chg: false, title: '' }); } else run.push(w); }); flush(); }
+    const mrows = [Object.assign(rowHead(refM, true), { segs: refSegs, hasSegs: true, summary: 'Everything below is compared with this wording', changes: [], hasChanges: false, cells: [] })].concat(cmpOthers.map((m, k) => {
+      const r = al.rows[k];
+      return Object.assign(rowHead(m, false), {
+        segs: r.segs.map((s) => ({ t: s.t, style: segStyle(s), ghost: !!s.ghost, chg: !!s.chg, title: s.chg ? (s.was ? 'The reference has: ' + s.was : 'Not in the reference') : s.ghost ? 'The reference has this; this wording does not' : '' })), hasSegs: true,
+        summary: summaryOf(r), changes: chipsOf(r, 4), hasChanges: r.changes.length > 0,
+        cells: r.cells.map((x) => ({ text: x.text, ghost: !!x.ghost, chg: !!x.chg, empty: !!x.empty, outer: cellOuter(x.span, ''), inner: x.empty ? '' : x.same ? faded : segStyle({ ghost: x.ghost, kind: x.kind }) }))
+      });
+    }));
+    mrows[0].cells = al.refCells.map((x) => ({ text: x.text, ghost: false, chg: false, empty: !!x.empty, outer: cellOuter(1, refBg), inner: x.kind ? SLOT_STYLE[x.kind] + 'padding:1px 3px;border-radius:4px;' : '' }));
+    const trackCols = 'grid-template-columns:var(--lab) repeat(' + al.tracks.length + ',max-content);';
+    /* fields other than the words */
+    const FIELDS = [['owner', 'Owner'], ['level', 'Level'], ['verif', 'Verification'], ['alloc', 'Allocated to'], ['base', 'Baseline']];
+    const diffF = FIELDS.filter(([k]) => ms.some((m) => m[k] !== refM[k]));
+    const ledRows = [refM].concat(cmpOthers).map((m) => ({ label: 'M' + (mi(m) + 1), id: m.id, cells: diffF.map(([k]) => { const d = m[k] !== refM[k]; return { v: m[k], differs: d, style: d ? 'background:#FFF0D2;color:#6B3D00;font-weight:600;border-radius:6px;padding:2px 8px;' : faded + 'padding:2px 8px;' }; }) }));
+    const ledger = { hasLedger: diffF.length > 0, noLedger: diffF.length === 0, head: diffF.map(([, n]) => ({ name: n })), rows: ledRows, cols: 'grid-template-columns:168px repeat(' + diffF.length + ',minmax(120px,1fr));' };
     const peeledN = (S.peeled[cid] || []).length;
     /* AI card */
     const ai = c.ai;
@@ -300,20 +320,32 @@
     /* revision chain */
     const chain = chainOf(S, c).map((r) => ({ rev: r.rev, markStyle: MARK[r.kind][1], markLabel: MARK[r.kind][0], chipStyle: CHIP + MARK[r.kind][2], title: r.title, by: r.by, at: r.at, detail: r.detail, hasDetail: !!r.detail, text: r.text, hasText: !!r.text }));
     const ch = { items: chain, hasShare: !!(dec && dec.share), shareLine: dec && dec.share ? 'AI-origin share of the final wording: ' + dec.share.bucket + (dec.share.pct ? ' (' + dec.share.pct + '% of words changed after the AI draft)' : '') + '. A later AI run never replaces a revision that a person edited; it arrives as a separate version.' : 'A later AI run never replaces a revision that a person edited. It arrives as a separate version.' };
+    const focusSoon = (id) => setTimeout(() => { try { const e = document.getElementById(id); if (e) e.focus(); } catch (x) { /* no DOM */ } }, 60);
+    const openAlign = () => { this.setState({ alignOpen: true }); focusSoon('al-close'); };
+    const closeAlign = () => { this.setState({ alignOpen: false }); focusSoon('al-open'); };
+    const onSheetKey = (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); closeAlign(); return; }
+      if (e.key !== 'Tab') return;
+      const box = e.currentTarget, f = box.querySelectorAll('button:not(:disabled),[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     /* assemble */
     const status = STATUS_LABEL[st] + (q ? ' · ' + q.have.length + ' of ' + q.slots.length + ' signed' : '');
     const dirCtl = { canFlip: canFlip && actor, flipLabel: 'Flip direction', flip: () => this.setState({ dirs: Object.assign({}, S.dirs, { [c.famKey]: dirEff(S, c) === 'higher' ? 'lower' : 'higher' }), events: this.mk(S.events, 'human', P.name + ' · lead', 'Set stricter direction for "' + c.param + '" to ' + (dirEff(S, c) === 'higher' ? 'lower' : 'higher') + ' is stricter', cid) }) };
     return {
       banners: banners.map((b) => Object.assign({ hasAdj: false, adjV: '', onAdj: () => {}, adjHelp: '' }, b)), hasBanners: banners.length > 0,
       mrows, nMembers: ms.length, peeledNote: peeledN ? peeledN + ' member' + (peeledN > 1 ? 's were' : ' was') + ' peeled out of this group by a person. They are no longer part of it.' : '',
-      cmpA: 'M' + (cmp[0] + 1) + ' · ' + mA.id, cmpB: 'M' + (cmp[1] + 1) + ' · ' + mB.id, tokA: diff.a, tokB: diff.b, metaA: meta(mA, mB), metaB: meta(mB, mA), hasCmp: ms.length > 1,
+      refLabel: 'M' + (mi(refM) + 1) + ' · ' + refM.id, refIsStrict: refM === strictM && rk.length > 1, trackCols, ledger,
+      alignOpen: !!S.alignOpen, openAlign, closeAlign, onSheetKey,
       blindPressed: blindOn ? 'true' : 'false', blindLabel: blindOn ? 'on' : 'off', toggleBlind: () => this.setState({ blind: !blindOn }),
       toggleWhy: () => this.setState({ why: Object.assign({}, S.why, { [cid]: !S.why[cid] }) }),
       d: {
         id: cid, title: c.title, rel: REL_LABEL[c.rel], relPlain: REL_PLAIN[c.rel], relStyle: CHIP + REL_STYLE[c.rel], laneName: LANE_NAME[c.lane], laneStyle: this.laneBadge(c.lane).replace('align-self:flex-start;', ''),
         status, statusStyle: CHIP + STATUS_STYLE[st], prov, paramLine: c.param + ' · stricter means ' + dirWords(S, c), claimTxt: cl && cl.by !== P.name && !dec ? 'Claimed by ' + cl.by.split(' ')[0] : '', hasClaim: !!(cl && cl.by !== P.name && !dec), claimStyle: CHIP + STATUS_STYLE.claimed,
         flipLabel: dirCtl.flipLabel, canFlip: dirCtl.canFlip, flip: dirCtl.flip,
-        scores, mNote: c.mNote, guards, guardSummary: (10 - nF - nW) + ' OF 10 PASS' + (nF ? ' · ' + nF + ' BLOCKING' : '') + (nW ? ' · ' + nW + ' WARNING' : ''),
+        scores, mNote: c.mNote, guards, guardSummary: (10 - nF - nW) + ' of 10 pass' + (nF ? ', ' + nF + ' blocking' : '') + (nW ? ', ' + nW + ' warning' : ''),
         aiJudge: ai.mode === 'judge', aiVerdict: ai.verdict, aiConf: ai.conf, aiVotes: ai.votes,
         hideAI, showAI: !hideAI, blindEcho: blindOn && !!S.blindDone[cid], blindSaid: S.blindDone[cid] || '', aiVerdictShort: ai.verdict || (ai.mode === 'draft' ? 'wording draft only' : 'no judgement needed'),
         blindOptions: ['Same obligation', 'Variant', 'Conflict', 'Not sure'].map((label) => ({ label, style: BLIND_STYLE, pick: () => this.setState({ blindDone: Object.assign({}, S.blindDone, { [cid]: label }), events: this.mk(S.events, 'human', P.name + ' · ' + (P.lens || ''), 'Recorded blind first impression: ' + label.toLowerCase(), cid) }) })),

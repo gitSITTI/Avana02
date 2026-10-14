@@ -11,6 +11,7 @@ ok = lambda c, m: print(('PASS ' if c else 'FAIL ') + m)
 with session(1440, 1000) as (pg, errs):
     pg.get_by_role('button', name='Open the sample project').click(); pg.wait_for_timeout(200)
     pg.get_by_role('button', name='Confirm mapping and import').click(); pg.wait_for_timeout(300)
+    pg.locator('.nav-btn', has_text='Overview').first.click(); pg.wait_for_timeout(300)   # the workspace now opens on Home
     nav(pg, 'Review queue')
     who(pg, 'Casey')
     # NU sign-off

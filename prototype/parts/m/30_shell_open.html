@@ -3,47 +3,61 @@
 <sc-if value="{{inWorkspace}}" hint-placeholder-val="{{ false }}">
 <div class="ws">
   <nav class="ws-nav" aria-label="Main">
-    <div class="ws-brand" style="display:flex;align-items:center;gap:10px">
-      <div style="width:24px;height:24px;background:#FFFFFF;border-radius:4px;display:flex;align-items:center;justify-content:center"><div style="width:10px;height:10px;border:2px solid #14202B;box-sizing:border-box"></div></div>
-      <div style="font-weight:700;font-size:15px">Consolidator</div>
+    <div class="ws-brand" style="display:flex;align-items:center;gap:10px;padding:2px 6px">
+      <span aria-hidden="true" style="width:30px;height:30px;border-radius:9px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="8" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><rect x="6.5" y="6.5" width="8" height="8" rx="2" fill="#fff"/></svg></span>
+      <span style="font-weight:700;font-size:16px;letter-spacing:-.01em">Consolidator</span>
     </div>
-    <div class="ws-project" style="display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid #33475A;border-radius:6px">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A9BAC8">PROJECT</div>
-      <div style="font-weight:600">{{projectName}}</div>
-      <div style="font-size:12px;color:#A9BAC8">{{sourceTitle}} · sample data</div>
+    <div class="ws-project" style="display:flex;flex-direction:column;gap:1px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#F8FAFB">
+      <span style="font-size:12px;color:var(--slate)">Project</span>
+      <span style="font-weight:600">{{projectName}}</span>
+      <span style="font-size:12px;color:var(--slate)">{{sourceTitle}} · sample data</span>
     </div>
     <div class="ws-navlist">
-      <sc-for list="{{nav}}" as="n" hint-placeholder-count="7">
-        <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}" style="{{n.style}}">
-          <span>{{n.label}}</span>
-          <sc-if value="{{n.hasCount}}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#FFFFFF;color:#14202B;border-radius:10px;padding:1px 8px;font-weight:600">{{n.count}}</span></sc-if>
-        </button>
+      <sc-for list="{{navTop}}" as="n" hint-placeholder-count="3">
+        <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}">§NI:n§<span>{{n.label}}</span><sc-if value="{{n.hasCount}}" hint-placeholder-val="{{ false }}"><span class="nav-count">{{n.count}}</span></sc-if></button>
       </sc-for>
-      <button class="nav-btn" onClick="{{openGlossary}}" style="text-align:left;min-height:44px;padding:0 12px;background:transparent;border:0;color:#C9D5DF;cursor:pointer">Glossary and help</button>
-      <button class="nav-btn" onClick="{{closeProject}}" style="text-align:left;min-height:44px;padding:0 12px;background:transparent;border:0;color:#A9BAC8;cursor:pointer">Close project</button>
+      <div class="nav-group">
+        <button class="nav-ghead" onClick="{{toggleProg}}" aria-expanded="{{progExp}}">§IC:chevron:14§<span>Progress and evidence</span></button>
+        <div class="nav-kids" data-open="{{progExp}}">
+          <sc-for list="{{navProg}}" as="n" hint-placeholder-count="3">
+            <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}">§NI:n§<span>{{n.label}}</span></button>
+          </sc-for>
+        </div>
+      </div>
+      <div class="nav-group">
+        <button class="nav-ghead" onClick="{{toggleOut}}" aria-expanded="{{outExp}}">§IC:chevron:14§<span>Policy and output</span></button>
+        <div class="nav-kids" data-open="{{outExp}}">
+          <sc-for list="{{navOut}}" as="n" hint-placeholder-count="2">
+            <button class="nav-btn" onClick="{{n.onClick}}" aria-current="{{n.current}}">§NI:n§<span>{{n.label}}</span></button>
+          </sc-for>
+        </div>
+      </div>
     </div>
-    <div class="ws-person" style="display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:#1C2D3C;border-radius:6px">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A9BAC8">SIGNED IN AS</div>
-      <div style="font-weight:600">{{meName}}</div>
-      <div style="font-size:12px;color:#C9D5DF">{{meLens}} · {{meRole}}</div>
+    <div class="ws-foot">
+      <button class="nav-btn" onClick="{{openGlossary}}">§IC:book§<span>Glossary and help</span></button>
+      <button class="nav-btn" onClick="{{closeProject}}">§IC:exit§<span>Close project</span></button>
+    </div>
+    <div class="ws-person" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px">
+      <span class="av" style="background:{{meColor}};margin:0" aria-hidden="true">{{meInit}}</span>
+      <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:12px;color:var(--slate)">Signed in as</span><span style="font-weight:600">{{meName}}</span><span style="font-size:12px;color:var(--slate)">{{meLens}} · {{meRole}}</span></span>
     </div>
     <div class="ws-demo">
     <sc-if value="{{isLead}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A9BAC8">PREVIEW AS A LENS (READ ONLY)</div>
-        <sc-for list="{{previews}}" as="p" hint-placeholder-count="5">
+        <div style="font-size:12px;font-weight:600;color:var(--slate)">Demo only: preview as a lens (read only)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{previews}}" as="p" hint-placeholder-count="5">
           <button onClick="{{p.onClick}}" aria-pressed="{{p.pressed}}" style="{{p.style}}">{{p.label}}</button>
-        </sc-for>
+        </sc-for></div>
       </div>
     </sc-if>
-    <div style="display:flex;flex-direction:column;gap:6px;border-top:1px dashed #33475A;padding-top:12px">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A9BAC8">DEMO ONLY · SWITCH PERSON</div>
+    <div style="display:flex;flex-direction:column;gap:6px;border-top:1px dashed #B9C3CD;padding-top:12px">
+      <div style="font-size:12px;font-weight:600;color:var(--slate)">Demo only: switch person</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><sc-for list="{{switcher}}" as="p" hint-placeholder-count="6">
-        <button onClick="{{p.onClick}}" aria-pressed="{{p.pressed}}" style="{{p.style}}"><span style="font-weight:600;font-size:13px">{{p.name}}</span><span style="font-size:11px;opacity:.8">{{p.sub}}</span></button>
+        <button onClick="{{p.onClick}}" aria-pressed="{{p.pressed}}" style="{{p.style}}"><span style="font-weight:600;font-size:13px">{{p.name}}</span><span style="font-size:11px;color:var(--slate)">{{p.sub}}</span></button>
       </sc-for></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A9BAC8">DEMO ONLY · SIMULATE A TEAMMATE</div>
+      <div style="font-size:12px;font-weight:600;color:var(--slate)">Demo only: simulate a teammate</div>
       <sc-for list="{{sim}}" as="s" hint-placeholder-count="3">
         <button onClick="{{s.onClick}}" disabled="{{s.disabled}}" title="{{s.hint}}" style="{{s.style}}"><span style="font-weight:600;font-size:13px">{{s.label}}</span></button>
       </sc-for>
@@ -51,24 +65,36 @@
     </div>
   </nav>
   <main class="ws-main">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:#FFFFFF;border-bottom:1px solid #BAC3CA">
-      <sc-for list="{{titleCells}}" as="c" hint-placeholder-count="5">
-        <div style="padding:8px 16px;border-right:1px solid #E3E7EA;display:flex;flex-direction:column;gap:2px">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#4F5B66">{{c.label}}</span>
-          <span style="font-weight:600;font-size:13px">{{c.value}}</span>
-        </div>
-      </sc-for>
+    <header class="topbar">
+      <div class="tb-crumb">
+        <span style="color:var(--slate);white-space:nowrap">{{projectName}}</span>
+        <span aria-hidden="true" style="color:#9AA6B1">/</span>
+        <span style="font-weight:600;white-space:nowrap">{{pageName}}</span>
+        <span style="margin-left:4px;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:#EEF2F6;color:#3C4852;white-space:nowrap">{{scopeTxt}}</span>
+        <span style="font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:#EEF2F6;color:#3C4852;white-space:nowrap">Pre-baseline</span>
+      </div>
+      <div class="tb-search">
+        §IC:search:16§
+        <input id="top-search" type="search" value="{{tbSearchV}}" onChange="{{onTbSearch}}" placeholder="Search requirements" aria-label="Search requirements">
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+        <span style="display:inline-flex;align-items:center;padding-right:10px" role="group" aria-label="Teammates on this project (sample)">
+          <sc-for list="{{presence}}" as="a" hint-placeholder-count="3"><span class="av" title="{{a.title}}" style="background:{{a.color}}">{{a.init}}</span></sc-for>
+        </span>
+        <button class="tb-icon" onClick="{{openGlossary}}" aria-label="Open the glossary" title="Glossary and help">§IC:help:20§</button>
+        <button class="tb-icon" onClick="{{openAudit}}" aria-label="Open the audit log" title="Decisions and audit">§IC:clock:20§</button>
+        <button onClick="{{chatToggle}}" aria-pressed="{{chatPressed}}" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:var(--radius-ctl);cursor:pointer;font-weight:600;border:1px solid #0B6E99;background:#E3F4FB;color:#0B4F6E">§IC:spark:16§{{chatLabel}}</button>
+      </div>
+    </header>
+    <div class="draftbar">
+      <b>Draft</b>
+      <span style="flex:1 1 320px">Suggestions are drafts until every lens the sign-off policy requires has signed. Nothing is written back to your source model.</span>
     </div>
-    <div style="background:#FFF4D6;border-bottom:1px solid #E5C87A;color:#4A3300;padding:10px 24px;display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap">
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;border:1px solid #4A3300;padding:1px 6px;border-radius:3px">DRAFT</span>
-      <span style="flex:1 1 320px">Mechanical and AI suggestions are proposals. Each stays a draft until every lens the sign-off policy requires has signed it, and nothing is written back to your source model from here.</span>
-      <button onClick="{{chatToggle}}" aria-pressed="{{chatPressed}}" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:600;border:1px solid #0B6E99;background:#E3F4FB;color:#0B4F6E"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h12v8H8l-3 3v-3H2z" fill="#0B6E99"/></svg>{{chatLabel}}</button>
-    </div>
-    <div style="padding:22px 20px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box">
+    <div class="content">
       <sc-if value="{{glossaryOpen}}" hint-placeholder-val="{{ false }}">
       <section aria-label="Glossary" style="background:#FFFFFF;border:2px solid var(--accent);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-          <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:24px">Glossary and help</h2>
+          <h2 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:24px">Glossary and help</h2>
           <button onClick="{{closeGlossary}}" style="§BTN§">Close glossary</button>
         </div>
         <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px 28px">

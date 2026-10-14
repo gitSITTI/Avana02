@@ -5,6 +5,7 @@ with session(1440, 1000) as (pg, errs):
     print('import:', pg.inner_text('h1'))
     pg.screenshot(path='s_import.png', full_page=True)
     pg.get_by_role('button', name='Confirm mapping and import').click(); pg.wait_for_timeout(500)
+    pg.locator('.nav-btn', has_text='Overview').first.click(); pg.wait_for_timeout(300)   # the workspace now opens on Home
     print('overview:', pg.inner_text('h1'), bad(errs))
     pg.screenshot(path='s_overview.png')
     pg.get_by_role('button', name='Start with the safest cluster').click(); pg.wait_for_timeout(500)

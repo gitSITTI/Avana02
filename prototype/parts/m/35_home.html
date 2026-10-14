@@ -1,0 +1,92 @@
+
+      <!-- ===== HOME ===== -->
+      <sc-if value="{{isHome}}" hint-placeholder-val="{{ false }}">
+      <div class="home-wrap" style="display:flex;flex-direction:column;gap:24px">
+        <section aria-label="Security" style="background:var(--band);color:#FFFFFF;border-radius:12px;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px">
+          <span aria-hidden="true" style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;flex:none">§IC:lock:20§</span>
+          <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:2px">
+            <div style="font-weight:700;font-size:16px">High security</div>
+            <div style="color:#C5D0DA;font-size:13px;max-width:62ch">This project runs on your own servers and opens every source read-only. AI is optional and goes through the gateway your administrator sets up.</div>
+          </div>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{secFacts}}" as="f" hint-placeholder-count="3"><li style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.1);color:#E8EDF1">§IC:check:14§{{f}}</li></sc-for>
+          </ul>
+        </section>
+        <div class="home-grid">
+          <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
+            <div style="display:flex;flex-direction:column;gap:14px;padding-bottom:20px;border-bottom:1px solid var(--line)">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <h1 style="margin:0;font-weight:700;font-size:30px;line-height:1.2;letter-spacing:-.02em">{{homeTitle}}</h1>
+                <p style="margin:0;color:#3C4852;max-width:62ch;text-wrap:pretty">{{homeSub}}</p>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <button onClick="{{startReview}}" style="§PRI§padding:0 20px;font-size:15px">{{nextLabel}}</button>
+                <button onClick="{{openOverview}}" style="§BTN§">Open the overview</button>
+              </div>
+            </div>
+            <section aria-labelledby="home-src" style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px">
+                <h2 id="home-src" style="margin:0;font-size:18px;font-weight:700">Bring in requirements</h2>
+                <button onClick="{{allSources}}" style="min-height:44px;padding:0 4px;background:transparent;border:0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px">See all six sources</button>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:12px">
+                <sc-for list="{{homeSources}}" as="s" hint-placeholder-count="3">
+                  <button class="chip-src" onClick="{{s.go}}">
+                    <span class="chip-disc" aria-hidden="true">{{s.disc}}</span>
+                    <span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">{{s.title}}</span><span style="font-size:12px;color:var(--slate)">{{s.sub}}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+            </section>
+            <div class="home-two">
+              <section aria-labelledby="home-rec" style="§CARD§display:flex;flex-direction:column;overflow:hidden">
+                <div style="padding:16px 20px 12px"><h2 id="home-rec" style="margin:0;font-size:16px;font-weight:700">Recent imports</h2><div style="font-size:12px;color:var(--slate)">Sample history, not from your files</div></div>
+                <sc-for list="{{imports}}" as="r" hint-placeholder-count="3">
+                  <div style="border-top:1px solid var(--hair)">
+                    <button class="acc-head" onClick="{{r.toggle}}" aria-expanded="{{r.exp}}">§IC:chevron:16§<span style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font-weight:600;overflow-wrap:anywhere">{{r.name}}</span><span style="font-size:12px;color:var(--slate)">{{r.sub}}</span></span></button>
+                    <sc-if value="{{r.open}}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:2px 20px 16px 46px;display:flex;flex-direction:column;gap:10px">
+                      <dl style="margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-size:13px">
+                        <dt style="color:var(--slate)">Records read</dt><dd style="margin:0;font-weight:600">{{r.records}}</dd>
+                        <dt style="color:var(--slate)">How sure the read is</dt><dd style="margin:0"><span style="{{r.chip}}">{{r.trust}}</span> <span style="color:#3C4852">{{r.means}}</span></dd>
+                        <dt style="color:var(--slate)">Imported by</dt><dd style="margin:0">{{r.by}}</dd>
+                      </dl>
+                      <button onClick="{{r.act}}" style="§BTN§align-self:flex-start">{{r.actLabel}}</button>
+                    </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </section>
+              <section aria-labelledby="home-bars" style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <div><h2 id="home-bars" style="margin:0;font-size:16px;font-weight:700">Open clusters by allocation</h2><div style="font-size:12px;color:var(--slate)">{{barsSub}}</div></div>
+                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px">
+                  <sc-for list="{{bars}}" as="b" hint-placeholder-count="4">
+                    <li><button class="bar-row" onClick="{{b.go}}" aria-label="{{b.aria}}" title="{{b.aria}}">
+                      <span style="flex:0 0 112px;text-align:left;font-size:13px;color:#2A353F;overflow-wrap:anywhere">{{b.name}}</span>
+                      <span style="flex:1;min-width:0;display:flex;align-items:center;gap:8px"><span style="{{b.bar}}"></span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{b.n}}</span></span>
+                    </button></li>
+                  </sc-for>
+                </ul>
+                <sc-if value="{{noBars}}" hint-placeholder-val="{{ false }}"><div style="color:#3C4852;font-size:13px">No cluster is open. Everything has a decision.</div></sc-if>
+                <div style="font-size:12px;color:var(--slate)">Select a bar to see those clusters in the review queue.</div>
+              </section>
+            </div>
+          </div>
+          <aside aria-labelledby="home-act" class="home-aside" style="§CARD§display:flex;flex-direction:column;overflow:hidden">
+            <div style="padding:16px 20px 12px;display:flex;align-items:baseline;justify-content:space-between;gap:8px"><h2 id="home-act" style="margin:0;font-size:16px;font-weight:700">Latest activity</h2><button onClick="{{openAudit}}" style="min-height:44px;padding:0 4px;background:transparent;border:0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Open the log</button></div>
+            <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+              <sc-for list="{{activity}}" as="a" hint-placeholder-count="5">
+                <li style="display:flex;gap:12px;padding:12px 20px;border-top:1px solid var(--hair)">
+                  <span style="{{a.disc}}" aria-hidden="true"><span style="{{a.shape}}"></span></span>
+                  <div style="min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <div style="font-size:13px;color:#2A353F;overflow-wrap:anywhere">{{a.text}}</div>
+                    <div style="font-size:12px;color:var(--slate)">{{a.who}} · {{a.time}}</div>
+                    <sc-if value="{{a.hasTarget}}" hint-placeholder-val="{{ false }}"><button onClick="{{a.open}}" style="align-self:flex-start;min-height:32px;padding:0;background:transparent;border:0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:13px">Open {{a.target}}</button></sc-if>
+                  </div>
+                </li>
+              </sc-for>
+            </ul>
+          </aside>
+        </div>
+      </div>
+      </sc-if>

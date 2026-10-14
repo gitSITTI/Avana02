@@ -3,7 +3,7 @@
       <sc-if value="{{isExplorer}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:20px">
         <div style="display:flex;flex-direction:column;gap:6px">
-          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">All requirements</h1>
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">All requirements</h1>
           <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">Every requirement in scope, whether or not anything similar was found. Each square is one requirement. Use this to check that nothing was skipped, then open any of them.</p>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Filter requirements">
@@ -14,7 +14,7 @@
           <sc-if value="{{xHasAlloc}}" hint-placeholder-val="{{ false }}"><button onClick="{{xClearAlloc}}" style="§BTN§min-height:36px;font-size:13px">Showing {{xAllocName}} only · clear</button></sc-if>
         </div>
         <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:14px">
-          <div style="§CAP§">MAP · GROUPED BY ALLOCATION · FADED SQUARES ARE OUTSIDE THE FILTER</div>
+          <div style="§CAP§">Map, grouped by allocation. Faded squares are outside the filter</div>
           <sc-for list="{{groups}}" as="g" hint-placeholder-count="8">
             <div style="display:flex;flex-direction:column;gap:6px">
               <button onClick="{{g.pick}}" aria-pressed="{{g.pressed}}" style="align-self:flex-start;min-height:36px;padding:0 10px;background:transparent;border:0;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px">{{g.name}} <span style="font-weight:400;color:#4F5B66">· {{g.count}}</span></button>
@@ -25,7 +25,7 @@
         <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
           <div style="flex:3 1 560px;min-width:0;display:flex;flex-direction:column;gap:12px">
             <div style="§CARD§overflow:hidden">
-              <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">BY ALLOCATION · CLICK A ROW TO FILTER</div>
+              <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">By allocation. Click a row to filter</div>
               <div style="overflow-x:auto"><div style="min-width:640px">
                 <div style="display:grid;grid-template-columns:minmax(0,1.4fr) repeat(7,minmax(0,.7fr));gap:8px;padding:8px 16px;border-bottom:1px solid #D5DADE;font-size:12px;color:#4F5B66;font-weight:600"><span>Allocation</span><span>Total</span><span>Alone</span><span>Needs decision</span><span>In review</span><span>Approved</span><span>Attention</span><span>Clusters</span></div>
                 <sc-for list="{{allocRows}}" as="a" hint-placeholder-count="8">
@@ -43,25 +43,25 @@
             <div style="display:flex;flex-direction:column;gap:6px">
               <sc-for list="{{xRows}}" as="r" hint-placeholder-count="8">
                 <button onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="{{r.style}}">
-                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">{{r.id}}</span>
+                  <span style="font-family:var(--mono);font-size:12px;font-weight:600">{{r.id}}</span>
                   <span style="{{r.shape}}"></span>
                   <span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{r.text}}</span>
-                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66">{{r.cluster}}</span>
+                  <span style="font-family:var(--mono);font-size:12px;color:#4F5B66">{{r.cluster}}</span>
                 </button>
               </sc-for>
             </div>
           </div>
           <sc-if value="{{xShowPick}}" hint-placeholder-val="{{ false }}">
           <aside aria-label="One requirement" style="flex:2 1 320px;min-width:0;§CARD§border-top:4px solid var(--accent);padding:16px 20px;display:flex;flex-direction:column;gap:12px;position:sticky;top:12px">
-            <div style="display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700">{{xp.id}}</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px"><span style="{{xp.shape}}"></span>{{xp.stateLabel}}</span></div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:'IBM Plex Serif',Georgia,serif;font-size:16px;line-height:1.7"><sc-for list="{{xp.tok}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center"><span style="font-family:var(--mono);font-weight:700">{{xp.id}}</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px"><span style="{{xp.shape}}"></span>{{xp.stateLabel}}</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:var(--serif);font-size:16px;line-height:1.7"><sc-for list="{{xp.tok}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for></div>
             <div style="font-size:13px;color:#3C4852">{{xp.alloc}} · owner {{xp.owner}}</div>
             <div style="font-size:13px;color:#2A353F">{{xp.clusterLine}}</div>
             <sc-if value="{{xp.inCluster}}" hint-placeholder-val="{{ false }}"><button onClick="{{xp.open}}" style="§PRI§align-self:flex-start">Open its cluster</button></sc-if>
             <div style="border-top:1px solid #E3E7EA;padding-top:10px;display:flex;flex-direction:column;gap:6px">
-              <div style="§CAP§">HISTORY</div>
+              <div style="§CAP§">History</div>
               <sc-for list="{{xp.history}}" as="h" hint-placeholder-count="3">
-                <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px"><span style="flex:none;width:52px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66">{{h.when}}</span><span>{{h.text}}</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px"><span style="flex:none;width:52px;font-family:var(--mono);font-size:12px;color:#4F5B66">{{h.when}}</span><span>{{h.text}}</span></div>
               </sc-for>
             </div>
           </aside>

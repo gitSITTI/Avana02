@@ -39,7 +39,7 @@ proto:
 	cd prototype && $(PY) build.py /tmp/Main.built.dc.html >/dev/null && cmp /tmp/Main.built.dc.html project/Main.dc.html && node verify.js project/Main.dc.html | grep -E "^ISSUES 0$$"
 
 proto-test:
-	cd prototype && (cd vendor && npm ci) && $(PY) b11.py 1440 && $(PY) b11.py 390
+	cd prototype && (cd vendor && npm ci) && $(PY) b11.py 1440 && $(PY) b11.py 390 && $(PY) b12.py 1440 && $(PY) b12.py 390
 
 image:
 	$(CTR) build -t $(IMG) -f Containerfile .

@@ -3,6 +3,7 @@ def bad(errs): return [e for e in errs if 'ERR_FAILED' not in e]
 with session(1440, 1000) as (pg, errs):
     pg.get_by_role('button', name='Open the sample project').click(); pg.wait_for_timeout(200)
     pg.get_by_role('button', name='Confirm mapping and import').click(); pg.wait_for_timeout(300)
+    pg.locator('.nav-btn', has_text='Overview').first.click(); pg.wait_for_timeout(300)   # the workspace now opens on Home
     pg.get_by_role('button', name='Open CL-050').click(); pg.wait_for_timeout(400)
     pg.get_by_role('button', name='Median').click(); pg.wait_for_timeout(150)
     pg.get_by_role('button', name='Looser middle').click(); pg.wait_for_timeout(150)
@@ -17,13 +18,13 @@ with session(1440, 1000) as (pg, errs):
     rec.click(); pg.wait_for_timeout(400)
     print('--- after record ---'); print(pg.locator('.rv-resolve').inner_text()[:900])
     det = pg.locator('.rv-detail').inner_text()
-    i = det.index('SIGN-OFF POLICY'); print(det[:240]); print('...'); print(det[i:i+900])
+    i = det.index('Sign-off policy for this cluster'); print(det[:240]); print('...'); print(det[i:i+900])
     pg.screenshot(path='s_recorded.png')
     # sign as other lenses
     for who, lens in [('Priya','Process engineer'),('Jordan','UI/UX engineer'),('Casey','New user'),('Morgan',None)]:
         pg.locator('nav button', has_text=who).first.click(); pg.wait_for_timeout(300)
         det = pg.locator('.rv-detail').inner_text()
-        i = det.index('SIGN-OFF POLICY')
+        i = det.index('Sign-off policy for this cluster')
         btns = [b.inner_text() for b in pg.locator('.rv-detail button').all() if 'ign' in b.inner_text() or 'approval' in b.inner_text() or 'Record' in b.inner_text()]
         print(who, '->', btns, '|', det[i+30:i+160].replace('\n',' / '))
     print(bad(errs))

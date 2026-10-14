@@ -78,7 +78,7 @@ if (require.main === module) {
   run('change editing + yaml', (c) => c.setState({ view: 'import', source: 'table', impStep: 'map', mapEdit: 'baseline', yamlOpen: true, mapOver: { 'table:text': '', 'table:owner': 'IPT' } }));
   run('reqif without allocation', (c) => c.setState({ view: 'import', source: 'reqif', impStep: 'map', yamlOpen: true }));
   run('all mapped, all verified', (c) => c.setState({ view: 'import', source: 'table', impStep: 'map', mapOver: { 'table:baseline': 'IPT' } }));
-  PEOPLE.forEach((p) => { ['overview', 'review', 'explorer', 'methods', 'audit', 'policy', 'export'].forEach((v) => run(v + '-' + p.k, (c) => base(c, { view: v, person: p.k, chatOpen: v === 'review', glossary: v === 'overview' }))); });
+  PEOPLE.forEach((p) => { ['home', 'overview', 'review', 'explorer', 'methods', 'audit', 'policy', 'export'].forEach((v) => run(v + '-' + p.k, (c) => base(c, { view: v, person: p.k, chatOpen: v === 'review', glossary: v === 'overview' }))); });
   run('audit-chain', (c) => base(c, { view: 'audit', logTab: 'chain', tamper: true, verified: 'fail:2' }));
   run('audit-chain-ok', (c) => base(c, { view: 'audit', logTab: 'chain', verified: 'ok' }));
   run('explorer-pick', (c) => base(c, { view: 'explorer', xPick: 'REQ-FCS-0312', xFilter: 'open', xAlloc: 'Flight Control' }));
@@ -109,6 +109,12 @@ if (require.main === module) {
   run('queue filters', (c) => base(c, { view: 'review', qTab: 'all', qLane: 'B', qStatus: 'open', qAlloc: 'Flight Control', qSearch: 'retention' }));
   run('queue empty', (c) => base(c, { view: 'review', qTab: 'all', qSearch: 'zzzzzz' }));
   run('pilot scope', (c) => base(c, { view: 'review', scope: 'Mission Computer', qTab: 'all' }));
+  run('compare aligned', (c) => base(c, { view: 'review', selected: 'CL-050', qTab: 'all', alignOpen: true }));
+  run('compare ref M6 aligned', (c) => base(c, { view: 'review', selected: 'CL-050', qTab: 'all', alignOpen: true, ref: { 'CL-050': 'x' } }));
+  run('compare peeled', (c) => base(c, { view: 'review', selected: 'CL-050', qTab: 'all', peeled: { 'CL-050': ['y'] } }));
+  run('home all open', (c) => base(c, { view: 'home', homeOpen: { 0: true, 1: true, 2: true }, navClosed: { prog: true, out: true } }));
+  run('home pilot', (c) => base(c, { view: 'home', scope: 'Data Recorder', person: 'lee' }));
+  run('home done', (c) => { base(c, { view: 'home' }); c.setState({ search: 1 }); });
   run('pilot overview', (c) => base(c, { view: 'overview', scope: 'Data Recorder' }));
   console.log('ISSUES', issues.size);
   issues.forEach((s, m) => console.log(' -', m, ' @', s));

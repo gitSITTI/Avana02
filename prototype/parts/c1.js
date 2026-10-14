@@ -29,7 +29,7 @@
   allInfos(S) { return universe(S).order.map((c) => this.info(S, c)); }
   openCount(S) { return this.allInfos(S).filter((x) => x.me).length; }
   /* ----- open and import ----- */
-  chipStyle(k) { return 'font-family:IBM Plex Mono,monospace;font-size:11px;padding:2px 8px;border-radius:3px;white-space:nowrap;' + TRUST[k].style; }
+  chipStyle(k) { return 'font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:3px;white-space:nowrap;' + TRUST[k].style; }
   goImport(src) { return () => this.setState({ source: src, view: 'import', impStep: 'verify', mapEdit: '', yamlOpen: false }); }
   valsOpen(S) {
     const dropFile = FILES.find((f) => f.f === S.drop);
@@ -37,7 +37,7 @@
     return {
       sources: SOURCES.map((s) => ({ ...s, trustStyle: this.chipStyle(s.trust), btn: s.later ? 'See how' : 'Choose', style: cardStyle(s.later), pick: s.later ? () => this.setState({ openNote: S.openNote === 'mdzip' ? '' : 'mdzip' }) : this.goImport(s.k) })),
       trustLegend: ['Structured', 'Tabular', 'Parsed', 'Extracted'].map((k) => ({ name: k, means: TRUST[k].means, style: this.chipStyle(k) })),
-      files: FILES.map((f) => ({ name: f.f, on: S.drop === f.f, style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-family:IBM Plex Mono,monospace;font-size:13px;background:' + (S.drop === f.f ? '#F1F6FF' : '#FFFFFF') + ';border:' + (S.drop === f.f ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';', pick: () => this.setState({ drop: f.f, openNote: f.src === 'mdzip' ? 'mdzip' : '' }) })),
+      files: FILES.map((f) => ({ name: f.f, on: S.drop === f.f, style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:13px;background:' + (S.drop === f.f ? '#F1F6FF' : '#FFFFFF') + ';border:' + (S.drop === f.f ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';', pick: () => this.setState({ drop: f.f, openNote: f.src === 'mdzip' ? 'mdzip' : '' }) })),
       dropShown: !!dropFile, dropEmpty: !dropFile, dropRec: dropFile ? dropFile.rec : '', dropTrust: dropFile ? dropFile.trust : 'Later',
       dropTrustName: dropFile ? (dropFile.trust === 'Later' ? 'Not read directly yet' : dropFile.trust) : '',
       dropTrustStyle: this.chipStyle(dropFile ? dropFile.trust : 'Later'), dropUsable: !!dropFile && dropFile.src !== 'mdzip',
@@ -83,7 +83,7 @@
   valsImport(S) {
     const I = IMPORTS[S.source] || IMPORTS.sample;
     const conf = { Exact: 'background:#E1F2E7;color:#14502B;', High: 'background:#E1F2E7;color:#14502B;', Medium: 'background:#FFF0D2;color:#6B3D00;', Low: 'background:#FDE3E0;color:#7A1510;' };
-    const base = 'font-family:IBM Plex Mono,monospace;font-size:12px;text-align:center;padding:3px 0;border-radius:4px;';
+    const base = 'font-family:var(--mono);font-size:12px;text-align:center;padding:3px 0;border-radius:4px;';
     const nJ = CLUSTERS.filter((c) => c.ai.mode === 'judge').length, nD = CLUSTERS.filter((c) => c.ai.mode === 'draft').length, nOver = CLUSTERS.filter((c) => c.members.length > 12).length;
     const stages = [
       ['Read and normalise', TOTAL_REQS.toLocaleString('en-US') + ' requirements; modal verbs, negations, numbers and units tagged'],
@@ -161,7 +161,7 @@
       pilotNote: 'Allocations of 100 to 200 requirements: ' + rec.join(', ') + '.',
       backToOpen: () => this.setState({ view: 'open' }),
       backFromMap: S.source === 'doc' ? () => this.setState({ impStep: 'verify' }) : () => this.setState({ view: 'open' }),
-      enterWorkspace: () => this.setState({ view: 'overview', scope: S.scopeChoice === 'pilot' ? S.pilotAlloc : 'all', qPage: 0, selected: S.scopeChoice === 'pilot' ? (ORDER.find((c) => c.alloc === S.pilotAlloc) || ORDER[0]).id : S.selected })
+      enterWorkspace: () => this.setState({ view: 'home', scope: S.scopeChoice === 'pilot' ? S.pilotAlloc : 'all', qPage: 0, selected: S.scopeChoice === 'pilot' ? (ORDER.find((c) => c.alloc === S.pilotAlloc) || ORDER[0]).id : S.selected })
     };
   }
   /* the "verify statements found in a document" step */
@@ -174,7 +174,7 @@
       const uid = it.invented && typed ? typed : it.uid;
       return {
         uid, loc: 'Found at ' + it.loc, text: it.text, sel: !!S.docSel[i], verified: ver, notVerified: !ver, invented: !!it.invented, aria: 'Select ' + uid,
-        uidStyle: 'font-weight:600;font-family:IBM Plex Mono,monospace;font-size:13px;' + (it.invented && !typed ? 'color:#7A1510;' : ''),
+        uidStyle: 'font-weight:600;font-family:var(--mono);font-size:13px;' + (it.invented && !typed ? 'color:#7A1510;' : ''),
         rowStyle: 'padding:12px 16px;border-bottom:1px solid #E3E7EA;display:flex;flex-direction:column;gap:6px;' + (on ? 'background:#F1F6FF;box-shadow:inset 4px 0 0 var(--accent);' : ''),
         invNote: typed ? 'ID typed by you' : 'ID invented: the document has none. Confirm it or type the real one.', invStyle: typed ? 'background:#E1F2E7;color:#14502B;' : 'background:#FFF0D2;color:#6B3D00;',
         idVal: typed, idLabel: 'ID for the statement at ' + it.loc,
@@ -192,7 +192,7 @@
     });
     return {
       docItems: items, docFile: IMPORTS.doc.file, docCount: DOC_ITEMS.length, docVerCount: nVer, docSelCount: nSel,
-      docHead: DOC_ITEMS.length + ' STATEMENTS FOUND · ' + nVer + ' VERIFIED · ' + nSel + ' SELECTED',
+      docHead: DOC_ITEMS.length + ' statements found, ' + nVer + ' verified, ' + nSel + ' selected',
       docFocusLoc: 'Selected record is at ' + focus.loc, docFocusRaw: 'locator ' + focus.raw, pageBlocks,
       verifySel: () => { const v = Object.assign({}, S.docVer); Object.keys(S.docSel).forEach((k) => { if (S.docSel[k]) v[k] = true; }); this.setState({ docVer: v, docSel: {} }); },
       unverifySel: () => { const v = Object.assign({}, S.docVer); Object.keys(S.docSel).forEach((k) => { if (S.docSel[k]) delete v[k]; }); this.setState({ docVer: v, docSel: {} }); },
@@ -207,46 +207,107 @@
   /* ----- shell ----- */
   valsShell(S) {
     const P = this.person(S), lead = P.role === 'lead';
-    const items = [['overview', 'Overview'], ['review', 'Review queue'], ['explorer', 'All requirements'], ['methods', 'Methods and metrics'], ['audit', 'Decisions and audit'], ['policy', 'Sign-off policy'], ['export', 'Export to documents']];
     const nMe = this.openCount(S);
-    const nav = items.map(([k, label]) => {
-      const on = S.view === k;
-      return {
-        label, onClick: () => this.setState({ view: k }), current: on ? 'page' : 'false', hasCount: k === 'review', count: String(nMe),
-        style: 'text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:0 12px;border-radius:6px;border:0;cursor:pointer;font-weight:' + (on ? 600 : 500) + ';background:' + (on ? '#2B4259' : 'transparent') + ';color:#E8EDF1'
-      };
-    });
-    const switcher = PEOPLE.map((p) => ({ name: p.name.split(' ')[0], sub: p.lens ? p.lens + (p.role === 'lead' ? ' · lead' : '') : 'observer', pressed: S.person === p.k ? 'true' : 'false', onClick: () => this.setState({ person: p.k, preview: '', just: '' }), style: 'text-align:left;min-height:44px;padding:4px 10px;border-radius:6px;cursor:pointer;display:flex;flex-direction:column;border:1px solid ' + (S.person === p.k ? '#FFFFFF' : '#33475A') + ';background:' + (S.person === p.k ? '#FFFFFF' : 'transparent') + ';color:' + (S.person === p.k ? '#14202B' : '#E8EDF1') + ';font-weight:' + (S.person === p.k ? 600 : 500) }));
-    const previews = [{ k: '', label: 'My own lens' }].concat(LENSES.map((l) => ({ k: l.k, label: l.name }))).map((o) => ({ label: o.label, pressed: S.preview === o.k ? 'true' : 'false', onClick: () => this.setState({ preview: o.k }), style: 'text-align:left;min-height:36px;padding:0 10px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid ' + (S.preview === o.k ? '#FFFFFF' : '#33475A') + ';background:' + (S.preview === o.k ? '#FFFFFF' : 'transparent') + ';color:' + (S.preview === o.k ? '#14202B' : '#E8EDF1') }));
+    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', methods: 'icFlask', audit: 'icClock', policy: 'icShield', export: 'icExport' };
+    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', methods: 'Methods and metrics', audit: 'Decisions and audit', policy: 'Sign-off policy', export: 'Export to documents' };
+    const item = (k) => {
+      const o = { label: NAME[k], onClick: () => this.setState({ view: k }), current: S.view === k ? 'page' : 'false', hasCount: k === 'review', count: String(nMe) };
+      Object.keys(IC).forEach((j) => { o[IC[j]] = j === k; });
+      return o;
+    };
+    const progOpen = !S.navClosed.prog, outOpen = !S.navClosed.out;
+    const lensColor = (l) => ({ SE: '#1C5CAB', PE: '#6A3FC0', UX: '#B35A00', NU: '#1B6B3A' }[l] || '#54626F');
+    const init = (n) => n.split(' ').map((w) => w[0]).join('');
+    const light = (on) => 'text-align:left;min-height:44px;padding:4px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;border:1px solid ' + (on ? 'var(--accent)' : '#B9C3CD') + ';background:' + (on ? 'color-mix(in srgb,var(--accent) 10%,#fff)' : '#FFFFFF') + ';color:var(--ink);font-weight:' + (on ? 600 : 500);
+    const switcher = PEOPLE.map((p) => ({ name: p.name.split(' ')[0], sub: p.lens ? p.lens + (p.role === 'lead' ? ' · lead' : '') : 'observer', pressed: S.person === p.k ? 'true' : 'false', onClick: () => this.setState({ person: p.k, preview: '', just: '' }), style: light(S.person === p.k) }));
+    const previews = [{ k: '', label: 'My own lens' }].concat(LENSES.map((l) => ({ k: l.k, label: l.name }))).map((o) => ({ label: o.label, pressed: S.preview === o.k ? 'true' : 'false', onClick: () => this.setState({ preview: o.k }), style: light(S.preview === o.k) + ';min-height:36px;padding:0 10px;font-size:13px;flex-direction:row;align-items:center' }));
     const sel = CL_BY[S.selected];
     const decSel = sel && decOf(S, sel.id);
     const sim = [
       { label: 'A teammate claims the open cluster', hint: 'Shows the soft-claim chip.', disabled: !sel, onClick: () => this.setState({ claims: Object.assign({}, S.claims, { [sel.id]: { by: 'Priya Raman', lens: 'PE', mins: 0 } }) }) },
       { label: 'A teammate changes the open cluster', hint: 'Bumps its version under you.', disabled: !sel, onClick: () => { const v = (S.liveVer[sel.id] || 0) + 1; this.setState({ liveVer: Object.assign({}, S.liveVer, { [sel.id]: v }), events: this.mk(S.events, 'human', 'Priya Raman · PE', 'Added a note on the cluster (simulated)', sel.id) }); } },
       { label: 'The source drifts under a decision', hint: 'Needs a decided cluster.', disabled: !sel || !decSel, onClick: () => this.setState({ stale: Object.assign({}, S.stale, { [sel.id]: { req: sel.members[0].id, when: TODAY, what: 'The source text of ' + sel.members[0].id + ' changed in the model after this decision was made.', hash: h32(sel.id + 'drift') } }), events: this.mk(S.events, 'mechanical', 'Refresh', 'Source drift detected on ' + sel.members[0].id, sel.id) }) }
-    ].map((x) => ({ ...x, style: 'text-align:left;min-height:44px;padding:4px 10px;border-radius:6px;cursor:pointer;display:flex;flex-direction:column;border:1px dashed #6E8296;background:transparent;color:#E8EDF1;' }));
+    ].map((x) => ({ ...x, style: 'text-align:left;min-height:44px;padding:4px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;border:1px dashed #8C98A3;background:#FFFFFF;color:var(--ink);' }));
     const scopeTxt = S.scope === 'all' ? 'Whole project' : 'Pilot · ' + S.scope;
+    const team = PEOPLE.filter((p) => p.k !== S.person && p.role !== 'observer').slice(0, 3);
+    const qFirst = (v) => (typeof v === 'string' ? v : '');
     return {
-      projectName: 'Reference air vehicle',
-      nav, switcher, previews, sim, isLead: lead,
-      meName: P.name, meLens: P.lens ? SLOT_NAME[P.lens] + ' lens' : 'No lens', meRole: ROLE_NAME[P.role],
-      titleCells: [
-        { label: 'PROJECT', value: 'Reference air vehicle (synthetic)' },
-        { label: 'SCOPE', value: scopeTxt },
-        { label: 'BASELINE', value: 'None · pre-baseline' },
-        { label: 'STATUS', value: 'DRAFT' },
-        { label: 'SIGNED IN AS', value: P.name + ' · ' + (S.preview ? 'previewing ' + S.preview : P.lens || 'observer') }
-      ],
+      projectName: 'Reference air vehicle', scopeTxt, pageName: NAME[S.view] || 'Home',
+      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'methods', 'audit'].map(item), navOut: ['policy', 'export'].map(item),
+      progExp: progOpen ? 'true' : 'false', outExp: outOpen ? 'true' : 'false',
+      toggleProg: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { prog: progOpen }) }),
+      toggleOut: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { out: outOpen }) }),
+      switcher, previews, sim, isLead: lead,
+      meName: P.name, meLens: P.lens ? SLOT_NAME[P.lens] + ' lens' : 'No lens', meRole: ROLE_NAME[P.role], meColor: lensColor(P.lens), meInit: init(P.name),
+      presence: team.map((p) => ({ init: init(p.name), color: lensColor(p.lens), title: p.name + ' · ' + SLOT_NAME[p.lens] + ' lens (sample)' })),
+      tbSearchV: qFirst(S.qSearch),
+      onTbSearch: (e) => { const q = e.target.value; this.setState(q.trim() ? { qSearch: q, view: 'review', qTab: 'all', qPage: 0, qLane: '', qStatus: '', qAlloc: '' } : { qSearch: q, qPage: 0 }); },
       chatToggle: () => this.setState({ chatOpen: !S.chatOpen }),
       chatLabel: S.chatOpen ? 'Hide the assistant' : 'Ask the assistant',
       chatPressed: S.chatOpen ? 'true' : 'false',
       openGlossary: () => this.setState({ glossary: true }),
+      openAudit: () => this.setState({ view: 'audit' }),
       closeProject: () => this.setState({ view: 'open', chatOpen: false })
     };
   }
+  /* ----- home ----- */
+  valsHome(S) {
+    const infos = this.allInfos(S), U = universe(S), P = this.person(S);
+    const nMe = infos.filter((x) => x.me).length, first = P.name.split(' ')[0];
+    const total = infos.length, decided = infos.filter((x) => x.dec).length, approved = infos.filter((x) => x.st === 'approved').length;
+    const obs = P.role === 'observer';
+    const open = {};
+    infos.forEach((x) => { if (x.st === 'open') open[x.c.alloc] = (open[x.c.alloc] || 0) + 1; });
+    const sorted = Object.keys(open).sort((a, b) => open[b] - open[a] || a.localeCompare(b));
+    const top = sorted.slice(0, 4), max = top.length ? open[top[0]] : 1;
+    const bars = top.map((k) => ({
+      name: k, n: String(open[k]), bar: 'height:14px;border-radius:0 4px 4px 0;background:#2A6FD6;width:' + Math.max(3, Math.round((open[k] / max) * 100) * 0.82) + '%',
+      aria: k + ': ' + open[k] + (open[k] === 1 ? ' open cluster' : ' open clusters') + '. Show them in the review queue.',
+      go: () => this.setState({ view: 'review', qTab: 'all', qAlloc: k, qStatus: 'open', qSearch: '', qLane: '', qPage: 0 })
+    }));
+    const imps = [
+      { name: 'Reference air vehicle', sub: 'SysML v2 model · 2 Oct', records: U.reqs.length.toLocaleString('en-US') + ' requirements', trust: 'Structured', by: 'Morgan Hale', k: 'review', label: 'Open the review queue' },
+      { name: 'Power subsystem requirements.xlsx', sub: 'Spreadsheet · 29 Sep', records: '86 rows, 82 mapped to a requirement', trust: 'Tabular', by: 'Sam Okafor', k: 'table', label: 'Import it again' },
+      { name: 'Supplier specification.pdf', sub: 'Word or PDF document · 24 Sep', records: '41 statements, 38 verified against the page', trust: 'Extracted', by: 'Priya Raman', k: 'doc', label: 'Import it again' }
+    ].map((r, i) => {
+      const on = !!S.homeOpen[i];
+      return {
+        name: r.name, sub: r.sub, records: r.records, trust: r.trust, means: TRUST[r.trust].means, chip: CHIP + TRUST[r.trust].style, by: r.by, open: on, exp: on ? 'true' : 'false',
+        toggle: () => this.setState({ homeOpen: Object.assign({}, S.homeOpen, { [i]: !on }) }),
+        actLabel: r.label, act: r.k === 'review' ? () => this.startReviewFor(S, infos) : this.goImport(r.k)
+      };
+    });
+    const MK = { mechanical: MARK.mech, ai: MARK.ai, human: MARK.human, bot: MARK.bot };
+    const activity = this.shownEvents(S).slice(-5).reverse().map((e) => {
+      const m = MK[e.type], isCl = /^CL-\d+$/.test(e.target);
+      return {
+        kind: m[0], text: e.text, who: (e.actor.toLowerCase().indexOf(m[0].toLowerCase()) === 0 ? '' : m[0] + ' · ') + e.actor, time: e.time.slice(0, 5), target: e.target, hasTarget: isCl,
+        open: isCl ? () => this.setState({ view: 'review', selected: e.target, qTab: 'all', just: '' }) : () => {},
+        disc: 'width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;' + m[2], shape: m[1]
+      };
+    });
+    return {
+      secFacts: ['Sources are read-only', 'Runs on your servers', 'Every action is logged'],
+      homeTitle: obs ? 'You can look at everything' : nMe ? nMe.toLocaleString('en-US') + (nMe === 1 ? ' cluster is' : ' clusters are') + ' waiting for you' : 'Nothing is waiting for you',
+      homeSub: obs ? 'Your account is read only, so nothing here can be changed. ' + decided + ' of ' + total + ' clusters have a decision.' : first + ', ' + decided + ' of ' + total + ' clusters have a decision and ' + approved + ' are approved by every lens they need.',
+      nextLabel: obs ? 'Look at the next cluster' : 'Review the next cluster',
+      startReview: () => this.startReviewFor(S, infos),
+      openOverview: () => this.setState({ view: 'overview' }),
+      homeSources: [
+        { disc: 'XLS', title: 'Spreadsheet or CSV', sub: 'You confirm each column', go: this.goImport('table') },
+        { disc: 'ERP', title: 'ERP database', sub: 'A read-only SQL query', go: this.goImport('sql') },
+        { disc: 'PDF', title: 'Word or PDF', sub: 'You verify every statement', go: this.goImport('doc') }
+      ],
+      allSources: () => this.setState({ view: 'open' }),
+      imports: imps, bars, noBars: bars.length === 0,
+      barsSub: 'Suggested, no decision yet' + (sorted.length > 4 ? '. Top 4 of ' + sorted.length + ' allocations' : ''),
+      activity, openAudit: () => this.setState({ view: 'audit' })
+    };
+  }
+  startReviewFor(S, infos) { const first = infos.find((x) => x.me) || infos.find((x) => !x.dec) || infos[0]; this.setState({ view: 'review', selected: first.c.id, qTab: 'me', qPage: 0 }); }
   laneBadge(l) {
     const c = { A: 'background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;', B: 'background:#FFF0D2;color:#6B3D00;border:1px solid #A15C00;', C: 'background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;' }[l];
-    return 'align-self:flex-start;font-family:IBM Plex Mono,monospace;font-size:12px;font-weight:600;letter-spacing:.04em;padding:2px 8px;border-radius:4px;' + c;
+    return 'align-self:flex-start;white-space:nowrap;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;' + c;
   }
   /* ----- overview ----- */
   valsOverview(S) {
@@ -255,10 +316,9 @@
       const mine = infos.filter((x) => x.c.lane === k);
       return { name, sub, badge: this.laneBadge(k), of: mine.length, n: mine.filter((x) => !x.dec).length };
     });
-    const ramp = ['#86B6EF', '#5598E7', '#2A78D6', '#1C5CAB', '#184F95', '#14407A'];
     const nPairs = S.scope === 'all' ? 3904 : Math.round(3904 * U.reqs.length / TOTAL_REQS), nShort = Math.round(nPairs * 1126 / 3904);
     const funnel = [['Requirements read', U.reqs.length], ['Candidate pairs (inside blocks)', nPairs], ['After embedding shortlist', nShort], ['Requirements in a cluster', U.cl.reduce((s, c) => s + c.members.length, 0)], ['Clusters', U.cl.length], ['Judged by the AI', U.cl.filter((c) => c.ai.mode === 'judge').length]].map(([label, value], i) => ({
-      label, value: value.toLocaleString('en-US'), bar: 'height:20px;border-radius:0 4px 4px 0;background:' + ramp[i] + ';width:' + Math.max(1.5, (value / Math.max(nPairs, U.reqs.length)) * 80) + '%'
+      label, value: value.toLocaleString('en-US'), bar: 'height:16px;border-radius:0 4px 4px 0;background:#2A6FD6;width:' + Math.max(1.5, (value / Math.max(nPairs, U.reqs.length)) * 80) + '%'
     }));
     const signoffMeters = LENSES.map((l) => {
       let req = 0, done = 0;

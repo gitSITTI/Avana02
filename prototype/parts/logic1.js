@@ -31,8 +31,99 @@ function diffTokens(textA, textB) {
   return { a: paint(A, keepA), b: paint(B, keepB) };
 }
 function paintOnly(text) {
-  let prev = null;
-  return text.split(' ').filter(Boolean).map((t) => { const kind = kindOf(t, prev); prev = kind; return { t, style: 'padding:1px 3px;border-radius:3px;' + (kind ? SLOT_STYLE[kind] : '') }; });
+  /* words that carry meaning get a colour; the plain words between them stay together as one run so the spacing reads like a sentence */
+  const T = text.split(' ').filter(Boolean), K = kindsOfTokens(T), out = []; let run = [];
+  const flush = () => { if (run.length) { out.push({ t: run.join(' '), style: 'padding:1px 3px;' }); run = []; } };
+  T.forEach((w, i) => { if (K[i]) { flush(); out.push({ t: w, style: 'padding:1px 3px;border-radius:3px;' + SLOT_STYLE[K[i]] }); } else run.push(w); });
+  flush();
+  return out;
+}
+
+/* ---------- aligning many wordings against one reference ----------
+   Word-level longest-common-subsequence of each wording against the reference. Everything that is not matched is a "hunk":
+   words the wording has and the reference lacks (ins), words the reference has and the wording lacks (del), or both (a replacement).
+   A hunk that holds a number on both sides is split around the numbers so "365 -> 60" stands alone. */
+const KIND_PRI = ['neg', 'modal', 'cond', 'num', 'unit'];
+const CH_STYLE = {
+  num: SLOT_STYLE.num, unit: SLOT_STYLE.unit, modal: SLOT_STYLE.modal, neg: SLOT_STYLE.neg, cond: SLOT_STYLE.cond,
+  other: 'background:#E3E9EF;color:#1B2733;box-shadow:inset 0 -2px 0 #6B7782;'
+};
+const CH_DOT = { num: '#B35A00', unit: '#B35A00', modal: '#1C5CAB', neg: '#B8361A', cond: '#5B3FB0', other: '#6B7782' };
+const CH_NAME = { num: 'number or unit', unit: 'number or unit', modal: 'shall or should', neg: 'negation', cond: 'condition', other: 'other wording' };
+function kindsOfTokens(T) { let prev = null; return T.map((t) => { const k = kindOf(t, prev); prev = k; return k; }); }
+function runKind(list) { for (let i = 0; i < KIND_PRI.length; i++) if (list.indexOf(KIND_PRI[i]) >= 0) return KIND_PRI[i]; return 'other'; }
+function wordHunks(R, X) {
+  const n = R.length, m = X.length;
+  const L = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) L[i][j] = normTok(R[i]) === normTok(X[j]) ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const hunks = []; let cur = null, i = 0, j = 0, matched = 0;
+  const open = () => { if (!cur) { cur = { at: i, xat: j, del: [], ins: [] }; hunks.push(cur); } };
+  while (i < n && j < m) {
+    if (normTok(R[i]) === normTok(X[j])) { cur = null; matched++; i++; j++; }
+    else if (L[i + 1][j] >= L[i][j + 1]) { open(); cur.del.push(i); i++; }
+    else { open(); cur.ins.push(j); j++; }
+  }
+  while (i < n) { open(); cur.del.push(i); i++; }
+  while (j < m) { open(); cur.ins.push(j); j++; }
+  const isNum = (t) => kindOf(t, null) === 'num';
+  const out = [];
+  hunks.forEach((h) => {
+    const a = h.del.findIndex((d) => isNum(R[d])), b = h.ins.findIndex((q) => isNum(X[q]));
+    if (a < 0 || b < 0 || (h.del.length === 1 && h.ins.length === 1)) { out.push(h); return; }
+    [{ at: h.at, xat: h.xat, del: h.del.slice(0, a), ins: h.ins.slice(0, b) }, { at: h.at + a, xat: h.xat + b, del: [h.del[a]], ins: [h.ins[b]] }, { at: h.at + a + 1, xat: h.xat + b + 1, del: h.del.slice(a + 1), ins: h.ins.slice(b + 1) }]
+      .forEach((p) => { if (p.del.length || p.ins.length) out.push(p); });
+  });
+  return { hunks: out, matched };
+}
+/* One row per wording: its words as a flowing sentence ("segs") and its difference chips. */
+function compareRows(refText, texts) {
+  const R = refText.split(' ').filter(Boolean), kR = kindsOfTokens(R);
+  return texts.map((text) => {
+    const X = text.split(' ').filter(Boolean), kX = kindsOfTokens(X);
+    const { hunks, matched } = wordHunks(R, X);
+    hunks.forEach((h) => { h.kind = runKind(h.ins.map((q) => kX[q]).concat(h.del.map((d) => kR[d]))); h.nowText = h.ins.map((q) => X[q]).join(' '); h.wasText = h.del.map((d) => R[d]).join(' '); });
+    const segs = []; let x = 0, run = [];
+    const flush = () => { if (run.length) { segs.push({ t: run.join(' '), same: true }); run = []; } };
+    hunks.forEach((h) => {
+      while (x < h.xat) { run.push(X[x]); x++; }
+      flush();
+      if (h.ins.length) { segs.push({ t: h.nowText, kind: h.kind, chg: true, was: h.wasText }); x += h.ins.length; }
+      else segs.push({ t: h.wasText, kind: h.kind, ghost: true });
+    });
+    while (x < X.length) { run.push(X[x]); x++; }
+    flush();
+    const changes = hunks.map((h) => ({ kind: h.kind, text: h.wasText && h.nowText ? h.wasText + ' → ' + h.nowText : h.nowText ? 'adds ' + h.nowText : 'drops ' + h.wasText }));
+    const ratio = matched / Math.max(R.length, X.length, 1);
+    return { X, hunks, segs, changes, same: hunks.length === 0, reworded: hunks.length > 0 && ratio < 0.5, nChanges: hunks.length };
+  });
+}
+/* The same comparison laid out as columns: one column per reference word, plus a column wherever any wording adds words. */
+function alignRows(refText, texts) {
+  const R = refText.split(' ').filter(Boolean), n = R.length, kR = kindsOfTokens(R);
+  const rows = compareRows(refText, texts);
+  const gaps = new Set();
+  rows.forEach((r) => r.hunks.forEach((h) => { if (!h.del.length) gaps.add(h.at); }));
+  const tracks = [];
+  for (let p = 0; p <= n; p++) { if (gaps.has(p)) tracks.push({ gap: p }); if (p < n) tracks.push({ col: p }); }
+  const trackOf = (t) => tracks.findIndex((q) => (t.gap !== undefined ? q.gap === t.gap : q.col === t.col));
+  rows.forEach((r) => {
+    const byStart = new Map(), skip = new Set(), delSet = new Set(), insSet = new Set();
+    r.hunks.forEach((h) => {
+      h.del.forEach((d) => delSet.add(d)); h.ins.forEach((q) => insSet.add(q));
+      if (h.del.length) { const a = trackOf({ col: h.del[0] }), b = trackOf({ col: h.del[h.del.length - 1] }); byStart.set(a, { h, span: b - a + 1 }); for (let q = a + 1; q <= b; q++) skip.add(q); }
+      else byStart.set(trackOf({ gap: h.at }), { h, span: 1 });
+    });
+    const keepX = r.X.map((_, q) => q).filter((q) => !insSet.has(q)), keepR = R.map((_, d) => d).filter((d) => !delSet.has(d)), matchedCol = new Map();
+    keepR.forEach((d, k) => matchedCol.set(d, r.X[keepX[k]]));
+    r.cells = [];
+    tracks.forEach((t, ti) => {
+      if (skip.has(ti)) return;
+      if (byStart.has(ti)) { const { h, span } = byStart.get(ti); r.cells.push({ span, text: h.nowText || h.wasText, kind: h.kind, chg: !!h.nowText, ghost: !h.nowText }); return; }
+      if (t.col !== undefined) r.cells.push({ span: 1, text: matchedCol.get(t.col), same: true }); else r.cells.push({ span: 1, text: '', empty: true });
+    });
+  });
+  const refCells = tracks.map((t) => (t.col !== undefined ? { span: 1, text: R[t.col], ref: true, kind: kR[t.col] } : { span: 1, text: '', empty: true }));
+  return { rows, tracks, refCells };
 }
 function editRatio(a, b) {
   const A = a.split(/\s+/).filter(Boolean), B = b.split(/\s+/).filter(Boolean);

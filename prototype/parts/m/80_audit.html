@@ -3,7 +3,7 @@
       <sc-if value="{{isAudit}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:20px">
         <div style="display:flex;flex-direction:column;gap:6px">
-          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Decisions and audit</h1>
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Decisions and audit</h1>
           <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">The ledger lists every decision with its reason, note and who made it, so anyone can review it later. The event chain behind it fingerprints every step, so editing an old entry breaks the chain. Reopening adds a new event; it never deletes one.</p>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Choose a log">
@@ -21,7 +21,7 @@
             <sc-for list="{{lrows}}" as="r" hint-placeholder-count="10">
               <div style="§CARD§padding:12px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:start">
                 <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
-                  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700">{{r.cid}}</span><span style="font-weight:600">{{r.title}}</span></div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline"><span style="font-family:var(--mono);font-weight:700">{{r.cid}}</span><span style="font-weight:600">{{r.title}}</span></div>
                   <div style="color:#2A353F"><b>{{r.decision}}</b> · {{r.reason}}</div>
                   <div style="font-size:13px;color:#3C4852">Note: {{r.note}}</div>
                   <div style="font-size:12px;color:#4F5B66">{{r.by}} · {{r.when}} · {{r.vs}}<sc-if value="{{r.hasShare}}" hint-placeholder-val="{{ false }}"> · AI-origin share: {{r.share}}</sc-if></div>
@@ -46,13 +46,13 @@
             <div style="display:grid;grid-template-columns:40px 70px 120px 190px minmax(0,1fr) 90px 170px;gap:12px;padding:8px 16px;font-size:12px;color:#4F5B66;border-bottom:1px solid #D5DADE"><div>#</div><div>Time</div><div>Source</div><div>Actor</div><div>Event</div><div>About</div><div>Fingerprint</div></div>
             <sc-for list="{{eventRows}}" as="e" hint-placeholder-count="6">
               <div style="{{e.rowStyle}}">
-                <div style="font-family:'IBM Plex Mono',monospace">{{e.seq}}</div>
-                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{e.time}}</div>
+                <div style="font-family:var(--mono)">{{e.seq}}</div>
+                <div style="font-family:var(--mono);font-size:12px">{{e.time}}</div>
                 <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600"><span style="{{e.shape}}"></span>{{e.kind}}</div>
                 <div>{{e.actor}}</div>
                 <div>{{e.text}}</div>
-                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{e.target}}</div>
-                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4F5B66">{{e.prev}} → {{e.hash}}</div>
+                <div style="font-family:var(--mono);font-size:12px">{{e.target}}</div>
+                <div style="font-family:var(--mono);font-size:11px;color:#4F5B66">{{e.prev}} → {{e.hash}}</div>
               </div>
             </sc-for>
           </div></div></div>

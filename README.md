@@ -6,11 +6,11 @@ This repository holds the research, the design boards, the generator that makes 
 
 ## What it looks like
 
-Everything on these screens is a synthetic sample. Click a picture for full size; the guide explains the design: [`docs/GUI_DESIGN_GUIDE.md`](docs/GUI_DESIGN_GUIDE.md). The screenshots were taken offline, so the text is in the browser's fallback fonts (the page asks for IBM Plex from Google Fonts when it has network access).
+Everything on these screens is a synthetic sample. Click a picture for full size; the guide explains the design: [`docs/GUI_DESIGN_GUIDE.md`](docs/GUI_DESIGN_GUIDE.md). The fonts are bundled with the prototype, so the pictures show the real typefaces.
 
-<a href="docs/images/prototype/01_open.png"><img src="docs/images/prototype/01_open.png" width="32%" alt="Open screen: choose where requirements come from"></a>
-<a href="docs/images/prototype/03_overview.png"><img src="docs/images/prototype/03_overview.png" width="32%" alt="Overview screen: one number and one button"></a>
-<a href="docs/images/prototype/06_cluster_review_conflict.png"><img src="docs/images/prototype/06_cluster_review_conflict.png" width="32%" alt="Cluster review: two wordings side by side"></a>
+<a href="docs/images/prototype/03_home.png"><img src="docs/images/prototype/03_home.png" width="32%" alt="Home screen: what needs you, where to bring requirements in, recent imports, open clusters and latest activity"></a>
+<a href="docs/images/prototype/07_cluster_review_six_wordings.png"><img src="docs/images/prototype/07_cluster_review_six_wordings.png" width="32%" alt="Cluster review: six wordings compared with one reference, changed words highlighted"></a>
+<a href="docs/images/prototype/08_wordings_lined_up.png"><img src="docs/images/prototype/08_wordings_lined_up.png" width="32%" alt="The same six wordings lined up word by word in columns"></a>
 
 The ten design boards (Excalidraw files, rendered here because GitHub cannot show them):
 
@@ -71,9 +71,9 @@ To also scan for your own program code names and number patterns, set a CI/CD va
 | `reqin`: 226 required checks pass (+1 optional with LibreOffice) | Python 3.11, 3.12 and 3.13, in clean virtual environments with no LibreOffice and no git. The connector template's 9 tests pass as shipped. |
 | The live connectors' tests bite | 21 deliberate breaks (a leaked secret, a redirect to another host, TLS off, a write verb, paging that stops after page one, caches removed, settle time ignored, a `delete` in the DOORS script ...): 18 caught at once, 3 exposed missing tests, which were added and are now caught. 20 more on the dataset layer: all caught |
 | Boards rebuild byte-for-byte; structurally valid | `make boards`, clean environment, standard library only |
-| Prototype | Committed page equals a fresh build; static check resolves every template hole across about 1,000 states (0 issues); 39 browser checks pass at 1440 and 390 px from a clean `npm ci`; older flow scripts give identical output to the previous published version. A deliberate break makes both CI jobs fail. |
+| Prototype | Committed page equals a fresh build; static check resolves every template hole across about 1,000 states (0 issues); two browser test files with assertions (44 checks at 1440, 900 and 390 px for Open and Import; 56 at 1440 px and 55 at 390 px for the side bar, Home and the wording comparison) pass from a clean `npm ci`. The older flow scripts only print what they see; they were re-run after the redesign but are not assertions. A deliberate break makes both CI jobs fail. |
 | Guard trips on what it should | 10 tests, including the real-export file types, data folders, size, missing approval entries, files not yet added to git, and that only the one reviewed DOORS script is exempt |
-| Pictures, links and workflow stay true | 23 more tests in `tools/` (33 in all). Every board picture and the prototype screenshots must have been made from the current board or page; every relative link in the Markdown files must resolve; the licence files must agree; the GitHub workflow must keep a read-only token, pinned actions and no `pull_request_target`, and name only files that exist. Each check was shown to fail on a deliberate break. |
+| Pictures, links and workflow stay true | 26 more tests in `tools/` (36 in all). Every board picture and the prototype screenshots must have been made from the current board or page; every relative link in the Markdown files must resolve; the licence files must agree and every bundled font family must ship with its licence and a notice; the prototype page must make no request to an outside host; the GitHub workflow must keep a read-only token, pinned actions and no `pull_request_target`, and name only files that exist. Each check was shown to fail on a deliberate break. |
 | `.gitlab-ci.yml`, `.github/workflows/ci.yml` | Both pass yamllint and their platform's JSON schema; the GitHub file also passes `actionlint`. Each job's commands were run locally. **Neither file has run on its platform yet.** |
 | **Not checked** | The `Containerfile` has not been built (no container engine daemon was available where it was written). **Any connector against a real system.** `sysml_api`, `oslc_rm` and `agility` are fake-server-tested only (`reqin connectors` says so); the DOORS 9 script has never run in DOORS; OAuth / form sign-in is not built. Reading real MSOSA, DOORS or SysML v2 exports: all fixtures are synthetic. Opening the boards in the live Excalidraw app. Python 3.10 (not supported; 3.11+ is). |
 
@@ -85,7 +85,7 @@ To also scan for your own program code names and number patterns, set a CI/CD va
 
 ## License and contributing
 
-Apache License 2.0: see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). Copyright 2026 gitSITTI. One file is not covered: `prototype/project/support.js` is a bundled copy of React (MIT), listed with its licence in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+Apache License 2.0: see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). Copyright 2026 gitSITTI. Some bundled files are not covered: `prototype/project/support.js` is a copy of React (MIT) and `prototype/project/fonts/` holds three font families (SIL Open Font License 1.1). Both are listed with their licences in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 This is a research prototype and comes **as is**, without warranty (see sections 7 and 8 of the licence). Read "What has and has not been checked" above before relying on it: no connector has been run against a real MSOSA, Teamwork Cloud, DOORS or Agility system.
 

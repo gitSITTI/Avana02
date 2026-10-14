@@ -1,0 +1,39 @@
+
+      <!-- ===== LINE UP THE WORDS (a wide sheet over the review screen) ===== -->
+      <sc-if value="{{alignOpen}}" hint-placeholder-val="{{ false }}">
+      <div class="sheet-back" onClick="{{closeAlign}}"></div>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="al-h" onKeyDown="{{onSheetKey}}">
+        <div style="padding:18px 24px 12px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px 16px;border-bottom:1px solid var(--line)">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <h2 id="al-h" style="margin:0;font-size:18px;font-weight:700">Wordings lined up against {{refLabel}}</h2>
+            <div style="font-size:13px;color:#3C4852;max-width:70ch">One column for each word of the reference. Where a wording changes, adds or drops words, you see it in the same column as the reference.</div>
+          </div>
+          <button id="al-close" onClick="{{closeAlign}}" style="§BTN§">Close</button>
+        </div>
+        <div style="padding:10px 24px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;color:#3C4852;border-bottom:1px solid var(--hair)">
+          <span style="font-weight:600">What the colours mean</span>
+          <span style="padding:1px 7px;border-radius:6px;background:#FFE0AD;color:#3F2400;box-shadow:inset 0 -2px 0 #B35A00">number or unit</span>
+          <span style="padding:1px 7px;border-radius:6px;background:#D5E3FF;color:#0B2A6B;outline:1px solid #6F96E3">shall or should</span>
+          <span style="padding:1px 7px;border-radius:6px;background:#FFD3CE;color:#6E100A;font-weight:700">not</span>
+          <span style="padding:1px 7px;border-radius:6px;background:#E8DEFF;color:#341C85;border-bottom:2px dotted #341C85">condition</span>
+          <span style="padding:1px 7px;border-radius:6px;background:#E3E9EF;color:#1B2733;box-shadow:inset 0 -2px 0 #6B7782">other wording</span>
+          <span style="padding:0 7px;border-radius:6px;border:1px dashed #8C98A3;color:#5A6672;text-decoration:line-through">missing here</span>
+          <span style="color:#5A6672">grey words match the reference</span>
+        </div>
+        <div style="flex:1 1 0;min-height:0;overflow:auto">
+          <div role="table" aria-label="Wordings lined up against the reference, one column per reference word" style="display:grid;{{trackCols}}width:max-content;min-width:100%;font-family:var(--serif);font-size:15px;line-height:1.45">
+            <sc-for list="{{mrows}}" as="m" hint-placeholder-count="4">
+              <div role="row" style="display:contents">
+                <div role="rowheader" style="position:sticky;left:0;z-index:2;{{m.headBg}}padding:8px 12px 8px 24px;border-bottom:1px solid #E7ECF1;border-right:1px solid var(--hair);font-family:var(--sans);font-size:12px;display:flex;flex-direction:column;align-items:flex-start;gap:5px">
+                  <span style="display:flex;align-items:center;gap:6px"><span class="mdisc" style="min-width:28px;height:28px" aria-hidden="true">{{m.label}}</span><span style="font-family:var(--mono);font-weight:500"><span class="sr">{{m.label}} </span>{{m.id}}</span></span>
+                  <span style="display:flex;flex-wrap:wrap;gap:4px"><sc-if value="{{m.isRef}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent);color:#FFFFFF">Reference</span></sc-if><span style="{{m.rankStyle}}">{{m.rankText}}</span></span>
+                  <sc-if value="{{m.notRef}}" hint-placeholder-val="{{ true }}"><span style="color:#2A353F;font-weight:600">{{m.summary}}</span></sc-if>
+                  <sc-if value="{{m.notRef}}" hint-placeholder-val="{{ true }}"><button class="ghost-btn" onClick="{{m.setRef}}" aria-label="{{m.refAria}}" style="min-height:32px;padding:0 8px;font-size:12px">Use as reference</button></sc-if>
+                </div>
+                <sc-for list="{{m.cells}}" as="c" hint-placeholder-count="14"><div role="cell" style="{{c.outer}}"><span style="{{c.inner}}"><sc-if value="{{c.ghost}}" hint-placeholder-val="{{ false }}"><span class="sr">missing: </span></sc-if><sc-if value="{{c.chg}}" hint-placeholder-val="{{ false }}"><span class="sr">changed: </span></sc-if>{{c.text}}</span></div></sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>

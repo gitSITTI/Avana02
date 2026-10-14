@@ -8,8 +8,9 @@ def open_cluster(pg, cid):
 with session(1440, 1000) as (pg, errs):
     pg.get_by_role('button', name='Open the sample project').click(); pg.wait_for_timeout(200)
     pg.get_by_role('button', name='Confirm mapping and import').click(); pg.wait_for_timeout(300)
+    pg.locator('.nav-btn', has_text='Overview').first.click(); pg.wait_for_timeout(300)   # the workspace now opens on Home
     nav(pg, 'Review queue'); who(pg, 'Jordan'); open_cluster(pg, 'CL-042')
-    el = pg.get_by_text('YOUR LENS ·').first
+    el = pg.get_by_text('Your lens:').first
     el.scroll_into_view_if_needed(); pg.evaluate('window.scrollBy(0,-120)'); pg.wait_for_timeout(200)
     pg.screenshot(path='s_lens.png')
     pg.evaluate('window.scrollBy(0,820)'); pg.wait_for_timeout(200)

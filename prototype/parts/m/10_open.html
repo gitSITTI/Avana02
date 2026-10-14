@@ -3,17 +3,17 @@
 <sc-if value="{{isOpen}}" hint-placeholder-val="{{ true }}">
 <div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:32px;box-sizing:border-box">
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <div style="width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center"><div style="width:12px;height:12px;border:2px solid #FFFFFF;box-sizing:border-box"></div></div>
-    <div style="font-weight:700;font-size:16px;letter-spacing:.01em">Requirements Consolidator</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66;border:1px solid #BAC3CA;padding:2px 8px;border-radius:4px">PROTOTYPE · SAMPLE DATA ONLY</div>
+    <span aria-hidden="true" style="width:32px;height:32px;border-radius:10px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="8" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><rect x="6.5" y="6.5" width="8" height="8" rx="2" fill="#fff"/></svg></span>
+    <div style="font-weight:700;font-size:17px;letter-spacing:-.01em">Requirements Consolidator</div>
+    <div style="font-size:12px;font-weight:600;color:#3C4852;background:#E7ECF1;padding:3px 10px;border-radius:999px">Prototype · sample data only</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:12px;max-width:780px">
-    <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:40px;line-height:1.15;letter-spacing:-.01em;text-wrap:balance">Open a requirements project</h1>
+    <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:36px;line-height:1.15;text-wrap:balance">Open a requirements project</h1>
     <p style="margin:0;font-size:17px;line-height:1.5;color:#3C4852;max-width:700px;text-wrap:pretty">Bring in requirements from a SysML v2 model, a ReqIF export from MSOSA or DOORS, a spreadsheet, a database query, or a Word or PDF document, from a few hundred to 1,500 requirements. The app says what it recognised and how far to trust what it read, before you go on. Every suggestion stays a draft until the reviewers your policy requires have signed it off.</p>
   </div>
   <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
     <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between">
-      <h2 style="margin:0;§CAP§font-weight:500">SIGNED IN AS</h2>
+      <h2 style="margin:0;§CAP§font-weight:500">Signed in as</h2>
       <span style="font-size:13px;color:#4F5B66">Your login decides your lens. In this prototype you can switch person to see each view.</span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:8px">
@@ -27,7 +27,7 @@
   </div>
   <div style="border:2px dashed #8C98A3;border-radius:8px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:4px">
-      <h2 style="margin:0;§CAP§font-weight:500">DROP A FILE, PASTE A MODEL ADDRESS, OR CONNECT A DATABASE</h2>
+      <h2 style="margin:0;§CAP§font-weight:500">Drop a file, paste a model address, or connect a database</h2>
       <p style="margin:0;color:#3C4852;max-width:760px">Prototype: nothing is read from your computer here. Try a sample file and see what the app would say.</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
@@ -47,7 +47,7 @@
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
     <div style="flex:2 1 600px;min-width:0;display:flex;flex-direction:column;gap:12px">
-      <h2 style="margin:0;§CAP§font-weight:500">OR CHOOSE A SOURCE</h2>
+      <h2 style="margin:0;§CAP§font-weight:500">Or choose a source</h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:12px">
         <sc-for list="{{sources}}" as="s" hint-placeholder-count="6">
           <button class="card-btn" onClick="{{s.pick}}" style="{{s.style}}">
@@ -75,7 +75,7 @@
     </div>
     <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:24px">
       <div style="display:flex;flex-direction:column;gap:12px">
-        <h2 style="margin:0;§CAP§font-weight:500">RECENT PROJECTS</h2>
+        <h2 style="margin:0;§CAP§font-weight:500">Recent projects</h2>
         <div style="display:flex;flex-direction:column;gap:8px">
           <sc-for list="{{recents}}" as="r" hint-placeholder-count="2">
             <button class="card-btn" onClick="{{r.pick}}" style="text-align:left;§CARD§padding:12px 16px;display:flex;flex-direction:column;gap:2px;cursor:pointer;min-height:44px">

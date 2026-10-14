@@ -30,7 +30,7 @@ Also welcome:
 - No connector has been run against a real MSOSA, Teamwork Cloud, DOORS, DOORS Next or Agility system. Differences from the fake servers in the tests are expected to turn up.
 - The DOORS script (`reqin/connectors/doors9/export_requirements.dxl`) has never run in DOORS.
 - OAuth and form sign-in are not built. Credentials are a token, basic authentication or a cookie from an environment variable, or your own `auth_hook`.
-- The clickable prototype (`prototype/`) is a single page with made-up data and no server part. Opened with network access it requests IBM Plex fonts from Google Fonts. No requirement data is sent, but the request does tell Google the page was opened. Offline it works with the browser's own fonts.
+- The clickable prototype (`prototype/`) is a single page with made-up data and no server part. Its fonts are files in `prototype/project/fonts/`, so opening it makes no request to any font server or other site.
 - The `Containerfile` has not been built, and neither CI file (`.github/workflows/ci.yml`, `.gitlab-ci.yml`) has run on its platform yet.
 
 ## If you find real program data in this repository

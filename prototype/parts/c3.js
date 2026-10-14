@@ -244,6 +244,8 @@
     v.isVerify = v.isImport && S.source === 'doc' && S.impStep === 'verify';
     v.isMap = v.isImport && !v.isVerify;
     v.inWorkspace = !(v.isOpen || v.isImport);
+    v.alignOpen = false;
+    v.isHome = S.view === 'home';
     v.isOverview = S.view === 'overview';
     v.isReview = S.view === 'review';
     v.isExplorer = S.view === 'explorer';
@@ -253,6 +255,7 @@
     v.isExport = S.view === 'export';
     Object.assign(v, this.valsOpen(S), this.valsImport(S), this.valsVerify(S), this.valsShell(S), this.valsGlossary(S));
     if (v.inWorkspace) {
+      if (v.isHome) Object.assign(v, this.valsHome(S));
       if (v.isOverview) Object.assign(v, this.valsOverview(S));
       if (v.isReview) Object.assign(v, this.valsQueue(S), this.valsDetail(S));
       if (v.isExplorer) Object.assign(v, this.valsExplorer(S));

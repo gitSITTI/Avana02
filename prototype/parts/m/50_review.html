@@ -6,7 +6,7 @@
 
         <!-- ---- queue ---- -->
         <section class="rv-queue" aria-label="Review queue" style="display:flex;flex-direction:column;gap:10px">
-          <div style="§CAP§">REVIEW QUEUE</div>
+          <div style="§CAP§">Review queue</div>
           <div style="§CARD§padding:12px;display:flex;flex-direction:column;gap:10px">
             <sc-for list="{{progress}}" as="p" hint-placeholder-count="3">
               <div style="display:flex;flex-direction:column;gap:4px">
@@ -33,7 +33,7 @@
           <sc-if value="{{emptyQ}}" hint-placeholder-val="{{ false }}"><div style="§CARD§padding:14px;color:#3C4852">Nothing here. Try another tab or clear the filters.</div></sc-if>
           <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
             <button onClick="{{r.pick}}" aria-current="{{r.current}}" style="{{r.style}}">
-              <span style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">{{r.id}}</span><span style="{{r.laneStyle}}">{{r.lane}}</span></span>
+              <span style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-family:var(--mono);font-size:12px;font-weight:600">{{r.id}}</span><span style="{{r.laneStyle}}">{{r.lane}}</span></span>
               <span style="font-weight:600;font-size:13px;line-height:1.3">{{r.title}}</span>
               <span style="display:flex;flex-wrap:wrap;gap:6px"><span style="{{r.relStyle}}">{{r.rel}}</span><span style="{{r.statusStyle}}">{{r.status}}</span></span>
               <span style="font-size:12px;color:#4F5B66">{{r.size}}</span>
@@ -66,14 +66,14 @@
 
           <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center">
-              <span style="font-family:'IBM Plex Mono',monospace;font-weight:600">{{d.id}}</span>
+              <span style="font-family:var(--mono);font-weight:600">{{d.id}}</span>
               <span style="{{d.laneStyle}}">{{d.laneName}}</span>
               <span style="{{d.relStyle}}">{{d.rel}}</span>
               <span style="{{d.statusStyle}}">{{d.status}}</span>
               <sc-if value="{{d.hasClaim}}" hint-placeholder-val="{{ false }}"><span style="{{d.claimStyle}}">{{d.claimTxt}}</span></sc-if>
               <button onClick="{{toggleBlind}}" aria-pressed="{{blindPressed}}" style="§BTN§margin-left:auto">Blind-first mode: {{blindLabel}}</button>
             </div>
-            <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:24px;line-height:1.25">{{d.title}}</h1>
+            <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:24px;line-height:1.25">{{d.title}}</h1>
             <div style="color:#3C4852"><b>{{d.rel}}:</b> {{d.relPlain}}</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;color:#2A353F;font-size:13px">
               <span>{{d.paramLine}}</span>
@@ -87,64 +87,80 @@
             </div>
           </div>
 
-          <!-- members -->
-          <div style="§CARD§overflow:hidden">
-            <div style="padding:12px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;border-bottom:1px solid #D5DADE">
-              <span style="§CAP§">THE GROUP · {{nMembers}} MEMBERS</span>
-              <span style="font-size:12px;color:#4F5B66">Pick A and B to compare any two.</span>
+          <!-- the group: every wording against one reference -->
+          <section aria-labelledby="grp-h" style="§CARD§overflow:hidden">
+            <div style="padding:16px 20px 12px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 16px">
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <h2 id="grp-h" style="margin:0;font-size:16px;font-weight:700">The group: {{nMembers}} members</h2>
+                <div style="font-size:13px;color:#3C4852">Every wording is compared with <b>{{refLabel}}</b><sc-if value="{{refIsStrict}}" hint-placeholder-val="{{ false }}">, the strictest</sc-if>. Choose “Use as reference” on another to change that.</div>
+              </div>
+              <button id="al-open" onClick="{{openAlign}}" aria-haspopup="dialog" style="§BTN§display:inline-flex;align-items:center;gap:8px;min-height:40px">§IC:table:16§Line up the words</button>
+            </div>
+            <div style="padding:0 20px 12px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;color:#3C4852">
+              <span style="font-weight:600">What the colours mean</span>
+              <span style="padding:1px 7px;border-radius:6px;background:#FFE0AD;color:#3F2400;box-shadow:inset 0 -2px 0 #B35A00">number or unit</span>
+              <span style="padding:1px 7px;border-radius:6px;background:#D5E3FF;color:#0B2A6B;outline:1px solid #6F96E3">shall or should</span>
+              <span style="padding:1px 7px;border-radius:6px;background:#FFD3CE;color:#6E100A;font-weight:700">not</span>
+              <span style="padding:1px 7px;border-radius:6px;background:#E8DEFF;color:#341C85;border-bottom:2px dotted #341C85">condition</span>
+              <span style="padding:1px 7px;border-radius:6px;background:#E3E9EF;color:#1B2733;box-shadow:inset 0 -2px 0 #6B7782">other wording</span>
+              <span style="padding:0 7px;border-radius:6px;border:1px dashed #8C98A3;color:#5A6672;text-decoration:line-through">missing here</span>
+              <span style="color:#5A6672">grey words match the reference</span>
             </div>
             <div>
               <sc-for list="{{mrows}}" as="m" hint-placeholder-count="4">
-                <div style="{{m.rowStyle}}">
-                  <span style="font-family:'IBM Plex Mono',monospace;font-weight:600;padding-top:2px">{{m.label}}</span>
-                  <span style="display:flex;flex-direction:column;gap:4px;min-width:0">
-                    <span style="display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px">{{m.id}}</span><sc-if value="{{m.hasTag}}" hint-placeholder-val="{{ false }}"><span style="{{m.tagStyle}}">{{m.tag}}</span></sc-if></span>
-                    <span style="font-weight:600;font-size:15px">{{m.val}}</span>
-                    <span style="font-size:12px;color:#4F5B66">{{m.owner}} · {{m.verif}}</span>
-                    <span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="{{m.rankStyle}}">{{m.rankText}}</span><sc-if value="{{m.canPeel}}" hint-placeholder-val="{{ false }}"><button onClick="{{m.peel}}" style="min-height:36px;padding:0 8px;background:transparent;border:1px solid #8C98A3;border-radius:6px;cursor:pointer;font-size:12px">Peel out</button></sc-if></span>
-                  </span>
-                  <span style="display:flex;gap:6px"><button onClick="{{m.pickA}}" aria-pressed="{{m.aOn}}" aria-label="Compare as A" style="{{m.aStyle}}">A</button><button onClick="{{m.pickB}}" aria-pressed="{{m.bOn}}" aria-label="Compare as B" style="{{m.bStyle}}">B</button></span>
+                <div class="cmp-row" data-ref="{{m.refStr}}" style="{{m.rowBg}}">
+                  <span class="mdisc" aria-hidden="true">{{m.label}}</span>
+                  <div style="min-width:0;display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px">
+                      <span style="font-family:var(--mono);font-size:13px;font-weight:500"><span class="sr">{{m.label}} </span>{{m.id}}</span>
+                      <sc-if value="{{m.isRef}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--accent);color:#FFFFFF">Reference</span></sc-if>
+                      <span style="{{m.rankStyle}}">{{m.rankText}}</span>
+                      <sc-if value="{{m.hasTag}}" hint-placeholder-val="{{ false }}"><span style="{{m.tagStyle}}">{{m.tag}}</span></sc-if>
+                      <span style="font-size:12px;color:var(--slate)">{{m.owner}} · {{m.verif}}</span>
+                      <span style="margin-left:auto;display:flex;flex-wrap:wrap;gap:6px">
+                        <sc-if value="{{m.notRef}}" hint-placeholder-val="{{ true }}"><button class="ghost-btn" onClick="{{m.setRef}}" aria-label="{{m.refAria}}">Use as reference</button></sc-if>
+                        <sc-if value="{{m.canPeel}}" hint-placeholder-val="{{ false }}"><button class="ghost-btn quiet" onClick="{{m.peel}}" aria-label="{{m.peelAria}}">Peel out</button></sc-if>
+                      </span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:3px 6px;font-family:var(--serif);font-size:16px;line-height:1.65">
+                      <sc-for list="{{m.segs}}" as="s" hint-placeholder-count="6"><span style="{{s.style}}" title="{{s.title}}"><sc-if value="{{s.ghost}}" hint-placeholder-val="{{ false }}"><span class="sr">missing: </span></sc-if><sc-if value="{{s.chg}}" hint-placeholder-val="{{ false }}"><span class="sr">changed: </span></sc-if>{{s.t}}</span></sc-for>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12px;color:var(--slate)">
+                      <span style="font-weight:600;color:#2A353F">{{m.summary}}</span>
+                      <sc-for list="{{m.changes}}" as="x" hint-placeholder-count="3"><span class="chg-chip" title="{{x.title}}"><i style="{{x.bar}}"></i><span>{{x.text}}</span></span></sc-for>
+                    </div>
+                  </div>
                 </div>
               </sc-for>
             </div>
-            <sc-if value="{{peeledNote}}" hint-placeholder-val="{{ false }}"><div style="padding:10px 16px;font-size:13px;background:#F4F6F8;border-top:1px solid #E3E7EA">{{peeledNote}}</div></sc-if>
-          </div>
-
-          <!-- compare -->
-          <sc-if value="{{hasCmp}}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;flex-wrap:wrap;gap:16px">
-            <div style="flex:1 1 280px;min-width:0;§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:10px">
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">A · {{cmpA}}</div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:'IBM Plex Serif',Georgia,serif;font-size:16px;line-height:1.7">
-                <sc-for list="{{tokA}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#3C4852;border-top:1px solid #E3E7EA;padding-top:8px">
-                <sc-for list="{{metaA}}" as="m" hint-placeholder-count="5"><span>{{m.k}}: <span style="{{m.style}}">{{m.v}}</span></span></sc-for>
+            <sc-if value="{{peeledNote}}" hint-placeholder-val="{{ false }}"><div style="padding:10px 20px;font-size:13px;background:#F4F6F8;border-top:1px solid #E7ECF1">{{peeledNote}}</div></sc-if>
+            <div style="border-top:1px solid var(--line);padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
+              <h3 style="margin:0;font-size:14px;font-weight:700">Beyond the words</h3>
+              <sc-if value="{{ledger.hasLedger}}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:#3C4852">These fields are not the same across the group. Shaded values differ from the reference.</div></sc-if>
+              <sc-if value="{{ledger.noLedger}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">Owner, level, verification, allocation and baseline are the same across the group.</div></sc-if>
+            </div>
+            <sc-if value="{{ledger.hasLedger}}" hint-placeholder-val="{{ true }}">
+            <div style="overflow-x:auto;padding-bottom:12px">
+              <div role="table" aria-label="Fields other than the wording" style="display:grid;{{ledger.cols}}min-width:100%;font-size:13px">
+                <div role="row" style="display:contents">
+                  <div role="columnheader" style="padding:6px 12px 6px 20px;color:var(--slate);font-size:12px;font-weight:600">Wording</div>
+                  <sc-for list="{{ledger.head}}" as="h" hint-placeholder-count="3"><div role="columnheader" style="padding:6px 8px;color:var(--slate);font-size:12px;font-weight:600">{{h.name}}</div></sc-for>
+                </div>
+                <sc-for list="{{ledger.rows}}" as="r" hint-placeholder-count="4">
+                  <div role="row" style="display:contents">
+                    <div role="rowheader" style="padding:8px 12px 8px 20px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:12px">{{r.label}} · {{r.id}}</div>
+                    <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="3"><div role="cell" style="padding:6px 8px;border-top:1px solid var(--hair)"><span style="{{c.style}}"><sc-if value="{{c.differs}}" hint-placeholder-val="{{ false }}"><span class="sr">differs: </span></sc-if>{{c.v}}</span></div></sc-for>
+                  </div>
+                </sc-for>
               </div>
             </div>
-            <div style="flex:1 1 280px;min-width:0;§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:10px">
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">B · {{cmpB}}</div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:'IBM Plex Serif',Georgia,serif;font-size:16px;line-height:1.7">
-                <sc-for list="{{tokB}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#3C4852;border-top:1px solid #E3E7EA;padding-top:8px">
-                <sc-for list="{{metaB}}" as="m" hint-placeholder-count="5"><span>{{m.k}}: <span style="{{m.style}}">{{m.v}}</span></span></sc-for>
-              </div>
-            </div>
-          </div>
-          </sc-if>
-          <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:12px;color:#3C4852">
-            <span style="font-weight:600">Key</span>
-            <span style="padding:1px 5px;border-radius:3px;background:#FFE0AD;color:#3F2400;box-shadow:inset 0 -2px 0 #B35A00">number or unit</span>
-            <span style="padding:1px 5px;border-radius:3px;background:#D5E3FF;color:#0B2A6B;outline:1px solid #6F96E3">shall / should</span>
-            <span style="padding:1px 5px;border-radius:3px;background:#FFD3CE;color:#6E100A;font-weight:700">not</span>
-            <span style="padding:1px 5px;border-radius:3px;background:#E8DEFF;color:#341C85;border-bottom:2px dotted #341C85">condition</span>
-          </div>
+            </sc-if>
+          </section>
 
           <!-- scores and guards -->
           <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
             <div style="flex:1 1 280px;min-width:0;§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#34424F;display:inline-block"></span><span style="§CAP§">MECHANICAL METHODS</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#34424F;display:inline-block"></span><span style="§CAP§">Mechanical methods</span></div>
               <sc-for list="{{d.scores}}" as="s" hint-placeholder-count="8">
                 <div style="display:flex;align-items:center;gap:10px">
                   <div style="flex:0 0 150px;font-size:13px">{{s.name}}</div>
@@ -156,7 +172,7 @@
               <div style="font-size:12px;color:#4F5B66">Scores are uncalibrated until a gold set of labelled pairs exists.</div>
             </div>
             <div style="flex:1 1 280px;min-width:0;§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:8px">
-              <div style="§CAP§">AI-PROPOSAL GUARDS · {{d.guardSummary}}</div>
+              <div style="§CAP§">AI-proposal guards: {{d.guardSummary}}</div>
               <sc-for list="{{d.guards}}" as="g" hint-placeholder-count="10">
                 <div style="display:flex;gap:8px;align-items:flex-start">
                   §GI:g§
@@ -170,7 +186,7 @@
           <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
             <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px">
               <span style="width:10px;height:10px;background:#8B1F6B;transform:rotate(45deg);display:inline-block;margin:0 2px"></span>
-              <span style="§CAP§">AI PROPOSAL · DRAFT</span>
+              <span style="§CAP§">AI proposal (draft)</span>
               <sc-if value="{{d.aiJudge}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;padding:2px 8px;border-radius:4px;background:#F6E4EF;color:#6A1650;font-weight:600">{{d.aiVerdict}} · {{d.aiConf}}% · {{d.aiVotes}}</span></sc-if>
             </div>
             <sc-if value="{{d.hideAI}}" hint-placeholder-val="{{ false }}">
@@ -187,14 +203,14 @@
               <div style="color:#2A353F">{{d.aiWhy}}</div>
               <sc-if value="{{d.hasQuotes}}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;flex-direction:column;gap:6px">
-                  <sc-for list="{{d.quotes}}" as="q" hint-placeholder-count="2"><div style="font-size:13px;display:flex;gap:8px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">{{q.who}}</span><span style="font-family:'IBM Plex Serif',Georgia,serif;background:#F4F6F8;padding:1px 6px;border-radius:3px">“{{q.text}}”</span></div></sc-for>
+                  <sc-for list="{{d.quotes}}" as="q" hint-placeholder-count="2"><div style="font-size:13px;display:flex;gap:8px;align-items:baseline"><span style="font-family:var(--mono);font-weight:600">{{q.who}}</span><span style="font-family:var(--serif);background:#F4F6F8;padding:1px 6px;border-radius:3px">“{{q.text}}”</span></div></sc-for>
                 </div>
               </sc-if>
               <sc-if value="{{d.aiAction}}" hint-placeholder-val="{{ false }}"><div><b>Suggested next step:</b> {{d.aiActionText}}</div></sc-if>
               <sc-if value="{{d.hasProposal}}" hint-placeholder-val="{{ false }}">
                 <div style="border:1px solid #8B1F6B;border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:#FCF6FA">
                   <div style="font-size:12px;font-weight:600;color:#6A1650">{{d.proposalLabel}}</div>
-                  <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:16px;line-height:1.55">{{d.proposalText}}</div>
+                  <div style="font-family:var(--serif);font-size:16px;line-height:1.55">{{d.proposalText}}</div>
                 </div>
               </sc-if>
               <button onClick="{{toggleWhy}}" aria-expanded="{{d.whyOpen}}" style="align-self:flex-start;min-height:44px;padding:0;background:transparent;border:0;color:var(--accent);text-decoration:underline;cursor:pointer">Why was this suggested?</button>
@@ -209,10 +225,10 @@
           <!-- lens panel -->
           <div style="§CARD§{{lp.colorStyle}}padding:16px 20px;display:flex;flex-direction:column;gap:12px">
             <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between">
-              <div style="§CAP§">YOUR LENS · {{lp.lensName}}</div>
+              <div style="§CAP§">Your lens: {{lp.lensName}}</div>
               <div style="font-size:12px;color:#4F5B66">Your login decides this lens. Sign-off happens below.</div>
             </div>
-            <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:18px;line-height:1.35">{{lp.question}}</div>
+            <div style="font-family:var(--serif);font-size:18px;line-height:1.35">{{lp.question}}</div>
             <div style="font-size:13px;color:#3C4852"><b>What to look at:</b> {{lp.look}}</div>
             <div style="display:flex;flex-direction:column;gap:8px">
               <sc-for list="{{lp.rows}}" as="c" hint-placeholder-count="4">
@@ -224,7 +240,7 @@
             </div>
             <sc-if value="{{lp.isNU}}" hint-placeholder-val="{{ false }}">
               <label style="display:flex;flex-direction:column;gap:6px;font-weight:600">Explain it back: in one sentence, what does this require?
-                <textarea value="{{lp.nuV}}" onChange="{{lp.onNu}}" rows="2" style="font-family:'IBM Plex Serif',Georgia,serif;font-size:16px;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
+                <textarea value="{{lp.nuV}}" onChange="{{lp.onNu}}" rows="2" style="font-family:var(--serif);font-size:16px;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
               </label>
               <div style="font-size:13px;color:#3C4852">{{lp.nuHelp}}</div>
             </sc-if>
@@ -232,7 +248,7 @@
 
           <!-- sign-off -->
           <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
-            <div style="§CAP§">SIGN-OFF POLICY FOR THIS CLUSTER</div>
+            <div style="§CAP§">Sign-off policy for this cluster</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:8px">
               <sc-for list="{{sg.slots}}" as="s" hint-placeholder-count="4">
                 <div style="{{s.style}}"><span style="font-weight:600">{{s.name}}<sc-if value="{{s.hasTag}}" hint-placeholder-val="{{ false }}"> <span style="font-weight:400;font-size:12px">({{s.tag}})</span></sc-if></span><span style="font-size:12px">{{s.state}}</span></div>
@@ -261,16 +277,16 @@
 
           <!-- revision chain -->
           <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
-            <div style="§CAP§">REVISION CHAIN</div>
+            <div style="§CAP§">Revision chain</div>
             <div style="display:flex;flex-direction:column;gap:0">
               <sc-for list="{{ch.items}}" as="r" hint-placeholder-count="4">
                 <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #E3E7EA">
-                  <span style="flex:none;width:34px;font-family:'IBM Plex Mono',monospace;font-weight:600">{{r.rev}}</span>
+                  <span style="flex:none;width:34px;font-family:var(--mono);font-weight:600">{{r.rev}}</span>
                   <span style="{{r.markStyle}};flex:none;margin-top:5px"></span>
                   <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
                     <div style="display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center"><span style="font-weight:600">{{r.title}}</span><span style="{{r.chipStyle}}">{{r.markLabel}}</span><span style="font-size:12px;color:#4F5B66">{{r.by}} · {{r.at}}</span></div>
                     <sc-if value="{{r.hasDetail}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">{{r.detail}}</div></sc-if>
-                    <sc-if value="{{r.hasText}}" hint-placeholder-val="{{ false }}"><div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:15px;background:#F4F6F8;border-radius:4px;padding:6px 10px">{{r.text}}</div></sc-if>
+                    <sc-if value="{{r.hasText}}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--serif);font-size:15px;background:#F4F6F8;border-radius:4px;padding:6px 10px">{{r.text}}</div></sc-if>
                   </div>
                 </div>
               </sc-for>
@@ -281,7 +297,7 @@
 
         <!-- ---- resolve ---- -->
         <aside class="rv-resolve" aria-label="Resolve this group" style="§CARD§border-top:4px solid var(--accent);padding:16px;display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div style="§CAP§">RESOLVE · {{d.id}}</div><span style="font-size:12px;color:#4F5B66">{{rp.gSummary}}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div style="§CAP§">Resolve {{d.id}}</div><span style="font-size:12px;color:#4F5B66">{{rp.gSummary}}</span></div>
           <div style="font-size:12px;color:#4F5B66">{{rp.aiHint}}</div>
 
           <sc-if value="{{rp.decided}}" hint-placeholder-val="{{ false }}">
@@ -326,20 +342,20 @@
               </sc-if>
               <sc-if value="{{rp.showOwn}}" hint-placeholder-val="{{ false }}">
                 <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Write your own wording
-                  <textarea value="{{rp.ownV}}" onChange="{{rp.onOwn}}" rows="4" style="font-family:'IBM Plex Serif',Georgia,serif;font-size:15px;line-height:1.5;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
+                  <textarea value="{{rp.ownV}}" onChange="{{rp.onOwn}}" rows="4" style="font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
                 </label>
               </sc-if>
               <sc-if value="{{rp.showAI}}" hint-placeholder-val="{{ false }}">
                 <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">AI draft (you can edit it)
-                  <textarea value="{{rp.aiV}}" onChange="{{rp.onAiText}}" rows="4" style="font-family:'IBM Plex Serif',Georgia,serif;font-size:15px;line-height:1.5;padding:10px;border:1px solid #8B1F6B;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400;background:#FCF6FA"></textarea>
+                  <textarea value="{{rp.aiV}}" onChange="{{rp.onAiText}}" rows="4" style="font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px;border:1px solid #8B1F6B;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400;background:#FCF6FA"></textarea>
                 </label>
               </sc-if>
               <sc-if value="{{rp.hasShare}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;background:#F4F6F8;border-radius:6px;padding:8px 10px">{{rp.shareLine}}</div></sc-if>
 
               <sc-if value="{{rp.showPreview}}" hint-placeholder-val="{{ true }}">
                 <div style="border:2px solid #12171C;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:6px;background:#FFFFFF">
-                  <div style="§CAP§">PREVIEW · WHAT SURVIVES</div>
-                  <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:'IBM Plex Serif',Georgia,serif;font-size:16px;line-height:1.7"><sc-for list="{{rp.pTok}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for></div>
+                  <div style="§CAP§">Preview: what survives</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:var(--serif);font-size:16px;line-height:1.7"><sc-for list="{{rp.pTok}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for></div>
                   <div style="font-size:12px;color:#4F5B66">{{rp.pLabel}}</div>
                 </div>
               </sc-if>

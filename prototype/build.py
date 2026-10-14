@@ -2,11 +2,11 @@ import glob, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(HERE, 'parts')
 MAC = {
- 'CARD': "background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;",
- 'CAP': "font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#4F5B66;",
- 'BTN': "min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:6px;cursor:pointer;",
- 'PRI': "min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:6px;font-weight:600;cursor:pointer;",
- 'INP': "min-height:44px;padding:0 10px;border:1px solid #8C98A3;border-radius:6px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;",
+ 'CARD': "background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;",
+ 'CAP': "font-size:13px;font-weight:600;color:#54626F;",
+ 'BTN': "min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;",
+ 'PRI': "min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;",
+ 'INP': "min-height:44px;padding:0 12px;border:1px solid #8C98A3;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;",
 }
 def icons(v):
     sv = '<svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:none;margin-top:1px">%s</svg>'
@@ -16,7 +16,36 @@ def icons(v):
     inf = sv % '<circle cx="10" cy="10" r="9" fill="#E8F0FD" stroke="#1C5CAB" stroke-width="1.5"/><path d="M10 9v5M10 6v.1" stroke="#10337F" stroke-width="2" stroke-linecap="round"/>'
     def blk(flag, svg, d): return '<sc-if value="{{%s.%s}}" hint-placeholder-val="{{ %s }}">%s</sc-if>' % (v, flag, d, svg)
     return blk('isPass', pas, 'true') + blk('isWarn', wrn, 'false') + blk('isFail', fal, 'false') + blk('isInfo', inf, 'false')
+ICONS = {
+ 'home': '<path d="M3.5 9.2 10 3.5l6.5 5.7V16a1 1 0 0 1-1 1H12v-4.5H8V17H4.5a1 1 0 0 1-1-1z"/>',
+ 'queue': '<path d="M3 11.5 5 4.5h10l2 7V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h4.2l.8 2h4l.8-2H17"/>',
+ 'table': '<rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8.5h14M8 8.5V16"/>',
+ 'chart': '<path d="M4.5 16.5v-6M10 16.5v-12M15.5 16.5v-8"/>',
+ 'flask': '<path d="M8 3h4M8.8 3v5L4.6 15.2A1.5 1.5 0 0 0 5.9 17.5h8.2a1.5 1.5 0 0 0 1.3-2.3L11.2 8V3"/><path d="M6.5 12.5h7"/>',
+ 'clock': '<circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/>',
+ 'shield': '<path d="M10 2.8 16 5v4.6c0 3.8-2.5 6.2-6 7.6-3.5-1.4-6-3.8-6-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.8"/>',
+ 'export': '<path d="M10 12.5V4M6.6 7.4 10 4l3.4 3.4"/><path d="M4 12.5V15a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 16 15v-2.5"/>',
+ 'book': '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H16v12.5H5.5A1.5 1.5 0 0 0 4 17z"/><path d="M4 4.5V17M7.5 6.5H13"/>',
+ 'exit': '<path d="M8 3.5H5a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h3"/><path d="m12.2 6.5 3.5 3.5-3.5 3.5M15.7 10H8"/>',
+ 'chevron': '<path d="m7.5 4.5 5.5 5.5-5.5 5.5"/>',
+ 'search': '<circle cx="8.8" cy="8.8" r="5.3"/><path d="m13 13 3.8 3.8"/>',
+ 'plus': '<path d="M10 4v12M4 10h12"/>',
+ 'lock': '<rect x="4.2" y="8.8" width="11.6" height="8" rx="2"/><path d="M7 8.8V6.6a3 3 0 0 1 6 0v2.2"/>',
+ 'spark': '<path d="M10 3 11.7 8.3 17 10l-5.3 1.7L10 17l-1.7-5.3L3 10l5.3-1.7z"/>',
+ 'help': '<circle cx="10" cy="10" r="7"/><path d="M7.9 8a2.1 2.1 0 1 1 3 1.9c-.7.3-.9.8-.9 1.4M10 14v.1"/>',
+ 'check': '<path d="m4.5 10.5 3.5 3.5 7.5-8"/>',
+ 'eye': '<path d="M2.5 10S5 5 10 5s7.5 5 7.5 5-2.5 5-7.5 5-7.5-5-7.5-5z"/><circle cx="10" cy="10" r="2.2"/>',
+ 'network': '<rect x="3" y="3.5" width="14" height="9" rx="2"/><path d="M7.5 16.5h5M10 12.5v4"/>',
+ 'edit': '<path d="m12.5 4.5 3 3M4 16l.7-3.3L13 4.4a1.4 1.4 0 0 1 2 0l.6.6a1.4 1.4 0 0 1 0 2L7.3 15.3z"/>',
+}
+NAV_ICONS = ['home', 'queue', 'table', 'chart', 'flask', 'clock', 'shield', 'export']
+def svg(name, size=18):
+    return '<svg width="%s" height="%s" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none">%s</svg>' % (size, size, ICONS[name])
+def nav_icons(v):
+    return ''.join('<sc-if value="{{%s.ic%s}}" hint-placeholder-val="{{ false }}">%s</sc-if>' % (v, n.capitalize(), svg(n)) for n in NAV_ICONS)
 def expand(t):
+    t = re.sub(r'§IC:(\w+)(?::(\d+))?§', lambda m: svg(m.group(1), m.group(2) or 18), t)
+    t = re.sub(r'§NI:(\w+)§', lambda m: nav_icons(m.group(1)), t)
     t = re.sub(r'§GI:(\w+)§', lambda m: icons(m.group(1)), t)
     t = re.sub(r'§(\w+)§', lambda m: MAC[m.group(1)], t)
     return t

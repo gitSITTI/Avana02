@@ -3,11 +3,11 @@
       <sc-if value="{{isPolicy}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:24px">
         <div style="display:flex;flex-direction:column;gap:6px">
-          <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:32px;line-height:1.2">Sign-off policy</h1>
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Sign-off policy</h1>
           <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">Four lenses exist, but asking all four to sign every cluster of a 1,000-requirement project is what makes reviews stall. The policy asks for the lenses that matter for each case, and samples the rest on a fixed 20% so the same clusters are always chosen.</p>
         </div>
         <div style="§CARD§overflow:hidden">
-          <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">WHO MUST SIGN, BY CASE</div>
+          <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">Who must sign, by case</div>
           <div style="overflow-x:auto"><div style="min-width:820px">
             <div style="display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr)) minmax(0,2fr);gap:12px;padding:8px 16px;border-bottom:1px solid #D5DADE;font-size:12px;color:#4F5B66;font-weight:600"><span>Case</span><span>Systems</span><span>Process</span><span>UI/UX</span><span>New user</span><span>Notes</span></div>
             <sc-for list="{{polRows}}" as="r" hint-placeholder-count="7">
@@ -17,7 +17,7 @@
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
           <div style="flex:1 1 400px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
-            <div style="§CAP§">TRY A CASE</div>
+            <div style="§CAP§">Try a case</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Lane"><sc-for list="{{polLanes}}" as="l" hint-placeholder-count="3"><button onClick="{{l.pick}}" aria-pressed="{{l.pressed}}" style="{{l.style}}">{{l.label}}</button></sc-for></div>
             <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{polToggles}}" as="t" hint-placeholder-count="3"><button onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button></sc-for></div>
             <div style="display:flex;flex-direction:column;gap:8px;background:#F4F6F8;border-radius:6px;padding:12px">
@@ -28,7 +28,7 @@
             <div style="font-size:13px;color:#3C4852">{{polNote}}</div>
           </div>
           <div style="flex:1 1 400px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
-            <div style="§CAP§">WHEN SEVERAL PEOPLE WORK AT ONCE</div>
+            <div style="§CAP§">When several people work at once</div>
             <sc-for list="{{syncRules}}" as="r" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{r.k}}</span><span style="font-size:13px;color:#3C4852">{{r.v}}</span></div></sc-for>
           </div>
         </div>

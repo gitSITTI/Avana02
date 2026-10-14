@@ -2,7 +2,7 @@
 <!-- ========== IMPORT: VERIFY STATEMENTS FOUND IN A DOCUMENT ========== -->
 <sc-if value="{{isVerify}}" hint-placeholder-val="{{ false }}">
 <div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box">
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:#4F5B66">
     <sc-for list="{{crumbs}}" as="c" hint-placeholder-count="4">
       <sc-if value="{{c.sepBefore}}" hint-placeholder-val="{{ true }}"><span>/</span></sc-if>
       <sc-if value="{{c.link}}" hint-placeholder-val="{{ true }}"><button onClick="{{c.go}}" style="background:none;border:0;padding:0;min-height:44px;color:var(--accent);cursor:pointer;text-decoration:underline;font-family:inherit;font-size:inherit">{{c.label}}</button></sc-if>
@@ -10,8 +10,8 @@
     </sc-for>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px;max-width:780px">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66">IMPORT FROM DOCUMENT: {{docFile}} · TRUST LEVEL: EXTRACTED</div>
-    <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:34px;line-height:1.2;text-wrap:balance">Check what the app found</h1>
+    <div style="font-family:var(--mono);font-size:12px;color:#4F5B66">IMPORT FROM DOCUMENT: {{docFile}} · TRUST LEVEL: EXTRACTED</div>
+    <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2;text-wrap:balance">Check what the app found</h1>
     <div><span style="display:inline-block;font-size:13px;background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;border-radius:4px;padding:3px 10px">Found in the text by rules. Each record needs your check against the page.</span></div>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
@@ -26,7 +26,7 @@
         <div style="{{it.rowStyle}}">
           <div style="display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap">
             <label style="display:flex;align-items:center;gap:10px;min-height:44px"><input type="checkbox" checked="{{it.sel}}" onChange="{{it.toggle}}" aria-label="{{it.aria}}" style="width:20px;height:20px;margin:0"><span style="{{it.uidStyle}}">{{it.uid}}</span></label>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#E4E9ED;color:#2F3B46;padding:2px 8px;border-radius:3px">{{it.loc}}</span>
+            <span style="font-family:var(--mono);font-size:12px;background:#E4E9ED;color:#2F3B46;padding:2px 8px;border-radius:3px">{{it.loc}}</span>
             <sc-if value="{{it.verified}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:600;background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;padding:2px 8px;border-radius:3px">Verified by you</span></sc-if>
             <sc-if value="{{it.notVerified}}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;padding:2px 8px;border-radius:3px">Extracted: not checked yet</span></sc-if>
           </div>
@@ -41,15 +41,15 @@
       </sc-for>
     </div>
     <div style="flex:2 1 340px;min-width:0;§CARD§padding:16px;display:flex;flex-direction:column;gap:12px;background:#FBFBFC">
-      <div style="§CAP§">SOURCE PAGE 1 (HIGHLIGHT = THE RECORD YOU CLICKED)</div>
-      <div style="background:#FFFFFF;border:1px solid #BAC3CA;padding:18px 16px;display:flex;flex-direction:column;gap:10px;font-family:'IBM Plex Serif',Georgia,serif;font-size:13px;line-height:1.5">
+      <div style="§CAP§">Source page 1 (highlight = the record you clicked)</div>
+      <div style="background:#FFFFFF;border:1px solid #BAC3CA;padding:18px 16px;display:flex;flex-direction:column;gap:10px;font-family:var(--serif);font-size:13px;line-height:1.5">
         <sc-for list="{{pageBlocks}}" as="b" hint-placeholder-count="11">
           <sc-if value="{{b.isH}}" hint-placeholder-val="{{ false }}"><div style="font-weight:700;font-size:15px">{{b.text}}</div></sc-if>
           <sc-if value="{{b.isP}}" hint-placeholder-val="{{ true }}"><div><sc-for list="{{b.spans}}" as="sp" hint-placeholder-count="2"><span style="{{sp.style}}">{{sp.t}}</span></sc-for></div></sc-if>
           <sc-if value="{{b.isRow}}" hint-placeholder-val="{{ false }}"><div style="{{b.rowStyle}}"><sc-for list="{{b.spans}}" as="sp" hint-placeholder-count="3"><div style="{{sp.cellStyle}}">{{sp.t}}</div></sc-for></div></sc-if>
         </sc-for>
       </div>
-      <div style="font-size:12px;color:#4F5B66">Amber with an outline = the record you clicked. Dotted underline = other statements the app found. Green = verified. <span style="font-family:'IBM Plex Mono',monospace">{{docFocusRaw}}</span></div>
+      <div style="font-size:12px;color:#4F5B66">Amber with an outline = the record you clicked. Dotted underline = other statements the app found. Green = verified. <span style="font-family:var(--mono)">{{docFocusRaw}}</span></div>
       <div style="color:#2A353F;font-size:13px;font-weight:600">{{docFocusLoc}}</div>
     </div>
   </div>
@@ -64,7 +64,7 @@
 <!-- ========== IMPORT: MAP FIELDS, CHOOSE SCOPE ========== -->
 <sc-if value="{{isMap}}" hint-placeholder-val="{{ true }}">
 <div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:28px;box-sizing:border-box">
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:#4F5B66">
     <sc-for list="{{crumbs}}" as="c" hint-placeholder-count="3">
       <sc-if value="{{c.sepBefore}}" hint-placeholder-val="{{ true }}"><span>/</span></sc-if>
       <sc-if value="{{c.link}}" hint-placeholder-val="{{ true }}"><button onClick="{{c.go}}" style="background:none;border:0;padding:0;min-height:44px;color:var(--accent);cursor:pointer;text-decoration:underline;font-family:inherit;font-size:inherit">{{c.label}}</button></sc-if>
@@ -72,7 +72,7 @@
     </sc-for>
   </div>
   <div style="display:flex;flex-direction:column;gap:10px;max-width:800px">
-    <h1 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:34px;line-height:1.2;text-wrap:balance">Check how your fields map</h1>
+    <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2;text-wrap:balance">Check how your fields map</h1>
     <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center">
       <span style="font-size:13px;background:#FFF0D2;color:#6B3D00;border:1px solid #A15C00;border-radius:4px;padding:3px 10px">PROPOSED by the app. Not trusted until you confirm.</span>
       <span style="{{impTrustStyle}}">{{impTrust}}</span>
@@ -80,12 +80,12 @@
     <p style="margin:0;font-size:16px;color:#3C4852;text-wrap:pretty">Source: <b>{{impFile}}</b> · {{impWhere}}. The review screens fill themselves from these fields. Anything the source lacks shows as an empty slot, never as a guess.</p>
     <p style="margin:0;font-size:13px;color:#4F5B66;text-wrap:pretty">{{impNote}}</p>
     <sc-if value="{{hasQuery}}" hint-placeholder-val="{{ false }}">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre">Read-only query: {{impQuery}}</div>
+      <div style="font-family:var(--mono);font-size:12px;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre">Read-only query: {{impQuery}}</div>
     </sc-if>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
     <div style="flex:3 1 560px;min-width:0;§CARD§overflow:hidden">
-      <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">MAPPING PROFILE: {{impProfile}}</div>
+      <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">Mapping profile: {{impProfile}}</div>
       <div style="overflow-x:auto">
         <div style="min-width:560px">
           <sc-for list="{{fields}}" as="f" hint-placeholder-count="7">
@@ -93,7 +93,7 @@
               <div><div style="font-weight:600">{{f.name}}</div><div style="font-size:12px;color:#4F5B66">{{f.desc}}</div></div>
               <div>
                 <sc-if value="{{f.notEditing}}" hint-placeholder-val="{{ true }}">
-                  <div style="{{f.srcStyle}}">{{f.src}}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4F5B66;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{f.sample}}</div>
+                  <div style="{{f.srcStyle}}">{{f.src}}</div><div style="font-family:var(--mono);font-size:12px;color:#4F5B66;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{f.sample}}</div>
                 </sc-if>
                 <sc-if value="{{f.editing}}" hint-placeholder-val="{{ false }}">
                   <select value="{{f.sel}}" onChange="{{f.onSel}}" aria-label="{{f.selLabel}}" style="§INP§width:100%;min-width:0"><sc-for list="{{f.opts}}" as="o" hint-placeholder-count="5"><option value="{{o.v}}">{{o.t}}</option></sc-for></select>
@@ -111,7 +111,7 @@
       </div>
     </div>
     <div style="flex:2 1 320px;min-width:0;§CARD§padding:16px;display:flex;flex-direction:column;gap:12px">
-      <div style="§CAP§">DRY-RUN REPORT</div>
+      <div style="§CAP§">Dry-run report</div>
       <div style="font-size:13px;font-weight:600">{{nNeedsText}}</div>
       <sc-for list="{{dry}}" as="d" hint-placeholder-count="5">
         <div style="display:flex;gap:10px;align-items:flex-start">
@@ -123,12 +123,12 @@
     </div>
   </div>
   <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:10px">
-    <div style="§CAP§">FIRST THREE RECORDS AS THE REVIEW SCREENS WILL SHOW THEM</div>
+    <div style="§CAP§">First three records as the review screens will show them</div>
     <div style="overflow-x:auto">
       <div style="min-width:640px">
-        <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 150px 110px;gap:12px;padding:6px 0;border-bottom:1px solid #BAC3CA;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4F5B66"><span>ID</span><span>STATEMENT</span><span>VERIFICATION</span><span>ALLOCATED TO</span><span>FIDELITY</span></div>
+        <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 150px 110px;gap:12px;padding:6px 0;border-bottom:1px solid #BAC3CA;font-family:var(--mono);font-size:11px;color:#4F5B66"><span>ID</span><span>STATEMENT</span><span>VERIFICATION</span><span>ALLOCATED TO</span><span>FIDELITY</span></div>
         <sc-for list="{{preview}}" as="p" hint-placeholder-count="3">
-          <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 150px 110px;gap:12px;padding:8px 0;border-bottom:1px solid #E3E7EA;font-size:13px"><span style="font-family:'IBM Plex Mono',monospace">{{p.id}}</span><span>{{p.text}}</span><span>{{p.ver}}</span><span>{{p.alloc}}</span><span>{{p.fid}}</span></div>
+          <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 150px 110px;gap:12px;padding:8px 0;border-bottom:1px solid #E3E7EA;font-size:13px"><span style="font-family:var(--mono)">{{p.id}}</span><span>{{p.text}}</span><span>{{p.ver}}</span><span>{{p.alloc}}</span><span>{{p.fid}}</span></div>
         </sc-for>
       </div>
     </div>
@@ -136,7 +136,7 @@
   </div>
   <div style="§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:4px">
-      <div style="§CAP§">HOW MUCH TO REVIEW FIRST</div>
+      <div style="§CAP§">How much to review first</div>
       <div style="color:#3C4852;max-width:760px">A first run on 1,000 or more requirements is easier to trust after a pilot. The pilot measures how long a real cluster takes a reviewer and shows where the thresholds need adjusting.</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:12px">
@@ -158,7 +158,7 @@
     </sc-if>
   </div>
   <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:12px">
-    <div style="§CAP§">COMPARISONS PREPARED (SAMPLE RUN)</div>
+    <div style="§CAP§">Comparisons prepared (sample run)</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:12px 24px">
       <sc-for list="{{stages}}" as="st" hint-placeholder-count="11">
         <div style="display:flex;gap:10px;align-items:flex-start">
@@ -175,8 +175,8 @@
   </div>
   <sc-if value="{{yamlOpen}}" hint-placeholder-val="{{ false }}">
     <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:8px">
-      <div style="§CAP§">PROFILE.YAML: THE WHOLE MAPPING, AS TEXT YOU CAN REVIEW AND KEEP IN GIT</div>
-      <pre style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:12px 14px;overflow-x:auto">{{yamlText}}</pre>
+      <div style="§CAP§">profile.yaml: the whole mapping, as text you can review and keep in git</div>
+      <pre style="margin:0;font-family:var(--mono);font-size:12px;line-height:1.6;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:12px 14px;overflow-x:auto">{{yamlText}}</pre>
       <div style="font-size:12px;color:#4F5B66">Prototype: nothing is saved from this page. In the reference code this is the file that <code>reqin propose</code> writes and <code>reqin import --profile</code> replays on the next import.</div>
     </div>
   </sc-if>

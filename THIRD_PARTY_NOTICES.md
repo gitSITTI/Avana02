@@ -1,10 +1,13 @@
 # Third-party code
 
-Everything in this repository is licensed under the Apache License, Version 2.0 (see `LICENSE`), **except the one file below**, which was not written here and keeps its own licence.
+Everything in this repository is licensed under the Apache License, Version 2.0 (see `LICENSE`), **except the files below**, which were not written here and keep their own licences.
 
 | File | What it is | Licence |
 |---|---|---|
 | `prototype/project/support.js` | A minified bundle of React and ReactDOM: the runtime the design-canvas format of the prototype needs. The original `@license` headers are still in the file. | MIT, Copyright (c) Facebook, Inc. and its affiliates. |
+| `prototype/project/fonts/*.woff2` | Three font families, Latin subsets, so the prototype looks the same offline and sends no request to a font server: Public Sans (interface), Source Serif 4 (requirement wording) and JetBrains Mono (identifiers). Taken from the `@fontsource` npm packages. The licence text of each family sits next to the files (`LICENSE-public-sans.txt`, `LICENSE-source-serif-4.txt`, `LICENSE-jetbrains-mono.txt`), copied unchanged from those packages. | SIL Open Font License 1.1. The copyright holders are named in each licence file. |
+
+The MIT licence text for `support.js`:
 
 ```
 MIT License

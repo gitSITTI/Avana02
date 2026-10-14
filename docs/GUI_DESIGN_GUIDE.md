@@ -14,25 +14,30 @@ All screens in the pictures use a synthetic sample. Nothing here has been tested
 
 ---
 
-## 1. A tour in five pictures
+## 1. A tour in six pictures
 
-Each picture is a real screenshot of the prototype. Click one to see it full size. All 13 are in [`images/prototype/`](images/prototype/).
-They were taken without network access, so the text is in the browser's fallback fonts. The page itself asks for IBM Plex Sans, Serif and Mono from Google Fonts, so with network access it looks a little different (same layout, different letter shapes).
+Each picture is a real screenshot of the prototype. Click one to see it full size. All 16 are in [`images/prototype/`](images/prototype/).
+The prototype bundles its fonts (Public Sans for the interface, Source Serif 4 for requirement wording, JetBrains Mono for IDs; all under the SIL Open Font License), so the pictures show the real typefaces.
 
 **Open: choose where requirements come from.** Six source cards, each with a trust level in words. A drop zone says what a file would be recognised as, before anything is imported.
 [![Open screen](images/prototype/01_open.png)](images/prototype/01_open.png)
 
-**Overview: one number, one button, then the detail.** The first screen after import answers "where do I start?" with one count and one button; the risk lanes and the narrowing funnel sit below it.
-[![Overview screen](images/prototype/03_overview.png)](images/prototype/03_overview.png)
+**Home: what needs you, and where to bring requirements in.** One count and one button lead. Below them: the three most common ways in (spreadsheet, database query, document), an expandable list of recent imports, a bar chart of where the open clusters are (select a bar to open them) and the latest activity. A dark band at the top says, in words, how the project handles security.
+[![Home screen](images/prototype/03_home.png)](images/prototype/03_home.png)
 
-**Cluster review: two wordings side by side.** Differences are marked in words and colour (numbers, units, shall/should, "not"), the choices are plain sentences, and a preview shows what would survive.
-[![Cluster review](images/prototype/06_cluster_review_conflict.png)](images/prototype/06_cluster_review_conflict.png)
+**Cluster review: every wording against one reference.** The strictest wording is the reference by default; choose another with "Use as reference". Grey words match it. Only what differs is coloured (numbers and units, shall/should, "not", conditions, other words), and a chip under each wording says the difference in plain words ("365 → 60", "drops at least"). Words the reference has and a wording lacks show as dashed, struck-through ghosts instead of a blank.
+[![Cluster review with six wordings](images/prototype/07_cluster_review_six_wordings.png)](images/prototype/07_cluster_review_six_wordings.png)
+
+**Line up the words: the same comparison as columns.** One column per word of the reference, so a changed number sits directly under the number it replaces. It opens in a wide window because it needs the width; Escape closes it and focus returns to the button that opened it.
+[![The wordings lined up](images/prototype/08_wordings_lined_up.png)](images/prototype/08_wordings_lined_up.png)
 
 **All requirements: a map, not a table.** Each square is a requirement, grouped by what the data says (here, allocation). Faded squares are outside the filter.
-[![All requirements map](images/prototype/07_all_requirements.png)](images/prototype/07_all_requirements.png)
+[![All requirements map](images/prototype/09_all_requirements.png)](images/prototype/09_all_requirements.png)
 
 **Methods and metrics: show the numbers for both approaches.** Mechanical and AI methods are scored the same way, side by side, with a banner saying the figures are placeholders until a human-labelled set exists.
-[![Methods and metrics](images/prototype/08_methods_and_metrics.png)](images/prototype/08_methods_and_metrics.png)
+[![Methods and metrics](images/prototype/10_methods_and_metrics.png)](images/prototype/10_methods_and_metrics.png)
+
+On a phone the side bar becomes a block of buttons at the top and everything else stacks: [Home](images/prototype/15_phone_home.png) and [the six wordings](images/prototype/16_phone_six_wordings.png).
 
 ---
 
@@ -40,7 +45,7 @@ They were taken without network access, so the text is in the browser's fallback
 
 A person who is not a systems engineer should be able to answer these without help. If a screen cannot answer one, redesign the screen, not the help text.
 
-1. **Where am I?** The sidebar shows the current place; the page title says it again; the project and baseline sit in a strip at the top.
+1. **Where am I?** The side bar marks the current place; the page title says it again; the top bar names the project, the page, the scope and the baseline.
 2. **What am I looking at?** A one-line sentence under the title, in plain words, before any table.
 3. **How far can I trust it?** Every value that was guessed, inferred or written by an AI says so in a word (section 5).
 4. **What can I do next?** One primary button per screen. Optional actions look different (dashed or secondary).
@@ -54,9 +59,10 @@ A person who is not a systems engineer should be able to answer these without he
 |---|---|---|
 | Open | What can I open, and how will it be read? | 5.3 (trust in words), 5.7 (several sources) |
 | Check the mapping | Did the tool understand my columns? Which slots stayed empty? | 5.1 (never hard-code), 5.2 (say what is missing) |
-| Overview | Where do I start? | 5.4 (counts add up), 5.5 (any size) |
+| Home | What needs me, and where do I bring more requirements in? | 5.2 (lists built from values present), 5.3 |
+| Overview | How did the list narrow, and how far has sign-off got? | 5.4 (counts add up), 5.5 (any size) |
 | Review queue | What is waiting for me, and what is waiting for others? | 5.2 (lists built from values present) |
-| Cluster review | Do these say the same thing, and what survives if I merge? | 5.3, 5.8 (text is text) |
+| Cluster review | How do these wordings differ from the reference, and what survives if I merge? | 5.3, 5.8 (text is text) |
 | All requirements | What is in this project, grouped how the data groups it? | 5.2, 5.5 |
 | Methods and metrics | How good is each method, honestly? | 5.4 (nothing hidden) |
 | Decisions and audit | What was decided, by whom, and has anything changed since? | 5.6 (always jump back) |
@@ -75,7 +81,20 @@ A new screen should start from the same question: write the question in the titl
 - **Counts are always on screen and always add up.** Read = kept + rejected + filtered, shown as numbers, not as a progress bar.
 - **No horizontal page scroll** at 1440, 900 and 390 px. The prototype's browser tests check this on the Open and Import screens; the phone screenshots in `images/prototype/` show the stacked layout for the others, which you should check by eye.
 - **Keep reading text readable.** Statements are shown verbatim, long ones can expand, and the line length stays comfortable (the prototype sets statements in a serif so they read as the document, and the interface around them in a sans; IDs are in a monospace).
-- **Keyboard and focus.** Use real buttons and inputs, never clickable boxes, and keep a visible focus ring (the prototype uses a 3 px outline). Aim for 44 px tall targets; the sidebar buttons are 44 px, but the prototype has not been checked control by control.
+- **Keyboard and focus.** Use real buttons and inputs, never clickable boxes, and keep a visible focus ring (the prototype uses a 3 px outline). Aim for 44 px tall targets. The primary buttons and inputs are 44 px; the side bar items and the search box are 40 px, and the smaller controls (the group headers in the side bar, the top-bar icons, "Use as reference") are 32 to 40 px. The prototype has not been checked control by control. A window that opens over the page (the "Line up the words" sheet) moves focus into itself, keeps Tab inside, closes on Escape and gives focus back.
+
+### Comparing wordings
+
+The first version of the prototype compared two wordings at a time (pick A, pick B). That makes a reviewer do the work of finding which two matter, and says nothing about the other four. What replaced it:
+
+- **One reference, many rows.** Every wording is compared with the same reference (by default the strictest), so the comparison is always the same question: how does this differ from the one that is hardest to meet? Choosing another reference is one click.
+- **Quiet where it matches, loud where it differs.** Matching words are grey. Colour is spent only on differences, and each colour is also a shape (an underline, an outline, bold) so it still reads in greyscale.
+- **Say the difference in words.** A chip under each row ("365 → 30", "adds after landing") is what a person can scan; the highlighted sentence is the evidence behind it. A row with almost nothing in common is labelled "Reworded" instead of showing a wall of chips.
+- **Missing is not blank.** A word the reference has and the row lacks is shown as a struck-through ghost, so "dropped at least" cannot be mistaken for "the same".
+- **Fields other than the words get their own small table.** Owner, level, verification, allocation and baseline appear only when they differ, with the differing values shaded.
+- **Keep the sentence readable first.** The redline view wraps like text. The column view (one column per reference word) needs width, so it opens in its own window rather than squeezing into a column.
+
+How the lining up is done: a word-by-word longest-common-subsequence of each wording against the reference, with the leftovers grouped into changes, split around numbers so a number change stands alone. The code is `compareRows` and `alignRows` in `prototype/parts/logic1.js`. It is meant for wordings of one sentence or two; it does not understand meaning, so "a minimum of" and "at least" are shown as different words (a person reads them as the same).
 
 ---
 
@@ -99,7 +118,7 @@ Guidance that the boards follow, and what has and has not been checked:
 - **The same colour means the same thing on every screen.** The palette lives in one place for the boards (`excalidraw_generator/wf.py`) and one place for the prototype.
 - **Contrast.** Aim for WCAG 2.2 AA: at least 4.5:1 for normal text and 3:1 for large text and interface components. The prototype was designed for this but **has not been audited**; run a contrast checker over a screenshot before relying on it.
 - **Colour-blind safety.** Because every colour is paired with a word, nothing depends on telling two colours apart. If you add a chart with several series, check the palette with a validator rather than by eye; the prototype's own palette has not been run through one.
-- **Type.** One sans for the interface, a serif for requirement statements, a monospace for IDs and small captions. Use two or three sizes for body text, not seven.
+- **Type.** One sans for the interface (Public Sans), a serif for requirement statements only (Source Serif 4), a monospace for IDs (JetBrains Mono). Section titles are the same sans in bold, not the serif: the serif is kept for the words a person is deciding about, so it always means "this is the requirement text". Labels are sentence case, not capitals. Use two or three sizes for body text, not seven.
 
 ---
 
@@ -165,7 +184,7 @@ At each step the output is a file someone else can open, so nothing depends on a
 ## 10. What this guide does not claim
 
 - It has **not been tested with real users**. The board 01 persona and the flows are design hypotheses.
-- The prototype has **no formal accessibility audit** and its palette has not been run through a colour-blind simulator.
+- The prototype has **no formal accessibility audit** and its palette has not been run through a colour-blind simulator. The comparison colours were chosen for contrast on white and each is paired with a shape, but they were checked by eye, not with a tool.
 - The contract and the 14 datasets have been tested against `reqin`'s own importers, not against any particular GUI.
 - "Good-looking" is judged by eye. Nothing in the test suite can tell you whether a screen is clear.
 - The synthetic sample project is generic (a made-up aerospace example); it says nothing about any real program.

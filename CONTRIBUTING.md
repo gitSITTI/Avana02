@@ -27,7 +27,7 @@ make check        # guard + reqin tests + connector template + boards + prototyp
 | `reqin/` code | `cd reqin && python -m pytest -q` | Tests use generated, made-up fixtures and in-memory fake servers. They never touch a network. |
 | A connector | the above; raise its `maturity` only if it has run against the real system | `reqin connectors` must not claim more than was checked. |
 | An Excalidraw board | in `excalidraw_generator/`: `python3 build_all.py --out ../excalidraw`, then `python3 render_previews.py`, then **look at the pictures** | Boards are generated: never edit a `.excalidraw` file by hand. A test fails if a board and its picture disagree. |
-| A prototype screen | in `prototype/`: `python3 build.py`, `node verify.js project/Main.dc.html`, `python3 b11.py 1440`, `python3 b11.py 390`, then `python3 shots.py` and look | `project/Main.dc.html` is built: never edit it by hand. |
+| A prototype screen | in `prototype/`: `python3 build.py`, `node verify.js project/Main.dc.html`, `python3 b11.py 1440`, `python3 b11.py 390`, `python3 b12.py 1440`, `python3 b12.py 390`, then `python3 shots.py` and look | `project/Main.dc.html` is built: never edit it by hand. |
 | A Markdown file | `python3 -m pytest -q tools` | Every relative link and image must resolve. |
 | `.github/workflows/ci.yml` | `python3 -m pytest -q tools`, and `actionlint` plus `check-jsonschema --builtin-schema vendor.github-workflows` if you have them | The tests keep the token read-only and the actions pinned; the two tools catch syntax errors. |
 
