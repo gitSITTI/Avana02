@@ -38,6 +38,25 @@ guard:no-real-data:
     - python -m pytest -q tools
     - python tools/check_no_real_data.py
 
+# 1b. Secrets and private names must never reach the repo, now or anywhere in its history. gitleaks is the pinned release from
+#     tools/run_gitleaks.py (checksum verified). The private-term list is a CI/CD variable of type FILE named DENYLIST_FILE
+#     (Settings > CI/CD > Variables; the file holds one term per line; see SECURITY.md). The job FAILS without it, so a forgotten
+#     variable cannot pass as a clean scan. On a fork or mirror that has no list, set the variable DENYLIST_OPTIONAL to 1 to skip only that part.
+#     Needs git inside the job, so this uses the full python image, not -slim. Behind a firewall: set GITLEAKS_BASE_URL to a mirror of the release files.
+guard:secrets:
+  extends: .python
+  stage: guard
+  image: "$PYTHON_IMAGE:3.12"
+  variables:
+    GIT_DEPTH: "0"                     # the scans read every commit, not a shallow clone
+    REQUIRE_GITLEAKS: "1"
+  script:
+    - python tools/run_gitleaks.py install
+    - pip install pytest
+    - python -m pytest -q -rs tools/test_secret_guards.py
+    - python tools/run_gitleaks.py history
+    - python tools/denylist_check.py ci
+
 # 2. The input layer: file adapters, live connectors against in-memory fakes, the shared HTTP kit against real local servers, watch mode.
 #    One optional check (PDF made by LibreOffice) is skipped here: no LibreOffice in this image, and that is expected.
 test:reqin:

@@ -39,6 +39,8 @@ BLOCKED_EXT = {
 # Adding a path here is a code-review decision: the file must contain a script, not requirements.
 ALLOW_FILES = {"reqin/connectors/doors9/export_requirements.dxl"}
 BLOCKED_DIRS = {"data", "private", "exports"}
+# The private-term lists (tools/denylist_check.py, and the regex list above) hold exactly the names they exist to hide, so they must never be tracked.
+TERM_LIST_FILES = {".denylist", ".forbidden-terms"}
 MAX_BYTES = 3 * 1024 * 1024
 SKIP_DIRS = {".git", "node_modules", ".venv", "__pycache__", ".pytest_cache", ".cache"}
 TEXT_EXT = {".md", ".txt", ".py", ".js", ".ts", ".tsx", ".json", ".yaml", ".yml", ".toml", ".html", ".css", ".excalidraw", ".sh", ".cfg", ".ini", ".xml"}
@@ -93,6 +95,8 @@ def scan(root: Path, files: list[str], terms: list[re.Pattern]) -> list[str]:
             bad = BLOCKED_DIRS.intersection(parts[:-1])
             if bad:
                 problems.append(f"{rel}: lives under a folder named {sorted(bad)[0]}/, which is reserved for real data and must not be committed")
+        if parts[-1] in TERM_LIST_FILES:
+            problems.append(f"{rel}: this is a private-term list; it names the things it hides, so it must stay outside the repository (see SECURITY.md)")
         size = p.stat().st_size
         if size > MAX_BYTES:
             problems.append(f"{rel}: {size / 1e6:.1f} MB is over the {MAX_BYTES // (1024 * 1024)} MB limit (database dump? bundle? build output?)")

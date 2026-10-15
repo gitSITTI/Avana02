@@ -19,6 +19,7 @@ data/
 private/
 exports/
 .forbidden-terms
+.denylist
 # The one allowed place, and only with an entry in APPROVALS.md:
 !reqin/tests/fixtures_approved/
 !reqin/tests/fixtures_approved/**

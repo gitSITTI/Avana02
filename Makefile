@@ -3,10 +3,12 @@ CTR ?= $(shell command -v podman 2>/dev/null || command -v docker 2>/dev/null)
 PY  ?= python3
 IMG ?= requirements-consolidator/reqin:dev
 
-.PHONY: help check guard test template boards proto proto-test image image-test render
+.PHONY: help check guard secrets hooks test template boards proto proto-test image image-test render
 help:
 	@echo "check       guard + test + boards (what CI runs)"
 	@echo "guard       refuse real-data files (tools/check_no_real_data.py)"
+	@echo "secrets     gitleaks over the whole history, plus the private-term check if you have a list"
+	@echo "hooks       turn on the pre-commit and commit-msg hooks for this clone (installs the pinned gitleaks)"
 	@echo "test        reqin tests (file adapters, live connectors against fakes, HTTP kit, watch mode)"
 	@echo "template    the connector template's own tests, in a throwaway virtualenv (.cache/tpl-venv)"
 	@echo "boards      rebuild all Excalidraw boards and confirm they match the committed ones"
@@ -16,11 +18,20 @@ help:
 	@echo "image-test  build the test stage (runs the tests inside the container)"
 	@echo "render      boards -> PNG in excalidraw_generator/out (needs node + Playwright; see EXCALIDRAW_GUIDE.md)"
 
-check: guard test template boards proto
+check: guard secrets test template boards proto
 
 guard:
 	$(PY) -m pytest -q tools
 	$(PY) tools/check_no_real_data.py
+
+# gitleaks over every commit. The private-term check runs when a list is available (./.denylist or DENYLIST_FILE) and says so when it is not.
+secrets:
+	$(PY) tools/run_gitleaks.py history
+	$(PY) tools/denylist_check.py tree
+	$(PY) tools/denylist_check.py history
+
+hooks:
+	$(PY) tools/setup_hooks.py
 
 test:
 	cd reqin && $(PY) -m pytest -q -rs

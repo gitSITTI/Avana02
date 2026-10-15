@@ -89,4 +89,6 @@ Apache License 2.0: see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). Copyright 2
 
 This is a research prototype and comes **as is**, without warranty (see sections 7 and 8 of the licence). Read "What has and has not been checked" above before relying on it: no connector has been run against a real MSOSA, Teamwork Cloud, DOORS or Agility system.
 
+Secrets and private names are checked before every commit and again in CI over the whole history (gitleaks at a pinned, checksum-verified version, plus a private-term list that is kept outside the repository): [`docs/SECRET_SCANNING.md`](docs/SECRET_SCANNING.md).
+
 Contributions are accepted under the same licence: see [`CONTRIBUTING.md`](CONTRIBUTING.md). Never commit real requirements, exports or models; the guard described above exists to stop that, and a pull request that trips it will not be merged. Report vulnerabilities privately: [`SECURITY.md`](SECURITY.md).

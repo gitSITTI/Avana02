@@ -1,0 +1,12 @@
+#!/bin/sh
+# Blocks a commit when the staged changes hold a secret, a private term, or a real-data file.
+# Turn on once per clone:   python tools/setup_hooks.py        (or: make hooks)
+# Emergency skip:           git commit --no-verify             (CI runs the same checks again, so it only delays the failure)
+root=$(cd "$(dirname "$0")/.." && pwd)
+py=${PYTHON:-python3}
+command -v "$py" >/dev/null 2>&1 || py=python
+command -v "$py" >/dev/null 2>&1 || { echo "pre-commit: no python3 or python on PATH, so this commit was blocked." >&2; exit 1; }
+
+"$py" "$root/tools/denylist_check.py" staged || exit 1       # your private terms (list kept outside the repo); skipped, with a note, if you have none
+"$py" "$root/tools/check_no_real_data.py" || exit 1          # real-data file types and folders
+"$py" "$root/tools/run_gitleaks.py" staged || exit 1         # secrets

@@ -15,7 +15,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parent.parent
 WORKFLOW = REPO / ".github" / "workflows" / "ci.yml"
-ALLOWED_SECRETS = {"FORBIDDEN_TERMS"}
+ALLOWED_SECRETS = {"FORBIDDEN_TERMS", "DENYLIST"}
 
 
 def code_lines(text: str) -> list[str]:
@@ -36,6 +36,40 @@ def steps(code: list[str]) -> list[str]:
         else:
             cur = None
     return ["\n".join(b) for b in blocks]
+
+
+def job_lines(code: list[str], name: str) -> list[str]:
+    """The lines of one job (two-space indent under `jobs:`), or [] if there is none."""
+    for i, line in enumerate(code):
+        if line == f"  {name}:":
+            out = []
+            for rest in code[i + 1:]:
+                if re.match(r"^ {2}\S", rest):
+                    break
+                out.append(rest)
+            return out
+    return []
+
+
+def secret_scan_problems(code: list[str]) -> list[str]:
+    """The secrets job is the only thing standing between a leaked key or a private name and a public history, so its shape is checked."""
+    job = job_lines(code, "secrets")
+    if not job:
+        return ["the workflow has no `secrets` job (gitleaks and the private-term check)"]
+    body = "\n".join(job)
+    bad: list[str] = []
+    if not re.search(r"fetch-depth:\s*0\b", body):
+        bad.append("the secrets job needs `fetch-depth: 0`: a shallow clone hides the history it is meant to scan")
+    if "tools/run_gitleaks.py history" not in body:
+        bad.append("the secrets job does not run the gitleaks history scan")
+    if "tools/denylist_check.py ci" not in body:
+        bad.append("the secrets job does not run the private-term check")
+    if not re.search(r"DENYLIST_OPTIONAL:\s*\$\{\{\s*github\.event\.pull_request\.head\.repo\.fork\b", body):
+        bad.append("DENYLIST_OPTIONAL must be set only for pull requests from forks; anything else lets a missing secret pass as a clean scan")
+    holders = [b for b in steps(code) if "secrets.DENYLIST" in b]
+    if len(holders) != 1 or "tools/denylist_check.py ci" not in holders[0]:
+        bad.append("the DENYLIST secret must reach only the step that runs the private-term check")
+    return bad
 
 
 def problems(text: str, repo: Path = REPO) -> list[str]:
@@ -63,6 +97,8 @@ def problems(text: str, repo: Path = REPO) -> list[str]:
             bad.append(f"line {number}: {ref} is not pinned to a full commit SHA")
         elif not re.search(r"#\s*v\d", rest):
             bad.append(f"line {number}: {ref} has no version comment after the SHA")
+
+    bad += secret_scan_problems(code)
 
     extra = set(re.findall(r"secrets\.([A-Za-z0-9_]+)", body)) - ALLOWED_SECRETS
     if extra:
@@ -108,7 +144,7 @@ def test_every_job_the_makefile_check_target_runs_has_a_workflow_job():
     body = "\n".join(code_lines(WORKFLOW.read_text(encoding="utf-8")))
     jobs = set(re.findall(r"^  ([a-z][a-z0-9-]*):[ \t]*$", body.split("\njobs:", 1)[1], re.M))
     # make target -> the workflow job that runs the same commands
-    mapping = {"guard": "guard", "test": "reqin", "template": "connector-template", "boards": "boards", "proto": "prototype"}
+    mapping = {"guard": "guard", "secrets": "secrets", "test": "reqin", "template": "connector-template", "boards": "boards", "proto": "prototype"}
     assert set(wanted) <= set(mapping), f"`make check` gained a target this test does not know: {sorted(set(wanted) - set(mapping))}"
     missing = [t for t in wanted if mapping[t] not in jobs]
     assert not missing, f"`make check` runs {missing} but the workflow has no matching job; jobs are {sorted(jobs)}"
@@ -126,6 +162,12 @@ MUTATIONS = [
     ("working-directory 'protoype'", lambda t: t.replace("working-directory: prototype", "working-directory: protoype", 1)),
     ("build_al.py", lambda t: t.replace("python build_all.py", "python build_al.py", 1)),
     ("check_nothing.py", lambda t: t.replace("run: python tools/check_no_real_data.py", "run: python tools/check_nothing.py", 1)),
+    ("needs `fetch-depth: 0`", lambda t: t.replace("          fetch-depth: 0\n", "", 1)),
+    ("does not run the gitleaks history scan", lambda t: t.replace("python tools/run_gitleaks.py history", "python tools/run_gitleaks.py find", 1)),
+    ("does not run the private-term check", lambda t: t.replace("run: python tools/denylist_check.py ci", "run: python tools/denylist_check.py status", 1)),
+    ("DENYLIST_OPTIONAL must be set only for pull requests from forks", lambda t: re.sub(r"DENYLIST_OPTIONAL: .*", "DENYLIST_OPTIONAL: '1'", t, count=1)),
+    ("must reach only the step", lambda t: t.replace('REQUIRE_GITLEAKS: "1"', "REQUIRE_GITLEAKS: ${{ secrets.DENYLIST }}", 1)),
+    ("has no `secrets` job", lambda t: t.replace("\n  secrets:\n", "\n  secretz:\n", 1)),
     ("spans several lines", lambda t: t.replace("      - run: pip install pytest\n", "      - run: |\n          pip install pytest\n", 1)),
 ]
 

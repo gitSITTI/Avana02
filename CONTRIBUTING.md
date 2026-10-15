@@ -8,6 +8,8 @@ Thank you for looking. This is a research prototype, so the most useful contribu
 
 Do not put personal details of any person, or details of a real programme or employer, into files, comments, example names or commit messages either.
 
+Two more tripwires run before every commit (once you have run `make hooks`) and in CI: gitleaks for secrets, and a check against a private list of names that must never appear. If you have no such list, the second one says so and skips; the first always runs. See [docs/SECRET_SCANNING.md](docs/SECRET_SCANNING.md).
+
 `tools/check_no_real_data.py` is a tripwire for honest mistakes and runs in CI. The only place an anonymised excerpt may live is `reqin/tests/fixtures_approved/`, with an entry in `APPROVALS.md` saying who approved it. A pull request that trips the guard will not be merged.
 
 ## Set up
@@ -15,7 +17,8 @@ Do not put personal details of any person, or details of a real programme or emp
 ```bash
 python3 -m venv .venv && . .venv/bin/activate      # Python 3.11 or newer
 pip install -e "reqin[test]"
-make check        # guard + reqin tests + connector template + boards + prototype page
+make hooks        # once per clone: secret and private-name checks before every commit (docs/SECRET_SCANNING.md)
+make check        # guard + secret scan + reqin tests + connector template + boards + prototype page
 ```
 
 `make check` runs what CI runs (see `.github/workflows/ci.yml` and `.gitlab-ci.yml`). The browser tests and the container image are separate: `make proto-test`, `make image-test`.

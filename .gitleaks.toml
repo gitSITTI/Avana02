@@ -1,0 +1,15 @@
+# Gitleaks configuration: https://github.com/gitleaks/gitleaks
+# Used by the pre-commit hook (.githooks/pre-commit) and by CI (tools/run_gitleaks.py).
+
+title = "requirements-consolidator gitleaks config"
+
+[extend]
+# Start from gitleaks' built-in rules (cloud keys, tokens, private keys, and so on).
+useDefault = true
+
+[allowlist]
+description = "Files that are known not to hold real secrets"
+paths = [
+  # Lockfiles hold integrity hashes that look like high-entropy secrets.
+  '''package-lock\.json$''',
+]

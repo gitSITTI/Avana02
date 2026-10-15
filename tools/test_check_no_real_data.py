@@ -85,3 +85,9 @@ def test_main_says_when_no_term_list_was_used(tmp_path, capsys, monkeypatch):
     make(tmp_path, {"README.md": "x"})
     assert g.main(["--root", str(tmp_path)]) == 0
     assert "structure checks only" in capsys.readouterr().out
+
+
+def test_a_private_term_list_must_never_be_tracked(tmp_path):
+    for name in (".denylist", "sub/.denylist", ".forbidden-terms"):
+        out = run(tmp_path, {name: "invented-term"})
+        assert out and "private-term list" in out[0] and "invented-term" not in out[0], name

@@ -39,4 +39,15 @@ Do not repost it and do not quote it in an issue or pull request. Requirements f
 
 ## Handling secrets in the project's own CI
 
-The only secret the GitHub workflow can read is the optional `FORBIDDEN_TERMS` (a list of patterns for the guard to scan for; keep it out of the repository). Pull requests from forks do not receive it. The workflow's token is read-only and the workflow never uses `pull_request_target`; `tools/test_workflows.py` checks both.
+The GitHub workflow can read two secrets, both optional to a contributor and both kept out of the repository:
+
+- `FORBIDDEN_TERMS`: patterns for the real-data guard to scan file contents for.
+- `DENYLIST`: the private-term list (see below).
+
+Each reaches only the one step that needs it. Pull requests from forks do not receive them. The workflow's token is read-only and the workflow never uses `pull_request_target`; `tools/test_workflows.py` checks all of this.
+
+## Secrets and private names in the repository
+
+Before every commit (`make hooks` turns this on) and again in CI over the whole history, the project runs [gitleaks](https://github.com/gitleaks/gitleaks) at a pinned version, and a check against a private list of terms that must never appear: in files, file names, commit messages, authors, branch names or history. The list is kept outside the repository, because it would publish what it hides. The CI log prints only a count, never a location or a term.
+
+Setup, the list format, what each check looks at, and what to do when something is found: [`docs/SECRET_SCANNING.md`](docs/SECRET_SCANNING.md). If you find a leaked key or a private name in this repository, report it privately as above and name only the file and line.

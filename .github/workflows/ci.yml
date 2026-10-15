@@ -6,8 +6,8 @@
 #   - the workflow token is read-only (permissions: contents: read) and no job asks for more
 #   - triggers are push to main, pull_request and a manual run. Never pull_request_target: it hands a secret-bearing token to code from forks
 #   - every third-party action is pinned to a full commit SHA; the version it is, is in the comment after it
-#   - the one secret (FORBIDDEN_TERMS) reaches the one step that needs it. Pull requests from forks do not receive it,
-#     so there the guard runs its structure checks only, and its log line says so
+#   - the two secrets (FORBIDDEN_TERMS, DENYLIST) each reach only the one step that needs them. Pull requests from forks do not receive
+#     them, so there the guard runs its structure checks only and the private-term check is skipped; each log line says so
 
 name: CI
 
@@ -49,6 +49,33 @@ jobs:
       - run: python tools/check_no_real_data.py
         env:
           FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
+
+  # 1b. Secrets and private names must never reach the repo, now or anywhere in its history. gitleaks is the pinned release from
+  #     tools/run_gitleaks.py (checksum verified); the private-term list is the repository secret DENYLIST (one term per line; see SECURITY.md).
+  #     The job FAILS when that secret is missing, so a forgotten secret cannot pass as a clean scan. Only pull requests from forks, which are
+  #     never given secrets, skip it. The log prints a count of places, never locations or terms, because a public repo's log is public.
+  secrets:
+    name: secrets (gitleaks, private terms)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python tools/run_gitleaks.py install
+      - run: pip install pytest
+      - run: python -m pytest -q -rs tools/test_secret_guards.py
+        env:
+          REQUIRE_GITLEAKS: "1"
+      - run: python tools/run_gitleaks.py history
+      - run: python tools/denylist_check.py ci
+        env:
+          DENYLIST_TERMS: ${{ secrets.DENYLIST }}
+          DENYLIST_OPTIONAL: ${{ github.event.pull_request.head.repo.fork && '1' || '' }}
 
   # 2. The input layer: file adapters, live connectors against in-memory fakes, the shared HTTP kit against real local servers, watch mode.
   #    One optional check (a PDF made by LibreOffice) is skipped when the runner has no LibreOffice; the `-rs` flag shows in the log whether it ran.
