@@ -1,0 +1,67 @@
+{
+  "about": "Shared by reqin/tests/test_aigate.py and prototype/verify.js: the same table, run by both, so the two copies of the AI gate rules cannot drift apart. Markings and names here are made up.",
+  "marking_cases": [
+    ["", "unstated"], ["   ", "unstated"], [null, "unstated"], [5, "unknown"], [["CUI"], "unknown"],
+    ["No marking", "none"], ["  no   MARKING ", "none"], ["none", "none"], ["Unmarked", "none"], ["Public", "none"], ["//No marking", "none"], ["/ public", "none"], ["  //  Unmarked", "none"],
+    ["CUI", "cui"], ["cui", "cui"], ["//CUI", "cui"], ["CUI // Basic", "cui"], ["Controlled Unclassified Information", "cui"],
+    ["CUI // export controlled", "exp"], ["CUI//SP-EXPT", "exp"], ["ITAR", "exp"], ["EAR99", "exp"], ["EAR", "exp"], ["Export controlled", "exp"], ["export", "exp"],
+    ["SECRET", "classified"], ["Top Secret", "classified"], ["TS//SCI", "classified"], ["Classified", "classified"], ["CUI // Secret", "classified"], ["SCI", "classified"],
+    ["Unclassified", "unknown"], ["Company confidential", "unknown"], ["Proprietary", "unknown"], ["Nothing", "unknown"], ["CUIX", "unknown"], ["nonexistent", "unknown"], ["Fear", "unknown"], ["Pearl99", "unknown"], ["PUBLIC RELEASE", "unknown"], ["noneoftheabove", "unknown"],
+    ["\u00a0CUI\u00a0", "cui"], ["\u2003no marking\u2003", "none"], ["\u00a0none\u00a0", "none"], ["no\u00a0marking", "none"], ["\u0085public", "none"], ["\u0085CUI", "cui"], ["\u001cITAR", "exp"], ["\ufeffCUI", "cui"], ["\ufeffnone", "unknown"],
+    ["cui\u00e9", "unknown"], ["ITAR\u00df", "unknown"], ["\u044fsecret", "unknown"], ["secret\u0301", "classified"], ["ear\u0663", "exp"], ["ear\u00b2", "unknown"], ["cui_", "unknown"], ["cui2", "unknown"]
+  ],
+  "group_cases": [
+    [[], "withhold", "unstated"], [[], "none", "none"],
+    [["none", "none"], "withhold", "none"], [["none", "cui"], "withhold", "cui"], [["cui", "exp", "none"], "withhold", "exp"],
+    [["none", "unstated"], "withhold", "unstated"], [["none", "unstated"], "none", "none"], [["cui", "unstated"], "none", "cui"],
+    [["none", "unknown"], "none", "unknown"], [["unknown", "unstated"], "none", "unknown"], [["classified", "unknown"], "withhold", "classified"], [["exp", "classified"], "none", "classified"],
+    [["unstated"], "withhold", "unstated"], [["unstated"], "none", "none"]
+  ],
+  "sheet_cases": [
+    ["the reference sheet", {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 90, "approved": "none", "unstated": "withhold"}, []],
+    ["no model named", {"model": "  ", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["model"]],
+    ["a vendor service that says nothing leaves", {"model": "x", "where": "vendor", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["vendor_leaves"]],
+    ["a vendor service, text leaves, no marking only", {"model": "x", "where": "vendor", "leaves": true, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, []],
+    ["text leaves and CUI is approved", {"model": "x", "where": "tenant", "leaves": true, "log": "none", "days": 0, "approved": "cui", "unstated": "withhold"}, ["leaves_marked"]],
+    ["the provider keeps copies and CUI is approved", {"model": "x", "where": "tenant", "leaves": false, "log": "service", "days": 30, "approved": "cui", "unstated": "withhold"}, ["log_marked"]],
+    ["export controlled on a tenant", {"model": "x", "where": "tenant", "leaves": false, "log": "local", "days": 30, "approved": "exp", "unstated": "withhold"}, ["exp_where"]],
+    ["export controlled on our own servers", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": 30, "approved": "exp", "unstated": "none"}, []],
+    ["kept but no days", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": 0, "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["kept for too long", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": 3651, "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["not kept, days ignored", {"model": "x", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, []],
+    ["days that are text", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": "90", "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["days that are true", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": true, "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["a value that is not on the list", {"model": "x", "where": "moon", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["values"]],
+    ["several things wrong at once", {"model": "", "where": "vendor", "leaves": false, "log": "service", "days": 0, "approved": "exp", "unstated": "withhold"}, ["model", "vendor_leaves", "log_marked", "exp_where", "days"]],
+    ["a fractional number of days", {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 1.5, "approved": "none", "unstated": "withhold"}, ["days"]]
+  ],
+  "gate_cases": [
+    {"name": "everything in order, no marking", "on": true, "reviewed": true, "sheet": "ours-none", "marks": ["No marking", "No marking"], "open": true, "code": "open"},
+    {"name": "the switch is off", "on": false, "reviewed": true, "sheet": "ours-none", "marks": ["No marking"], "open": false, "code": "off"},
+    {"name": "off beats everything else", "on": false, "reviewed": false, "sheet": "broken", "marks": ["SECRET"], "open": false, "code": "off"},
+    {"name": "the sheet is not reviewed", "on": true, "reviewed": false, "sheet": "ours-none", "marks": ["No marking"], "open": false, "code": "unreviewed"},
+    {"name": "unreviewed beats a broken sheet", "on": true, "reviewed": false, "sheet": "broken", "marks": ["No marking"], "open": false, "code": "unreviewed"},
+    {"name": "a broken sheet opens nothing", "on": true, "reviewed": true, "sheet": "broken", "marks": ["No marking"], "open": false, "code": "sheet"},
+    {"name": "CUI with approval for no marking only", "on": true, "reviewed": true, "sheet": "ours-none", "marks": ["No marking", "CUI"], "open": false, "code": "marking"},
+    {"name": "CUI with approval for CUI", "on": true, "reviewed": true, "sheet": "ours-cui", "marks": ["No marking", "CUI"], "open": true, "code": "open"},
+    {"name": "export controlled with approval for CUI", "on": true, "reviewed": true, "sheet": "ours-cui", "marks": ["CUI // export controlled"], "open": false, "code": "marking"},
+    {"name": "export controlled with approval for it", "on": true, "reviewed": true, "sheet": "ours-exp", "marks": ["CUI // export controlled", "CUI"], "open": true, "code": "open"},
+    {"name": "classified is never sent, even when everything else allows", "on": true, "reviewed": true, "sheet": "ours-exp", "marks": ["No marking", "SECRET"], "open": false, "code": "classified"},
+    {"name": "words the table does not know are never sent", "on": true, "reviewed": true, "sheet": "ours-exp", "marks": ["No marking", "Company confidential"], "open": false, "code": "unknown"},
+    {"name": "no marking recorded, and the sheet withholds", "on": true, "reviewed": true, "sheet": "ours-none", "marks": ["No marking", null], "open": false, "code": "unstated"},
+    {"name": "no marking recorded, and the sheet treats it as none", "on": true, "reviewed": true, "sheet": "ours-none-lenient", "marks": ["No marking", ""], "open": true, "code": "open"},
+    {"name": "no marking recorded but CUI beside it, approved for none", "on": true, "reviewed": true, "sheet": "ours-none-lenient", "marks": ["CUI", ""], "open": false, "code": "marking"},
+    {"name": "an empty group follows the sheet", "on": true, "reviewed": true, "sheet": "ours-none", "marks": [], "open": false, "code": "unstated"},
+    {"name": "an empty group with a lenient sheet", "on": true, "reviewed": true, "sheet": "ours-none-lenient", "marks": [], "open": true, "code": "open"},
+    {"name": "a vendor service with no marking", "on": true, "reviewed": true, "sheet": "vendor-none", "marks": ["No marking"], "open": true, "code": "open"},
+    {"name": "a vendor service with CUI", "on": true, "reviewed": true, "sheet": "vendor-none", "marks": ["CUI"], "open": false, "code": "marking"}
+  ],
+  "sheets": {
+    "ours-none": {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 90, "approved": "none", "unstated": "withhold"},
+    "ours-none-lenient": {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 90, "approved": "none", "unstated": "none"},
+    "ours-cui": {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 90, "approved": "cui", "unstated": "withhold"},
+    "ours-exp": {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 90, "approved": "exp", "unstated": "withhold"},
+    "vendor-none": {"model": "Vendor model", "where": "vendor", "leaves": true, "log": "service", "days": 30, "approved": "none", "unstated": "withhold"},
+    "broken": {"model": "", "where": "vendor", "leaves": false, "log": "service", "days": 0, "approved": "exp", "unstated": "withhold"}
+  }
+}
