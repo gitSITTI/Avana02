@@ -202,6 +202,13 @@ This is the real range the GUI has to cope with. It comes from what the current 
 
 **5.8 Text is text.** Statements can be long, multilingual, contain symbols, and contain markup remnants. Show verbatim; never truncate without a way to expand.
 
+**5.9 Show where the work sits in the V.** Engineers read a requirements set as the V: stakeholder needs, system, subsystem and component requirements down the left leg, and the matching verification (validation, then system, subsystem and component verification) up the right. Every workspace screen shows a small V, and one page shows the whole thing by level: requirements, clusters decided, requirements with a verification method and item, and the verification items a merge would leave pointing at a requirement that is gone.
+- The numbers come from `reqin vee DIR` (`--json` for a screen). Levels come from the parent tree, or from a field the user names (`--by field --level-field NAME`). A source with no parent links and no level field places nobody, and the screen says so instead of putting everything at level 1.
+- A requirement is traced only when it has a verification method **and** at least one verify link. Neither alone is enough.
+- A cluster whose members sit at different levels (a requirement and its parent) is offered "link" or "supersede", never "merge".
+- The V never changes a verification item. It says which ones must move. Colour is never the only carrier: circles are the left leg, squares the right, and every shape has its number beside it.
+- Say plainly when levels, methods or items are sample values.
+
 ## 6. Test datasets the screen must pass
 
 They already exist. `reqin make-datasets DIR` writes all fourteen (add `--only F1,F6` for some, `--size N` to change the large one; 50,000 by default, about 40 MB, so generate it rather than commit it). They are fictional, deterministic (the same bytes on every machine) and each one passes `reqin check-dataset`. Each removes one assumption. The screen is not done until it renders every one with no error, no blank panel without an explanation, and counts equal to the report.

@@ -1,8 +1,9 @@
-"""reqin  sniff | discover | propose | import | sample | connectors | watch | check-dataset | make-datasets
+"""reqin  sniff | discover | propose | import | sample | connectors | watch | check-dataset | make-datasets | vee
 
   sniff / discover / propose / import   the four steps the app's Import screen performs (import --out-dir DIR writes the dataset the GUI reads)
   check-dataset DIR                      is this folder a valid dataset under GUI_CONTRACT.md? what is in it?
   make-datasets DIR                      write the fourteen test datasets (F1-F14) a screen must pass
+  vee DIR                                the engineering V of a dataset: requirements per level, and how many have a verification method and item
   sample                                 look at what a connector sees (first page only) so you can tune options and profile names
   connectors                             list every adapter with its maturity (fixture-tested / fake-server-tested / live-verified / stub)
   watch                                  re-ingest a folder of exports when they change; never writes to that folder
@@ -114,6 +115,25 @@ def _cmd_check_dataset(a) -> int:
     return 0
 
 
+def _cmd_vee(a) -> int:
+    from .dataset import check_dataset
+    from .vee import render, vee_report
+    ds, problems = check_dataset(a.dir)
+    if problems:
+        print(f"NOT a valid dataset: {a.dir}  ({len(problems)} problem(s)); run `reqin check-dataset` for the list. A V of a broken dataset would be a guess.", file=sys.stderr)
+        return 1
+    try:
+        rep = vee_report(ds, by=a.by, level_field=a.level_field)
+    except ValueError as e:
+        print(f"vee: {e}", file=sys.stderr)
+        return 2
+    print(json.dumps(rep, indent=2, ensure_ascii=False) if a.json else render(rep))
+    if a.max_gaps is not None and rep["total"]["gaps"] > a.max_gaps:
+        print(f"vee: {rep['total']['gaps']} requirement(s) have no verification method or item, more than the {a.max_gaps} allowed.", file=sys.stderr)
+        return 1
+    return 0
+
+
 def _cmd_make_datasets(a) -> int:
     from .contract_datasets import build_all, validate_all
     try:
@@ -175,6 +195,12 @@ def main(argv: list[str] | None = None) -> int:
     cd = sub.add_parser("check-dataset", help="is this folder a valid dataset under GUI_CONTRACT.md, and what does it contain?")
     cd.add_argument("dir")
     cd.add_argument("--json", action="store_true", help="machine-readable result")
+    vp = sub.add_parser("vee", help="the engineering V of a dataset: how many requirements at each level, and how many are traced to a verification method and item")
+    vp.add_argument("dir")
+    vp.add_argument("--by", choices=("depth", "field"), default="depth", help="where the level comes from: the parent tree (default) or a field")
+    vp.add_argument("--level-field", metavar="NAME", help="with --by field: the field that holds the level (1 to 4, L2, system, component ...)")
+    vp.add_argument("--json", action="store_true", help="machine-readable result")
+    vp.add_argument("--max-gaps", type=int, metavar="N", help="exit 1 when more than N requirements lack a verification method or item (for CI)")
     md = sub.add_parser("make-datasets", help="write the fourteen test datasets (F1-F14) a requirements screen must pass")
     md.add_argument("dir")
     md.add_argument("--only", help="comma-separated ids, e.g. F1,F6,F12")
@@ -196,6 +222,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_check_dataset(a)
     if a.cmd == "make-datasets":
         return _cmd_make_datasets(a)
+    if a.cmd == "vee":
+        return _cmd_vee(a)
     if a.cmd == "watch":
         return _cmd_watch(a)
     if a.cmd == "sample":

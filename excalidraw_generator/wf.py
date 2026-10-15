@@ -120,6 +120,24 @@ def sidebar(s: Scr, h, active, labels=None):
     s.t(18, h - 36, 'Close project', fs=9, color='#adb5bd')
 
 
+def mini_vee(s: Scr, x, y, w=64):
+    """The small V that sits in the header of every workspace screen: circles down the left leg, squares up the right, a diamond at the bottom.
+    It is a button in the app (it opens the V page); see board 11 for the full set of places it appears."""
+    size = 7
+    margin = size / 2 + 3
+    dx = (w / 2 - margin - size * 1.4) / 3
+    dy = dx * 0.8
+    left = [(x + margin + dx * k, y + margin + dy * k) for k in range(4)]
+    right = [(x + w - margin - dx * k, y + margin + dy * k) for k in range(4)]
+    vx, vy = x + w / 2, y + margin + dy * 4 + size * 0.3
+    s.line(left + [(vx, vy)] + right[::-1], stroke=SOFT, sw=1.5)
+    for cx, cy in left:
+        s.shape('ellipse', cx - size / 2, cy - size / 2, size, size, fill='#ffffff', stroke='#1C5CAB', sw=1.5)
+    for cx, cy in right:
+        s.r(cx - size / 2, cy - size / 2, size, size, fill='#8FCBA6', stroke='#1B6B3A', sw=1.5, rounded=False)
+    s.shape('diamond', vx - 3, vy - 3, 6, 6, fill=MID, stroke=SOFT, sw=1.5)
+
+
 def shell(s: Scr, w, h, active, view_title=None):
     """Sidebar + title block + draft banner. Returns the content origin (x, y)."""
     sidebar(s, h, active)
@@ -130,6 +148,7 @@ def shell(s: Scr, w, h, active, view_title=None):
         a, b = c.split('\n')
         s.t(158 + i * cw, 5, a, fs=7, color=SOFT, family=3)
         s.t(158 + i * cw, 18, b, fs=9, color=INK)
+    mini_vee(s, w - 72, 2)
     s.r(150, 36, w - 150, 24, fill=AMBER_BG, stroke='#f1c40f', rounded=False)
     s.chip(160, 41, 34, 14, 'DRAFT', fill='#ffffff', stroke=DARK, fs=8)
     s.t(202, 42, 'Suggestions are proposals. Each stays a draft until all four lenses sign off. Nothing is written back to the source model.', fs=8, color='#5c4400')

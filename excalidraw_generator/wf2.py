@@ -125,6 +125,7 @@ def shell2(s, w, h, active, lens=0, labels=None):
         a, b = c.split('\n')
         s.t(158 + i * cw, 5, a, fs=7, color=SOFT, family=3)
         s.t(158 + i * cw, 18, b, fs=9, color=INK)
+    mini_vee(s, w - 72, 2)
     s.r(150, 36, w - 150, 24, fill=AMBER_BG, stroke='#f1c40f', rounded=False)
     s.chip(160, 41, 34, 14, 'DRAFT', fill='#ffffff', stroke=DARK, fs=8)
     s.t(202, 42, BANNER, fs=8, color='#5c4400')
