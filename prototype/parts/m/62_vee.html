@@ -1,0 +1,127 @@
+
+      <!-- ===== THE V ===== -->
+      <sc-if value="{{isVee}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between">
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 420px;min-width:0">
+            <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">The engineering V</h1>
+            <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">Each level of requirements on the left is checked at the matching level on the right. Consolidating requirements changes the left side. This page shows what that does to the right side, so nothing is left with nothing to verify it.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;font-size:12px;color:#2A353F">
+            §VG:vGlyphPage:300§
+            <span style="display:flex;flex-wrap:wrap;gap:4px 14px;max-width:300px"><span><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid #1C5CAB;margin-right:5px;vertical-align:-1px"></span>fuller means more decided</span><span><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;background:#1B6B3A;margin-right:5px;vertical-align:-1px"></span>fuller means more traced</span></span>
+          </div>
+        </div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Sample values.</b> {{vSample}}</div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+          <section aria-labelledby="vs-l" style="§CARD§flex:1 1 260px;padding:16px 20px;display:flex;flex-direction:column;gap:4px;min-width:0">
+            <div id="vs-l" style="display:flex;align-items:center;gap:8px;§CAP§"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;background:#1C5CAB;display:inline-block"></span>Left leg: what we require</div>
+            <div style="font-size:26px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums">{{vLeftBig}}</div>
+            <div style="color:#2A353F">clusters with a standing decision</div>
+            <div style="font-size:13px;color:#54626F">{{vLeftSub}}</div>
+          </section>
+          <section aria-labelledby="vs-m" style="§CARD§flex:1 1 260px;padding:16px 20px;display:flex;flex-direction:column;gap:4px;min-width:0">
+            <div id="vs-m" style="display:flex;align-items:center;gap:8px;§CAP§"><span aria-hidden="true" style="width:16px;border-top:2px dashed #54626F;display:inline-block"></span>Between the legs: to carry over</div>
+            <div style="font-size:26px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums">{{vMidBig}}</div>
+            <div style="color:#2A353F">{{vMidSub}}</div>
+            <button onClick="{{vRepointToExport}}" style="§BTN§align-self:flex-start;margin-top:6px">Open Export</button>
+          </section>
+          <section aria-labelledby="vs-r" style="§CARD§flex:1 1 260px;padding:16px 20px;display:flex;flex-direction:column;gap:4px;min-width:0">
+            <div id="vs-r" style="display:flex;align-items:center;gap:8px;§CAP§"><span aria-hidden="true" style="width:12px;height:12px;background:#1B6B3A;display:inline-block"></span>Right leg: how we show it</div>
+            <div style="font-size:26px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums">{{vRightBig}}</div>
+            <div style="color:#2A353F">requirements fully traced</div>
+            <div style="font-size:13px;color:#54626F">{{vRightSub}}</div>
+          </section>
+        </div>
+
+        <section aria-labelledby="v-main" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 id="v-main" style="margin:0;font-size:18px;font-weight:700">Level by level</h2>
+            <div style="font-size:13px;color:#3C4852">Read down the left, then up the right. The dashed line joins each level to the check that shows it is met.</div>
+          </div>
+          <div class="v-row v-head" aria-hidden="true" style="font-size:13px;font-weight:600;color:#54626F">
+            <div>What we require</div><div></div><div style="text-align:right">How we show it</div>
+          </div>
+          <sc-for list="{{vRows}}" as="r" hint-placeholder-count="4">
+          <div class="v-row" role="group" aria-label="{{r.aria}}">
+            <div class="v-l" style="{{r.lStyle}}">
+              <div class="v-card vl">
+                <div style="display:flex;align-items:center;gap:6px;§CAP§"><span aria-hidden="true" style="width:10px;height:10px;border-radius:50%;background:#1C5CAB;display:inline-block"></span>Level {{r.k}}</div>
+                <h3 style="margin:0;font-size:16px;font-weight:700">{{r.lname}}</h3>
+                <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:22px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums">{{r.reqs}} <span style="font-size:13px;font-weight:500;color:#3C4852">requirements</span></span><span style="font-size:12px;color:#54626F">{{r.afterTxt}}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <div style="height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{r.decBar}}"></div></div>
+                  <div style="font-size:12px;color:#2A353F">{{r.decTxt}}</div>
+                </div>
+                <sc-if value="{{r.hasCross}}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#4A3300;background:#FFF4D6;border-radius:6px;padding:6px 8px">{{r.crossTxt}}</div></sc-if>
+                <sc-if value="{{r.hasOpen}}" hint-placeholder-val="{{ false }}"><button onClick="{{r.review}}" aria-label="{{r.reviewAria}}" style="§BTN§align-self:flex-start;font-size:13px">{{r.openTxt}}</button></sc-if>
+              </div>
+              <div class="v-dn" aria-hidden="true" style="{{r.lStyle}}"></div>
+            </div>
+            <div class="v-mid">
+              <div class="v-pair">
+                <span style="display:inline-flex;align-items:center;gap:6px">§GI:r§<b>{{r.stateLabel}}</b></span>
+                <sc-for list="{{r.facts}}" as="f" hint-placeholder-count="3"><span style="color:#2A353F">{{f.t}}</span></sc-for>
+              </div>
+            </div>
+            <div class="v-r" style="{{r.rStyle}}">
+              <div class="v-card vr">
+                <div style="display:flex;align-items:center;gap:6px;§CAP§"><span aria-hidden="true" style="width:10px;height:10px;background:#1B6B3A;display:inline-block"></span>Checked by</div>
+                <h3 style="margin:0;font-size:16px;font-weight:700">{{r.ver}}</h3>
+                <div style="font-size:12px;color:#54626F">{{r.how}}</div>
+                <div role="group" aria-label="How the requirements at this level are verified" style="display:flex;flex-direction:column;gap:3px">
+                  <sc-for list="{{r.methods}}" as="m" hint-placeholder-count="5">
+                    <div style="display:grid;grid-template-columns:96px minmax(0,1fr) 38px;gap:8px;align-items:center;font-size:12px"><span>{{m.name}}</span><span style="display:block"><span style="{{m.bar}};display:block"></span></span><span style="text-align:right;font-variant-numeric:tabular-nums">{{m.n}}</span></div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <div style="height:10px;background:#D6EBDD;border-radius:5px;overflow:hidden"><div style="{{r.traceBar}}"></div></div>
+                  <div style="font-size:12px;color:#2A353F">{{r.tracedTxt}}</div>
+                  <div style="font-size:12px;color:#54626F">{{r.itemsTxt}}</div>
+                </div>
+                <sc-if value="{{r.hasRepoint}}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#4A3300;background:#FFF4D6;border-radius:6px;padding:6px 8px">{{r.repointTxt}}</div></sc-if>
+                <sc-if value="{{r.hasGaps}}" hint-placeholder-val="{{ false }}"><button onClick="{{r.gaps}}" aria-label="{{r.gapsAria}}" style="§BTN§align-self:flex-start;font-size:13px">See the gaps</button></sc-if>
+              </div>
+              <div class="v-up" aria-hidden="true" style="{{r.rStyle}}"></div>
+            </div>
+          </div>
+          </sc-for>
+          <div class="v-row">
+            <div class="v-card v-vertex" style="border-style:dashed;background:#F8FAFB">
+              <div style="display:flex;align-items:center;gap:6px;§CAP§"><span aria-hidden="true" style="width:10px;height:10px;background:#7B8792;transform:rotate(45deg);display:inline-block"></span>Bottom of the V</div>
+              <h3 style="margin:0;font-size:16px;font-weight:700">Design and build</h3>
+              <div style="font-size:13px;color:#3C4852">Outside this app. The app works on the left leg only: it reads requirements and writes nothing back, and it never changes a verification item. It only tells you which ones must move.</div>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="v-cross" style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:6px">
+          <h2 id="v-cross" style="margin:0;font-size:16px;font-weight:700">Requirements that sit at different levels</h2>
+          <div style="color:#2A353F">{{vCrossTxt}}</div>
+        </section>
+
+        <section aria-labelledby="v-tab" style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+          <h2 id="v-tab" style="margin:0;font-size:16px;font-weight:700">The same numbers as a table</h2>
+          <div role="region" tabindex="0" aria-label="The V as a table" style="overflow-x:auto">
+            <table style="border-collapse:collapse;width:100%;min-width:640px;font-size:13px;font-variant-numeric:tabular-nums">
+              <caption style="text-align:left;color:#54626F;font-size:12px;padding-bottom:6px">Requirements, decisions and verification at each level of the V</caption>
+              <thead><tr style="text-align:left;color:#54626F"><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Level</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Requirements now</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">After decisions</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Clusters decided</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">With a method and an item</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Gaps</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Items to re-point</th></tr></thead>
+              <tbody>
+                <sc-for list="{{vTable}}" as="t" hint-placeholder-count="4"><tr><th scope="row" style="text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.lvl}}</th><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.now}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.after}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.dec}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.traced}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.gaps}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.re}}</td></tr></sc-for>
+                <tr style="font-weight:700"><th scope="row" style="text-align:left;padding:6px 8px">{{vTotal.lvl}}</th><td style="padding:6px 8px">{{vTotal.now}}</td><td style="padding:6px 8px">{{vTotal.after}}</td><td style="padding:6px 8px">{{vTotal.dec}}</td><td style="padding:6px 8px">{{vTotal.traced}}</td><td style="padding:6px 8px">{{vTotal.gaps}}</td><td style="padding:6px 8px">{{vTotal.re}}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <details style="§CARD§padding:4px 20px">
+          <summary style="min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600">What the V is, and what this app does to it</summary>
+          <div style="padding:0 0 14px;display:flex;flex-direction:column;gap:8px;color:#2A353F;max-width:760px">
+            <p style="margin:0">The V is a way of laying out systems engineering. Down the left you go from what the stakeholders need to system requirements, then subsystem and component requirements. At the bottom the thing is designed and built. Up the right you show each level is met, from components to acceptance by the people who asked for it.</p>
+            <p style="margin:0">Every level on the left has a matching check on the right, and that pairing is what the dashed lines show. Requirements are verified by test, analysis, inspection or demonstration, and each verification item points at the requirement it proves.</p>
+            <p style="margin:0">Consolidation removes requirements from the left. If a removed requirement had verification items, those items must be pointed at the one that survives, or that level is left with checks that prove nothing. The “to carry over” number counts them, and the trace map in Export lists each one.</p>
+          </div>
+        </details>
+      </div>
+      </sc-if>

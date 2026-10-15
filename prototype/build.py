@@ -4,9 +4,9 @@ P = os.path.join(HERE, 'parts')
 MAC = {
  'CARD': "background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;",
  'CAP': "font-size:13px;font-weight:600;color:#54626F;",
- 'BTN': "min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:8px;cursor:pointer;font-weight:500;",
+ 'BTN': "min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;",
  'PRI': "min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;",
- 'INP': "min-height:44px;padding:0 12px;border:1px solid #8C98A3;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;",
+ 'INP': "min-height:44px;padding:0 12px;border:1px solid #7A8793;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;",
 }
 def icons(v):
     sv = '<svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:none;margin-top:1px">%s</svg>'
@@ -38,14 +38,37 @@ ICONS = {
  'network': '<rect x="3" y="3.5" width="14" height="9" rx="2"/><path d="M7.5 16.5h5M10 12.5v4"/>',
  'medal': '<circle cx="10" cy="7.8" r="4.6"/><path d="m7.6 11.6-1.3 5.4 3.7-2.1 3.7 2.1-1.3-5.4"/>',
  'send': '<path d="M17 3 9 11M17 3l-5 14-3-6-6-3z"/>',
+ 'vee': '<path d="M3.5 4.5 10 16l6.5-11.5"/><circle cx="3.5" cy="4.5" r="1.1"/><circle cx="16.5" cy="4.5" r="1.1"/>',
  'edit': '<path d="m12.5 4.5 3 3M4 16l.7-3.3L13 4.4a1.4 1.4 0 0 1 2 0l.6.6a1.4 1.4 0 0 1 0 2L7.3 15.3z"/>',
+ 'tag': '<path d="M3.5 10.6V4.7a1.2 1.2 0 0 1 1.2-1.2h5.9l6 6a1.2 1.2 0 0 1 0 1.7l-4.9 4.9a1.2 1.2 0 0 1-1.7 0z"/><circle cx="7.3" cy="7.3" r="1.1"/>',
 }
-NAV_ICONS = ['home', 'queue', 'table', 'chart', 'medal', 'flask', 'clock', 'shield', 'export']
+NAV_ICONS = ['home', 'queue', 'table', 'chart', 'vee', 'medal', 'flask', 'tag', 'clock', 'shield', 'spark', 'export']
 def svg(name, size=18):
     return '<svg width="%s" height="%s" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none">%s</svg>' % (size, size, ICONS[name])
 def nav_icons(v):
     return ''.join('<sc-if value="{{%s.ic%s}}" hint-placeholder-val="{{ false }}">%s</sc-if>' % (v, n.capitalize(), svg(n)) for n in NAV_ICONS)
+def vglyph(v, w, hidden=False):
+    """The small V, drawn with plain elements (the page runtime does not fill holes inside <svg>): four circles down the left leg, four
+    squares up the right leg, a vertex. Data comes from veeGlyph() in logic3.js, which gives each shape's style in an 88 by 44 box.
+    hidden=True when the glyph sits inside something that already says the same in words (a button with a label)."""
+    h = round(w * 44 / 88)
+    role = 'aria-hidden="true"' if hidden else 'role="img" aria-label="{{%s.aria}}"' % v
+    line = '<svg width="88" height="44" viewBox="0 0 88 44" style="position:absolute;left:0;top:0" aria-hidden="true"><polyline points="8,6 44,38 80,6" fill="none" stroke="#596674" stroke-width="1.5" stroke-linejoin="round"/></svg>'
+    return ('<span %s style="position:relative;display:block;flex:none;width:%spx;height:%spx">'
+            '<span aria-hidden="true" style="position:absolute;left:0;top:0;width:88px;height:44px;transform:scale(%.4f);transform-origin:0 0">%s'
+            '<span style="position:absolute;left:41.4px;top:35.4px;width:5.2px;height:5.2px;border-radius:50%%;background:#596674"></span>'
+            '<sc-for list="{{%s.left}}" as="gl" hint-placeholder-count="4"><span style="{{gl.style}}">{{gl.n}}</span></sc-for>'
+            '<sc-for list="{{%s.right}}" as="gr" hint-placeholder-count="4"><span style="{{gr.style}}">{{gr.n}}</span></sc-for>'
+            '</span></span>') % (role, w, h, w / 88, line, v, v)
+def impact(v):
+    """The 'what this moves' block: a heading from v.head and the lines in v.lines, each a label and a sentence."""
+    return ('<sc-if value="{{%s.on}}" hint-placeholder-val="{{ false }}"><div style="border:1px solid #D5DADE;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;background:#F7F9FA">'
+            '<div style="font-weight:600;font-size:13px">{{%s.head}}</div>'
+            '<sc-for list="{{%s.lines}}" as="il" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px;font-size:13px"><span style="color:#54626F">{{il.k}}</span><span>{{il.v}}</span></div></sc-for>'
+            '</div></sc-if>') % (v, v, v)
 def expand(t):
+    t = re.sub(r'§IMP:([\w.]+)§', lambda m: impact(m.group(1)), t)
+    t = re.sub(r'§VG:([\w.]+)(?::(\d+))?(?::(h))?§', lambda m: vglyph(m.group(1), int(m.group(2) or 88), bool(m.group(3))), t)
     t = re.sub(r'§IC:(\w+)(?::(\d+))?§', lambda m: svg(m.group(1), m.group(2) or 18), t)
     t = re.sub(r'§NI:(\w+)§', lambda m: nav_icons(m.group(1)), t)
     t = re.sub(r'§GI:(\w+)§', lambda m: icons(m.group(1)), t)
@@ -53,9 +76,17 @@ def expand(t):
     return t
 markup = ''.join(open(f).read() for f in sorted(glob.glob(os.path.join(P, 'm', '*.html'))))
 markup = expand(markup)
-js_order = ['data1', 'data2', 'data3', 'data4', 'logic1', 'misc', 'logic2', 'logic3']
+js_order = ['data1', 'data2', 'data3', 'data4', 'logic1', 'misc', 'logic2', 'logic3', 'gold', 'single', 'trace', 'aigate', 'persist']
 js = '\n'.join(open(os.path.join(P, n + '.js')).read() for n in js_order)
-cls = 'class Component extends DCLogic {\n' + '\n'.join(open(os.path.join(P, n + '.js')).read() for n in ['c1', 'c2', 'c3']) + '}\n'
+# A test build with a bigger project, for the scale test (tools in tests/scale.js): REQIN_SCALE=20 makes 20 times as many requirements and clusters.
+# It never writes the shipped page: give it another destination.
+SCALE = int(os.environ.get('REQIN_SCALE', '1'))
+if SCALE > 1:
+    assert len(sys.argv) > 1, 'a scaled build must be written somewhere other than project/Main.dc.html'
+    for pat, rep in [(r"const TOTAL_REQS = 1248;", "const TOTAL_REQS = 1248 * %d;" % SCALE), (r"n <= 252; n\+\+", "n <= 252 * %d; n++" % SCALE)]:
+        js, n = re.subn(pat, rep, js); assert n == 1, pat
+    js, n = re.subn(r"add\('(\w+)', (\d+)\);", lambda m: "add('%s', %d);" % (m.group(1), int(m.group(2)) * SCALE), js); assert n == 7, n
+cls = 'class Component extends DCLogic {\n' + '\n'.join(open(os.path.join(P, n + '.js')).read() for n in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']) + '}\n'
 props = '{"accent":{"editor":"color","default":"#1A4DB5","options":["#1A4DB5","#0B6E6E","#7A3E00","#2F3B46"]},"showHints":{"editor":"boolean","default":true}}'
 out = markup + "\n</x-dc>\n" if not markup.rstrip().endswith('</x-dc>') else markup
 out = out.rstrip() + "\n<script type=\"text/x-dc\" data-dc-script data-props='" + props + "'>\n" + js + "\n" + cls + "</script>\n</body>\n</html>\n"

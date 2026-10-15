@@ -5,14 +5,54 @@
           <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Methods and metrics</h1>
           <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">How well each way of working finds the right pairs, and what the AI adds when it comes after the mechanical steps or before them. Every source is scored the same way, so the comparison is fair.</p>
         </div>
-        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Sample values.</b> No gold set of human-labelled pairs exists yet, so every score on this page except the “This session” blocks is a placeholder that shows the layout. They are not measurements. Ranges will be shown once there are enough labelled pairs.</div>
+        <div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Only the first table is measured.</b> It comes from pairs people have labelled (see Label pairs) and shows a range. Every score below it, including the four ways of working and the AI before and after, is still a placeholder that shows the layout, until the engine scores pairs and the labels cover them. The “This session” blocks are counted from your own decisions.</div>
+
+        <sc-if value="{{mtAiNote}}" hint-placeholder-val="{{ false }}"><div style="background:#F1F3F5;border:1px dashed #6B7782;color:#2A353F;border-radius:8px;padding:12px 16px"><b>AI use on this project.</b> {{mtAiNote}}</div></sc-if>
+        <section aria-labelledby="mt-gold" style="§CARD§overflow:hidden;border-color:#1B6B3A">
+          <div style="padding:16px 20px 4px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:flex-start;justify-content:space-between">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 420px">
+              <h2 id="mt-gold" style="margin:0;font-size:18px;font-weight:700">Measured from labelled pairs</h2>
+              <div style="font-size:13px;color:#3C4852">{{gmHead}} Precision: of the pairs it flagged, how many are related. Recall: of the related pairs among those clustered or reading alike, how many it flagged. The line is a range that holds the true value about 95 times in 100; the dot is the best estimate.</div>
+            </div>
+            <button onClick="{{gmToLabel}}" style="§PRI§">Label pairs</button>
+          </div>
+          <sc-if value="{{gmSample}}" hint-placeholder-val="{{ false }}"><div style="margin:8px 20px 0;background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:8px 12px;font-size:13px"><b>Sample labels are in use.</b> Some labels were made up for the demonstration, so these numbers show the layout and are not a measurement of anything.</div></sc-if>
+          <sc-if value="{{gmEmpty}}" hint-placeholder-val="{{ false }}"><div style="padding:12px 20px 20px;color:#2A353F">Label some pairs, or load the sample labels on the Label pairs page to see how this table fills in.</div></sc-if>
+          <sc-if value="{{gmHas}}" hint-placeholder-val="{{ true }}">
+          <div style="padding:12px 20px 0;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center">
+            <span id="mt-cut" style="font-size:13px;font-weight:600;color:#2A353F">Cut-off for the two scores</span>
+            <div role="group" aria-labelledby="mt-cut" style="display:flex;gap:6px">
+              <sc-for list="{{gmCuts}}" as="c" hint-placeholder-count="4"><button aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button></sc-for>
+            </div>
+          </div>
+          <div role="region" tabindex="0" aria-label="Precision and recall measured from labels" style="overflow-x:auto"><div style="min-width:820px">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1.5fr) 110px;gap:16px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line);margin-top:8px"><div>Way of finding pairs</div><div>Precision</div><div>Recall</div><div>Pairs it flags</div></div>
+            <sc-for list="{{gmRows}}" as="r" hint-placeholder-count="3">
+              <div role="group" aria-label="{{r.aria}}" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1.5fr) 110px;gap:16px;padding:12px 20px;align-items:start;border-bottom:1px solid var(--hair)">
+                <div style="display:flex;flex-direction:column"><span style="font-weight:600">{{r.name}}</span><span style="font-size:12px;color:#54626F">{{r.sub}}</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-variant-numeric:tabular-nums;font-weight:700;font-size:16px">{{r.p}}</span><sc-if value="{{r.hasP}}" hint-placeholder-val="{{ true }}"><div aria-hidden="true" style="position:relative;height:8px;background:#E3E9EF;border-radius:4px"><div style="position:absolute;top:0;height:8px;background:#9FC2F2;border-radius:4px;{{r.pLine}}"></div><div style="position:absolute;top:0;width:8px;height:8px;border-radius:50%;background:#10337F;{{r.pDot}}"></div></div><span style="font-size:12px;color:#3C4852">range {{r.pRange}}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-variant-numeric:tabular-nums;font-weight:700;font-size:16px">{{r.r}}</span><sc-if value="{{r.hasR}}" hint-placeholder-val="{{ true }}"><div aria-hidden="true" style="position:relative;height:8px;background:#E3E9EF;border-radius:4px"><div style="position:absolute;top:0;height:8px;background:#9FC2F2;border-radius:4px;{{r.rLine}}"></div><div style="position:absolute;top:0;width:8px;height:8px;border-radius:50%;background:#10337F;{{r.rDot}}"></div></div><span style="font-size:12px;color:#3C4852">range {{r.rRange}}</span></sc-if></div>
+                <div style="font-variant-numeric:tabular-nums">{{r.flagged}}</div>
+                <sc-if value="{{r.needs}}" hint-placeholder-val="{{ false }}"><div style="grid-column:1 / -1;font-size:13px;color:#6B3D00;background:#FFF0D2;border-radius:6px;padding:6px 10px">{{r.needText}}</div></sc-if>
+                <sc-if value="{{r.wide}}" hint-placeholder-val="{{ false }}"><div style="grid-column:1 / -1;font-size:13px;color:#3C4852">{{r.wideText}}</div></sc-if>
+              </div>
+            </sc-for>
+          </div></div>
+          <div style="padding:14px 20px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);background:#F8FAFB">
+            <div style="font-weight:600">Pairs outside the recall</div>
+            <div style="font-size:13px;color:#3C4852">Pairs that neither read alike nor were clustered, and pairs from different allocations, are not in the recall above. They are sampled on their own to show how many related pairs could be hiding there.</div>
+            <sc-for list="{{gmOutside}}" as="o" hint-placeholder-count="2"><div style="font-size:13px;color:#2A353F"><b>{{o.name}}</b> ({{o.N}} pairs): {{o.line}}</div></sc-for>
+            <sc-if value="{{gmNaming}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#2A353F"><b>Naming the relation.</b> {{gmNamingLine}}</div></sc-if>
+          </div>
+          </sc-if>
+        </section>
 
         <section aria-labelledby="mt-arms" style="§CARD§overflow:hidden">
           <div style="padding:16px 20px 4px;display:flex;flex-direction:column;gap:2px">
-            <h2 id="mt-arms" style="margin:0;font-size:18px;font-weight:700">Four ways of working, side by side</h2>
+            <h2 id="mt-arms" style="margin:0;font-size:18px;font-weight:700">Four ways of working, side by side<span style="margin-left:8px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:#FFF0D2;color:#6B3D00;border:1px solid #A15C00;vertical-align:middle">Placeholder values</span></h2>
             <div style="font-size:13px;color:#3C4852">Across all {{goldPairs}} labelled pairs (sample). The score balances precision (of the pairs it suggested, how many were right) and recall (of the real duplicates, how many it found).</div>
           </div>
-          <div style="overflow-x:auto"><div style="min-width:900px">
+          <div role="region" tabindex="0" aria-label="Four ways of working, side by side" style="overflow-x:auto"><div style="min-width:900px">
             <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 74px 74px 96px 80px 96px 90px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
               <div>Way of working</div><div>Score</div><div>Precision</div><div>Recall</div><div>Wrong suggestions</div><div>Missed pairs</div><div>Reviewer minutes per cluster</div><div>AI calls</div>
             </div>
@@ -35,10 +75,10 @@
 
         <section aria-labelledby="mt-ladder" style="§CARD§overflow:hidden">
           <div style="padding:16px 20px 4px;display:flex;flex-direction:column;gap:2px">
-            <h2 id="mt-ladder" style="margin:0;font-size:18px;font-weight:700">Each mechanical method, then with the AI</h2>
+            <h2 id="mt-ladder" style="margin:0;font-size:18px;font-weight:700">Each mechanical method, then with the AI<span style="margin-left:8px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:#FFF0D2;color:#6B3D00;border:1px solid #A15C00;vertical-align:middle">Placeholder values</span></h2>
             <div style="font-size:13px;color:#3C4852">The same candidate pairs, scored on their own and then with the AI judging them after, or proposing them first.</div>
           </div>
-          <div style="overflow-x:auto"><div style="min-width:900px">
+          <div role="region" tabindex="0" aria-label="Each mechanical method, then with the AI" style="overflow-x:auto"><div style="min-width:900px">
             <div style="display:grid;grid-template-columns:minmax(0,2fr) 74px 74px minmax(0,1.5fr) minmax(0,1.2fr) minmax(0,1.2fr) 80px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
               <div>Method</div><div>Precision</div><div>Recall</div><div>Score on its own</div><div>With AI after</div><div>With AI before</div><div>Pairs scored</div>
             </div>
@@ -57,7 +97,7 @@
 
         <section aria-labelledby="mt-cats" style="§CARD§overflow:hidden">
           <div style="padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
-            <h2 id="mt-cats" style="margin:0;font-size:18px;font-weight:700">Which categories score best, with and without AI</h2>
+            <h2 id="mt-cats" style="margin:0;font-size:18px;font-weight:700">Which categories score best, with and without AI<span style="margin-left:8px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:#FFF0D2;color:#6B3D00;border:1px solid #A15C00;vertical-align:middle">Placeholder values</span></h2>
             <div style="font-size:13px;color:#3C4852">One row per kind of requirement. The square is the score without AI. The diamond is the score with the AI {{armShort}} the mechanical steps.</div>
           </div>
           <div style="padding:4px 20px 12px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center">
@@ -81,11 +121,11 @@
           </div>
           <sc-if value="{{showChart}}" hint-placeholder-val="{{ true }}">
           <div style="border-top:1px solid var(--line);padding:12px 20px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px">
-            <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:#34424F;display:inline-block"></span>Without AI</span>
-            <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:10px;height:10px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>With AI</span>
+            <span style="display:inline-flex;align-items:center;gap:6px"><span data-chart-mark="with and without AI" style="width:12px;height:12px;background:#2A6FD6;display:inline-block"></span>Without AI</span>
+            <span style="display:inline-flex;align-items:center;gap:8px"><span data-chart-mark="with and without AI" style="width:10px;height:10px;background:#8B1F6B;transform:rotate(45deg);display:inline-block"></span>With AI</span>
             <span style="color:#54626F">Score from 0.5 to 1.0</span>
           </div>
-          <div style="overflow-x:auto"><div style="min-width:720px;padding:0 20px 8px">
+          <div role="region" tabindex="0" aria-label="Scores by category, chart" style="overflow-x:auto"><div style="min-width:720px;padding:0 20px 8px">
             <div style="display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(0,3fr) 120px;gap:14px;align-items:end;padding:6px 0;font-size:12px;color:#54626F">
               <span></span>
               <span style="display:flex;justify-content:space-between;font-variant-numeric:tabular-nums"><span>0.5</span><span>0.6</span><span>0.7</span><span>0.8</span><span>0.9</span><span>1.0</span></span>
@@ -104,7 +144,7 @@
                 </div>
                 <div aria-hidden="true" style="position:relative;height:30px;background:linear-gradient(to right,#E7ECF1 1px,transparent 1px) 0 0/20% 100%;border-right:1px solid #E7ECF1">
                   <span style="position:absolute;top:50%;height:3px;background:#B9C3CD;transform:translateY(-50%);{{r.line}}"></span>
-                  <span style="position:absolute;top:50%;width:12px;height:12px;background:#34424F;transform:translate(-50%,-50%);{{r.sq}}"></span>
+                  <span style="position:absolute;top:50%;width:12px;height:12px;background:#2A6FD6;transform:translate(-50%,-50%);{{r.sq}}"></span>
                   <span style="position:absolute;top:50%;width:11px;height:11px;background:#8B1F6B;transform:translate(-50%,-50%) rotate(45deg);{{r.dm}}"></span>
                 </div>
                 <div style="display:flex;flex-direction:column;font-variant-numeric:tabular-nums"><span style="font-weight:700">{{r.delta}}</span><span style="font-size:12px;color:#3C4852">{{r.without}} to {{r.withAI}}</span></div>
@@ -113,7 +153,7 @@
           </div></div>
           </sc-if>
           <sc-if value="{{showTable}}" hint-placeholder-val="{{ false }}">
-          <div style="overflow-x:auto;border-top:1px solid var(--line)"><div style="min-width:860px">
+          <div role="region" tabindex="0" aria-label="Scores by category, table" style="overflow-x:auto;border-top:1px solid var(--line)"><div style="min-width:860px">
             <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 70px repeat(3,64px) repeat(3,64px) 80px;gap:10px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)">
               <div>Category</div><div>Clusters</div><div>Pairs</div><div>Precision without</div><div>Recall without</div><div>Score without</div><div>Precision with</div><div>Recall with</div><div>Score with</div><div>Change</div>
             </div>

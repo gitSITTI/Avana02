@@ -51,6 +51,7 @@ function genAll() {
         last.text = last.text.replace(/\.$/, '') + ' while ' + cd + '.'; last.cond = cd; last.rankable = false;
       }
       Object.assign(c, { famKey: fam.k, dir: fam.dir, time: !!fam.time, unit: fam.time ? 'ms' : fam.unit });
+      c.sig = fam.k + '|' + S + '|' + thing;
       const th = { ret: cap(thing) + ' retention', rate: cap(thing) + ' update rate', resp: cap(thing) + ' response time', hb: cap(thing) + ' interval' }[fam.k] || fam.name;
       c.param = th;
       const rk = c.members.filter((x) => x.rankable);
@@ -150,7 +151,8 @@ function genAll() {
   const nMembers = out.reduce((s, c) => s + c.members.length, 0) + HAND.reduce((s, c) => s + c.members.length, 0);
   for (let i = nMembers; i < TOTAL_REQS; i++) {
     const al = wpk(ALLOCS), fam = pk(FAMS), thing = pk(fam.things);
-    lone.push({ id: newId(al), alloc: al.k, owner: al.owner, text: fam.mk(al.sub, pk(fam.vals), ri(0, 2), thing, pk([0, 1, 2])), cid: null });
+    const id = newId(al), val = pk(fam.vals), s0 = ri(0, 2), cnd = pk([0, 1, 2]);   // same draws, same order as before; the topic, the subject and the value are kept so the sample labels can be made (gold.js)
+    lone.push({ id, alloc: al.k, owner: al.owner, text: fam.mk(al.sub, val, s0, thing, cnd), cid: null, fam: fam.k, sig: fam.k + '|' + al.sub + '|' + thing, val });
   }
   return { out, lone };
 }

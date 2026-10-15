@@ -3,10 +3,10 @@
     const infos = this.allInfos(S), P = this.person(S);
     const PAGE = 8;
     const byTab = { me: infos.filter((x) => x.me), wait: infos.filter((x) => x.wait), attn: infos.filter((x) => x.attn), all: infos };
-    const pill = (on) => 'min-height:44px;padding:0 10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#8C98A3') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';color:#12171C;';
+    const pill = (on) => 'min-height:44px;padding:0 10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#7A8793') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';color:#12171C;';
     const qTabs = [['me', 'For me'], ['wait', 'Waiting on others'], ['attn', 'Needs attention'], ['all', 'All']].map(([k, label]) => ({ label, count: byTab[k].length, pressed: S.qTab === k ? 'true' : 'false', pick: () => this.setState({ qTab: k, qPage: 0 }), style: pill(S.qTab === k) }));
     const q = S.qSearch.trim().toLowerCase();
-    const list = (byTab[S.qTab] || infos).filter((x) => (!S.qLane || x.c.lane === S.qLane) && (!S.qStatus || x.st === S.qStatus) && (!S.qAlloc || x.c.alloc === S.qAlloc) && (!q || x.c.id.toLowerCase().indexOf(q) >= 0 || x.c.title.toLowerCase().indexOf(q) >= 0 || x.c.members.some((m) => m.id.toLowerCase().indexOf(q) >= 0 || m.text.toLowerCase().indexOf(q) >= 0)));
+    const list = (byTab[S.qTab] || infos).filter((x) => (!S.qLane || x.c.lane === S.qLane) && (!S.qStatus || x.st === S.qStatus || (S.qStatus === 'undecided' && !standingDec(x))) && (!S.qAlloc || x.c.alloc === S.qAlloc) && (!S.qLvl || x.c.lvls[1] === +S.qLvl) && (!q || x.c.id.toLowerCase().indexOf(q) >= 0 || x.c.title.toLowerCase().indexOf(q) >= 0 || x.c.members.some((m) => m.id.toLowerCase().indexOf(q) >= 0 || m.text.toLowerCase().indexOf(q) >= 0)));
     const pages = Math.max(1, Math.ceil(list.length / PAGE));
     const page = Math.min(S.qPage, pages - 1);
     const shown = list.slice(page * PAGE, page * PAGE + PAGE);
@@ -36,14 +36,15 @@
     const progress = [meter('Decided', decided, total, '#1C5CAB'), meter('Approved by every required lens', approved, total, '#1B6B3A')];
     if (P.lens) progress.push(meter('Your ' + P.lens + ' sign-offs', mineDone, mineReq, '#6A1650'));
     const opts = (arr) => arr.map(([v, t]) => ({ v, t }));
-    const hasFilters = !!(S.qLane || S.qStatus || S.qAlloc || S.qSearch);
+    const hasFilters = !!(S.qLane || S.qStatus || S.qAlloc || S.qLvl || S.qSearch);
     const idxNow = infos.findIndex((x) => x.c.id === sel);
     return {
       qTabs, rows, progress, qSearchV: S.qSearch, onSearch: (e) => this.setState({ qSearch: e.target.value, qPage: 0 }),
       laneV: S.qLane, onLane: (e) => this.setState({ qLane: e.target.value, qPage: 0 }), laneOpts: opts([['', 'All lanes'], ['A', 'Lane A'], ['B', 'Lane B'], ['C', 'Lane C']]),
-      statusV: S.qStatus, onStatus: (e) => this.setState({ qStatus: e.target.value, qPage: 0 }), statusOpts: opts([['', 'Any status']].concat(Object.keys(STATUS_LABEL).map((k) => [k, STATUS_LABEL[k]]))),
+      statusV: S.qStatus, onStatus: (e) => this.setState({ qStatus: e.target.value, qPage: 0 }), statusOpts: opts([['', 'Any status'], ['undecided', 'Still to decide (not counted yet)']].concat(Object.keys(STATUS_LABEL).map((k) => [k, STATUS_LABEL[k]]))),
       allocV: S.qAlloc, onAlloc: (e) => this.setState({ qAlloc: e.target.value, qPage: 0 }), allocOpts: opts([['', 'Any allocation']].concat(ALLOCS.map((a) => [a.k, a.k]))),
-      hasFilters, clearFilters: () => this.setState({ qLane: '', qStatus: '', qAlloc: '', qSearch: '', qPage: 0 }),
+      lvlV: S.qLvl, onLvl: (e) => this.setState({ qLvl: e.target.value, qPage: 0 }), lvlOpts: opts([['', 'Any V level']].concat(VLEVELS.map((l) => [String(l.k), 'Level ' + l.k + ' · ' + l.short]))),
+      hasFilters, clearFilters: () => this.setState({ qLane: '', qStatus: '', qAlloc: '', qLvl: '', qSearch: '', qPage: 0 }),
       qInfo: list.length ? 'Showing ' + (page * PAGE + 1) + ' to ' + (page * PAGE + shown.length) + ' of ' + list.length : 'Nothing matches',
       qPageText: 'Page ' + (page + 1) + ' of ' + pages, prevDisabled: page === 0, nextDisabled: page >= pages - 1,
       qPrev: () => this.setState({ qPage: Math.max(0, page - 1) }), qNext: () => this.setState({ qPage: Math.min(pages - 1, page + 1) }),
@@ -102,20 +103,50 @@
   lensEvidence(S, c, ms, lens, terms) {
     const uniq = (a) => a.filter((x, i) => a.indexOf(x) === i);
     const hv = h32(c.id);
-    const parent = 'SYS-0' + (100 + (parseInt(hv.slice(0, 3), 16) % 900)), vp = 1 + (parseInt(hv.slice(3, 4), 16) % 3);
+    const pars = uniq(ms.map((m) => TR_PARENT[m.id]).filter(Boolean)), nItems = ms.reduce((a, m) => a + VREQ[m.id].vi, 0);
     const aiRec = c.ai.mode === 'none' ? 'None used' : 'AIR-' + hv.slice(0, 4).toUpperCase();
     const R = {
-      SE: [['Parameter', c.param], ['Values', joinOr(groupValues(c, ms))], ['Stricter means', dirWords(S, c)], ['Parent trace', parent + ' · ' + vp + ' verification item' + (vp > 1 ? 's' : '') + ' linked'], ['Verification', uniq(ms.map((m) => m.verif)).join(', ')], ['Allocation', c.alloc]],
+      SE: [['Parameter', c.param], ['Values', joinOr(groupValues(c, ms))], ['Stricter means', dirWords(S, c)], ['Parent trace', (pars.length ? pars.join(', ') : 'Top level, no parent') + ' · ' + nItems + ' verification item' + (nItems === 1 ? '' : 's') + ' linked'], ['Verification', uniq(ms.map((m) => m.verif)).join(', ')], ['Allocation', c.alloc]],
       PE: [['Baseline', c.baselined ? 'Baselined (BL-2) · ' + c.cr : 'Pre-baseline'], ['Owners', uniq(ms.map((m) => m.owner)).join(', ')], ['AI record', aiRec], ['Impacted documents', c.alloc + ' requirements specification; interface control document'], ['Rule', 'Sign-offs this cluster needs are shown in the sign-off card below']],
       UX: [['Key terms', terms.length ? terms.join(', ') : 'No project-specific terms'], ['Readers', 'Test engineers and new engineers on ' + c.alloc], ['Wording length', ms.map((m) => m.text.split(/\s+/).length).join(', ') + ' words across the members'], ['Style rule', 'One "shall" and one thought per requirement']],
       NU: [['What you see first', 'Only the wording below. Source, owners and the AI answer open after your own read.'], ['Terms to look up', terms.length ? terms.map((t) => t + ' = ' + TERMS[t]).join('; ') : 'None found']]
     }[lens];
     return R.map(([k, v]) => ({ k, v }));
   }
+  /* Where this cluster sits in the V, and what a merge would do to the verification items on its members. */
+  veeFor(S, c, ms) {
+    const V = this._V || veeOf(S, this.allInfos(S));
+    const reqs = ms.map((m) => VREQ[m.id]), lo = c.lvls[0], hi = c.lvls[1], names = (k) => VLEVELS[k - 1];
+    const uniq = (a) => a.filter((x, i) => a.indexOf(x) === i);
+    const items = reqs.reduce((a, v) => a + v.vi, 0), methods = reqs.map((v) => v.vm || 'none').filter((x, i, a) => a.indexOf(x) === i);
+    const head = c.crossLevel
+      ? 'Spans level ' + lo + ' (' + names(lo).short + ') and level ' + hi + ' (' + names(hi).short + ')'
+      : 'Level ' + hi + ' · ' + names(hi).name + ', checked at ' + names(hi).ver.toLowerCase();
+    const lines = [];
+    if (c.crossLevel) lines.push('One of these is the parent of the other, a level up. Link them as parent and child. Merging would leave level ' + lo + ' with a check that proves nothing.');
+    lines.push(items === 0 ? 'No verification item is linked to any of these requirements yet.' : items + (items === 1 ? ' verification item is' : ' verification items are') + ' linked across them (' + ms.map((m, i) => 'M' + (c.members.indexOf(m) + 1) + ': ' + reqs[i].vi).join(', ') + '). ' + (c.crossLevel ? 'Each stays with its own requirement, because each belongs to its own level.' : 'A merge moves the items of every wording that is not kept onto the one that is.'));
+    if (methods.length > 1) lines.push('They are verified by different methods (' + methods.map((x) => (x === 'none' ? 'no method' : x.toLowerCase())).join(', ') + '). Keep the method that proves the stricter wording.');
+    // the requirements above and below, and the baseline
+    const tag = (m) => 'M' + (c.members.indexOf(m) + 1);
+    const kids = ms.map((m) => (TR_CHILD[m.id] || []).length), kidsAll = kids.reduce((a, b) => a + b, 0);
+    lines.push(kidsAll === 0 ? 'No requirement sits below these.' : trPl(kidsAll, 'requirement sits', 'requirements sit') + ' below them (' + ms.map((m, i) => tag(m) + ': ' + kids[i]).join(', ') + '). ' + (c.crossLevel ? 'Each stays under its own wording.' : 'Those under a wording that is not kept move under the one that is.'));
+    const ups = uniq(ms.map((m) => TR_PARENT[m.id]).filter(Boolean));
+    if (ups.length > 1) lines.push('They trace to different parents (' + ups.join(', ') + '). Merging leaves one of those with a requirement fewer below it.');
+    const bl = ms.filter((m) => trBase(m.id));
+    if (bl.length) lines.push(bl.map((m) => tag(m) + ' is in baseline ' + trBase(m.id).bl).join(', ') + '. ' + (c.cr ? 'The change goes with ' + c.cr + '.' : 'No change request is linked yet.'));
+    // once decided, the exact moves
+    const T = this.traceAll(S), mine = T.removals.filter((r) => r.src === c.id);
+    if (mine.length) {
+      const mv = T.items.filter((x) => x.src === c.id && x.action === 'move').length, kv = T.links.filter((x) => x.src === c.id && x.kind === 'child_moves').length, bare = T.links.filter((x) => x.src === c.id && x.kind === 'parent_bare').map((x) => x.req);
+      lines.push('This decision: ' + trPl(mine.length, 'requirement leaves', 'requirements leave') + ', ' + trPl(mv, 'verification item moves', 'verification items move') + ', ' + trPl(kv, 'requirement below changes', 'requirements below change') + ' parent' + (bare.length ? ', ' + trIds(bare, 3) + ' ' + (bare.length === 1 ? 'is' : 'are') + ' left with nothing below' : '') + '. Export lists each one.');
+    }
+    return { glyph: veeGlyph(V, c.crossLevel ? [lo, hi] : [hi]), head, lines: lines.map((t) => ({ t })) };
+  }
   valsDetail(S) {
     const U = universe(S);
     let c = CL_BY[S.selected];
     if (!c || (S.scope !== 'all' && c.alloc !== S.scope)) c = U.order[0];
+    c = aiCl(S, c);
     const P = this.person(S), lens = this.viewLens(S), actor = this.canAct(S), lead = P.role === 'lead';
     const ms = membersOf(S, c), st = statusOf(S, c), dec = decOf(S, c.id), res = resOf(S, c);
     const ev = evaluate(S, c, ms, res);
@@ -131,12 +162,14 @@
     /* header */
     const prov = [{ label: 'Mechanical methods', chip: 'background:#E4E9ED;color:#2F3B46;', shape: MARK.mech[1] }];
     if (c.ai.mode !== 'none') prov.push({ label: c.ai.mode === 'draft' ? 'AI wording draft' : 'AI judge', chip: MARK.ai[2], shape: MARK.ai[1] });
+    if (c.aiHeld) prov.push({ label: 'Held back from the AI', chip: 'background:#FFF4D6;color:#4A3300;border:1px solid #E5C87A;', shape: MARK.mech[1] });
     if (dec) prov.push({ label: dec.strategy === 'own' || dec.share ? 'Human-edited' : 'Human decision', chip: MARK.human[2], shape: MARK.human[1] });
     if (dec && dec.ownFrom === 'assistant') prov.push({ label: 'Assistant draft used', chip: MARK.bot[2], shape: MARK.bot[1] });
     const cl = claimOf(S, cid);
     const canFlip = lead && (c.dir === 'lower' || c.dir === 'higher');
     /* banners */
     const banners = [];
+    if (c.aiHeld) banners.push(this.banner('info', 'No AI answer is shown for this group', [c.aiHeld.text, 'Review it the usual way, from the mechanical results. The AI use page lists what is held back and why.'], [{ label: 'Open AI use', fn: () => this.setState({ view: 'ai' }) }]));
     if (S.preview) banners.push(this.banner('info', 'Previewing the ' + SLOT_NAME[S.preview] + ' lens', ['You see what a ' + SLOT_NAME[S.preview] + ' reviewer sees. Everything is read only while you preview.'], [{ label: 'Back to my own lens', fn: () => this.setState({ preview: '' }), primary: true }]));
     if (cl && cl.by !== P.name && !dec) banners.push(this.banner('claim', cl.by + ' (' + cl.lens + ') is looking at this cluster', [cl.mins + ' minute' + (cl.mins === 1 ? '' : 's') + ' ago. A soft claim expires after 15 minutes and never locks anyone out. If you both decide, the second save is stopped and offered as a sibling version.']));
     if ((S.liveVer[cid] || 0) > (S.openVer[cid] || 0)) banners.push(this.banner('warn', 'This cluster changed after you opened it', ['Priya Raman added a note while you were reading. Reload so that you decide on what is current. Deciding is paused until you do.'], [{ label: 'Reload the cluster', fn: () => this.setState({ openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) }), primary: true }]));
@@ -193,7 +226,7 @@
     };
     const summaryOf = (r) => (r.same ? 'Same words as the reference' : r.reworded ? 'Reworded' : r.nChanges + (r.nChanges === 1 ? ' change' : ' changes'));
     const chipsOf = (r, max) => r.changes.slice(0, max).map((x) => ({ text: x.text, bar: kindChip(x.kind), title: CH_NAME[x.kind] + ': ' + x.text })).concat(r.changes.length > max ? [{ text: '+' + (r.changes.length - max) + ' more', bar: kindChip('other'), title: 'More changes are shown in the wording above' }] : []);
-    const segStyle = (s) => s.same ? faded : s.ghost ? 'padding:0 6px;border-radius:6px;border:1px dashed #8C98A3;color:#5A6672;text-decoration:line-through;font-size:14px;' : CH_STYLE[s.kind] + 'padding:1px 7px;border-radius:6px;font-weight:600;';
+    const segStyle = (s) => s.same ? faded : s.ghost ? 'padding:0 6px;border-radius:6px;border:1px dashed #7A8793;color:#5A6672;text-decoration:line-through;font-size:14px;' : CH_STYLE[s.kind] + 'padding:1px 7px;border-radius:6px;font-weight:600;';
     const refSegs = []; { const toks = refM.text.split(' ').filter(Boolean), ks = kindsOfTokens(toks); let run = []; const flush = () => { if (run.length) { refSegs.push({ t: run.join(' '), style: '', ghost: false, chg: false, title: '' }); run = []; } }; toks.forEach((w, i) => { if (ks[i]) { flush(); refSegs.push({ t: w, style: SLOT_STYLE[ks[i]] + 'padding:1px 7px;border-radius:6px;', ghost: false, chg: false, title: '' }); } else run.push(w); }); flush(); }
     const mrows = [Object.assign(rowHead(refM, true), { segs: refSegs, hasSegs: true, summary: 'Everything below is compared with this wording', changes: [], hasChanges: false, cells: [] })].concat(cmpOthers.map((m, k) => {
       const r = al.rows[k];
@@ -264,7 +297,7 @@
     };
     /* resolve panel */
     const avail = strategyAvail(S, c, ms, rk);
-    const outcomes = c.actions.map(([k, label]) => ({ label, on: res.outcome === k, pressed: res.outcome === k ? 'true' : 'false', pick: () => setRes({ outcome: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (res.outcome === k ? 600 : 500) + ';border:' + (res.outcome === k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (res.outcome === k ? '#F1F6FF' : '#FFFFFF') + ';' }));
+    const outcomes = c.actions.map(([k, label]) => ({ label, on: res.outcome === k, pressed: res.outcome === k ? 'true' : 'false', pick: () => setRes({ outcome: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (res.outcome === k ? 600 : 500) + ';border:' + (res.outcome === k ? '2px solid var(--accent)' : '1px solid #7A8793') + ';background:' + (res.outcome === k ? '#F1F6FF' : '#FFFFFF') + ';' }));
     const merging = res.outcome === 'merge';
     const stratsAll = STRATS.map((s) => ({
       k: s.k, name: s.name, sub: s.sub, on: res.strat === s.k, pressed: res.strat === s.k ? 'true' : 'false', disabled: !!avail[s.k], why: avail[s.k], hasWhy: !!avail[s.k],
@@ -274,7 +307,7 @@
     }));
     const strats = stratsAll.filter((x) => x.k !== 'ai'), aiStrat = stratsAll.find((x) => x.k === 'ai');
     const memberOpts = ms.map((m, i) => ({ v: m.id, t: 'M' + (i + 1) + ' · ' + m.id + ' · ' + (m.v !== null && m.v !== undefined ? fmtVal(c, m.v) : m.cond || 'no number') }));
-    const sideOpts = ev.sideOpts.map((o) => ({ label: o.label + ' (' + (o.m.v !== null ? fmtVal(c, o.m.v) : o.m.id) + ')', pressed: res.side === o.k ? 'true' : 'false', pick: () => setRes({ side: o.k }), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:600;border:' + (res.side === o.k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (res.side === o.k ? '#F1F6FF' : '#FFFFFF') + ';' }));
+    const sideOpts = ev.sideOpts.map((o) => ({ label: o.label + ' (' + (o.m.v !== null ? fmtVal(c, o.m.v) : o.m.id) + ')', pressed: res.side === o.k ? 'true' : 'false', pick: () => setRes({ side: o.k }), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:600;border:' + (res.side === o.k ? '2px solid var(--accent)' : '1px solid #7A8793') + ';background:' + (res.side === o.k ? '#F1F6FF' : '#FFFFFF') + ';' }));
     const aiTextNow = res.aiText || c.aiDraft || '';
     const aiS = res.strat === 'ai' && c.aiDraft ? aiShare(c.aiDraft, aiTextNow) : null;
     const ownS = res.strat === 'own' && res.ownSeed ? aiShare(res.ownSeed, res.own) : null;
@@ -302,6 +335,7 @@
     const fcSlots = SLOT_KEYS.filter((k) => forecast[k] !== 'none').map((k) => ({ label: SLOT_NAME[k] + (forecast[k] === 'sample' ? ' (sampled)' : '') }));
     const aiRelWord = String(c.ai.verdict || '').split(/[ (]/)[0];
     const aiAfter = hideAI ? 'The AI answer stays hidden until you record your own first impression above.'
+      : c.aiHeld ? 'This group was held back from the AI: ' + c.aiHeld.text.charAt(0).toLowerCase() + c.aiHeld.text.slice(1) + ' The mechanical methods decided the suggestion.'
       : c.ai.mode === 'none' ? 'The AI was not used on this group. The mechanical methods decided the suggestion.'
       : c.ai.mode === 'judge' ? (aiRelWord === c.rel ? 'After the mechanical steps, the AI reads this group as ' + (REL_LABEL[c.rel] || c.rel).toLowerCase() + ' too, so the two agree.' : 'The mechanical methods say ' + (REL_LABEL[c.rel] || c.rel).toLowerCase() + ' and the AI says ' + (REL_LABEL[aiRelWord] || aiRelWord).toLowerCase() + '. Look at that difference before you choose.')
       : !c.aiDraft ? 'The AI declined to draft wording for this group.'
@@ -412,7 +446,7 @@
       title: dec ? 'Ask a teammate to review' : 'Send to a teammate',
       help: dec ? 'Sign-off still comes from the lenses the policy names. A review you ask for here is advice, and it is kept with the decision.' : 'Use this when you want another pair of eyes before you record, or when someone else should decide.',
       toV: toK, onTo: (e) => setSend({ to: e.target.value }), toOpts: mates.map((p) => ({ v: p.k, t: p.name + ' · ' + lensTxt(p) + (p.k === suggested ? ' (suggested)' : '') })),
-      asks: dec ? [] : ['check', 'decide'].map((k) => ({ label: ASK_LABEL[k], pressed: askNow === k ? 'true' : 'false', pick: () => setSend({ ask: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (askNow === k ? 600 : 500) + ';border:' + (askNow === k ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (askNow === k ? '#F1F6FF' : '#FFFFFF') + ';' })),
+      asks: dec ? [] : ['check', 'decide'].map((k) => ({ label: ASK_LABEL[k], pressed: askNow === k ? 'true' : 'false', pick: () => setSend({ ask: k }), style: 'text-align:left;min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-weight:' + (askNow === k ? 600 : 500) + ';border:' + (askNow === k ? '2px solid var(--accent)' : '1px solid #7A8793') + ';background:' + (askNow === k ? '#F1F6FF' : '#FFFFFF') + ';' })),
       hasAsks: !dec, noteV: sendF.note, onNote: (e) => setSend({ note: e.target.value }),
       noteHelp: sendOk ? 'Your draft choice goes with the message, so they see what you were about to do.' : 'Write at least 12 characters: what you want them to look at.',
       sendLabel: 'Send to ' + first(pBy(toK)), sendDisabled: !sendOk, send: doSend
@@ -429,7 +463,7 @@
       toggleWhy: () => this.setState({ why: Object.assign({}, S.why, { [cid]: !S.why[cid] }) }),
       d: {
         id: cid, title: c.title, rel: REL_LABEL[c.rel], relPlain: REL_PLAIN[c.rel], relStyle: CHIP + REL_STYLE[c.rel], laneName: LANE_NAME[c.lane], laneStyle: this.laneBadge(c.lane).replace('align-self:flex-start;', ''),
-        status, statusStyle: CHIP + STATUS_STYLE[st], prov, paramLine: c.param + ' · stricter means ' + dirWords(S, c), claimTxt: cl && cl.by !== P.name && !dec ? 'Claimed by ' + cl.by.split(' ')[0] : '', hasClaim: !!(cl && cl.by !== P.name && !dec), claimStyle: CHIP + STATUS_STYLE.claimed,
+        status, statusStyle: CHIP + STATUS_STYLE[st], prov, vee: this.veeFor(S, c, ms), paramLine: c.param + ' · stricter means ' + dirWords(S, c), claimTxt: cl && cl.by !== P.name && !dec ? 'Claimed by ' + cl.by.split(' ')[0] : '', hasClaim: !!(cl && cl.by !== P.name && !dec), claimStyle: CHIP + STATUS_STYLE.claimed,
         flipLabel: dirCtl.flipLabel, canFlip: dirCtl.canFlip, flip: dirCtl.flip,
         scores, mNote: c.mNote, guards, guardSummary: (10 - nF - nW) + ' of 10 pass' + (nF ? ', ' + nF + ' blocking' : '') + (nW ? ', ' + nW + ' warning' : ''),
         aiJudge: ai.mode === 'judge', aiVerdict: ai.verdict, aiConf: ai.conf, aiVotes: ai.votes,

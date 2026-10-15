@@ -18,7 +18,8 @@ def session(w=1440, h=1000, page='Main.dc.html'):
              '@babel/standalone@7.29.0/babel.min.js': vend + '/@babel/standalone/babel.min.js'}
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path=exe[0] if exe else None, args=['--no-sandbox'])
-        pg = b.new_page(viewport={'width': w, 'height': h})
+        ctx = b.new_context(viewport={'width': w, 'height': h})   # a context, so a second tab of the same browser shares storage and routes
+        pg = ctx.new_page()
         errs = []
         pg.on('console', lambda m: errs.append(m.type + ': ' + m.text) if m.type in ('error', 'warning') else None)
         pg.on('pageerror', lambda e: errs.append('pageerror: ' + str(e)))
@@ -29,11 +30,11 @@ def session(w=1440, h=1000, page='Main.dc.html'):
                     return r.fulfill(path=v, content_type='application/javascript')
             if 'fonts.g' in u: return r.abort()
             return r.continue_()
-        pg.route('**/*', route)
+        ctx.route('**/*', route)
         pg.goto('http://127.0.0.1:%d/%s' % (PORT, page))
         pg.wait_for_timeout(1800)
         try:
             yield pg, errs
         finally:
             b.close()
-            srv.shutdown()
+            srv.shutdown(); srv.server_close()

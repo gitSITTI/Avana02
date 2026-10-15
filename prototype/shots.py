@@ -16,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -64,6 +65,18 @@ def shot(pg, name: str, full=False, width=1440):
     print(f"{name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
 
 
+def part(pg, locator, name, width=1440):
+    """A picture of one section of a page. The window is made as tall as the page and the page is at the top, so the sticky top bar
+    stays where it belongs and does not lie across the section the way it does in an element screenshot taken after scrolling."""
+    p = OUT / name
+    pg.evaluate("window.scrollTo(0, 0)")
+    pg.set_viewport_size({"width": width, "height": max(900, pg.evaluate("document.documentElement.scrollHeight"))}); settle(pg, 250)
+    box = locator.bounding_box()
+    pg.screenshot(path=str(p), full_page=True, clip={"x": box["x"], "y": box["y"], "width": box["width"], "height": box["height"]})
+    pg.set_viewport_size({"width": width, "height": 900})
+    shrink(p, width); print(f"{name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
+
+
 # ---- desktop, 1440 px wide
 with session(1440, 900) as (pg, errs):
     shot(pg, "01_open.png", full=True)
@@ -92,6 +105,13 @@ with session(1440, 900) as (pg, errs):
                         ("Export to documents", "13_export_to_documents.png")):
         nav(pg, label)
         shot(pg, name, full=True)
+    nav(pg, "The V")
+    shot(pg, "20_the_v.png", full=True)
+    pg.fill("#top-search", "CL-038"); settle(pg)                       # a cluster that mixes two levels: the strip says to link, not merge
+    pg.get_by_role("button", name="CL-038").first.click(); settle(pg, 600)
+    p = OUT / "21_cluster_in_the_v.png"
+    pg.locator('[role="group"][aria-label="Where this cluster sits in the V"]').screenshot(path=str(p))
+    shrink(p, 1440); print(f"{p.name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
     nav(pg, "Results and grade")
     shot(pg, "17_results_and_grade.png", full=True)
     pg.fill("#top-search", "CL-001"); settle(pg)                       # a cluster sent to a teammate, waiting for the answer
@@ -100,7 +120,43 @@ with session(1440, 900) as (pg, errs):
     pg.fill("#snd-note", "Please check the unit on M2."); settle(pg, 200)
     pg.locator("#snd-send").click(); settle(pg, 500)
     shot(pg, "18_hand_off_waiting.png", full=True)
+    # the gold set: label pairs without being told what the app thought
+    nav(pg, "Label pairs")
+    shot(pg, "23_label_pairs.png", full=True)
+    # one requirement at a time: a requirement with no similar one, kept with a reason and waiting for a colleague's sign-off
+    nav(pg, "All requirements")
+    pg.get_by_role("button", name=re.compile(r"^Alone\b")).first.click(); settle(pg)
+    pg.locator('button[aria-pressed]:has(span:text-matches("^REQ-"))').nth(2).click(); settle(pg)
+    one = pg.locator('aside[aria-label="One requirement"]')
+    one.get_by_role("button", name="Keep as written").first.click(); settle(pg, 150)
+    pg.select_option("#xp-reason", "S-OK"); settle(pg, 150)
+    one.get_by_role("button", name="Record this decision").first.click(); settle(pg, 400)
+    shot(pg, "24_one_requirement.png", full=True)
+    # what a decision moves outside the requirement list
+    nav(pg, "Export to documents")
+    part(pg, pg.locator('section[aria-labelledby="tr-h"]'), "25_trace_map.png")
+    # the work is kept in this browser
+    nav(pg, "Home")
+    part(pg, pg.locator('section[aria-labelledby="home-keep"]'), "26_your_work.png")
+    # a group the AI data sheet holds back from the AI, in review
+    pg.fill("#top-search", "CL-025"); settle(pg)
+    pg.get_by_role("button", name="CL-025").first.click(); settle(pg, 600)
+    shot(pg, "28_held_group_review.png", full=True)
+    # AI use, as the lead: the switch, the data sheet and what the gate does with each group
+    pg.get_by_role("button", name=re.compile(r"^Morgan\b")).first.click(); settle(pg)
+    nav(pg, "AI use")
+    shot(pg, "27_ai_use.png", full=True)
     print("console problems:", [e for e in errs if "ERR_FAILED" not in e] or "none")
+
+# ---- the first Tab stop: a link that skips the menu (a picture of the top of the page with the link showing)
+h.PORT += 1
+with session(1440, 900) as (pg, errs):
+    pg.get_by_role("button", name="Open the sample project").click(); settle(pg)
+    pg.get_by_role("button", name="Confirm mapping and import").click(); settle(pg, 600)
+    pg.evaluate("document.activeElement && document.activeElement.blur()"); pg.keyboard.press("Tab"); settle(pg, 300)
+    p = OUT / "29_skip_link.png"
+    pg.screenshot(path=str(p), clip={"x": 0, "y": 0, "width": 1440, "height": 220})
+    shrink(p, 1440); print(f"{p.name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
 
 # ---- phone, 390 px wide
 h.PORT += 1          # the first session's server socket is still bound in this process
@@ -118,6 +174,12 @@ with session(390, 844) as (pg, errs):
     p = OUT / "19_phone_results.png"                       # the grade card: the letter, the bands and the five parts
     pg.locator('section[aria-labelledby="rs-grade"]').screenshot(path=str(p))
     shrink(p, 390); print(f"{p.name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
+    pg.locator(".nav-btn", has_text="The V").first.click(); settle(pg, 500)
+    pg.set_viewport_size({"width": 390, "height": 1500}); settle(pg, 300)     # the page is long; the picture is the top of it: the V, the three numbers and the first level
+    pg.evaluate("document.querySelector('h1').scrollIntoView()"); settle(pg, 200)
+    p = OUT / "22_phone_the_v.png"
+    pg.screenshot(path=str(p)); shrink(p, 390); print(f"{p.name:34} {Image.open(p).size}  {os.path.getsize(p) // 1024} KB")
+    pg.set_viewport_size({"width": 390, "height": 844})
     print("console problems (phone):", [e for e in errs if "ERR_FAILED" not in e] or "none")
 
 # ---- record which version of the page these pictures show; tools/test_previews_fresh.py compares it with the page

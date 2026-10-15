@@ -15,6 +15,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parent.parent
 WORKFLOW = REPO / ".github" / "workflows" / "ci.yml"
+GITLAB = REPO / ".gitlab-ci.yml"
 ALLOWED_SECRETS = {"FORBIDDEN_TERMS", "DENYLIST"}
 
 
@@ -72,6 +73,25 @@ def secret_scan_problems(code: list[str]) -> list[str]:
     return bad
 
 
+BROWSER_JOBS = {
+    "prototype-browser": ["npm ci", "playwright install", "python run_browser_tests.py"],
+    "prototype-scale": ["node scale.js"],
+}
+
+
+def browser_job_problems(code: list[str]) -> list[str]:
+    """The browser tests, the accessibility scan and the scale test only protect anything if the jobs exist and run them."""
+    bad: list[str] = []
+    for job, must in BROWSER_JOBS.items():
+        lines = job_lines(code, job)
+        if not lines:
+            bad.append(f"the workflow has no `{job}` job")
+            continue
+        body = "\n".join(lines)
+        bad += [f"the `{job}` job does not run `{m}`" for m in must if m not in body]
+    return bad
+
+
 def problems(text: str, repo: Path = REPO) -> list[str]:
     raw = text.splitlines()
     code = code_lines(text)
@@ -99,6 +119,7 @@ def problems(text: str, repo: Path = REPO) -> list[str]:
             bad.append(f"line {number}: {ref} has no version comment after the SHA")
 
     bad += secret_scan_problems(code)
+    bad += browser_job_problems(code)
 
     extra = set(re.findall(r"secrets\.([A-Za-z0-9_]+)", body)) - ALLOWED_SECRETS
     if extra:
@@ -150,6 +171,32 @@ def test_every_job_the_makefile_check_target_runs_has_a_workflow_job():
     assert not missing, f"`make check` runs {missing} but the workflow has no matching job; jobs are {sorted(jobs)}"
 
 
+def test_every_job_the_makefile_check_full_target_adds_has_a_workflow_job():
+    makefile = (REPO / "Makefile").read_text(encoding="utf-8")
+    wanted = re.search(r"^check-full:\s*(.+)$", makefile, re.M).group(1).split()
+    body = "\n".join(code_lines(WORKFLOW.read_text(encoding="utf-8")))
+    jobs = set(re.findall(r"^  ([a-z][a-z0-9-]*):[ \t]*$", body.split("\njobs:", 1)[1], re.M))
+    mapping = {"check": None, "proto-test": "prototype-browser", "proto-scale": "prototype-scale"}
+    assert set(wanted) <= set(mapping), f"`make check-full` gained a target this test does not know: {sorted(set(wanted) - set(mapping))}"
+    missing = [t for t in wanted if mapping[t] and mapping[t] not in jobs]
+    assert not missing, f"`make check-full` runs {missing} but the workflow has no matching job; jobs are {sorted(jobs)}"
+
+
+def test_the_make_targets_run_the_same_runner_as_the_workflow():
+    makefile = (REPO / "Makefile").read_text(encoding="utf-8")
+    assert re.search(r"^proto-test:\n(?:\t.*\n)*?\tcd prototype && \$\(PY\) run_browser_tests\.py$", makefile, re.M)
+    assert re.search(r"^proto-scale:\n\tcd prototype && node scale\.js$", makefile, re.M)
+
+
+def test_the_runner_lists_every_browser_test_file():
+    """A test file nobody lists is a test that never runs."""
+    runner = (REPO / "prototype" / "run_browser_tests.py").read_text(encoding="utf-8")
+    listed = set(re.findall(r"\('(b\d+\.py)'", runner))
+    present = {p.name for p in (REPO / "prototype").glob("b[0-9]*.py") if int(p.stem[1:]) >= 11}
+    assert present <= listed, f"test files the runner does not run: {sorted(present - listed)}"
+    assert listed <= {p.name for p in (REPO / "prototype").glob("b*.py")}, "the runner lists a file that does not exist"
+
+
 MUTATIONS = [
     ("pull_request_target", lambda t: t.replace("\non:\n", "\non:\n  pull_request_target:\n", 1)),
     ("workflow_run", lambda t: t.replace("\non:\n", "\non:\n  workflow_run:\n", 1)),
@@ -169,6 +216,12 @@ MUTATIONS = [
     ("must reach only the step", lambda t: t.replace('REQUIRE_GITLEAKS: "1"', "REQUIRE_GITLEAKS: ${{ secrets.DENYLIST }}", 1)),
     ("has no `secrets` job", lambda t: t.replace("\n  secrets:\n", "\n  secretz:\n", 1)),
     ("spans several lines", lambda t: t.replace("      - run: pip install pytest\n", "      - run: |\n          pip install pytest\n", 1)),
+    ("has no `prototype-browser` job", lambda t: t.replace("\n  prototype-browser:\n", "\n  prototype-brwsr:\n", 1)),
+    ("does not run `python run_browser_tests.py`", lambda t: t.replace("run: python run_browser_tests.py", "run: python run_browser_test.py", 1)),
+    ("does not run `npm ci`", lambda t: t.replace("      - run: npm ci\n        working-directory: prototype/vendor\n", "", 1)),
+    ("does not run `playwright install`", lambda t: t.replace("run: python -m playwright install --with-deps chromium", "run: python -m pip --version", 1)),
+    ("has no `prototype-scale` job", lambda t: t.replace("\n  prototype-scale:\n", "\n  prototype-scal:\n", 1)),
+    ("does not run `node scale.js`", lambda t: t.replace("run: node scale.js", "run: node verify.js project/Main.dc.html", 1)),
 ]
 
 
@@ -186,3 +239,84 @@ def test_a_trigger_named_only_in_a_comment_is_not_a_problem():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "pull_request_target" in text   # the header comment names it
     assert not any("pull_request_target" in p for p in problems(text))
+
+
+# ---- the GitLab pipeline: read, not run ----
+GITLAB_JOBS = {
+    "prototype:vendor": ["npm ci"],
+    "prototype:browser": ["python run_browser_tests.py"],
+    "prototype:scale": ["node scale.js"],
+}
+
+
+def gitlab_scripts(text: str) -> dict[str, list[str]]:
+    """Each top-level job and its script lines, with comments removed."""
+    jobs: dict[str, list[str]] = {}
+    cur = None
+    for line in code_lines(text):
+        m = re.match(r"^([A-Za-z.][\w:.-]*):[ \t]*$", line)
+        if m:
+            cur = m.group(1)
+            jobs[cur] = []
+        elif cur is not None and re.match(r"^\s+- \S", line):
+            jobs[cur].append(line.strip()[2:].strip())
+    return jobs
+
+
+def gitlab_problems(text: str, repo: Path = REPO) -> list[str]:
+    bad: list[str] = []
+    jobs = gitlab_scripts(text)
+    for job, must in GITLAB_JOBS.items():
+        if job not in jobs:
+            bad.append(f"the pipeline has no `{job}` job")
+            continue
+        bad += [f"the `{job}` job does not run `{m}`" for m in must if m not in jobs[job]]
+    # every file a script line names must exist, in the folder the job has moved to
+    for job, lines in jobs.items():
+        cwd = repo
+        for line in lines:
+            if line.startswith("cd "):
+                cwd = repo / line[3:].strip().strip('"')
+                if "$" not in line and not cwd.is_dir():
+                    bad.append(f"{job}: `{line}` goes to a folder that does not exist")
+                continue
+            try:
+                words = shlex.split(line)
+            except ValueError:
+                continue
+            for word in words:
+                if word.startswith("-") or "$" in word or any(c in word for c in "{}^[<>|"):
+                    continue
+                if word.endswith((".py", ".js", ".txt")) and not (glob.glob(str(cwd / word)) or glob.glob(str(repo / word))):
+                    bad.append(f"{job}: `{line}` names {word!r}, which does not exist")
+    # the browser image and the pinned Playwright must be the same version, or the browser the tests ask for is not in the image
+    pin = re.search(r"^playwright==(\S+)", (repo / "prototype" / "requirements-test.txt").read_text(encoding="utf-8"), re.M)
+    image = re.search(r'PLAYWRIGHT_IMAGE:\s*"[^"]*:v(\d+\.\d+\.\d+)', text)
+    if not pin or not image or pin.group(1) != image.group(1):
+        bad.append(f"the Playwright image ({image.group(1) if image else 'none'}) and prototype/requirements-test.txt ({pin.group(1) if pin else 'none'}) are not the same version")
+    return bad
+
+
+def test_the_gitlab_pipeline_has_no_problems():
+    assert GITLAB.is_file()
+    assert gitlab_problems(GITLAB.read_text(encoding="utf-8")) == []
+
+
+GITLAB_MUTATIONS = [
+    ("no `prototype:browser` job", lambda t: t.replace("\nprototype:browser:\n", "\nprototype:brwsr:\n", 1)),
+    ("`prototype:browser` job does not run `python run_browser_tests.py`", lambda t: t.replace("    - python run_browser_tests.py\n", "    - python verify.py\n", 1)),
+    ("`prototype:scale` job does not run `node scale.js`", lambda t: t.replace("    - node scale.js\n", "    - node verify.js project/Main.dc.html\n", 1)),
+    ("`prototype:vendor` job does not run `npm ci`", lambda t: t.replace("    - npm ci\n", "    - npm install\n", 1)),
+    ("names 'run_browser_test.py'", lambda t: t.replace("run_browser_tests.py", "run_browser_test.py", 1)),
+    ("goes to a folder that does not exist", lambda t: t.replace("    - cd prototype/vendor\n", "    - cd prototype/vendr\n", 1)),
+    ("are not the same version", lambda t: t.replace("playwright/python:v1.56.0-noble", "playwright/python:v1.57.0-noble", 1)),
+]
+
+
+@pytest.mark.parametrize("expected,mutate", GITLAB_MUTATIONS, ids=[m[0] for m in GITLAB_MUTATIONS])
+def test_each_gitlab_check_can_fail(expected, mutate):
+    text = GITLAB.read_text(encoding="utf-8")
+    broken = mutate(text)
+    assert broken != text, "the mutation did not change the pipeline; fix the test"
+    found = gitlab_problems(broken)
+    assert any(expected in p for p in found), f"{expected!r} not reported; got {found}"

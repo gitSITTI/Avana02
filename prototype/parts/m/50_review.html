@@ -28,6 +28,8 @@
           </div>
           <label for="q-alloc" style="position:absolute;left:-9999px">Allocation</label>
           <select id="q-alloc" value="{{allocV}}" onChange="{{onAlloc}}" style="§INP§width:100%"><sc-for list="{{allocOpts}}" as="o" hint-placeholder-count="9"><option value="{{o.v}}">{{o.t}}</option></sc-for></select>
+          <label for="q-lvl" style="position:absolute;left:-9999px">Level of the V</label>
+          <select id="q-lvl" value="{{lvlV}}" onChange="{{onLvl}}" style="§INP§width:100%"><sc-for list="{{lvlOpts}}" as="o" hint-placeholder-count="5"><option value="{{o.v}}">{{o.t}}</option></sc-for></select>
           <sc-if value="{{hasFilters}}" hint-placeholder-val="{{ false }}"><button onClick="{{clearFilters}}" style="§BTN§">Clear filters</button></sc-if>
           <div style="font-size:12px;color:#4F5B66;display:flex;justify-content:space-between;gap:8px"><span>{{qInfo}}</span><span>{{qPageText}}</span></div>
           <sc-if value="{{emptyQ}}" hint-placeholder-val="{{ false }}"><div style="§CARD§padding:14px;color:#3C4852">Nothing here. Try another tab or clear the filters.</div></sc-if>
@@ -55,7 +57,7 @@
                 <sc-if value="{{b.hasLines}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:3px"><sc-for list="{{b.lines}}" as="l" hint-placeholder-count="2"><div>{{l.t}}</div></sc-for></div></sc-if>
                 <sc-if value="{{b.hasAdj}}" hint-placeholder-val="{{ false }}">
                   <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Adjudication note (kept with the decision)
-                    <textarea value="{{b.adjV}}" onChange="{{b.onAdj}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
+                    <textarea value="{{b.adjV}}" onChange="{{b.onAdj}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
                   </label>
                   <div style="font-size:13px">{{b.adjHelp}}</div>
                 </sc-if>
@@ -70,7 +72,7 @@
               <sc-if value="{{hd.hasLines}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:3px"><sc-for list="{{hd.lines}}" as="l" hint-placeholder-count="3"><div>{{l.t}}</div></sc-for></div></sc-if>
               <sc-if value="{{hd.canReply}}" hint-placeholder-val="{{ false }}">
                 <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Your comment
-                  <textarea id="hd-reply" value="{{hd.replyV}}" onChange="{{hd.onReply}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
+                  <textarea id="hd-reply" value="{{hd.replyV}}" onChange="{{hd.onReply}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
                 </label>
                 <div style="font-size:13px">{{hd.replyHelp}}</div>
               </sc-if>
@@ -92,6 +94,13 @@
             <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;color:#2A353F;font-size:13px">
               <span>{{d.paramLine}}</span>
               <sc-if value="{{d.canFlip}}" hint-placeholder-val="{{ false }}"><button onClick="{{d.flip}}" style="§BTN§min-height:36px;font-size:13px">{{d.flipLabel}}</button></sc-if>
+            </div>
+            <div role="group" aria-label="Where this cluster sits in the V" style="display:flex;gap:14px;align-items:flex-start;background:#F4F7FA;border:1px solid #D8DFE6;border-radius:8px;padding:10px 12px">
+              §VG:d.vee.glyph:76:h§
+              <div style="display:flex;flex-direction:column;gap:3px;min-width:0;font-size:13px;color:#2A353F">
+                <div style="font-weight:600">{{d.vee.head}}</div>
+                <sc-for list="{{d.vee.lines}}" as="vl" hint-placeholder-count="2"><div>{{vl.t}}</div></sc-for>
+              </div>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
               <span style="font-size:12px;color:#4F5B66">Suggested by</span>
@@ -117,7 +126,7 @@
               <span style="padding:1px 7px;border-radius:6px;background:#FFD3CE;color:#6E100A;font-weight:700">not</span>
               <span style="padding:1px 7px;border-radius:6px;background:#E8DEFF;color:#341C85;border-bottom:2px dotted #341C85">condition</span>
               <span style="padding:1px 7px;border-radius:6px;background:#E3E9EF;color:#1B2733;box-shadow:inset 0 -2px 0 #6B7782">other wording</span>
-              <span style="padding:0 7px;border-radius:6px;border:1px dashed #8C98A3;color:#5A6672;text-decoration:line-through">missing here</span>
+              <span style="padding:0 7px;border-radius:6px;border:1px dashed #7A8793;color:#5A6672;text-decoration:line-through">missing here</span>
               <span style="color:#5A6672">grey words match the reference</span>
             </div>
             <sc-if value="{{disp.hasHeadline}}" hint-placeholder-val="{{ true }}"><div style="margin:0 20px 10px;padding:8px 12px;border-radius:8px;background:#F4F6F8;display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;font-size:13px"><b>{{disp.stateLabel}}:</b><span>{{disp.headline}}</span></div></sc-if>
@@ -156,7 +165,7 @@
               <sc-if value="{{ledger.noLedger}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">Owner, level, verification, allocation and baseline are the same across the group.</div></sc-if>
             </div>
             <sc-if value="{{ledger.hasLedger}}" hint-placeholder-val="{{ true }}">
-            <div style="overflow-x:auto;padding-bottom:12px">
+            <div role="region" tabindex="0" aria-label="Fields compared across the group" style="overflow-x:auto;padding-bottom:12px">
               <div role="table" aria-label="Fields other than the wording" style="display:grid;{{ledger.cols}}min-width:100%;font-size:13px">
                 <div role="row" style="display:contents">
                   <div role="columnheader" style="padding:6px 12px 6px 20px;color:var(--slate);font-size:12px;font-weight:600">Wording</div>
@@ -206,7 +215,7 @@
               <sc-if value="{{d.aiJudge}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;padding:2px 8px;border-radius:4px;background:#F6E4EF;color:#6A1650;font-weight:600">{{d.aiVerdict}} · {{d.aiConf}}% · {{d.aiVotes}}</span></sc-if>
             </div>
             <sc-if value="{{d.hideAI}}" hint-placeholder-val="{{ false }}">
-              <div style="background:#F4F6F8;border:1px dashed #8C98A3;border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:10px">
+              <div style="background:#F4F6F8;border:1px dashed #7A8793;border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:10px">
                 <div style="font-weight:600">The AI proposal is hidden. Record your own first impression.</div>
                 <div style="color:#3C4852;font-size:13px">Blind-first mode keeps you from anchoring on the AI. Your answer is stored with the decision.</div>
                 <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -256,7 +265,7 @@
             </div>
             <sc-if value="{{lp.isNU}}" hint-placeholder-val="{{ false }}">
               <label style="display:flex;flex-direction:column;gap:6px;font-weight:600">Explain it back: in one sentence, what does this require?
-                <textarea value="{{lp.nuV}}" onChange="{{lp.onNu}}" rows="2" style="font-family:var(--serif);font-size:16px;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
+                <textarea value="{{lp.nuV}}" onChange="{{lp.onNu}}" rows="2" style="font-family:var(--serif);font-size:16px;padding:10px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
               </label>
               <div style="font-size:13px;color:#3C4852">{{lp.nuHelp}}</div>
             </sc-if>
@@ -279,7 +288,7 @@
               </div>
               <div style="border-top:1px solid #E3E7EA;padding-top:10px;display:flex;flex-direction:column;gap:6px">
                 <label for="obj-box" style="font-weight:600">Or request changes (pauses sign-offs for an adjudicator)</label>
-                <textarea id="obj-box" value="{{sg.objV}}" onChange="{{sg.onObj}}" rows="2" placeholder="Say what is wrong, at least 12 characters" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box"></textarea>
+                <textarea id="obj-box" value="{{sg.objV}}" onChange="{{sg.onObj}}" rows="2" placeholder="Say what is wrong, at least 12 characters" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box"></textarea>
                 <button onClick="{{sg.doObject}}" disabled="{{sg.objDisabled}}" style="§BTN§align-self:flex-start">Request changes</button>
               </div>
             </sc-if>
@@ -322,7 +331,7 @@
             </div>
             <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #E3E7EA;padding-top:10px">
               <label for="reopen-box" style="font-weight:600">Reopen this decision</label>
-              <textarea id="reopen-box" value="{{rp.reopenV}}" onChange="{{rp.onReopen}}" rows="2" placeholder="Why are you reopening it? At least 12 characters" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box"></textarea>
+              <textarea id="reopen-box" value="{{rp.reopenV}}" onChange="{{rp.onReopen}}" rows="2" placeholder="Why are you reopening it? At least 12 characters" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box"></textarea>
               <button onClick="{{rp.doReopen}}" disabled="{{rp.reopenDisabled}}" style="§BTN§align-self:flex-start">Reopen and clear sign-offs</button>
             </div>
           </sc-if>
@@ -358,7 +367,7 @@
               </sc-if>
               <sc-if value="{{rp.showOwn}}" hint-placeholder-val="{{ false }}">
                 <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Write your own wording
-                  <textarea value="{{rp.ownV}}" onChange="{{rp.onOwn}}" rows="4" style="font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
+                  <textarea value="{{rp.ownV}}" onChange="{{rp.onOwn}}" rows="4" style="font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
                 </label>
               </sc-if>
               <div style="display:flex;flex-direction:column;gap:6px;border-top:1px dashed #B9C3CD;padding-top:10px">
@@ -405,14 +414,14 @@
 
             <div style="display:flex;flex-direction:column;gap:6px;background:#F4F6F8;border-radius:6px;padding:10px 12px">
               <div style="font-size:13px;font-weight:600">{{rp.forecastNote}}</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{rp.forecast}}" as="f" hint-placeholder-count="3"><span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;background:#FFFFFF;border:1px solid #8C98A3">{{f.label}}</span></sc-for></div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{rp.forecast}}" as="f" hint-placeholder-count="3"><span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;background:#FFFFFF;border:1px solid #7A8793">{{f.label}}</span></sc-for></div>
             </div>
 
             <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">3 · Reason code
               <select value="{{rp.reasonV}}" onChange="{{rp.onReason}}" style="§INP§width:100%;font-weight:400"><sc-for list="{{rp.reasonOpts}}" as="o" hint-placeholder-count="8"><option value="{{o.v}}">{{o.t}}</option></sc-for></select>
             </label>
             <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Note
-              <textarea value="{{rp.noteV}}" onChange="{{rp.onNote}}" rows="3" placeholder="Why this choice? Others will read it later." style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
+              <textarea value="{{rp.noteV}}" onChange="{{rp.onNote}}" rows="3" placeholder="Why this choice? Others will read it later." style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;font-weight:400"></textarea>
               <span style="font-size:12px;font-weight:400;color:#4F5B66">{{rp.noteWhy}}</span>
             </label>
             <sc-if value="{{rp.needsAck}}" hint-placeholder-val="{{ false }}">
@@ -438,7 +447,7 @@
                     <div role="group" aria-label="What you need from them" style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{snd.asks}}" as="o" hint-placeholder-count="2"><button onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">{{o.label}}</button></sc-for></div>
                   </sc-if>
                   <label style="display:flex;flex-direction:column;gap:4px;font-weight:600">Message
-                    <textarea id="snd-note" value="{{snd.noteV}}" onChange="{{snd.onNote}}" rows="3" placeholder="What should they look at?" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #8C98A3;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
+                    <textarea id="snd-note" value="{{snd.noteV}}" onChange="{{snd.onNote}}" rows="3" placeholder="What should they look at?" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea>
                   </label>
                   <div style="font-size:12px;color:#4F5B66">{{snd.noteHelp}}</div>
                   <button id="snd-send" onClick="{{snd.send}}" disabled="{{snd.sendDisabled}}" style="§PRI§align-self:flex-start">{{snd.sendLabel}}</button>

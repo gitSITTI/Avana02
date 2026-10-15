@@ -26,10 +26,15 @@
             <sc-if value="{{hasMoreWait}}" hint-placeholder-val="{{ false }}"><div style="color:#4F5B66">{{moreWait}} waiting for sign-off.</div></sc-if>
             <div style="color:#3C4852"><b>{{flagCount}}</b> decided clusters are stale, disputed, have sibling versions or are oversized. They are held back until someone resolves them.</div>
             <div style="color:#3C4852"><b>{{undecidedCount}}</b> clusters have no decision yet. They are left out of the package.</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;border-top:1px solid #E3E7EA;padding-top:12px">
+              §VG:vTop:64§
+              <div style="flex:1 1 240px;color:#3C4852"><b>On the V:</b> {{vExportLine}}</div>
+              <button onClick="{{openVee}}" style="§BTN§">Open the V</button>
+            </div>
           </div>
           <div style="flex:2 1 320px;min-width:0;background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
             <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">PACKAGE</div>
-            <div style="display:flex;flex-direction:column;gap:4px"><label for="base-id" style="font-weight:600">Draft baseline ID</label><input id="base-id" type="text" value="{{baseId}}" onChange="{{onBase}}" style="min-height:44px;padding:0 10px;border:1px solid #8C98A3;border-radius:6px;font-family:var(--mono);font-size:14px"></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><label for="base-id" style="font-weight:600">Draft baseline ID</label><input id="base-id" type="text" value="{{baseId}}" onChange="{{onBase}}" style="min-height:44px;padding:0 10px;border:1px solid #7A8793;border-radius:6px;font-family:var(--mono);font-size:14px"></div>
             <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-weight:600;padding:0;margin-bottom:6px">Format</legend>
               <sc-for list="{{formats}}" as="f" hint-placeholder-count="4">
                 <label style="display:flex;gap:10px;align-items:flex-start;min-height:44px"><input type="radio" name="fmt" checked="{{f.on}}" onChange="{{f.pick}}" style="width:20px;height:20px;margin:2px 0 0"><span><span style="font-weight:600">{{f.name}}</span><br><span style="font-size:13px;color:#3C4852">{{f.sub}}</span></span></label>
@@ -39,6 +44,47 @@
             <div style="font-size:13px;color:#4F5B66">{{prepareHelp}}</div>
           </div>
         </div>
+        <section aria-labelledby="tr-h" style="background:#FFFFFF;border:1px solid #BAC3CA;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#4F5B66">TRACE MAP</div>
+          <h2 id="tr-h" tabindex="-1" style="margin:0;font-size:18px;font-weight:700">What moves outside the requirement list</h2>
+          <p style="margin:0;color:#3C4852;max-width:760px;text-wrap:pretty">A merge, a supersede or a drop changes more than the list. The verification items, the requirements below, and the baselines all have to follow. This is every one of them, so the tools that hold those links can be brought into step.</p>
+          <fieldset style="border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 24px"><legend style="font-weight:600;padding:0;margin-bottom:4px">Changes to include</legend>
+            <label style="display:flex;gap:10px;align-items:flex-start;min-height:44px"><input type="radio" name="tr-only" checked="{{trOnlyApproved}}" onChange="{{trPickApproved}}" style="width:20px;height:20px;margin:2px 0 0"><span><span style="font-weight:600">Approved only</span><br><span style="font-size:13px;color:#3C4852">What the package contains</span></span></label>
+            <label style="display:flex;gap:10px;align-items:flex-start;min-height:44px"><input type="radio" name="tr-only" checked="{{trOnlyAll}}" onChange="{{trPickAll}}" style="width:20px;height:20px;margin:2px 0 0"><span><span style="font-weight:600">Every decided change</span><br><span style="font-size:13px;color:#3C4852">A draft view, with changes still waiting for sign-off</span></span></label>
+          </fieldset>
+          <sc-if value="{{trEmpty}}" hint-placeholder-val="{{ false }}"><div style="color:#4F5B66">{{trEmptyText}}</div></sc-if>
+          <sc-if value="{{trShow}}" hint-placeholder-val="{{ true }}">
+            <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:2px;color:#2A353F">
+              <sc-for list="{{trLines}}" as="tl" hint-placeholder-count="3"><li>{{tl.t}}</li></sc-for>
+            </ul>
+            <div role="group" aria-label="Which table to show" style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{trTabs}}" as="tt" hint-placeholder-count="4">
+                <button onClick="{{tt.pick}}" aria-pressed="{{tt.pressed}}" aria-label="{{tt.aria}}" style="{{tt.style}}">{{tt.name}} <span style="font-weight:400;color:#3C4852">({{tt.count}})</span></button>
+              </sc-for>
+            </div>
+            <sc-if value="{{trTabEmpty}}" hint-placeholder-val="{{ false }}"><div style="color:#4F5B66">Nothing in this table.</div></sc-if>
+            <div role="region" tabindex="0" aria-label="Trace map table" style="overflow-x:auto">
+              <div role="table" aria-label="{{trTabName}}" style="min-width:640px;font-size:13px">
+                <div role="row" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0 12px;color:#54626F;font-weight:600;padding:6px 8px;border-bottom:1px solid #D8DFE6">
+                  <sc-for list="{{trCols}}" as="th" hint-placeholder-count="5"><div role="columnheader">{{th.h}}</div></sc-for>
+                </div>
+                <sc-for list="{{trRows}}" as="tr" hint-placeholder-count="3">
+                  <div role="row" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0 12px;padding:6px 8px;border-bottom:1px solid #E3E7EA;overflow-wrap:anywhere">
+                    <div role="rowheader" style="font-family:var(--mono);font-weight:600">{{tr.first}}</div>
+                    <sc-for list="{{tr.rest}}" as="tc" hint-placeholder-count="4"><div role="cell">{{tc.t}}</div></sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{trHasMore}}" hint-placeholder-val="{{ false }}"><div style="color:#4F5B66;font-size:13px">{{trMore}}.</div></sc-if>
+          </sc-if>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button onClick="{{trJson}}" disabled="{{trNoFile}}" style="§PRI§">Download the trace map (trace-map.json)</button>
+            <button onClick="{{trCsv}}" disabled="{{trNoFileCsv}}" style="§BTN§">{{trCsvLabel}}</button>
+          </div>
+          <div role="status" style="font-size:13px;color:#14502B;min-height:18px">{{trMsg}}</div>
+          <div style="font-size:13px;color:#4F5B66;max-width:760px">The levels, verification items, parent links and baselines are sample values given to each requirement in this demonstration, and the file says so. These two downloads are real files built from your decisions. Preparing the package above only logs the step.</div>
+        </section>
         <sc-if value="{{published}}" hint-placeholder-val="{{ false }}">
           <div style="background:#E1F2E7;border:1px solid #1B6B3A;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:8px">
             <div style="font-weight:600;color:#14502B">Draft package prepared for {{baseId}}</div>

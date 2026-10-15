@@ -1,31 +1,40 @@
   /* ----- all requirements: map, table, one requirement ----- */
   reqState(S, r) {
+    const own = rdStatus(S, r);   // a requirement decided on its own is shown by how far that decision has got
+    if (own) return own === 'approved' ? 'approved' : 'review';
     if (!r.cid) return 'alone';
     const st = statusOf(S, CL_BY[r.cid]);
     return st === 'approved' ? 'approved' : st === 'review' || st === 'decided' ? 'review' : attention(st) ? 'attn' : 'open';
+  }
+  /* a click on the map or the list picks the requirement to look at; while a person is choosing the second one it puts that one beside the first */
+  xPickReq(S, id) {
+    if (S.rpick && S.xPick && id !== S.xPick) this.setState({ rcmp: id, rpick: false });
+    else this.setState({ xPick: id });
   }
   valsExplorer(S) {
     const U = universe(S), P = this.person(S);
     const SQ = 'width:10px;height:10px;border-radius:2px;display:inline-block;box-sizing:border-box;flex:none;';
     const STY = {
       alone: ['Alone · nothing similar found', SQ + 'border:2px solid #7B8792;background:transparent', '#7B8792'],
-      open: ['In a cluster · needs a decision', SQ + 'background:#7FB0EE', '#7FB0EE'],
+      open: ['In a cluster · needs a decision', SQ + 'background:#4F8FE6', '#4F8FE6'],
       review: ['Decided · collecting sign-offs', SQ + 'background:#1C5CAB', '#1C5CAB'],
       approved: ['Approved', SQ + 'background:#1B6B3A', '#1B6B3A'],
-      attn: ['Needs attention · stale, disagreement or too big', SQ + 'background:repeating-linear-gradient(45deg,#B35A00 0 3px,#FFD9A8 3px 5px)', '#B35A00']
+      attn: ['Needs attention · stale, disagreement or too big', SQ + 'background:repeating-linear-gradient(45deg,#C47A00 0 3px,#FFE3B8 3px 5px)', '#C47A00']
     };
     const stateOf = {}; U.reqs.forEach((r) => { stateOf[r.id] = this.reqState(S, r); });
     const meSet = new Set(); this.allInfos(S).forEach((x) => { if (x.me) x.c.members.forEach((m) => meSet.add(m.id)); });
-    const matches = (r) => (S.xFilter === 'all' ? true : S.xFilter === 'mine' ? meSet.has(r.id) : stateOf[r.id] === S.xFilter) && (!S.xAlloc || r.alloc === S.xAlloc);
+    const chipStyle = (on) => 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#7A8793') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';';
+    const isGap = (r) => { const v = VREQ[r.id]; return !(v.vm && v.vi > 0); };
+    const matches = (r) => (S.xFilter === 'all' ? true : S.xFilter === 'mine' ? meSet.has(r.id) : stateOf[r.id] === S.xFilter) && (!S.xAlloc || r.alloc === S.xAlloc) && (!S.xLvl || VREQ[r.id].lvl === S.xLvl) && (!S.xGap || isGap(r));
     const counts = { all: U.reqs.length, alone: 0, open: 0, review: 0, approved: 0, attn: 0 };
     U.reqs.forEach((r) => { counts[stateOf[r.id]]++; });
     const fdefs = [['all', 'All'], ['mine', 'For me'], ['open', 'Needs a decision'], ['review', 'In review'], ['approved', 'Approved'], ['attn', 'Needs attention'], ['alone', 'Alone']];
-    const chips = fdefs.map(([k, label]) => ({ label, count: k === 'mine' ? meSet.size : counts[k], pressed: S.xFilter === k ? 'true' : 'false', pick: () => this.setState({ xFilter: k, xPage: 0 }), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (S.xFilter === k ? 600 : 500) + ';border:1px solid ' + (S.xFilter === k ? 'var(--accent)' : '#8C98A3') + ';background:' + (S.xFilter === k ? '#E8F0FD' : '#FFFFFF') + ';' }));
+    const chips = fdefs.map(([k, label]) => ({ label, count: k === 'mine' ? meSet.size : counts[k], pressed: S.xFilter === k ? 'true' : 'false', pick: () => this.setState({ xFilter: k, xPage: 0 }), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (S.xFilter === k ? 600 : 500) + ';border:1px solid ' + (S.xFilter === k ? 'var(--accent)' : '#7A8793') + ';background:' + (S.xFilter === k ? '#E8F0FD' : '#FFFFFF') + ';' }));
     const groups = ALLOCS.filter((a) => S.scope === 'all' || a.k === S.scope).map((a) => {
       const rs = U.reqs.filter((r) => r.alloc === a.k);
       return {
         name: a.k, count: rs.length, on: S.xAlloc === a.k, pressed: S.xAlloc === a.k ? 'true' : 'false', pick: () => this.setState({ xAlloc: S.xAlloc === a.k ? '' : a.k, xPage: 0 }),
-        cells: rs.map((r) => { const s = stateOf[r.id], hit = matches(r); return { title: r.id + ' · ' + STY[s][0], pick: () => this.setState({ xPick: r.id }), style: STY[s][1].replace('display:inline-block', 'display:block') + ';cursor:pointer;flex:none;opacity:' + (hit ? 1 : 0.15) + (S.xPick === r.id ? ';outline:2px solid #12171C;outline-offset:2px' : '') }; })
+        cells: rs.map((r) => { const s = stateOf[r.id], hit = matches(r); return { title: r.id + ' · ' + STY[s][0], pick: () => this.xPickReq(S, r.id), style: STY[s][1].replace('display:inline-block', 'display:block') + ';cursor:pointer;flex:none;opacity:' + (hit ? 1 : 0.15) + (S.xPick === r.id ? ';outline:2px solid #12171C;outline-offset:2px' : '') }; })
       };
     });
     const legend = ['alone', 'open', 'review', 'approved', 'attn'].map((k) => ({ label: STY[k][0], shape: STY[k][1], n: counts[k] }));
@@ -35,7 +44,7 @@
     });
     const list = U.reqs.filter(matches);
     const PAGE = 8, pages = Math.max(1, Math.ceil(list.length / PAGE)), page = Math.min(S.xPage, pages - 1);
-    const rows = list.slice(page * PAGE, page * PAGE + PAGE).map((r) => ({ id: r.id, alloc: r.alloc, state: STY[stateOf[r.id]][0], shape: STY[stateOf[r.id]][1], cluster: r.cid || 'none', text: r.text, pick: () => this.setState({ xPick: r.id }), on: S.xPick === r.id, style: 'text-align:left;display:grid;grid-template-columns:160px 20px minmax(0,1fr) 90px;gap:10px;align-items:center;min-height:44px;padding:6px 12px;border-radius:6px;cursor:pointer;border:' + (S.xPick === r.id ? '2px solid var(--accent)' : '1px solid #D5DADE') + ';background:#FFFFFF;' }));
+    const rows = list.slice(page * PAGE, page * PAGE + PAGE).map((r) => ({ id: r.id, alloc: r.alloc, state: STY[stateOf[r.id]][0], shape: STY[stateOf[r.id]][1], cluster: r.cid || 'none', text: r.text, pick: () => this.xPickReq(S, r.id), on: S.xPick === r.id, style: 'text-align:left;display:grid;gap:10px;align-items:center;min-height:44px;padding:6px 12px;border-radius:6px;cursor:pointer;border:' + (S.xPick === r.id ? '2px solid var(--accent)' : '1px solid #D5DADE') + ';background:#FFFFFF;' }));
     const pk = S.xPick && REQ_BY[S.xPick] ? REQ_BY[S.xPick] : null;
     const pc = pk && pk.cid ? CL_BY[pk.cid] : null;
     return {
@@ -44,13 +53,87 @@
       xPageText: 'Page ' + (page + 1) + ' of ' + pages, xPrevDisabled: page === 0, xNextDisabled: page >= pages - 1,
       xPrev: () => this.setState({ xPage: Math.max(0, page - 1) }), xNext: () => this.setState({ xPage: Math.min(pages - 1, page + 1) }),
       xHasAlloc: !!S.xAlloc, xAllocName: S.xAlloc, xClearAlloc: () => this.setState({ xAlloc: '', xPage: 0 }),
-      xShowPick: !!pk,
+      xLvlChips: [[0, 'All levels']].concat(VLEVELS.map((l) => [l.k, 'Level ' + l.k + ' · ' + l.short])).map(([k, label]) => ({ label, pressed: (S.xLvl || 0) === k ? 'true' : 'false', pick: () => this.setState({ xLvl: k, xPage: 0 }), style: chipStyle((S.xLvl || 0) === k) })),
+      xGapPressed: S.xGap ? 'true' : 'false', xGapPick: () => this.setState({ xGap: !S.xGap, xPage: 0 }), xGapLabel: 'Verification gaps only', xGapStyle: chipStyle(!!S.xGap),
+      xShowPick: !!pk, sp: this.valsSingle(S, pk),
       xp: pk ? {
-        id: pk.id, alloc: pk.alloc, owner: pk.owner, tok: paintOnly(pk.text), stateLabel: STY[stateOf[pk.id]][0], shape: STY[stateOf[pk.id]][1],
+        id: pk.id, vLine: (() => { const v = VREQ[pk.id], l = VLEVELS[v.lvl - 1]; return 'Level ' + v.lvl + ' · ' + l.short + '. Checked by ' + (v.vm ? v.vm.toLowerCase() : 'no method yet') + ' at ' + l.ver.toLowerCase() + ', ' + (v.vi ? v.vi + (v.vi === 1 ? ' verification item' : ' verification items') + ' linked' : 'no verification item linked') + '.'; })(), alloc: pk.alloc, owner: pk.owner, tok: paintOnly(pk.text), stateLabel: STY[stateOf[pk.id]][0], shape: STY[stateOf[pk.id]][1],
         inCluster: !!pc, clusterLine: pc ? pc.id + ' · ' + pc.title + ' · ' + STATUS_LABEL[statusOf(S, pc)] : 'Not in any cluster. Four methods compared it with every other requirement in its allocation and found nothing close.',
         open: pc ? () => this.setState({ view: 'review', selected: pc.id, qTab: 'all', just: '', openVer: Object.assign({}, S.openVer, { [pc.id]: S.liveVer[pc.id] || 0 }) }) : () => {},
         history: reqHistory(S, pk.id)
-      } : { id: '', alloc: '', owner: '', tok: [], stateLabel: '', shape: '', inCluster: false, clusterLine: '', open: () => {}, history: [] }
+      } : { id: '', alloc: '', owner: '', tok: [], stateLabel: '', shape: '', inCluster: false, clusterLine: '', open: () => {}, history: [], vLine: '' }
+    };
+  }
+  /* ----- the engineering V: levels on the left, what checks them on the right, and what your decisions do to the right leg ----- */
+  valsVee(S, V) {
+    V = V || veeOf(S, this.allInfos(S));
+    const nf = (n) => n.toLocaleString('en-US'), pct = (a, b) => (b ? Math.round((a / b) * 100) : 100) + '%';
+    const plural = (n, one, many) => nf(n) + ' ' + (n === 1 ? one : many || one + 's');
+    const bar = (share, color) => 'height:10px;background:' + (color || '#2A6FD6') + ';border-radius:0 5px 5px 0;width:' + Math.max(share > 0 ? 2 : 0, Math.round(share * 100)) + '%';
+    const maxM = (l) => Math.max(1, l.methods.Test, l.methods.Analysis, l.methods.Inspection, l.methods.Demonstration, l.methods.none);
+    const rows = V.levels.map((l, i) => {
+      const facts = [];
+      if (l.open) facts.push(plural(l.open, 'cluster') + ' still to decide');
+      if (l.dropped) facts.push(plural(l.dropped, 'requirement') + ' dropped or not a requirement');
+      if (l.repoint) facts.push(plural(l.repoint, 'verification item') + ' to re‑point');
+      if (l.recheck) facts.push(plural(l.recheck, 'verification item') + ' to read again against new wording');
+      if (l.gaps) facts.push(plural(l.gaps, 'requirement') + ' without a method or an item');
+      const state = l.state;
+      const label = state === 'ok' ? 'In step' : state === 'attn' ? 'Needs attention' : 'Still being consolidated';
+      const methods = VMETHODS.concat(['none']).map((k) => ({
+        name: k === 'none' ? 'No method' : k, n: nf(l.methods[k]), isNone: k === 'none',
+        bar: k === 'none' ? 'height:10px;border-radius:0 5px 5px 0;background:repeating-linear-gradient(45deg,#B35A00 0 3px,#FFD9A8 3px 5px);width:' + Math.max(l.methods[k] ? 2 : 0, Math.round((l.methods[k] / maxM(l)) * 100)) + '%' : bar(l.methods[k] / maxM(l))
+      }));
+      return {
+        k: l.k, lname: l.name, ver: l.ver, how: l.how,
+        aria: 'Level ' + l.k + '. ' + l.name + ' and ' + l.ver + '. ' + label + '.',
+        lStyle: '--ind:' + i * 34 + 'px', rStyle: '--ind:' + i * 34 + 'px', gapStyle: '--ind:' + (i + 1) * 34 + 'px',
+        reqs: nf(l.reqs), afterTxt: l.gone ? nf(l.after) + ' after your decisions (' + nf(Math.abs(l.gone)) + (l.gone > 0 ? ' fewer)' : ' more)') : 'None removed at this level so far',
+        decBar: bar(l.decShare), decTxt: nf(l.decided) + ' of ' + nf(l.clusters) + ' clusters decided',
+        hasOpen: l.open > 0, openTxt: 'Review the ' + nf(l.open) + ' open',
+        review: () => this.setState({ view: 'review', qTab: 'all', qLvl: String(l.k), qStatus: 'undecided', qAlloc: '', qLane: '', qSearch: '', qPage: 0 }),
+        reviewAria: 'Review the ' + l.open + ' open clusters at level ' + l.k + ', ' + l.name,
+        crossTxt: l.cross ? plural(l.cross, 'cluster') + ' here hold a requirement and its parent. They can be linked, not merged.' : '',
+        hasCross: l.cross > 0,
+        methods, tracedTxt: nf(l.traced) + ' of ' + nf(l.reqs) + ' have a method and a verification item (' + pct(l.traced, l.reqs) + ')',
+        traceBar: bar(l.traceShare, '#1B6B3A'), itemsTxt: plural(l.items, 'verification item') + ' linked',
+        hasRepoint: l.repoint > 0, repointTxt: plural(l.repoint, 'verification item') + ' must move to the requirement that takes the place of the one removed' + (l.methodShift ? '. In ' + plural(l.methodShift, 'case') + ' the removed wording was verified a different way.' : '.') + (l.levelShift ? ' ' + plural(l.levelShift, 'item') + ' would land on a requirement at a different level.' : ''),
+        hasGaps: l.gaps > 0, gapsAria: 'See the gaps: ' + l.gaps + (l.gaps === 1 ? ' requirement' : ' requirements') + ' at level ' + l.k + ' without a method or an item',
+        gaps: () => this.setState({ view: 'explorer', xLvl: l.k, xGap: true, xFilter: 'all', xAlloc: '', xPage: 0, xPick: '' }),
+        isPass: state === 'ok', isWarn: state === 'attn', isInfo: state === 'open', isFail: false,
+        stateLabel: label, facts: facts.map((t) => ({ t })), hasFacts: facts.length > 0,
+        tr: { lvl: l.k + ' · ' + l.short, now: nf(l.reqs), after: nf(l.after), dec: nf(l.decided) + ' of ' + nf(l.clusters), traced: nf(l.traced) + ' (' + pct(l.traced, l.reqs) + ')', gaps: nf(l.gaps), re: nf(l.repoint) }
+      };
+    });
+    const tot = { lvl: 'All levels', now: nf(V.reqs), after: nf(V.after), dec: nf(V.decided) + ' of ' + nf(V.clusters), traced: nf(V.traced) + ' (' + pct(V.traced, V.reqs) + ')', gaps: nf(V.gaps), re: nf(V.repoint) };
+    return {
+      vRows: rows, vTable: rows.map((r) => r.tr), vTotal: tot, vGlyphPage: veeGlyph(V, [], true),
+      vLeftBig: nf(V.decided) + ' of ' + nf(V.clusters), vLeftSub: nf(V.reqs) + ' requirements now, ' + nf(V.after) + ' after your decisions.' + (V.held ? ' ' + plural(V.held, 'more cluster has', 'more clusters have') + ' a stale or disputed decision, which does not count until it is settled.' : ''),
+      vRightBig: nf(V.traced) + ' of ' + nf(V.reqs), vRightSub: plural(V.gaps, 'requirement') + ' with no method or no verification item (' + plural(V.noMethod, 'has', 'have') + ' no method, ' + nf(V.noItem) + ' no item)',
+      vMidBig: nf(V.repoint), vMidSub: V.repoint ? (V.repoint === 1 ? 'verification item' : 'verification items') + ' must move to the requirement that takes the place of one removed, before export' + (V.methodShift ? '. In ' + plural(V.methodShift, 'case') + ' the removed wording was verified a different way.' : '.') + (V.levelShift ? ' ' + plural(V.levelShift, 'item') + ' would land on a requirement at a different level, which is a different kind of check.' : '') : 'verification items to move. No requirement has been removed yet.',
+      vCrossTxt: V.cross ? plural(V.cross, 'cluster') + ' hold a requirement together with its parent from the level above. The app offers “link as parent and child” or “supersede” for these and never “merge”, because merging would leave one level’s verification with nothing to point at.' : 'No cluster mixes levels.',
+      vSample: 'Levels, verification methods and verification items are sample values given to each requirement for this demo. A real import reads the level from a field or from your parent links, and the items from your verify links.',
+      vRepointToExport: () => this.setState({ view: 'export' })
+    };
+  }
+  /* the small V that sits on every workspace screen, and the lines the Home, Results and Export strips share */
+  valsVeeStrip(S, V) {
+    const nf = (n) => n.toLocaleString('en-US');
+    const g = veeGlyph(V);
+    const worst = V.levels.reduce((a, l) => (l.state === 'attn' && a.state !== 'attn' ? l : a), V.levels[0]);
+    return {
+      vTop: g, vTopAria: 'Open the V. ' + nf(V.decided) + ' of ' + nf(V.clusters) + ' clusters decided, ' + nf(V.gaps) + ' requirements without a verification method or item, ' + nf(V.repoint) + ' verification items to move.',
+      openVee: () => this.setState({ view: 'vee' }),
+      vHome: g, vHomeTitle: 'Where the work sits in the V',
+      vHomeLines: [
+        { shape: 'width:11px;height:11px;border-radius:50%;background:#1C5CAB;display:inline-block;flex:none', t: nf(V.decided) + ' of ' + nf(V.clusters) + ' clusters have a standing decision on the left leg' + (V.held ? ' (' + nf(V.held) + ' more are held as stale or disputed)' : '') },
+        { shape: 'width:11px;height:11px;background:#1B6B3A;display:inline-block;flex:none', t: nf(V.gaps) + ' requirements with no verification method or item on the right leg' },
+        { shape: 'width:14px;border-top:2px dashed #54626F;display:inline-block;flex:none', t: nf(V.repoint) + ' verification items will have to move to a surviving requirement' }
+      ],
+      vResultsRows: V.levels.map((l) => ({ lvl: 'Level ' + l.k + ' · ' + l.short, now: nf(l.reqs), after: nf(l.after), gone: l.gone > 0 ? '−' + nf(l.gone) : l.gone < 0 ? '+' + nf(-l.gone) : '0', re: nf(l.repoint), gaps: nf(l.gaps) })),
+      vResultsTotal: { lvl: 'All levels', now: nf(V.reqs), after: nf(V.after), gone: V.reqs - V.after ? '−' + nf(V.reqs - V.after) : '0', re: nf(V.repoint), gaps: nf(V.gaps) },
+      vResultsNote: V.repoint ? nf(V.repoint) + ' verification items sit on requirements your decisions remove or mark superseded. Each has to be pointed at the requirement that takes its place, or the check proves nothing. The trace map in Export lists every one.' : 'No decision removes a requirement that carries a verification item.',
+      vExportLine: V.repoint ? nf(V.repoint) + ' verification items move to a surviving requirement. ' + (worst.state === 'attn' ? 'Most are at level ' + V.levels.reduce((a, l) => (l.repoint > a.repoint ? l : a), V.levels[0]).k + '.' : '') : 'No verification item has to move yet.'
     };
   }
   /* ----- methods and metrics: sample scores for four ways of working, then by category (see data4.js; nothing here is measured) ----- */
@@ -105,7 +188,7 @@
     const topN = (key) => cats.slice().sort((x, y) => y[key] - x[key]).slice(0, 3).map((x, i) => ({ rank: String(i + 1), name: x.name, v: f2(x[key]) }));
     const gain = cats.slice().sort((x, y) => y.d - x.d)[0], lows = cats.filter((x) => x.d < -0.005).sort((x, y) => x.d - y.d);
     const catNotes = ['The most gained from the AI: ' + gain.name + ' (' + sgn(gain.d) + ').', lows.length ? 'The AI lowers the score in ' + lows.map((x) => x.name + ' (' + sgn(x.d) + ')').join(', ') + ' when it runs ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps.' : 'With the AI running ' + (armKey === 'after' ? 'after' : 'before') + ' the mechanical steps, no category gets worse.', 'Categories with fewer than 60 labelled pairs are marked: their scores can move a lot with a few more labels.'].map((t) => ({ t }));
-    const pill = (on) => 'min-height:40px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#8C98A3') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';color:#12171C;';
+    const pill = (on) => 'min-height:40px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#7A8793') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';color:#12171C;';
     const armBtns = [['after', 'AI after the mechanical steps'], ['before', 'AI before the mechanical steps']].map(([k, label]) => ({ label, pressed: armKey === k ? 'true' : 'false', style: pill(armKey === k), pick: () => this.setState({ metArm: k }) }));
     const sortBtns = [['gain', 'Biggest gain from AI'], ['with', 'Best with AI'], ['without', 'Best without AI']].map(([k, label]) => ({ label, pressed: sortKey === k ? 'true' : 'false', style: pill(sortKey === k), pick: () => this.setState({ metSort: k }) }));
     /* kept from before */
@@ -128,7 +211,9 @@
       topWithout: topN('w0'), topWith: topN('w1'), catNotes,
       showTable: !!S.metTable, showChart: !S.metTable, tableLabel: S.metTable ? 'Show the chart' : 'Show as a table', tablePressed: S.metTable ? 'true' : 'false', toggleTable: () => this.setState({ metTable: !S.metTable }),
       goldPairs: M.gold.toLocaleString('en-US'),
-      cont, acc, live, guardStats, laneStats: lanes
+      mtAiNote: (() => { const k = aiCounts(S, CLUSTERS); return !S.aiOn ? 'AI is switched off, so no group goes to a model and no AI answer is shown. The “with AI” scores on this page come from a trial run on the sample data set. They show what the AI added then, and they do not change with the switch.' : k.held ? k.held.toLocaleString('en-US') + ' of ' + k.total.toLocaleString('en-US') + ' groups are held back from the AI by the data sheet, so people review them without an AI answer. The “with AI” scores on this page come from a trial run on the sample data set and do not change with the data sheet.' : ''; })(),
+      cont, acc, live, guardStats, laneStats: lanes,
+      ...this.valsGoldPanel(S)
     };
   }
   /* ----- results and grade: the consolidated set set against the original, computed from the decisions (see logic3.js) ----- */
@@ -170,6 +255,10 @@
       ['linked', 'Kept and linked', 'Both stay, joined by a “variant of” link.', DISP_STYLE.linked],
       ['escalated', 'Waiting for the owners', 'Escalated. Nothing changes until they answer.', DISP_STYLE.escalated],
       ['superseded', 'Superseded', 'Contained in a kept requirement. ID and links stay.', DISP_STYLE.superseded],
+      ['kept1', 'Kept after a person looked', 'Decided on its own and kept as written.', DISP_STYLE.kept1],
+      ['reworded', 'Kept with new wording', 'Decided on its own. The wording changed; the ID stays.', DISP_STYLE.reworded],
+      ['dropped', 'Dropped', 'Decided on its own. It leaves the set; the ID stays as an alias.', DISP_STYLE.dropped],
+      ['notreq', 'Not a requirement', 'Decided on its own. It leaves the set and stays in the document.', DISP_STYLE.notreq],
       ['waiting', 'Not decided yet', 'The cluster has no decision, or its decision is stale or disputed.', DISP_STYLE.pending]
     ];
     const destAll = DEST.map(([k, label, note, sty]) => ({ k, label, note, n: R.kinds[k], sty }));
@@ -177,14 +266,15 @@
     const dest = destAll.map((d) => ({ label: d.label, note: d.note, n: fmt(d.n), pct: pct(d.n, R.n), swatch: 'width:16px;height:16px;border-radius:3px;flex:none;box-sizing:border-box;' + d.sty }));
     const destBar = destAll.filter((d) => d.n > 0).map((d) => ({ title: d.label + ': ' + fmt(d.n) + ' (' + pct(d.n, R.n) + ')', style: 'flex:' + d.n + ' 1 0;min-width:3px;height:26px;box-sizing:border-box;border-radius:3px;' + d.sty }));
     /* what would raise the grade */
-    const asIds = (ids) => ids.slice(0, 3).map((id) => ({ id, open: openCl(id) }));
+    const openReq = (id) => () => this.setState({ view: 'explorer', xPick: id, xFilter: 'all', xAlloc: '', xLvl: 0, xGap: false, xPage: 0, rcmp: '', rpick: false });
+    const asIds = (ids) => ids.slice(0, 3).map((id) => ({ id, open: CL_BY[id] ? openCl(id) : openReq(id) }));
     const gapOf = (k) => R.parts.find((p) => p.k === k).gap;
     const risePool = [
       { k: 'cover', n: R.waitingClusters, title: 'Decide the ' + fmt(R.waitingClusters) + (R.waitingClusters === 1 ? ' cluster' : ' clusters') + ' still waiting', text: fmt(R.kinds.waiting) + ' requirements have no destination yet. Their suggestions would bring the set to ' + fmt(R.projected) + '.', btn: 'Show them in the queue', go: goto({ qStatus: 'open' }), ids: [] },
       { k: 'sign', n: R.notSigned, title: 'Get ' + R.notSigned + (R.notSigned === 1 ? ' decision' : ' decisions') + ' fully signed', text: 'Each is missing a lens that the sign-off policy requires.', btn: 'Show decisions in review', go: goto({ qStatus: 'review' }), ids: R.ids.sign },
       { k: 'why', n: R.noWhy, title: 'Write the why on ' + R.noWhy + (R.noWhy === 1 ? ' decision' : ' decisions'), text: 'A reason code is not enough. The note says what a person reading the record later needs to know.', btn: '', go: null, ids: R.ids.why },
       { k: 'second', n: R.noSecond, title: 'Ask a teammate to look at ' + R.noSecond + (R.noSecond === 1 ? ' decision' : ' decisions'), text: 'Only the person who decided has seen these. Open one and use “Send to a teammate”.', btn: '', go: null, ids: R.ids.second },
-      { k: 'oblig', n: R.unprotected, title: 'Settle ' + R.unprotected + (R.unprotected === 1 ? ' merge that loosens' : ' merges that loosen') + ' a requirement', text: 'The owners and the process engineer have not both signed.' + (R.capped ? ' This also lifts the cap at C.' : ''), btn: '', go: null, ids: R.ids.oblig }
+      { k: 'oblig', n: R.unprotected, title: 'Settle ' + R.unprotected + (R.unprotected === 1 ? ' change that loosens' : ' changes that loosen') + ' a requirement', text: 'The owners and the process engineer have not both signed.' + (R.capped ? ' This also lifts the cap at C.' : ''), btn: '', go: null, ids: R.ids.oblig }
     ];
     const rise = risePool.filter((x) => x.n > 0).map((x) => Object.assign(x, { gain: '+' + one(gapOf(x.k)) + ' points at most', g: gapOf(x.k) })).sort((a, b) => b.g - a.g).map((x) => ({
       title: x.title, text: x.text, gain: x.gain, hasBtn: !!x.go, btn: x.btn, go: x.go || (() => {}), ids: asIds(x.ids), hasIds: x.ids.length > 0, more: x.ids.length > 3 ? 'and ' + (x.ids.length - 3) + ' more' : '', hasMore: x.ids.length > 3
@@ -210,7 +300,7 @@
     const infoChip = 'font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;background:#F4F6F8;color:#2F3B46;border:1px solid #B9C3CD;';
     const checks = [
       { chip: adds ? 'Passes' : 'Look at this', style: adds ? okChip : lookChip, label: 'Every original requirement has a destination', detail: 'The destinations above add up to ' + fmt(total) + ' of ' + fmt(R.n) + '. None is lost.' },
-      { chip: R.unprotected ? 'Look at this' : 'Passes', style: R.unprotected ? lookChip : okChip, label: 'No merge loosens a requirement without both signatures', detail: R.mergeN ? (R.mergeN - R.unprotected) + ' of ' + R.mergeN + ' merges are clean.' : 'No merge has been recorded yet.' },
+      { chip: R.unprotected ? 'Look at this' : 'Passes', style: R.unprotected ? lookChip : okChip, label: 'No merge or removal loosens a requirement without both signatures', detail: R.mergeN + R.looseN ? (R.mergeN + R.looseN - R.unprotected) + ' of ' + (R.mergeN + R.looseN) + (R.looseN ? ' merges and removals are clean.' : ' merges are clean.') : 'No merge or removal has been recorded yet.' },
       { chip: 'For information', style: infoChip, label: 'Stale or disputed decisions are left out of the grade', detail: excluded ? excluded + (excluded === 1 ? ' decision does' : ' decisions do') + ' not count until settled.' : 'None right now.' },
       { chip: 'For information', style: infoChip, label: 'Approved and ready to export', detail: ready + ' of ' + R.decided + ' decided clusters have every sign-off they need.' }
     ];
@@ -283,24 +373,19 @@
     const q = S.lfilter.trim().toLowerCase();
     const all = ledgerRows(S, U.cl).filter((r) => !q || (r.cid + ' ' + r.title + ' ' + r.decision + ' ' + r.reason + ' ' + r.by + ' ' + r.note).toLowerCase().indexOf(q) >= 0);
     const PAGE = 10, pages = Math.max(1, Math.ceil(all.length / PAGE)), page = Math.min(S.lpage, pages - 1);
-    const tabStyle = (on) => 'min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#8C98A3') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';';
-    const open = (cid) => () => this.setState({ view: 'review', selected: cid, qTab: 'all', just: '', openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) });
+    const tabStyle = (on) => 'min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:' + (on ? 600 : 500) + ';border:1px solid ' + (on ? 'var(--accent)' : '#7A8793') + ';background:' + (on ? '#E8F0FD' : '#FFFFFF') + ';';
+    const open = (cid) => () => (CL_BY[cid] ? this.setState({ view: 'review', selected: cid, qTab: 'all', just: '', openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) }) : this.setState({ view: 'explorer', xPick: cid, xFilter: 'all', xAlloc: '', xLvl: 0, xGap: false, xPage: 0, rcmp: '', rpick: false }));
     return {
       logTabs: [['ledger', 'Decision ledger'], ['chain', 'Event chain']].map(([k, label]) => ({ label, pressed: S.logTab === k ? 'true' : 'false', pick: () => this.setState({ logTab: k }), style: tabStyle(S.logTab === k) })),
       isLedger: S.logTab === 'ledger', isChain: S.logTab === 'chain',
-      lrows: all.slice(page * PAGE, page * PAGE + PAGE).map((r) => ({ cid: r.cid, title: r.title, when: r.when, decision: r.decision, reason: r.reason, by: r.by, vs: r.vs, state: r.state, note: r.note || 'No note', share: r.share || '', hasShare: !!r.share, open: open(r.cid) })),
+      lrows: all.slice(page * PAGE, page * PAGE + PAGE).map((r) => ({ cid: r.cid, title: r.title, when: r.when, decision: r.decision, reason: r.reason, by: r.by, vs: r.vs, state: r.state, note: r.note || 'No note', share: r.share || '', hasShare: !!r.share, open: open(r.cid), openLabel: CL_BY[r.cid] ? 'Open cluster' : 'Open requirement', openAria: (CL_BY[r.cid] ? 'Open cluster ' : 'Open requirement ') + r.cid })),
       lInfo: all.length ? 'Showing ' + (page * PAGE + 1) + ' to ' + Math.min(all.length, page * PAGE + PAGE) + ' of ' + all.length : 'No decisions match', lPageText: 'Page ' + (page + 1) + ' of ' + pages,
       lPrevDisabled: page === 0, lNextDisabled: page >= pages - 1, lPrev: () => this.setState({ lpage: Math.max(0, page - 1) }), lNext: () => this.setState({ lpage: Math.min(pages - 1, page + 1) }),
       lfilterV: S.lfilter, onLfilter: (e) => this.setState({ lfilter: e.target.value, lpage: 0 }),
       eventRows, tamper: S.tamper, evNote: 'Newest first. Showing the latest ' + Math.min(40, ev.length) + ' of ' + ev.length + ' entries.',
       toggleTamper: () => this.setState({ tamper: !S.tamper, verified: '' }),
       verifyChain: () => {
-        let prev = '00000000', result = 'ok';
-        for (const e of ev) {
-          const payload = [e.seq, e.type, e.actor, e.text, e.target].join('|');
-          if (e.prev !== prev || h32(e.prev + payload) !== e.hash) { result = 'fail:' + e.seq; break; }
-          prev = e.hash;
-        }
+        const result = chainCheck(ev);
         this.setState({ verified: result });
       },
       verifyShown: S.verified !== '',
@@ -322,9 +407,11 @@
     const dec = { newWording: S.polNew, weakening: false };
     const fake = { id: 'CL-POLICY-DEMO', lane: S.polLane, crossOwner: S.polCross, baselined: S.polBase };
     const req = required(fake, dec);
-    const out = SLOT_KEYS.filter((k) => req[k] !== 'none' && !(k === 'PE' && req[k] === 'sample') && !(k === 'NU' && req[k] === 'sample')).map((k) => ({ label: SLOT_NAME[k] }));
-    const samples = SLOT_KEYS.filter((k) => req[k] === 'sample').map((k) => ({ label: SLOT_NAME[k] + ' only if the 20% sample picks the cluster' }));
-    const sel = (on) => 'min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:' + (on ? 600 : 500) + ';border:' + (on ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';background:' + (on ? '#F1F6FF' : '#FFFFFF') + ';';
+    /* the demo cluster is not a real cluster, so its own ID must not decide whether it is sampled: show the sampled lens whenever the rule has one */
+    const sk = (S.polNew ? [] : S.polLane === 'A' ? ['PE'] : S.polLane === 'B' ? ['NU'] : []).filter((k) => req[k] !== 'req');
+    const out = SLOT_KEYS.filter((k) => req[k] !== 'none' && sk.indexOf(k) < 0).map((k) => ({ label: SLOT_NAME[k] }));
+    const samples = sk.map((k) => ({ label: SLOT_NAME[k] + ' only if the 20% sample picks the cluster' }));
+    const sel = (on) => 'min-height:44px;padding:0 14px;border-radius:6px;cursor:pointer;font-weight:' + (on ? 600 : 500) + ';border:' + (on ? '2px solid var(--accent)' : '1px solid #7A8793') + ';background:' + (on ? '#F1F6FF' : '#FFFFFF') + ';';
     const tog = (key, label) => ({ label: label + ': ' + (S[key] ? 'yes' : 'no'), pressed: S[key] ? 'true' : 'false', pick: () => this.setState({ [key]: !S[key] }), style: sel(S[key]) });
     return {
       polRows: rows,
@@ -349,7 +436,7 @@
     const infos = this.allInfos(S).filter((x) => x.dec);
     const readyC = infos.filter((x) => x.st === 'approved'), waitC = infos.filter((x) => x.st === 'review' || x.st === 'decided'), flagC = infos.filter((x) => attention(x.st));
     const go = (c) => () => this.setState({ view: 'review', selected: c.id, qTab: 'all', just: '' });
-    const FM = [['sphinx', 'Sphinx-Needs (reStructuredText)', 'Needs-as-code pages with trace tables', ['requirements.rst', 'traceability.rst', 'change-record.rst']], ['strictdoc', 'StrictDoc (SDoc)', 'Requirements document with HTML or PDF output', ['requirements.sdoc', 'change-record.sdoc']], ['docx', 'Word (.docx)', 'Built from a Word template', ['Requirements-' + S.baseId + '.docx']], ['reqif', 'ReqIF 1.2', 'Round trip back to MSOSA', ['requirements.reqif']]];
+    const FM = [['sphinx', 'Sphinx-Needs (reStructuredText)', 'Needs-as-code pages with trace tables', ['requirements.rst', 'traceability.rst', 'change-record.rst', 'alias-map.csv', 'trace-map.json']], ['strictdoc', 'StrictDoc (SDoc)', 'Requirements document with HTML or PDF output', ['requirements.sdoc', 'change-record.sdoc', 'alias-map.csv', 'trace-map.json']], ['docx', 'Word (.docx)', 'Built from a Word template', ['Requirements-' + S.baseId + '.docx', 'alias-map.csv', 'trace-map.json']], ['reqif', 'ReqIF 1.2', 'Round trip back to MSOSA', ['requirements.reqif', 'alias-map.csv', 'trace-map.json']]];
     const fm = FM.find((f) => f[0] === S.fmt) || FM[0];
     const n = readyC.length;
     const nAll = universe(S).cl.length;
@@ -370,6 +457,7 @@
     const U = universe(S);
     let c = CL_BY[S.selected];
     if (!c || (S.scope !== 'all' && c.alloc !== S.scope)) c = U.order[0];
+    c = aiCl(S, c);
     const cid = c.id, ms = membersOf(S, c), P = this.person(S);
     const log = S.chat[cid] || [];
     const blindHidden = this.blindOn(S) && !decOf(S, cid) && !S.blindDone[cid] && c.ai.mode !== 'none';
@@ -383,10 +471,11 @@
     }));
     return {
       chatShown: S.chatOpen, aCluster: cid + ' · ' + c.title, aActor: P.name + (P.lens ? ' · ' + P.lens : ' · observer'),
-      msgs, hasMsgs: msgs.length > 0, noMsgs: msgs.length === 0, chips: CHIPS.map(([k, label]) => ({ label, onClick: ask(k, label), style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid #0B6E99;background:#E3F4FB;color:#0B4F6E;font-weight:600;' })),
+      msgs, hasMsgs: msgs.length > 0, noMsgs: msgs.length === 0, chips: CHIPS.map(([k, label]) => ({ label, onClick: ask(k, label), off: !!c.aiHeld, style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:' + (c.aiHeld ? 'not-allowed' : 'pointer') + ';font-size:13px;border:1px solid #0B6E99;background:#E3F4FB;color:#0B4F6E;font-weight:600;' + (c.aiHeld ? 'opacity:.55;' : '') })),
+      aHeld: !!c.aiHeld, aHeldNote: c.aiHeld ? 'Not used on this group. ' + c.aiHeld.text : '',
       chatV: S.chatInput, onChat: (e) => this.setState({ chatInput: e.target.value }),
       sendChat: () => { const t = S.chatInput.trim(); if (!t) return; const i = intentOf(t); if (!i) { this.setState({ chatInput: '', chat: Object.assign({}, S.chat, { [cid]: log.concat([{ who: 'you', text: t }, { who: 'bot', text: 'In this prototype I answer the six suggested questions. In the real tool I would answer this from the project, as you, using only what you may read.', quotes: [], draft: '', refs: '' }]) }) }); return; } this.setState({ chatInput: '' }); push(t, reply(i)); },
-      sendDisabled: S.chatInput.trim().length === 0, closeChat: () => this.setState({ chatOpen: false }),
+      sendDisabled: S.chatInput.trim().length === 0 || !!c.aiHeld, closeChat: () => this.setState({ chatOpen: false }),
       blindNote: blindHidden ? 'Blind-first is on, so I will not tell you what the AI judged until you record your own first impression.' : ''
     };
   }
@@ -405,20 +494,33 @@
     v.isExplorer = S.view === 'explorer';
     v.isMethods = S.view === 'methods';
     v.isResults = S.view === 'results';
+    v.isVee = S.view === 'vee';
+    v.isGold = S.view === 'gold';
     v.isAudit = S.view === 'audit';
     v.isPolicy = S.view === 'policy';
+    v.isAi = S.view === 'ai';
     v.isExport = S.view === 'export';
     Object.assign(v, this.valsOpen(S), this.valsImport(S), this.valsVerify(S), this.valsShell(S), this.valsGlossary(S));
+    // the page's name, for the tab, for a screen reader when it changes, and for the skip link
+    v.pageTitle = v.isOpen ? 'Open a requirements project' : v.isVerify ? 'Check statements found in a document' : v.isImport ? 'Map fields and choose scope' : v.pageName;
+    v.pageAnnounce = 'Now showing: ' + v.pageTitle;
+    v.skipToMain = (e) => { if (e && e.preventDefault) e.preventDefault(); const m = typeof document !== 'undefined' ? document.getElementById('main-content') : null; if (m) m.focus(); };
+    if (typeof document !== 'undefined' && document.title !== v.pageTitle + ' · Requirements Consolidator') document.title = v.pageTitle + ' · Requirements Consolidator';
     if (v.inWorkspace) {
-      if (v.isHome) Object.assign(v, this.valsHome(S));
+      this._V = veeOf(S, this.allInfos(S)); this._T = null;
+      Object.assign(v, this.valsVeeStrip(S, this._V));
+      if (v.isHome) Object.assign(v, this.valsHome(S), this.valsKeep(S));
       if (v.isOverview) Object.assign(v, this.valsOverview(S));
       if (v.isReview) Object.assign(v, this.valsQueue(S), this.valsDetail(S));
       if (v.isExplorer) Object.assign(v, this.valsExplorer(S));
       if (v.isMethods) Object.assign(v, this.valsMethods(S));
       if (v.isResults) Object.assign(v, this.valsResults(S));
+      if (v.isVee) Object.assign(v, this.valsVee(S, this._V));
+      if (v.isGold) Object.assign(v, this.valsGold(S));
       if (v.isAudit) Object.assign(v, this.valsAudit(S));
       if (v.isPolicy) Object.assign(v, this.valsPolicy(S));
-      if (v.isExport) Object.assign(v, this.valsExport(S));
+      if (v.isAi) Object.assign(v, this.valsAi(S));
+      if (v.isExport) Object.assign(v, this.valsExport(S), this.valsTrace(S));
       Object.assign(v, this.valsAssist(S));
     }
     return v;

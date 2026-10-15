@@ -10,13 +10,13 @@ Read this with three other things in the repository:
 | [`excalidraw_generator/EXCALIDRAW_GUIDE.md`](../excalidraw_generator/EXCALIDRAW_GUIDE.md) | **How the boards are built** (the Python, the widgets, the recipes). Section 7 below is the craft on top of it. |
 | [`prototype/README.md`](../prototype/README.md) | **The clickable prototype** these pictures come from. |
 
-All screens in the pictures use a synthetic sample. Nothing here has been tested with real users, and the prototype has not had a formal accessibility audit (see section 10).
+All screens in the pictures use a synthetic sample. Nothing here has been tested with real users. The prototype's accessibility was checked by programs, not by anyone using assistive technology (see section 10 and [`ACCESSIBILITY.md`](ACCESSIBILITY.md)).
 
 ---
 
-## 1. A tour in eight pictures
+## 1. A tour in pictures
 
-Each picture is a real screenshot of the prototype. Click one to see it full size. All 19 are in [`images/prototype/`](images/prototype/).
+Each picture is a real screenshot of the prototype. Click one to see it full size. All 29 are in [`images/prototype/`](images/prototype/).
 The prototype bundles its fonts (Public Sans for the interface, Source Serif 4 for requirement wording, JetBrains Mono for IDs; all under the SIL Open Font License), so the pictures show the real typefaces.
 
 **Open: choose where requirements come from.** Six source cards, each with a trust level in words. A drop zone says what a file would be recognised as, before anything is imported.
@@ -31,7 +31,7 @@ The prototype bundles its fonts (Public Sans for the interface, Source Serif 4 f
 **Line up the words: the same comparison as columns.** One column per word of the reference, so a changed number sits directly under the number it replaces. It opens in a wide window because it needs the width; Escape closes it and focus returns to the button that opened it.
 [![The wordings lined up](images/prototype/08_wordings_lined_up.png)](images/prototype/08_wordings_lined_up.png)
 
-**All requirements: a map, not a table.** Each square is a requirement, grouped by what the data says (here, allocation). Faded squares are outside the filter.
+**All requirements: a map, not a table.** Each square is a requirement, grouped by what the data says (here, allocation). Faded squares are outside the filter. A key says what the five kinds of square mean, and colour is not the only carrier: the "needs attention" squares are hatched and the "alone" squares are hollow. The squares are a shortcut for the mouse; the list under the map does the same from the keyboard and a screen reader.
 [![All requirements map](images/prototype/09_all_requirements.png)](images/prototype/09_all_requirements.png)
 
 **Methods and metrics: show the numbers for both approaches, and for the order they run in.** Mechanical only, the AI after the mechanical steps, the AI before them and the AI alone are scored the same way, side by side. A second table does the same for each mechanical method, and a third shows which categories of requirement score best with and without the AI. A banner says the figures are placeholders until a human-labelled set exists.
@@ -43,7 +43,34 @@ The prototype bundles its fonts (Public Sans for the interface, Source Serif 4 f
 **Sending a cluster to a teammate.** From any cluster you can ask someone for a second opinion before you record, hand them the decision, or ask them to review one you recorded. The sender sees who it is waiting on and recording pauses; the teammate sees what was asked and what the sender was about to do. A "second opinion" only counts as "checked by" if you then record what they agreed to.
 [![A cluster waiting on a teammate](images/prototype/18_hand_off_waiting.png)](images/prototype/18_hand_off_waiting.png)
 
-On a phone the side bar becomes a block of buttons at the top and everything else stacks: [Home](images/prototype/15_phone_home.png), [the six wordings](images/prototype/16_phone_six_wordings.png) and [the grade card](images/prototype/19_phone_results.png).
+**The engineering V: what the decisions do to the checks.** Systems engineers think in the V, so the app shows it. Down the left, the levels of requirements (needs, system, subsystem, component); up the right, the check that proves each level (validation, then system, subsystem and component verification). A fuller circle means more of that level has a decision; a fuller square means more of it is traced to a method and a verification item. Under the picture, for each level: requirements now and after your decisions, gaps, and how many verification items sit on requirements your decisions remove. Every number is also in the table below the picture and in the words under it. The levels and the verification shown here are sample values; [`V_MODEL.md`](V_MODEL.md) says how a real project's are counted.
+[![The engineering V](images/prototype/20_the_v.png)](images/prototype/20_the_v.png)
+
+**A cluster in the V.** On a cluster the same idea in one strip: where its members sit, whether they cross levels (then you can link or supersede but not merge), and which verification items would have to move.
+[![A cluster in the V](images/prototype/21_cluster_in_the_v.png)](images/prototype/21_cluster_in_the_v.png)
+
+**Label pairs: a gold set, labelled blind.** The numbers on the metrics page are placeholders until people have labelled pairs of requirements. This page shows one pair at a time **without** saying what any method thought, with six labels to choose from, how many pairs you have done, and how the pairs were chosen (so the figures can say how sure they are). Sample labels can be loaded to see the page filled in; they are marked as samples everywhere. [`GOLD_SET.md`](GOLD_SET.md) explains the estimate.
+[![Label pairs](images/prototype/23_label_pairs.png)](images/prototype/23_label_pairs.png)
+
+**One requirement at a time.** Any requirement, including one nothing was found similar to, can be opened from the map. The panel says what the methods found, offers the five closest in its allocation to put beside it, and takes a decision with a reason code and a note. After recording it says what the decision moves and which sign-offs are waiting; the person who decided cannot sign it themselves.
+[![One requirement](images/prototype/24_one_requirement.png)](images/prototype/24_one_requirement.png)
+
+**The trace map: what a decision moves outside the requirement list.** A merge, a supersede or a drop changes more than the list: verification items must be pointed at the survivor, child requirements need a new parent, baselines need to follow. The page counts them, lists old and new IDs, and offers `trace-map.json` and `alias-map.csv`. The levels, items and links are sample values and the page says so. [`V_MODEL.md`](V_MODEL.md) has the rules.
+[![The trace map](images/prototype/25_trace_map.png)](images/prototype/25_trace_map.png)
+
+**Your work is kept.** On Home, a card says that decisions, sign-offs, hand-offs and labels are kept in this browser, when, and how many; it can save them to a file, load a file back (after checking it and asking) and start over. It says in words that this is not encrypted and not shared. [`KEEPING_THE_WORK.md`](KEEPING_THE_WORK.md) says what is checked before a file replaces anything.
+[![Your work](images/prototype/26_your_work.png)](images/prototype/26_your_work.png)
+
+**AI use: one switch, one data sheet, and what the gate did.** Requirement text goes to a model only when every rule on the page says yes: the switch is on, the data sheet is reviewed and agrees with itself, and the group is not marked above what the sheet approves. The page shows how many groups the gate let through and why it held back the rest, the markings of the requirements, the data sheet, the rules in the order they are checked, and what changed. It says plainly that this page checks and records; the wall that keeps text from leaving is the network rule at your gateway. [`AI_DATA_HANDLING.md`](AI_DATA_HANDLING.md).
+[![AI use](images/prototype/27_ai_use.png)](images/prototype/27_ai_use.png)
+
+**A group held back from the AI.** The review page works as usual, from the mechanical results and the people; the AI box says why no AI answer is shown for this group, and the "Ask the AI to propose" button is switched off and says why.
+[![A held group in review](images/prototype/28_held_group_review.png)](images/prototype/28_held_group_review.png)
+
+**The first Tab stop.** A link that skips the menu appears on screen when the keyboard reaches it.
+[![The skip link](images/prototype/29_skip_link.png)](images/prototype/29_skip_link.png)
+
+On a phone the side bar becomes a block of buttons at the top and everything else stacks: [Home](images/prototype/15_phone_home.png), [the six wordings](images/prototype/16_phone_six_wordings.png), [the grade card](images/prototype/19_phone_results.png) and [the V](images/prototype/22_phone_the_v.png).
 
 ---
 
@@ -72,6 +99,7 @@ A person who is not a systems engineer should be able to answer these without he
 | All requirements | What is in this project, grouped how the data groups it? | 5.2, 5.5 |
 | Methods and metrics | How good is each method, and what does the AI add before or after it? | 5.4 (nothing hidden) |
 | Results and grade | Does the consolidated set hold up against the original, and what would raise the grade? | 5.4 (counts add up) |
+| The V | Does every level of requirement still have a check that proves it, once my decisions are applied? | 5.4, 5.9 (the V is counted from the data, never typed in) |
 | Decisions and audit | What was decided, by whom, and has anything changed since? | 5.6 (always jump back) |
 | Sign-off policy | Who must sign what, and why? | none: this one is about the process, not the data |
 | Export | What goes into the draft package, and what is left out? | 5.4 |
@@ -86,9 +114,9 @@ A new screen should start from the same question: write the question in the titl
 - **Build filters from what is present.** A filter for "allocation" exists only if some record has an allocation. The lists of values come from the data, not from a fixed list in the code.
 - **Say "not provided by this source".** A blank is ambiguous (empty? lost? hidden?). Use the words.
 - **Counts are always on screen and always add up.** Read = kept + rejected + filtered, shown as numbers, not as a progress bar.
-- **No horizontal page scroll** at 1440, 900 and 390 px. The prototype's browser tests check this on the Open and Import screens; the phone screenshots in `images/prototype/` show the stacked layout for the others, which you should check by eye.
+- **No horizontal page scroll** at 1440, 900 and 390 px, and at 320 px (a 1280 px page at 400 percent zoom). `prototype/b20.py` checks every workspace page at 320 px; the phone screenshots in `images/prototype/` show the stacked layout, which you should still check by eye.
 - **Keep reading text readable.** Statements are shown verbatim, long ones can expand, and the line length stays comfortable (the prototype sets statements in a serif so they read as the document, and the interface around them in a sans; IDs are in a monospace).
-- **Keyboard and focus.** Use real buttons and inputs, never clickable boxes, and keep a visible focus ring (the prototype uses a 3 px outline). Aim for 44 px tall targets. The primary buttons and inputs are 44 px; the side bar items and the search box are 40 px, and the smaller controls (the group headers in the side bar, the top-bar icons, "Use as reference") are 32 to 40 px. The prototype has not been checked control by control. A window that opens over the page (the "Line up the words" sheet) moves focus into itself, keeps Tab inside, closes on Escape and gives focus back.
+- **Keyboard and focus.** Use real buttons and inputs, never clickable boxes, and keep a visible focus ring (the prototype uses a 3 px outline). Aim for 44 px tall targets. The primary buttons and inputs are 44 px; the side bar items and the search box are 40 px, and the smaller controls (the group headers in the side bar, the top-bar icons, "Use as reference") are 32 to 40 px. The 44 px aim is not checked control by control; the scan does enforce the WCAG 2.2 minimum of 24 px. `b20.py` also walks the page with Tab and requires a visible ring on every stop, that every stop is scrolled into view and is not hidden behind the sticky top bar, and that the first stop is a skip link. A window that opens over the page (the "Line up the words" sheet) moves focus into itself, keeps Tab inside, closes on Escape and gives focus back.
 
 ### Dispositions, and the AI last
 
@@ -99,6 +127,16 @@ A cluster review has to answer "which of these do I keep, and why?" for every me
 - **Mechanical choices first, the AI last and optional.** The Resolve panel is ordered: what happens, which wording (most stringent, least, median, one member's, your own), and only then "Optional · still unsure? Ask the AI last". That step starts by summing up what the mechanical steps already decided. The AI's text goes through the same guards as anyone's.
 - **Say what the grade is made of.** A grade without its arithmetic is an opinion. The results page prints the weights, the bands and the cap rule, and every part links to the clusters that hold it down.
 - **Ask a person, keep the record.** Sending a cluster to a teammate is a message with a purpose (second opinion, please decide, please review), a visible "waiting on" for both people, and an entry in the event chain. It never replaces a required sign-off.
+
+### Showing where a screen sits in the V
+
+Engineers like to see the V on the screen, and it earns its place: it is how they check that nothing is left unproven. The rules the prototype follows (the full account is in [`V_MODEL.md`](V_MODEL.md)):
+
+- **Small on every screen, whole on one.** A small V sits in the header of every workspace screen and opens the full page. It is the same drawing everywhere so it is learned once.
+- **Fill means progress, and the number is beside it.** A circle fills as more of its level has a decision, a square as more is traced. The accessible name and the table say the same numbers, so the picture is never the only carrier.
+- **The V shows what a decision does.** Not only a status: "after your decisions" sits next to "now", and the verification items that would have to move are counted.
+- **Cluster review warns about crossing levels.** A cluster that spans two levels is a refinement. The screen offers link or supersede, not merge.
+- **Sample values say so.** Until levels come from the data, the page says "Sample values" next to the picture.
 
 ### Comparing wordings
 
@@ -133,8 +171,8 @@ Guidance that the boards follow, and what has and has not been checked:
 
 - **Grey is structure; colour appears only where it carries meaning.** One action colour (a strong blue in the prototype), a small set of soft fills for states, and red only for guards, warnings and notes.
 - **The same colour means the same thing on every screen.** The palette lives in one place for the boards (`excalidraw_generator/wf.py`) and one place for the prototype.
-- **Contrast.** Aim for WCAG 2.2 AA: at least 4.5:1 for normal text and 3:1 for large text and interface components. The prototype was designed for this but **has not been audited**; run a contrast checker over a screenshot before relying on it.
-- **Colour-blind safety.** Because every colour is paired with a word, nothing depends on telling two colours apart. If you add a chart with several series, check the palette with a validator rather than by eye; the prototype's own palette has not been run through one.
+- **Contrast.** Aim for WCAG 2.2 AA: at least 4.5:1 for normal text and 3:1 for large text and interface components. The prototype measures it as drawn: `b20.py` works out the colour behind every piece of text in the browser (including translucent layers and text over shapes in a picture) and the edge of every text box, menu and button, on every page at three widths, and fails below the limit. A background it cannot measure fails the check instead of passing silently. What this does not cover is in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
+- **Colour-blind safety.** Because every colour is paired with a word, nothing depends on telling two colours apart. A chart with several series still has to be checked with a validator rather than by eye, and the prototype does: `prototype/chart_colours.py` simulates red-green colour blindness (Machado 2009) and requires the marks of the status map and of the with-and-without-AI chart to be at least 6 apart (OKLab distance x 100; 8 is the target, and 6 to 8 is allowed only where a label or a pattern also tells the marks apart), at least 15 apart for ordinary vision, and 3:1 against the page. It found real problems: the slate "Without AI" mark and the plum "With AI" mark could not be told apart, and two status colours were too close, so both were changed. The four lens colours (SE, PE, UX, NU) do **not** pass for two pairs; the lens name is always written beside the colour, but the colour does not help a person with colour blindness find a lens. To add a chart, give each mark in its key `data-chart-mark="<chart name>"` and list it in `b20.py`.
 - **Type.** One sans for the interface (Public Sans), a serif for requirement statements only (Source Serif 4), a monospace for IDs (JetBrains Mono). Section titles are the same sans in bold, not the serif: the serif is kept for the words a person is deciding about, so it always means "this is the requirement text". Labels are sentence case, not capitals. Use two or three sizes for body text, not seven.
 
 ---
@@ -156,7 +194,7 @@ The boards are generated by Python, so beauty here means *consistency you can ch
 
 The sequence for a new screen is in [`EXCALIDRAW_GUIDE.md`](../excalidraw_generator/EXCALIDRAW_GUIDE.md), recipes A to F.
 
-### The ten boards
+### The eleven boards
 
 Click a board to see it in full. They are rendered by the repository's own `render.py` (Excalidraw's exporter in headless Chromium); regenerate with the commands in the guide.
 
@@ -165,7 +203,7 @@ Click a board to see it in full. They are rendered by the repository's own `rend
 | [![01](images/boards/thumbs/01_storyboard.png)](images/boards/01_storyboard.png)<br>**01 Storyboard** | [![02](images/boards/thumbs/02_wireframes.png)](images/boards/02_wireframes.png)<br>**02 Wireframes** | [![03](images/boards/thumbs/03_system_flows.png)](images/boards/03_system_flows.png)<br>**03 System flows** |
 | [![04](images/boards/thumbs/04_ui_kit_and_IA.png)](images/boards/04_ui_kit_and_IA.png)<br>**04 UI kit and information architecture** | [![05](images/boards/thumbs/05_scale_and_multiuser.png)](images/boards/05_scale_and_multiuser.png)<br>**05 Scale and many reviewers** | [![06](images/boards/thumbs/06_lens_views.png)](images/boards/06_lens_views.png)<br>**06 Four lens views** |
 | [![07](images/boards/thumbs/07_group_and_decisions.png)](images/boards/07_group_and_decisions.png)<br>**07 Group decisions** | [![08](images/boards/thumbs/08_assistant.png)](images/boards/08_assistant.png)<br>**08 The assistant** | [![09](images/boards/thumbs/09_more_pipelines.png)](images/boards/09_more_pipelines.png)<br>**09 More pipelines** |
-| [![10](images/boards/thumbs/10_input_any_source.png)](images/boards/10_input_any_source.png)<br>**10 Any input** | | |
+| [![10](images/boards/thumbs/10_input_any_source.png)](images/boards/10_input_any_source.png)<br>**10 Any input** | [![11](images/boards/thumbs/11_the_engineering_v.png)](images/boards/11_the_engineering_v.png)<br>**11 The engineering V** | |
 
 ---
 
@@ -173,7 +211,7 @@ Click a board to see it in full. They are rendered by the repository's own `rend
 
 1. **Contract.** Start from `GUI_CONTRACT.md`: what data exists and what each field can be. Do not look at a sample file.
 2. **Storyboard.** Who is this for, in what moments, feeling what (board 01).
-3. **Wireframes.** One frame per screen, with callouts and notes (boards 02, 05 to 08, 10).
+3. **Wireframes.** One frame per screen, with callouts and notes (boards 02, 05 to 08, 10, 11).
 4. **Flows and rules.** Where each piece of data comes from and who decides (boards 03, 09).
 5. **Prototype.** The same screens clickable, with synthetic data (`prototype/`). Capture them with `python3 shots.py` and look at the result.
 6. **Run it on the 14 test datasets.** `reqin make-datasets datasets/` builds folders that differ on purpose (no IDs, no links, 50,000 rows, awkward text, unknown fields). A screen that only works on one of them is molded to a sample.
@@ -193,6 +231,7 @@ At each step the output is a file someone else can open, so nothing depends on a
 - [ ] Empty, one-record and very large cases all show something helpful.
 - [ ] Nothing is hard-coded to a source, a column name or a sample's size.
 - [ ] The page does not scroll sideways at 1440, 900 and 390 px.
+- [ ] `python3 b20.py` passes at 1440, 900 and 390 (axe, contrast as drawn, keyboard, reflow, chart colours). A new page has its own title and one heading and is added to `PAGES` in `b20.py`; a chart whose marks differ by colour is run through `chart_colours.py`.
 - [ ] You looked at a screenshot of every changed screen at 100 percent.
 - [ ] The sample data is obviously synthetic and no real program data is anywhere in the picture.
 
@@ -201,7 +240,7 @@ At each step the output is a file someone else can open, so nothing depends on a
 ## 10. What this guide does not claim
 
 - It has **not been tested with real users**. The board 01 persona and the flows are design hypotheses.
-- The prototype has **no formal accessibility audit** and its palette has not been run through a colour-blind simulator. The comparison colours were chosen for contrast on white and each is paired with a shape, but they were checked by eye, not with a tool.
+- The prototype's accessibility was checked by **programs** (axe-core and checks written for this page): that finds a part of the problems. **No screen reader, switch device or voice control has been used with it, and no person with a disability has tried it.** Chromium only. The lens colours fail the colour-blind check for two pairs. [`ACCESSIBILITY.md`](ACCESSIBILITY.md) lists what was checked, what was changed because of it and what was not checked.
 - The contract and the 14 datasets have been tested against `reqin`'s own importers, not against any particular GUI.
 - "Good-looking" is judged by eye. Nothing in the test suite can tell you whether a screen is clear.
 - The synthetic sample project is generic (a made-up aerospace example); it says nothing about any real program.

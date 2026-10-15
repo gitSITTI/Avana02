@@ -1,11 +1,13 @@
-# `make check` runs what CI runs. Needs: python3 (3.11+), and `pip install -e "reqin[test]"` once.
+# `make check` runs the checks that need only Python and Node. `make check-full` adds the browser tests and the scale test, which CI also runs
+# and which also need Playwright for Python and a Chromium. Needs: python3 (3.11+), and `pip install -e "reqin[test]"` once.
 CTR ?= $(shell command -v podman 2>/dev/null || command -v docker 2>/dev/null)
 PY  ?= python3
 IMG ?= requirements-consolidator/reqin:dev
 
-.PHONY: help check guard secrets hooks test template boards proto proto-test image image-test render
+.PHONY: help check check-full guard secrets hooks test template boards proto proto-test proto-scale image image-test render
 help:
-	@echo "check       guard + test + boards (what CI runs)"
+	@echo "check       guard + secrets + test + template + boards + proto (needs only Python and Node)"
+	@echo "check-full  check, then proto-test and proto-scale (everything CI runs)"
 	@echo "guard       refuse real-data files (tools/check_no_real_data.py)"
 	@echo "secrets     gitleaks over the whole history, plus the private-term check if you have a list"
 	@echo "hooks       turn on the pre-commit and commit-msg hooks for this clone (installs the pinned gitleaks)"
@@ -13,12 +15,15 @@ help:
 	@echo "template    the connector template's own tests, in a throwaway virtualenv (.cache/tpl-venv)"
 	@echo "boards      rebuild all Excalidraw boards and confirm they match the committed ones"
 	@echo "proto       rebuild the prototype page, confirm it matches the committed one, run the static check"
-	@echo "proto-test  prototype browser tests (needs npm, Playwright for Python, Chromium)"
+	@echo "proto-test  prototype browser tests, accessibility included, at three screen widths (needs npm, Playwright for Python, Chromium)"
+	@echo "proto-scale prototype scale test: 25,000 requirements, timed (needs node and python3)"
 	@echo "image       build the runtime image with podman (or docker)"
 	@echo "image-test  build the test stage (runs the tests inside the container)"
 	@echo "render      boards -> PNG in excalidraw_generator/out (needs node + Playwright; see EXCALIDRAW_GUIDE.md)"
 
 check: guard secrets test template boards proto
+
+check-full: check proto-test proto-scale
 
 guard:
 	$(PY) -m pytest -q tools
@@ -50,7 +55,12 @@ proto:
 	cd prototype && $(PY) build.py /tmp/Main.built.dc.html >/dev/null && cmp /tmp/Main.built.dc.html project/Main.dc.html && node verify.js project/Main.dc.html | grep -E "^ISSUES 0$$"
 
 proto-test:
-	cd prototype && (cd vendor && npm ci) && $(PY) b11.py 1440 && $(PY) b11.py 390 && $(PY) b12.py 1440 && $(PY) b12.py 390 && $(PY) b13.py 1440 && $(PY) b13.py 390
+	cd prototype/vendor && npm ci
+	cd prototype && $(PY) run_browser_tests.py
+
+# Builds a page with 20 times the sample (24,960 requirements) in a temporary folder and times what a person waits for. SCALE_SLACK=2 doubles every limit on a slow machine.
+proto-scale:
+	cd prototype && node scale.js
 
 image:
 	$(CTR) build -t $(IMG) -f Containerfile .

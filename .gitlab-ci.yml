@@ -10,12 +10,14 @@ workflow:
     - if: $CI_COMMIT_BRANCH
     - if: $CI_COMMIT_TAG
 
-stages: [guard, test, boards, image]
+stages: [guard, test, boards, browser, image]
 
 variables:
   # Behind a firewall? Set PYTHON_IMAGE to your internal mirror (and PIP_INDEX_URL to your PyPI mirror) in Settings > CI/CD > Variables.
   PYTHON_IMAGE: "docker.io/library/python"
   NODE_IMAGE: "docker.io/library/node"
+  # The Playwright image carries Chromium and its system libraries. Its version must equal the one in prototype/requirements-test.txt (tools/test_workflows.py checks).
+  PLAYWRIGHT_IMAGE: "mcr.microsoft.com/playwright/python:v1.56.0-noble"
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHONDONTWRITEBYTECODE: "1"
@@ -109,6 +111,39 @@ prototype:verify:
   script:
     - cd prototype
     - node verify.js project/Main.dc.html
+
+# 3c. The prototype in a real browser, ten test files at three screen widths (the flows, the V, the gold set, keeping the work, the AI gate, and the
+#     accessibility scan). The libraries come from the first job as an artifact, so the browser image needs no Node. The 30 runs took about 17 minutes in all where this was written (a busy machine).
+prototype:vendor:
+  stage: boards
+  image: "$NODE_IMAGE:22-slim"
+  script:
+    - cd prototype/vendor
+    - npm ci
+  artifacts:
+    paths: [prototype/vendor/node_modules]
+    expire_in: 1 day
+
+prototype:browser:
+  stage: browser
+  image: "$PLAYWRIGHT_IMAGE"
+  needs: ["prototype:vendor"]
+  timeout: 1h
+  script:
+    - pip install -r prototype/requirements-test.txt
+    - cd prototype
+    - python run_browser_tests.py
+
+# 3d. The scale test: 20 times the sample (24,960 requirements) built in a temporary folder and timed. The full node image has the Python the build needs.
+#     SCALE_SLACK doubles every limit for a shared runner; the limits themselves are about three times what a laptop needs.
+prototype:scale:
+  stage: browser
+  image: "$NODE_IMAGE:22"
+  variables:
+    SCALE_SLACK: "2"
+  script:
+    - cd prototype
+    - node scale.js
 
 # 4. Container image (Podman). Manual by default because it needs a runner that allows building images.
 #    Make it automatic by deleting the `when: manual` / `allow_failure` lines.

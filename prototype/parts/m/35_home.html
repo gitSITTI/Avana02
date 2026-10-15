@@ -6,8 +6,9 @@
           <span aria-hidden="true" style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;flex:none">§IC:lock:20§</span>
           <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:2px">
             <div style="font-weight:700;font-size:16px">High security</div>
-            <div style="color:#C5D0DA;font-size:13px;max-width:62ch">This project runs on your own servers and opens every source read-only. AI is optional and goes through the gateway your administrator sets up.</div>
+            <div style="color:#C5D0DA;font-size:13px;max-width:62ch">{{secLine}}</div>
           </div>
+          <button onClick="{{secAiOpen}}" style="min-height:44px;padding:0 14px;border-radius:8px;cursor:pointer;font-weight:600;background:transparent;color:#FFFFFF;border:1px solid rgba(255,255,255,.55)">AI use</button>
           <ul style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px">
             <sc-for list="{{secFacts}}" as="f" hint-placeholder-count="3"><li style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.1);color:#E8EDF1">§IC:check:14§{{f}}</li></sc-for>
           </ul>
@@ -36,6 +37,57 @@
                     <span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">{{s.title}}</span><span style="font-size:12px;color:var(--slate)">{{s.sub}}</span></span>
                   </button>
                 </sc-for>
+              </div>
+            </section>
+            <section aria-labelledby="home-v" style="§CARD§padding:16px 20px;display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center">
+              §VG:vHome:132§
+              <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:6px">
+                <h2 id="home-v" style="margin:0;font-size:16px;font-weight:700">{{vHomeTitle}}</h2>
+                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px;color:#2A353F">
+                  <sc-for list="{{vHomeLines}}" as="l" hint-placeholder-count="3"><li style="display:flex;align-items:center;gap:8px"><span aria-hidden="true" style="{{l.shape}}"></span>{{l.t}}</li></sc-for>
+                </ul>
+              </div>
+              <button onClick="{{openVee}}" style="§BTN§">Open the V</button>
+            </section>
+            <section aria-labelledby="home-keep" style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <h2 id="home-keep" style="margin:0;font-size:16px;font-weight:700">{{kHead}}</h2>
+                <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{kLine}}</p>
+                <sc-if value="{{kRestored}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:13px;color:#14502B;font-weight:600;max-width:70ch">{{kRestoredText}}</p></sc-if>
+                <sc-if value="{{kWarn}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:13px;color:#7A1510;font-weight:600;max-width:70ch">{{kWarnText}}</p></sc-if>
+                <p style="margin:0;font-size:12px;color:var(--slate);max-width:70ch">{{kScope}}</p>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <button onClick="{{kSave}}" style="§BTN§">Save to a file</button>
+                <button onClick="{{kLoad}}" style="§BTN§">Load from a file</button>
+                <button onClick="{{kStart}}" disabled="{{kStartDisabled}}" style="§BTN§">Start over</button>
+                <input id="keep-file" type="file" accept=".json,application/json" onChange="{{kFile}}" aria-label="Choose a saved project file" tabindex="-1" style="display:none">
+              </div>
+              <sc-if value="{{kOther}}" hint-placeholder-val="{{ false }}">
+                <div role="group" aria-label="Choose whose work stands" style="border:2px solid #A15C00;border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:10px;background:#FFF7E6">
+                  <div style="font-weight:700;font-size:14px">Which tab’s work should stand?</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{kTake}}" style="§BTN§">Use the other tab’s work (this tab’s changes are dropped)</button><button onClick="{{kMine}}" style="§BTN§">Keep this tab’s work (it overwrites the other tab’s)</button></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{kAskStart}}" hint-placeholder-val="{{ false }}">
+                <div role="group" aria-label="Confirm start over" style="border:2px solid #A6261E;border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:10px;background:#FFF7F6">
+                  <div style="font-weight:700;font-size:14px">Start over and remove the work kept in this browser?</div>
+                  <div style="font-size:13px;color:#2A353F;max-width:70ch">Every decision, sign-off, hand-off, label and the event record go back to how the sample started. A saved file is not touched, so save one first if you want to keep this.</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{kDoStart}}" style="§BTN§border-color:#A6261E;color:#7A1510">Remove my work and start over</button><button onClick="{{kCancel}}" style="§BTN§">Keep my work</button></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{kAskLoad}}" hint-placeholder-val="{{ false }}">
+                <div role="group" aria-label="Confirm loading a file" style="border:2px solid var(--accent);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:10px;background:#F1F6FF">
+                  <div style="font-weight:700;font-size:14px">Replace the work in this browser with this file?</div>
+                  <ul style="margin:0;padding-left:18px;font-size:13px;color:#2A353F;display:flex;flex-direction:column;gap:2px;max-width:70ch"><sc-for list="{{kSummary}}" as="l" hint-placeholder-count="3"><li>{{l.t}}</li></sc-for></ul>
+                  <div style="font-size:13px;color:#2A353F;max-width:70ch">The file passed every check. Loading it replaces what is here now.</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{kDoLoad}}" style="§PRI§padding:0 20px">Replace my work with this file</button><button onClick="{{kCancel}}" style="§BTN§">Keep my work</button></div>
+                </div>
+              </sc-if>
+              <div role="status" aria-live="polite">
+                <sc-if value="{{kHasMsg}}" hint-placeholder-val="{{ false }}">
+                  <div style="{{kMsgStyle}}"><div style="font-weight:600">{{kMsgText}}</div><sc-for list="{{kMsgNotes}}" as="n" hint-placeholder-count="2"><div>{{n.t}}</div></sc-for></div>
+                </sc-if>
               </div>
             </section>
             <div class="home-two">

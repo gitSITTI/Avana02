@@ -42,7 +42,7 @@
     return {
       sources: SOURCES.map((s) => ({ ...s, trustStyle: this.chipStyle(s.trust), btn: s.later ? 'See how' : 'Choose', style: cardStyle(s.later), pick: s.later ? () => this.setState({ openNote: S.openNote === 'mdzip' ? '' : 'mdzip' }) : this.goImport(s.k) })),
       trustLegend: ['Structured', 'Tabular', 'Parsed', 'Extracted'].map((k) => ({ name: k, means: TRUST[k].means, style: this.chipStyle(k) })),
-      files: FILES.map((f) => ({ name: f.f, on: S.drop === f.f, style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:13px;background:' + (S.drop === f.f ? '#F1F6FF' : '#FFFFFF') + ';border:' + (S.drop === f.f ? '2px solid var(--accent)' : '1px solid #8C98A3') + ';', pick: () => this.setState({ drop: f.f, openNote: f.src === 'mdzip' ? 'mdzip' : '' }) })),
+      files: FILES.map((f) => ({ name: f.f, on: S.drop === f.f, style: 'min-height:44px;padding:0 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:13px;background:' + (S.drop === f.f ? '#F1F6FF' : '#FFFFFF') + ';border:' + (S.drop === f.f ? '2px solid var(--accent)' : '1px solid #7A8793') + ';', pick: () => this.setState({ drop: f.f, openNote: f.src === 'mdzip' ? 'mdzip' : '' }) })),
       dropShown: !!dropFile, dropEmpty: !dropFile, dropRec: dropFile ? dropFile.rec : '', dropTrust: dropFile ? dropFile.trust : 'Later',
       dropTrustName: dropFile ? (dropFile.trust === 'Later' ? 'Not read directly yet' : dropFile.trust) : '',
       dropTrustStyle: this.chipStyle(dropFile ? dropFile.trust : 'Later'), dropUsable: !!dropFile && dropFile.src !== 'mdzip',
@@ -209,12 +209,19 @@
       verifyBack: () => this.setState({ view: 'open' })
     };
   }
+  aiBandLine(S) {
+    if (!S.aiOn) return 'AI is switched off for the whole project.';
+    if (!aiReviewed(S.aiSheet)) return 'AI is on, but nothing goes to a model until the AI data sheet is reviewed.';
+    if (aiProblemsOf(S.aiSheet).length) return 'AI is on, but nothing goes to a model until the AI data sheet is made consistent.';
+    const c = aiCounts(S, CLUSTERS);
+    return 'AI can see ' + c.open.toLocaleString('en-US') + ' of ' + c.total.toLocaleString('en-US') + ' groups. ' + (c.held ? c.held.toLocaleString('en-US') + ' are held back by the AI data sheet.' : 'None are held back.');
+  }
   /* ----- shell ----- */
   valsShell(S) {
     const P = this.person(S), lead = P.role === 'lead';
     const nMe = this.openCount(S);
-    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', results: 'icMedal', methods: 'icFlask', audit: 'icClock', policy: 'icShield', export: 'icExport' };
-    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', results: 'Results and grade', methods: 'Methods and metrics', audit: 'Decisions and audit', policy: 'Sign-off policy', export: 'Export to documents' };
+    const IC = { home: 'icHome', review: 'icQueue', explorer: 'icTable', overview: 'icChart', vee: 'icVee', results: 'icMedal', methods: 'icFlask', gold: 'icTag', audit: 'icClock', policy: 'icShield', ai: 'icSpark', export: 'icExport' };
+    const NAME = { home: 'Home', review: 'Review queue', explorer: 'All requirements', overview: 'Overview', vee: 'The V', results: 'Results and grade', methods: 'Methods and metrics', gold: 'Label pairs', audit: 'Decisions and audit', policy: 'Sign-off policy', ai: 'AI use', export: 'Export to documents' };
     const item = (k) => {
       const o = { label: NAME[k], onClick: () => this.setState({ view: k }), current: S.view === k ? 'page' : 'false', hasCount: k === 'review', count: String(nMe) };
       Object.keys(IC).forEach((j) => { o[IC[j]] = j === k; });
@@ -232,13 +239,13 @@
       { label: 'A teammate claims the open cluster', hint: 'Shows the soft-claim chip.', disabled: !sel, onClick: () => this.setState({ claims: Object.assign({}, S.claims, { [sel.id]: { by: 'Priya Raman', lens: 'PE', mins: 0 } }) }) },
       { label: 'A teammate changes the open cluster', hint: 'Bumps its version under you.', disabled: !sel, onClick: () => { const v = (S.liveVer[sel.id] || 0) + 1; this.setState({ liveVer: Object.assign({}, S.liveVer, { [sel.id]: v }), events: this.mk(S.events, 'human', 'Priya Raman · PE', 'Added a note on the cluster (simulated)', sel.id) }); } },
       { label: 'The source drifts under a decision', hint: 'Needs a decided cluster.', disabled: !sel || !decSel, onClick: () => this.setState({ stale: Object.assign({}, S.stale, { [sel.id]: { req: sel.members[0].id, when: TODAY, what: 'The source text of ' + sel.members[0].id + ' changed in the model after this decision was made.', hash: h32(sel.id + 'drift') } }), events: this.mk(S.events, 'mechanical', 'Refresh', 'Source drift detected on ' + sel.members[0].id, sel.id) }) }
-    ].map((x) => ({ ...x, style: 'text-align:left;min-height:44px;padding:4px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;border:1px dashed #8C98A3;background:#FFFFFF;color:var(--ink);' }));
+    ].map((x) => ({ ...x, style: 'text-align:left;min-height:44px;padding:4px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;border:1px dashed #7A8793;background:#FFFFFF;color:var(--ink);' }));
     const scopeTxt = S.scope === 'all' ? 'Whole project' : 'Pilot · ' + S.scope;
     const team = PEOPLE.filter((p) => p.k !== S.person && p.role !== 'observer').slice(0, 3);
     const qFirst = (v) => (typeof v === 'string' ? v : '');
     return {
       projectName: 'Reference air vehicle', scopeTxt, pageName: NAME[S.view] || 'Home',
-      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'results', 'methods', 'audit'].map(item), navOut: ['policy', 'export'].map(item),
+      navTop: ['home', 'review', 'explorer'].map(item), navProg: ['overview', 'vee', 'results', 'methods', 'gold', 'audit'].map(item), navOut: ['policy', 'ai', 'export'].map(item),
       progExp: progOpen ? 'true' : 'false', outExp: outOpen ? 'true' : 'false',
       toggleProg: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { prog: progOpen }) }),
       toggleOut: () => this.setState({ navClosed: Object.assign({}, S.navClosed, { out: outOpen }) }),
@@ -293,6 +300,8 @@
     });
     return {
       secFacts: ['Sources are read-only', 'Runs on your servers', 'Every action is logged'],
+      secLine: 'This project runs on your own servers and opens every source read-only. ' + this.aiBandLine(S),
+      secAiOpen: () => this.setState({ view: 'ai' }),
       homeTitle: obs ? 'You can look at everything' : nMe ? nMe.toLocaleString('en-US') + (nMe === 1 ? ' cluster is' : ' clusters are') + ' waiting for you' : 'Nothing is waiting for you',
       homeSub: obs ? 'Your account is read only, so nothing here can be changed. ' + decided + ' of ' + total + ' clusters have a decision.' : first + ', ' + decided + ' of ' + total + ' clusters have a decision and ' + approved + ' are approved by every lens they need.',
       nextLabel: obs ? 'Look at the next cluster' : 'Review the next cluster',

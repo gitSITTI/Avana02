@@ -169,7 +169,7 @@ with session(W, 1000) as (pg, errs):
     # ---- methods and metrics
     nav(pg, 'Methods and metrics')
     t = body(pg)
-    ok(pg.inner_text('h1').strip() == 'Methods and metrics' and 'Sample values.' in t, 'metrics: opens, and says its numbers are samples')
+    ok(pg.inner_text('h1').strip() == 'Methods and metrics' and 'Only the first table is measured.' in t and 'placeholder' in t, 'metrics: opens, and says which table is measured and which are placeholders')
     ok('Four ways of working, side by side' in t and 'Each mechanical method, then with the AI' in t and 'Which categories score best, with and without AI' in t, 'metrics: the three comparisons are there')
     for arm in ['Mechanical only', 'Mechanical, then AI', 'AI, then mechanical', 'AI only']:
         ok(arm in t, 'metrics: arm "%s"' % arm)

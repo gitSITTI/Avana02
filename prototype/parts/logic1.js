@@ -140,7 +140,7 @@ function aiShare(aiText, finalText) {
 }
 
 /* ---------- policy ---------- */
-const sampled = (cid, k) => h32(cid + k) % 5 === 0;
+const sampled = (cid, k) => parseInt(h32(cid + k), 16) % 5 === 0; /* h32 returns hex text; parse it, or the test is NaN and nothing is ever sampled */
 function required(c, dec, forecastNew) {
   const nw = dec ? !!dec.newWording : !!forecastNew;
   const out = { SE: 'none', PE: 'none', UX: 'none', NU: 'none', OWN: 'none', ADJ: 'none' };
@@ -219,7 +219,7 @@ function strategyAvail(S, c, ms, rk) {
     median: rk.length < 3 ? 'Needs at least three ranked members. This group has ' + rk.length + '.' : '',
     member: '',
     own: '',
-    ai: c.aiDraft ? '' : 'The AI declined to draft wording for this group.'
+    ai: c.aiHeld ? c.aiHeld.text : c.aiDraft ? '' : 'The AI declined to draft wording for this group.'
   };
 }
 function evaluate(S, c, ms, res) {
@@ -259,8 +259,8 @@ function evaluate(S, c, ms, res) {
   } else if (res.strat === 'own') {
     sel = res.own.trim() ? { text: res.own.trim() } : { err: 'Write the wording you want to keep.' };
   } else {
-    const t = (res.aiText || c.aiDraft || '').trim();
-    sel = t ? { text: t } : { err: 'The AI declined to draft wording for this group.' };
+    const t = c.aiHeld ? '' : (res.aiText || c.aiDraft || '').trim();
+    sel = t ? { text: t } : { err: c.aiHeld ? 'The AI is not used on this group: ' + c.aiHeld.text : 'The AI declined to draft wording for this group.' };
   }
   if (sel.err) { out.err = sel.err; add('Wording', 'block', sel.err); return out; }
   out.chosen = sel.m || null;
@@ -377,7 +377,11 @@ const DISP_STYLE = {
   linked: 'background:#EDE8F8;color:#3A2A80;border:1px solid #C4B6EC;',
   escalated: 'background:#FFF0D2;color:#6B3D00;border:1px solid #E5C87A;',
   superseded: 'background:#F4F6F8;color:#4F5B66;border:1px solid #B9C3CD;',
-  pending: 'background:#FFFFFF;color:#4F5B66;border:1px dashed #B9C3CD;'
+  pending: 'background:#FFFFFF;color:#4F5B66;border:1px dashed #B9C3CD;',
+  kept1: 'background:#E1F2E7;color:#14502B;border:1px solid #9CCBAE;',
+  reworded: 'background:#F6E4EF;color:#6A1650;border:1px solid #D9A9C6;',
+  dropped: 'background:repeating-linear-gradient(45deg,#FDE3E0 0 4px,#FFFFFF 4px 7px);color:#7A1510;border:1px solid #E1A29C;',
+  notreq: 'background:repeating-linear-gradient(135deg,#E4E9ED 0 4px,#FFFFFF 4px 7px);color:#2F3B46;border:1px solid #B9C3CD;'
 };
 function valTxt(c, m) {
   if (c.kind === 'modal') return '“' + (modalOf(m.text) || 'no modal verb') + '”';

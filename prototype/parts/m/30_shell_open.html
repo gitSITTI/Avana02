@@ -2,6 +2,7 @@
 <!-- ========== WORKSPACE SHELL ========== -->
 <sc-if value="{{inWorkspace}}" hint-placeholder-val="{{ false }}">
 <div class="ws">
+  <a class="skip-link" href="#main-content" onClick="{{skipToMain}}">Skip to the main content</a>
   <nav class="ws-nav" aria-label="Main">
     <div class="ws-brand" style="display:flex;align-items:center;gap:10px;padding:2px 6px">
       <span aria-hidden="true" style="width:30px;height:30px;border-radius:9px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="8" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><rect x="6.5" y="6.5" width="8" height="8" rx="2" fill="#fff"/></svg></span>
@@ -77,10 +78,11 @@
         §IC:search:16§
         <input id="top-search" type="search" value="{{tbSearchV}}" onChange="{{onTbSearch}}" placeholder="Search requirements" aria-label="Search requirements">
       </div>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <div style="margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px">
         <span style="display:inline-flex;align-items:center;padding-right:10px" role="group" aria-label="Teammates on this project (sample)">
           <sc-for list="{{presence}}" as="a" hint-placeholder-count="3"><span class="av" title="{{a.title}}" style="background:{{a.color}}">{{a.init}}</span></sc-for>
         </span>
+        <button class="tb-icon" onClick="{{openVee}}" aria-label="{{vTopAria}}" title="The V: levels and what checks them" style="width:auto;padding:0 8px">§VG:vTop:64:h§</button>
         <button class="tb-icon" onClick="{{openGlossary}}" aria-label="Open the glossary" title="Glossary and help">§IC:help:20§</button>
         <button class="tb-icon" onClick="{{openAudit}}" aria-label="Open the audit log" title="Decisions and audit">§IC:clock:20§</button>
         <button onClick="{{chatToggle}}" aria-pressed="{{chatPressed}}" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:var(--radius-ctl);cursor:pointer;font-weight:600;border:1px solid #0B6E99;background:#E3F4FB;color:#0B4F6E">§IC:spark:16§{{chatLabel}}</button>
@@ -90,7 +92,7 @@
       <b>Draft</b>
       <span style="flex:1 1 320px">Suggestions are drafts until every lens the sign-off policy requires has signed. Nothing is written back to your source model.</span>
     </div>
-    <div class="content">
+    <div class="content" id="main-content" tabindex="-1">
       <sc-if value="{{glossaryOpen}}" hint-placeholder-val="{{ false }}">
       <section aria-label="Glossary" style="background:#FFFFFF;border:2px solid var(--accent);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">

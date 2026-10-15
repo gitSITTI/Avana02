@@ -9,16 +9,20 @@
         <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Filter requirements">
           <sc-for list="{{xChips}}" as="c" hint-placeholder-count="7"><button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}} <span style="font-variant-numeric:tabular-nums;color:#4F5B66">{{c.count}}</span></button></sc-for>
         </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Filter by level of the V and by verification gaps">
+          <sc-for list="{{xLvlChips}}" as="c" hint-placeholder-count="5"><button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}</button></sc-for>
+          <button onClick="{{xGapPick}}" aria-pressed="{{xGapPressed}}" style="{{xGapStyle}}">{{xGapLabel}}</button>
+        </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;font-size:13px">
-          <sc-for list="{{legend}}" as="l" hint-placeholder-count="5"><span style="display:inline-flex;align-items:center;gap:6px"><span style="{{l.shape}}"></span>{{l.label}} · {{l.n}}</span></sc-for>
+          <sc-for list="{{legend}}" as="l" hint-placeholder-count="5"><span style="display:inline-flex;align-items:center;gap:6px"><span data-chart-mark="status map" style="{{l.shape}}"></span>{{l.label}} · {{l.n}}</span></sc-for>
           <sc-if value="{{xHasAlloc}}" hint-placeholder-val="{{ false }}"><button onClick="{{xClearAlloc}}" style="§BTN§min-height:36px;font-size:13px">Showing {{xAllocName}} only · clear</button></sc-if>
         </div>
         <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:14px">
-          <div style="§CAP§">Map, grouped by allocation. Faded squares are outside the filter</div>
+          <div style="§CAP§">Map, grouped by allocation. Faded squares are outside the filter. The squares are a shortcut for the mouse; the list further down does the same from the keyboard</div>
           <sc-for list="{{groups}}" as="g" hint-placeholder-count="8">
             <div style="display:flex;flex-direction:column;gap:6px">
               <button onClick="{{g.pick}}" aria-pressed="{{g.pressed}}" style="align-self:flex-start;min-height:36px;padding:0 10px;background:transparent;border:0;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px">{{g.name}} <span style="font-weight:400;color:#4F5B66">· {{g.count}}</span></button>
-              <div class="xmap"><sc-for list="{{g.cells}}" as="c" hint-placeholder-count="30"><span title="{{c.title}}" onClick="{{c.pick}}" style="{{c.style}}"></span></sc-for></div>
+              <div class="xmap" aria-hidden="true"><sc-for list="{{g.cells}}" as="c" hint-placeholder-count="30"><span title="{{c.title}}" onClick="{{c.pick}}" style="{{c.style}}"></span></sc-for></div>
             </div>
           </sc-for>
         </div>
@@ -26,7 +30,7 @@
           <div style="flex:3 1 560px;min-width:0;display:flex;flex-direction:column;gap:12px">
             <div style="§CARD§overflow:hidden">
               <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">By allocation. Click a row to filter</div>
-              <div style="overflow-x:auto"><div style="min-width:640px">
+              <div role="region" tabindex="0" aria-label="Requirements by allocation" style="overflow-x:auto"><div style="min-width:640px">
                 <div style="display:grid;grid-template-columns:minmax(0,1.4fr) repeat(7,minmax(0,.7fr));gap:8px;padding:8px 16px;border-bottom:1px solid #D5DADE;font-size:12px;color:#4F5B66;font-weight:600"><span>Allocation</span><span>Total</span><span>Alone</span><span>Needs decision</span><span>In review</span><span>Approved</span><span>Attention</span><span>Clusters</span></div>
                 <sc-for list="{{allocRows}}" as="a" hint-placeholder-count="8">
                   <div style="{{a.rowStyle}}">
@@ -42,7 +46,7 @@
             </div>
             <div style="display:flex;flex-direction:column;gap:6px">
               <sc-for list="{{xRows}}" as="r" hint-placeholder-count="8">
-                <button onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="{{r.style}}">
+                <button class="xrow" onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="{{r.style}}">
                   <span style="font-family:var(--mono);font-size:12px;font-weight:600">{{r.id}}</span>
                   <span style="{{r.shape}}"></span>
                   <span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{r.text}}</span>
@@ -52,12 +56,117 @@
             </div>
           </div>
           <sc-if value="{{xShowPick}}" hint-placeholder-val="{{ false }}">
-          <aside aria-label="One requirement" style="flex:2 1 320px;min-width:0;§CARD§border-top:4px solid var(--accent);padding:16px 20px;display:flex;flex-direction:column;gap:12px;position:sticky;top:12px">
-            <div style="display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center"><span style="font-family:var(--mono);font-weight:700">{{xp.id}}</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px"><span style="{{xp.shape}}"></span>{{xp.stateLabel}}</span></div>
+          <aside aria-label="One requirement" style="flex:2 1 400px;min-width:0;§CARD§border-top:4px solid var(--accent);padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+            <h2 id="xp-h" tabindex="-1" style="margin:0;font-size:16px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center"><span style="font-family:var(--mono);font-weight:700">{{xp.id}}</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:400"><span style="{{xp.shape}}"></span>{{xp.stateLabel}}</span></h2>
             <div style="display:flex;flex-wrap:wrap;gap:4px 5px;font-family:var(--serif);font-size:16px;line-height:1.7"><sc-for list="{{xp.tok}}" as="t" hint-placeholder-count="14"><span style="{{t.style}}">{{t.t}}</span></sc-for></div>
             <div style="font-size:13px;color:#3C4852">{{xp.alloc}} · owner {{xp.owner}}</div>
+            <div style="font-size:13px;color:#2A353F">{{xp.vLine}}</div>
             <div style="font-size:13px;color:#2A353F">{{xp.clusterLine}}</div>
             <sc-if value="{{xp.inCluster}}" hint-placeholder-val="{{ false }}"><button onClick="{{xp.open}}" style="§PRI§align-self:flex-start">Open its cluster</button></sc-if>
+
+            <section aria-labelledby="xp-cmp-h" style="border-top:1px solid #E3E7EA;padding-top:12px;display:flex;flex-direction:column;gap:8px">
+              <h3 id="xp-cmp-h" style="margin:0;font-size:15px;font-weight:700">Compare with another requirement</h3>
+              <div style="font-size:13px;color:#3C4852">These five read most like this one inside the same allocation. Choose one to put beside it.</div>
+              <div role="group" aria-label="Requirements that read most like this one" style="display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{sp.near}}" as="n" hint-placeholder-count="5">
+                  <button onClick="{{n.pick}}" aria-pressed="{{n.pressed}}" aria-label="{{n.aria}}" style="text-align:left;min-height:44px;padding:6px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;gap:2px;border:1px solid #7A8793;background:#FFFFFF">
+                    <span style="font-family:var(--mono);font-size:12px;font-weight:600">{{n.id}}</span>
+                    <span style="font-size:13px">{{n.text}}</span>
+                    <span style="font-size:12px;color:#54626F">{{n.line}}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{sp.pickToggle}}" aria-pressed="{{sp.picking}}" style="§BTN§">{{sp.pickLabel}}</button></div>
+              <div aria-live="polite" style="font-size:13px;color:#2A353F;min-height:18px">{{sp.pickHelp}}</div>
+              <sc-if value="{{sp.hasCmp}}" hint-placeholder-val="{{ false }}">
+              <div role="group" aria-label="{{sp.cmp.aria}}" style="border:1px solid #D5DADE;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;background:#FAFBFC">
+                <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:13px">This one · {{xp.id}}</b><div style="font-family:var(--serif);font-size:15px;line-height:1.6"><sc-for list="{{sp.cmp.a}}" as="w" hint-placeholder-count="12"><span style="{{w.style}}">{{w.t}} </span></sc-for></div></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:13px">Beside it · {{sp.cmp.id}} · {{sp.cmp.alloc}}</b><div style="font-family:var(--serif);font-size:15px;line-height:1.6"><sc-for list="{{sp.cmp.b}}" as="w" hint-placeholder-count="12"><span style="{{w.style}}">{{w.t}} </span></sc-for></div></div>
+                <div style="font-size:13px;color:#2A353F"><b>{{sp.cmp.readLine}}</b> {{sp.cmp.scoreLine}}</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <sc-for list="{{sp.cmp.facts}}" as="f" hint-placeholder-count="6">
+                    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E3E7EA;padding-top:6px"><div style="font-size:12px;font-weight:600;color:#54626F">{{f.label}}</div><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;font-size:13px"><span>{{f.a}}</span><span>{{f.b}}</span></div></div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{sp.cmp.swap}}" style="§BTN§">Look at {{sp.cmp.id}} instead</button><button onClick="{{sp.cmp.clear}}" style="§BTN§">Stop comparing</button></div>
+              </div>
+              </sc-if>
+            </section>
+
+            <section aria-labelledby="xp-dec-h" style="border-top:1px solid #E3E7EA;padding-top:12px;display:flex;flex-direction:column;gap:10px">
+              <h3 id="xp-dec-h" style="margin:0;font-size:15px;font-weight:700">Decide this requirement</h3>
+              <sc-if value="{{sp.notAlone}}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:13px;color:#2A353F">This requirement is in {{sp.peel.cid}}, so it is decided there with the others. To decide it on its own, take it out of the cluster first.</div>
+                <div style="font-size:13px;color:#3C4852">{{sp.peel.why}}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{sp.peel.open}}" style="§BTN§">Open {{sp.peel.cid}}</button><button onClick="{{sp.peel.doIt}}" disabled="{{sp.peel.no}}" style="§BTN§">Take it out of {{sp.peel.cid}}</button></div>
+              </div>
+              </sc-if>
+              <sc-if value="{{sp.canDecide}}" hint-placeholder-val="{{ true }}">
+              <sc-if value="{{sp.hasDec}}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #D5DADE;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between"><b>On record</b><span style="font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;background:#E8F0FD;color:#123C8C">{{sp.d.status}}</span></div>
+                <sc-for list="{{sp.d.lines}}" as="l" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px;font-size:13px"><span style="color:#54626F">{{l.k}}</span><span>{{l.v}}</span></div>
+                </sc-for>
+                §IMP:sp.d.imp§
+                <sc-if value="{{sp.d.hasSlots}}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="§CAP§">Sign-offs the policy asks for</div>
+                  <sc-for list="{{sp.d.slots}}" as="k" hint-placeholder-count="3">
+                    <div style="display:flex;flex-wrap:wrap;gap:2px 10px;justify-content:space-between;border:1px solid #D5DADE;border-radius:6px;padding:6px 10px;font-size:13px"><span><b>{{k.name}}</b><sc-if value="{{k.hasTag}}" hint-placeholder-val="{{ false }}"> <span style="color:#54626F">({{k.tag}})</span></sc-if></span><span>{{k.state}}</span></div>
+                  </sc-for>
+                </div>
+                </sc-if>
+                <sc-if value="{{sp.d.selfNote}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">{{sp.d.selfText}}</div></sc-if>
+                <sc-if value="{{sp.d.isNU}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><label for="xp-nu" style="font-size:13px;font-weight:600">Say it back in your own words</label><textarea id="xp-nu" value="{{sp.d.nuV}}" onChange="{{sp.d.onNu}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea></div></sc-if>
+                <sc-if value="{{sp.d.canSign}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><button onClick="{{sp.d.doSign}}" disabled="{{sp.d.signDisabled}}" style="§PRI§align-self:flex-start">{{sp.d.signLabel}}</button><div style="font-size:12px;color:#3C4852">{{sp.d.signHelp}}</div></div></sc-if>
+                <sc-if value="{{sp.d.canOwn}}" hint-placeholder-val="{{ false }}"><button onClick="{{sp.d.doOwn}}" style="§BTN§align-self:flex-start">Sign off for the owners</button></sc-if>
+                <sc-if value="{{sp.d.canWithdrawSign}}" hint-placeholder-val="{{ false }}"><button onClick="{{sp.d.doWithdrawSign}}" style="§BTN§align-self:flex-start">Withdraw my sign-off</button></sc-if>
+                <sc-if value="{{sp.d.readOnly}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">{{sp.d.readOnlyText}}</div></sc-if>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <sc-if value="{{sp.d.canChange}}" hint-placeholder-val="{{ false }}"><button onClick="{{sp.d.change}}" style="§BTN§">{{sp.d.answerLabel}}</button></sc-if>
+                  <sc-if value="{{sp.d.canWithdraw}}" hint-placeholder-val="{{ false }}"><button onClick="{{sp.d.withdraw}}" style="§BTN§">Withdraw the decision</button></sc-if>
+                </div>
+              </div>
+              </sc-if>
+              <sc-if value="{{sp.showFormLocked}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">Observers, and anyone previewing another lens, can look at and compare requirements but not decide them.</div></sc-if>
+              <sc-if value="{{sp.showForm}}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div role="group" aria-label="What to do with this requirement" style="display:flex;flex-direction:column;gap:6px">
+                  <sc-for list="{{sp.kinds}}" as="k" hint-placeholder-count="5">
+                    <button onClick="{{k.pick}}" disabled="{{k.off}}" aria-pressed="{{k.pressed}}" style="{{k.style}}"><span style="display:flex;flex-direction:column;gap:1px"><span style="font-weight:600">{{k.name}}</span><span style="font-size:13px;color:#3C4852">{{k.help}}</span></span></button>
+                  </sc-for>
+                </div>
+                <sc-if value="{{sp.hasReason}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><label for="xp-reason" style="font-size:13px;font-weight:600;color:#2A353F">Reason</label><select id="xp-reason" value="{{sp.reasonV}}" onChange="{{sp.onReason}}" style="§INP§width:100%"><sc-for list="{{sp.reasons}}" as="o" hint-placeholder-count="4"><option value="{{o.v}}">{{o.t}}</option></sc-for></select></div></sc-if>
+                <sc-if value="{{sp.isDrop}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#2A353F">{{sp.coverLine}}</div></sc-if>
+                <sc-if value="{{sp.isReword}}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label for="xp-text" style="font-size:13px;font-weight:600;color:#2A353F">New wording</label>
+                  <textarea id="xp-text" value="{{sp.textV}}" onChange="{{sp.onText}}" rows="4" style="font-family:var(--serif);font-size:16px;padding:10px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box"></textarea>
+                  <div><button onClick="{{sp.useOld}}" style="§BTN§min-height:36px;font-size:13px">Start again from the old wording</button></div>
+                  <sc-if value="{{sp.hasChanges}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#2A353F"><b>What changes:</b> <sc-for list="{{sp.changes}}" as="c" hint-placeholder-count="2"><span>{{c.t}}. </span></sc-for></div></sc-if>
+                  <sc-if value="{{sp.hasGuards}}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                    <sc-for list="{{sp.guards}}" as="g" hint-placeholder-count="5">
+                      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;font-size:13px;border-top:1px solid #E3E7EA;padding-top:4px"><span><b>{{g.name}}</b> · {{g.note}}</span><span style="{{g.tagStyle}}">{{g.tag}}</span></div>
+                    </sc-for>
+                  </div>
+                  </sc-if>
+                </div>
+                </sc-if>
+                <sc-if value="{{sp.isAsk}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><label for="xp-q" style="font-size:13px;font-weight:600;color:#2A353F">Your question for the owner</label><textarea id="xp-q" value="{{sp.qV}}" onChange="{{sp.onQ}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea><div style="font-size:12px;color:#3C4852">{{sp.askLine}}</div></div></sc-if>
+                <sc-if value="{{sp.needCr}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><label for="xp-cr" style="font-size:13px;font-weight:600;color:#2A353F">{{sp.crLabel}}</label><input id="xp-cr" type="text" value="{{sp.crV}}" onChange="{{sp.onCr}}" autocomplete="off" style="min-height:44px;padding:0 10px;border:1px solid #7A8793;border-radius:6px;font-family:var(--mono);font-size:14px;max-width:220px;box-sizing:border-box;background:#FFFFFF"><div style="font-size:12px;color:#3C4852">{{sp.crHelp}}</div></div></sc-if>
+                <sc-if value="{{sp.showNote}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><label for="xp-note" style="font-size:13px;font-weight:600;color:#2A353F">{{sp.noteLabel}}</label><textarea id="xp-note" value="{{sp.noteV}}" onChange="{{sp.onNote}}" rows="2" style="font-family:inherit;font-size:14px;padding:8px;border:1px solid #7A8793;border-radius:6px;resize:vertical;width:100%;box-sizing:border-box;background:#FFFFFF"></textarea></div></sc-if>
+                §IMP:sp.imp§
+                <sc-if value="{{sp.hasWillSign}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">{{sp.willSign}}</div></sc-if>
+                <sc-if value="{{sp.hasProblems}}" hint-placeholder-val="{{ false }}"><div role="status" style="font-size:13px;color:#6B3D00;background:#FFF4D6;border:1px solid #E5C87A;border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><sc-for list="{{sp.problems}}" as="p" hint-placeholder-count="2"><span>{{p.t}}</span></sc-for></div></sc-if>
+                <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{sp.record}}" disabled="{{sp.noRecord}}" style="§PRI§">{{sp.recordLabel}}</button><sc-if value="{{sp.hasCancel}}" hint-placeholder-val="{{ false }}"><button onClick="{{sp.cancel}}" style="§BTN§">Cancel</button></sc-if></div>
+              </div>
+              </sc-if>
+              </sc-if>
+            </section>
+
             <div style="border-top:1px solid #E3E7EA;padding-top:10px;display:flex;flex-direction:column;gap:6px">
               <div style="§CAP§">History</div>
               <sc-for list="{{xp.history}}" as="h" hint-placeholder-count="3">

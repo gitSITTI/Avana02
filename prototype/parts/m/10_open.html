@@ -1,7 +1,8 @@
 
 <!-- ========== OPEN ========== -->
+<div class="sr" role="status" aria-live="polite" aria-atomic="true">{{pageAnnounce}}</div>
 <sc-if value="{{isOpen}}" hint-placeholder-val="{{ true }}">
-<div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:32px;box-sizing:border-box">
+<main style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:32px;box-sizing:border-box">
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <span aria-hidden="true" style="width:32px;height:32px;border-radius:10px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="8" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><rect x="6.5" y="6.5" width="8" height="8" rx="2" fill="#fff"/></svg></span>
     <div style="font-weight:700;font-size:17px;letter-spacing:-.01em">Requirements Consolidator</div>
@@ -25,7 +26,7 @@
       </sc-for>
     </div>
   </div>
-  <div style="border:2px dashed #8C98A3;border-radius:8px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;gap:14px">
+  <div style="border:2px dashed #7A8793;border-radius:8px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:4px">
       <h2 style="margin:0;§CAP§font-weight:500">Drop a file, paste a model address, or connect a database</h2>
       <p style="margin:0;color:#3C4852;max-width:760px">Prototype: nothing is read from your computer here. Try a sample file and see what the app would say.</p>
@@ -97,5 +98,5 @@
       </div>
     </div>
   </div>
-</div>
+</main>
 </sc-if>

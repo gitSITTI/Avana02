@@ -1,0 +1,123 @@
+      <!-- ===== LABEL PAIRS (the gold set) ===== -->
+      <sc-if value="{{isGold}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">Label pairs</h1>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">Say whether two requirements are the same. Your labels are what turn the precision and recall on Methods and metrics from placeholders into measurements. You will not see what the app or the AI thought of a pair, so the answer is yours.</p>
+        </div>
+        <sc-if value="{{gSampleOn}}" hint-placeholder-val="{{ false }}"><div style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:12px 16px"><b>Sample labels are loaded.</b> {{gSampleLine}}</div></sc-if>
+        <sc-if value="{{gReadOnly}}" hint-placeholder-val="{{ false }}"><div style="background:#F1F3F5;border:1px dashed #6B7782;color:#2A353F;border-radius:8px;padding:12px 16px">{{gReadOnlyLine}}</div></sc-if>
+
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <div style="flex:3 1 520px;min-width:0;display:flex;flex-direction:column;gap:24px">
+
+            <sc-if value="{{gHasPair}}" hint-placeholder-val="{{ true }}">
+            <section aria-labelledby="gl-pair-h" onKeyDown="{{gOnKey}}" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
+                <h2 id="gl-pair-h" tabindex="-1" style="margin:0;font-size:18px;font-weight:700">{{gPairTitle}}</h2>
+                <span style="font-size:13px;color:#54626F">{{gWho}}</span>
+              </div>
+              <div style="font-size:15px;font-weight:600">Do these two requirements say the same thing?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:12px">
+                <div style="flex:1 1 280px;min-width:0;border:1px solid #D5DADE;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:#FAFBFC">
+                  <div style="display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline"><b>Requirement A</b><span style="font-family:var(--mono);font-size:13px">{{gA.id}}</span><span style="font-size:12px;color:#54626F">{{gA.alloc}}</span></div>
+                  <div style="font-family:var(--serif);font-size:16px;line-height:1.55">{{gA.text}}</div>
+                </div>
+                <div style="flex:1 1 280px;min-width:0;border:1px solid #D5DADE;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:#FAFBFC">
+                  <div style="display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline"><b>Requirement B</b><span style="font-family:var(--mono);font-size:13px">{{gB.id}}</span><span style="font-size:12px;color:#54626F">{{gB.alloc}}</span></div>
+                  <div style="font-family:var(--serif);font-size:16px;line-height:1.55"><sc-for list="{{gB.segs}}" as="s" hint-placeholder-count="6"><span style="{{s.style}}">{{s.t}} </span></sc-for></div>
+                </div>
+              </div>
+              <label style="display:flex;gap:10px;align-items:center;min-height:32px;font-size:13px;color:#2A353F"><input type="checkbox" checked="{{gDiff}}" onChange="{{gToggleDiff}}" style="width:20px;height:20px;margin:0"><span>Show the words in B that differ from A</span></label>
+              <div role="group" aria-label="How are these two related?" style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{gOpts}}" as="o" hint-placeholder-count="6">
+                  <button onClick="{{o.pick}}" disabled="{{o.off}}" aria-keyshortcuts="{{o.key}}" style="{{o.style}}">
+                    <span aria-hidden="true" style="{{o.keyStyle}}">{{o.key}}</span>
+                    <span style="display:flex;flex-direction:column;gap:1px;text-align:left"><span style="font-weight:600">{{o.name}}</span><span style="font-size:13px;color:#3C4852">{{o.help}}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end">
+                <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:4px"><label for="gl-note" style="font-size:13px;font-weight:600;color:#2A353F">Why? (optional, kept with the label)</label><input id="gl-note" type="text" value="{{gNote}}" onChange="{{gOnNote}}" style="§INP§width:100%"></div>
+                <button onClick="{{gSkip}}" disabled="{{gNoAct}}" style="§BTN§">Skip for now</button>
+                <button onClick="{{gUndo}}" disabled="{{gNoUndo}}" style="§BTN§">Undo my last label</button>
+              </div>
+              <div aria-live="polite" style="min-height:22px;font-size:13px;color:#2A353F">{{gStatus}}</div>
+              <div style="font-size:12px;color:#54626F">Keys 1 to 6 choose a label while the focus is in this box. Choosing records it and shows the next pair.</div>
+            </section>
+            </sc-if>
+
+            <sc-if value="{{gNoPair}}" hint-placeholder-val="{{ false }}">
+            <section aria-labelledby="gl-done-h" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+              <h2 id="gl-done-h" tabindex="-1" style="margin:0;font-size:18px;font-weight:700">{{gDoneTitle}}</h2>
+              <div style="color:#2A353F">{{gDoneText}}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{gToMetrics}}" style="§PRI§">See the measured scores</button><button onClick="{{gLoadSample}}" disabled="{{gSampleOn}}" style="§BTN§">Load sample labels</button></div>
+            </section>
+            </sc-if>
+
+            <section aria-labelledby="gl-how" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <h2 id="gl-how" style="margin:0;font-size:18px;font-weight:700">How the pairs were chosen, and why the numbers can be trusted</h2>
+                <div style="font-size:13px;color:#3C4852">{{gHowLine}}</div>
+              </div>
+              <div role="region" tabindex="0" aria-label="How the pairs were chosen, by group" style="overflow-x:auto"><div style="min-width:560px">
+                <div style="display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1fr 1fr 1fr;gap:12px;padding:8px 0;font-size:12px;font-weight:600;color:#54626F;border-bottom:1px solid var(--line)"><div>Group of pairs</div><div>Pairs it stands for</div><div>In the sample</div><div>Labelled and counted</div><div>Related</div></div>
+                <sc-for list="{{gGroups}}" as="g" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1fr 1fr 1fr;gap:12px;padding:10px 0;align-items:baseline;border-bottom:1px solid var(--hair)"><div><div style="font-weight:600">{{g.name}}</div><div style="font-size:12px;color:#54626F">{{g.sub}}</div></div><div style="font-variant-numeric:tabular-nums">{{g.N}}</div><div style="font-variant-numeric:tabular-nums">{{g.size}}</div><div style="font-variant-numeric:tabular-nums">{{g.n}}</div><div style="font-variant-numeric:tabular-nums">{{g.k}}</div></div>
+                </sc-for>
+              </div></div>
+              <div style="font-size:13px;color:#2A353F;max-width:780px;text-wrap:pretty">Nearly every pair of requirements is unrelated, so a plain random sample would hold almost no duplicates. Pairs are drawn from each group on purpose, and each group is then weighted by the number of pairs it stands for, so the recall is for all the pairs, not only the ones that were picked. Every fifth pair goes to a second person, which is how agreement between people is measured.</div>
+            </section>
+          </div>
+
+          <div style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;gap:24px">
+            <section aria-labelledby="gl-prog" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+              <h2 id="gl-prog" style="margin:0;font-size:18px;font-weight:700">Progress</h2>
+              <div style="display:flex;align-items:center;gap:8px"><div role="progressbar" aria-valuemin="0" aria-valuemax="{{gOffered}}" aria-valuenow="{{gMineN}}" aria-label="Pairs you have labelled" style="flex:1;height:10px;background:#DCE7F7;border-radius:5px;overflow:hidden"><div style="{{gBar}}"></div></div><span style="font-variant-numeric:tabular-nums;font-weight:700">{{gMineN}} of {{gOffered}}</span></div>
+              <div style="font-size:13px;color:#2A353F">{{gMineLine}}</div>
+              <div style="font-size:13px;color:#2A353F">{{gAllLine}}</div>
+              <div><button onClick="{{gToMetrics}}" style="§BTN§">See the measured scores</button></div>
+            </section>
+
+            <section aria-labelledby="gl-agree" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+              <h2 id="gl-agree" style="margin:0;font-size:18px;font-weight:700">Do two people agree?</h2>
+              <div style="font-size:13px;color:#2A353F">{{gAgreeLine}}</div>
+              <sc-if value="{{gHasDisputes}}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="font-weight:600">Disagreements to settle ({{gDisputeN}})</div>
+                <div style="font-size:13px;color:#3C4852">{{gSettleWho}}</div>
+                <sc-for list="{{gDisputes}}" as="d" hint-placeholder-count="2">
+                  <div style="border:1px solid #D5DADE;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+                    <div style="font-family:var(--mono);font-size:12px">{{d.pair}}</div>
+                    <div style="font-size:13px">{{d.said}}</div>
+                    <sc-if value="{{d.canSettle}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{d.opts}}" as="p" hint-placeholder-count="2"><button onClick="{{p.pick}}" style="§BTN§min-height:36px;font-size:13px">{{p.label}}</button></sc-for></div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              </sc-if>
+            </section>
+
+            <section aria-labelledby="gl-mine" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:8px">
+              <h2 id="gl-mine" style="margin:0;font-size:18px;font-weight:700">Your latest labels</h2>
+              <sc-if value="{{gNoRecent}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#3C4852">You have not labelled a pair yet.</div></sc-if>
+              <sc-for list="{{gRecent}}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;justify-content:space-between;border-top:1px solid var(--hair);padding-top:8px"><span style="display:flex;flex-direction:column"><span style="font-family:var(--mono);font-size:12px">{{r.pair}}</span><span style="font-size:13px"><b>{{r.label}}</b></span></span><button onClick="{{r.change}}" aria-label="{{r.aria}}" style="§BTN§min-height:36px;font-size:13px">Change</button></div>
+              </sc-for>
+            </section>
+
+            <section aria-labelledby="gl-file" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+              <h2 id="gl-file" style="margin:0;font-size:18px;font-weight:700">The gold set file</h2>
+              <div style="font-size:13px;color:#2A353F">{{gFileLine}}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{gDownload}}" disabled="{{gNoFile}}" style="§PRI§">Download the gold set</button></div>
+              <pre role="region" aria-label="Start of the gold set file" tabindex="0" style="margin:0;max-height:200px;overflow:auto;background:#F4F6F8;border:1px solid #D5DADE;border-radius:8px;padding:10px;font-family:var(--mono);font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word">{{gFilePreview}}</pre>
+            </section>
+
+            <section aria-labelledby="gl-demo" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:10px;border-style:dashed">
+              <h2 id="gl-demo" style="margin:0;font-size:18px;font-weight:700">Try it with sample labels</h2>
+              <div style="font-size:13px;color:#2A353F">Adds {{gSampleN}} labels from two made-up labellers, so you can see the measured scores before you label anything yourself. They are marked as sample everywhere and are not real judgements.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><button onClick="{{gLoadSample}}" disabled="{{gSampleOn}}" style="§BTN§">Load sample labels</button><button onClick="{{gRemoveSample}}" disabled="{{gNoSample}}" style="§BTN§">Remove sample labels</button><button onClick="{{gClearMine}}" disabled="{{gNoMine}}" style="§BTN§">Remove my labels</button></div>
+            </section>
+          </div>
+        </div>
+      </div>
+      </sc-if>

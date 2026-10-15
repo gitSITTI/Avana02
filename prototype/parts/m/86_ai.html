@@ -1,0 +1,128 @@
+
+      <!-- ===== AI USE ===== -->
+      <sc-if value="{{isAi}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-weight:700;letter-spacing:-.02em;font-size:30px;line-height:1.2">AI use</h1>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">Requirement text goes to an AI model only when every rule on this page says yes. Anything else stays with the mechanical methods and your reviewers. This page checks and records. The wall that keeps text from leaving is the network rule at your gateway, which your IT staff set.</p>
+        </div>
+
+        <section aria-labelledby="au-status-h" style="§CARD§padding:20px;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center">
+          <span style="flex:none;display:inline-flex">§GI:auSt§</span>
+          <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:4px">
+            <h2 id="au-status-h" style="margin:0;font-size:20px;font-weight:700">{{auHead}}</h2>
+            <p style="margin:0;color:#2A353F;max-width:70ch;text-wrap:pretty">{{auLine}}</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+            <button onClick="{{auSwitch}}" disabled="{{auCanNot}}" style="§BTN§">{{auSwitchLabel}}</button>
+            <sc-if value="{{auCanNot}}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#4F5B66;max-width:300px">{{auWhy}}</span></sc-if>
+          </div>
+        </section>
+        <sc-if value="{{auHasMsg}}" hint-placeholder-val="{{ false }}"><div role="status" aria-live="polite" style="background:#E8F0FD;border:1px solid #9DB8E8;color:#10337F;border-radius:8px;padding:10px 14px">{{auMsg}}</div></sc-if>
+
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <section aria-labelledby="au-holds-h" style="flex:3 1 460px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+            <h2 id="au-holds-h" style="margin:0;font-size:18px;font-weight:700">What the gate does with the {{auTotal}} groups</h2>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{auHolds}}" as="h" hint-placeholder-count="3">
+                <div role="img" aria-label="{{h.aria}}" style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 84px;gap:8px 12px;align-items:center">
+                  <span style="font-size:14px">{{h.name}}</span>
+                  <span aria-hidden="true" style="display:block;background:#EEF1F3;border-radius:0 5px 5px 0"><span style="{{h.bar}}"></span></span>
+                  <span aria-hidden="true" style="font-family:var(--mono);font-size:13px;text-align:right">{{h.n}} · {{h.pct}}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;color:#4F5B66;max-width:70ch">A group is as restricted as its most restricted requirement. Markings come from the source system: this page shows them and does not let anyone edit one. Fix a marking at the source and read the source again.</div>
+          </section>
+          <section aria-labelledby="au-marks-h" style="flex:2 1 300px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 id="au-marks-h" style="margin:0;font-size:18px;font-weight:700">The {{auReqTotal}} requirements, by marking</h2>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{auMarks}}" as="m" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #E3E7EA;padding:4px 0"><span>{{m.name}}</span><span style="font-family:var(--mono);font-size:13px">{{m.n}} · {{m.pct}}</span></div></sc-for>
+            </div>
+            <div style="font-size:13px;color:#4F5B66">The sample project’s markings are made up so that every kind of hold can be seen.</div>
+          </section>
+        </div>
+
+        <section aria-labelledby="au-sheet-h" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
+            <h2 id="au-sheet-h" style="margin:0;font-size:18px;font-weight:700">AI data sheet</h2>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-if value="{{auShowEditBtn}}" hint-placeholder-val="{{ true }}"><button onClick="{{auBegin}}" style="§BTN§">Change the data sheet</button></sc-if>
+              <sc-if value="{{auShowWithdraw}}" hint-placeholder-val="{{ true }}"><button onClick="{{auWithdraw}}" style="§BTN§">Withdraw approval</button></sc-if>
+            </div>
+          </div>
+          <p style="margin:0;color:#3C4852;max-width:780px;text-wrap:pretty">What the people who approved the AI were told about the model. The security and export-control reviewers decide what goes on it. The gate refuses to go beyond it.</p>
+          <sc-if value="{{auEditing}}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:16px;border:1px solid #9DB8E8;background:#F7FAFF;border-radius:8px;padding:16px">
+              <div style="display:flex;flex-direction:column;gap:4px"><label for="au-model" style="font-size:13px;font-weight:600;color:#2A353F">Model name and version, as your gateway reports it</label><input id="au-model" type="text" maxlength="120" value="{{auModel}}" onChange="{{auOnModel}}" style="§INP§width:100%;max-width:420px"></div>
+              <sc-for list="{{auGroups}}" as="g" hint-placeholder-count="5">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="font-size:13px;font-weight:600;color:#2A353F">{{g.legend}}</div>
+                  <div role="group" aria-label="{{g.legend}}" style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{g.items}}" as="it" hint-placeholder-count="3"><button onClick="{{it.pick}}" aria-pressed="{{it.pressed}}" style="{{it.style}}">{{it.label}}</button></sc-for></div>
+                </div>
+              </sc-for>
+              <div style="display:flex;flex-direction:column;gap:4px"><label for="au-days" style="font-size:13px;font-weight:600;color:#2A353F">Days prompts and answers are kept (1 to 3650; not needed when they are not kept)</label><input id="au-days" type="text" inputmode="numeric" value="{{auDays}}" onChange="{{auOnDays}}" style="§INP§width:140px"></div>
+              <div style="display:flex;flex-direction:column;gap:4px"><label for="au-rev" style="font-size:13px;font-weight:600;color:#2A353F">Who reviewed this sheet (name and office)</label><input id="au-rev" type="text" maxlength="120" value="{{auReviewer}}" onChange="{{auOnReviewer}}" style="§INP§width:100%;max-width:420px"></div>
+              <sc-if value="{{auHasDraftProblems}}" hint-placeholder-val="{{ false }}">
+                <div role="alert" style="background:#FFF4D6;border:1px solid #E5C87A;color:#4A3300;border-radius:8px;padding:10px 14px">
+                  <div style="font-weight:600">This sheet cannot be saved yet</div>
+                  <ul style="margin:4px 0 0;padding-left:18px"><sc-for list="{{auDraftProblems}}" as="p" hint-placeholder-count="1"><li>{{p.t}}</li></sc-for></ul>
+                </div>
+              </sc-if>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+                <button onClick="{{auSave}}" disabled="{{auSaveDisabled}}" style="§PRI§">Save and mark reviewed</button>
+                <button onClick="{{auCancel}}" style="§BTN§">Cancel</button>
+                <span style="font-size:13px;color:#3C4852">{{auDraftLine}}</span>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{auEditing}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#4F5B66">The sheet below is the saved one. The gate reads it until you save.</div></sc-if>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{auSheetRows}}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px 16px;padding:8px 0;border-bottom:1px solid #E3E7EA"><span style="color:#3C4852">{{r.k}}</span><span style="font-weight:600">{{r.v}}</span></div></sc-for>
+          </div>
+          <sc-if value="{{auHasSheetProblems}}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FDE3E0;border:1px solid #E8A29B;color:#6E100A;border-radius:8px;padding:10px 14px">
+              <div style="font-weight:600">The saved sheet contradicts itself, so nothing goes to the AI</div>
+              <ul style="margin:4px 0 0;padding-left:18px"><sc-for list="{{auSheetProblems}}" as="p" hint-placeholder-count="1"><li>{{p.t}}</li></sc-for></ul>
+            </div>
+          </sc-if>
+        </section>
+
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <section aria-labelledby="au-held-h" style="flex:3 1 460px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 id="au-held-h" style="margin:0;font-size:18px;font-weight:700">Groups held back</h2>
+            <sc-if value="{{auHasHeld}}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{auHeldRows}}" as="h" hint-placeholder-count="4">
+                  <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E3E7EA">
+                    <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{h.id}} · {{h.title}}</span><span style="font-size:13px;color:#3C4852">{{h.why}}</span></div>
+                    <button onClick="{{h.open}}" aria-label="{{h.openAria}}" style="§BTN§">Open</button>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{auHasHeldMore}}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#4F5B66">{{auHeldMore}}</div></sc-if>
+            </sc-if>
+            <sc-if value="{{auNoHeld}}" hint-placeholder-val="{{ false }}"><div style="color:#3C4852">No group is held back.</div></sc-if>
+            <div style="font-size:13px;color:#4F5B66;max-width:70ch">A held group is still reviewed the usual way, by people, from the mechanical results. The review page says why no AI answer is shown.</div>
+          </section>
+          <section aria-labelledby="au-rules-h" style="flex:2 1 300px;min-width:0;§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+            <h2 id="au-rules-h" style="margin:0;font-size:18px;font-weight:700">The rules, in the order they are checked</h2>
+            <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><sc-for list="{{auRules}}" as="r" hint-placeholder-count="7"><li>{{r.t}}</li></sc-for></ol>
+          </section>
+        </div>
+
+        <section aria-labelledby="au-hist-h" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between">
+            <h2 id="au-hist-h" style="margin:0;font-size:18px;font-weight:700">Changes to AI use</h2>
+            <button onClick="{{auDownload}}" style="§BTN§">Download ai-use.json</button>
+          </div>
+          <sc-if value="{{auNoHist}}" hint-placeholder-val="{{ false }}"><div style="color:#3C4852">Nothing has been changed in this session. The switch is on and the sheet is the one the sample project started with.</div></sc-if>
+          <sc-if value="{{auHasHist}}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{auHist}}" as="e" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:4px 12px;padding:8px 0;border-bottom:1px solid #E3E7EA"><span style="font-family:var(--mono);font-size:13px;color:#4F5B66">{{e.when}}</span><span><b>{{e.who}}</b> · {{e.what}}</span></div></sc-for>
+            </div>
+          </sc-if>
+          <div style="font-size:13px;color:#4F5B66;max-width:70ch">ai-use.json holds the switch, the sheet, the number of groups held back for each reason and the ID of each held group. It holds no requirement text. The same rules are in the pipeline’s Python library and are tested against the same table of cases.</div>
+        </section>
+      </div>
+      </sc-if>

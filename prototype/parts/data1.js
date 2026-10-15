@@ -2,9 +2,15 @@ const DEFAULTS = {
   view: 'open', source: 'sample', scope: 'all', person: 'sam', preview: '', hint: true, glossary: false, navClosed: {}, homeOpen: { 0: true },
   selected: 'CL-001', blind: null, blindDone: {}, events: [], verified: '', fmt: 'sphinx', tamper: false, published: false, baseId: 'DRAFT-0001',
   dec: {}, sign: {}, objections: {}, adjud: {}, res: {}, why: {}, ref: {}, alignOpen: false, hand: {}, sendF: {}, replyNote: {}, metArm: 'after', metSort: 'gain', metTable: false, peeled: {}, claims: {}, openVer: {}, liveVer: {}, dirs: {}, stale: {}, sib: {},
-  qTab: 'me', qLane: '', qStatus: '', qAlloc: '', qSearch: '', qPage: 0,
-  xFilter: 'all', xAlloc: '', xPick: '', xPage: 0, lpage: 0, lfilter: '', logTab: 'ledger',
+  qTab: 'me', qLane: '', qStatus: '', qAlloc: '', qLvl: '', qSearch: '', qPage: 0,
+  xFilter: 'all', xAlloc: '', xLvl: 0, xGap: false, xPick: '', xPage: 0, lpage: 0, lfilter: '', logTab: 'ledger',
   chatOpen: false, chat: {}, chatInput: '', lensNote: {}, polLane: 'B', polNew: false, polCross: false, polBase: false, scopeChoice: 'all', pilotAlloc: 'Mission Computer', just: '', adjNote: {}, sibNote: {},
+  gold: { labels: {}, adj: {}, skip: {}, last: {}, cut: 0.8, diff: true, note: '', all: false, settleNote: {} },
+  rdec: {}, rcmp: '', rpick: false, rform: {},   /* single-requirement decisions, the requirement put beside the picked one, and the unsaved form for each */
+  trTab: 'aliases', trOnly: 'approved', trMsg: '',   /* the trace map in Export: which table is shown, approved changes only or every decided change, and the last thing it did */
+  keepAt: '', keepStatus: 'ready', keepRestored: null, keepMsg: null, keepAsk: '', keepSummary: [],   /* what Home says about the saved work: when it was last kept, whether the browser allows it, and a pending file load */
+  aiOn: true, aiSheet: { model: 'Local model v1', where: 'ours', leaves: false, log: 'local', days: 90, approved: 'none', unstated: 'withhold', reviewed_by: 'A. Moreno, security office', reviewed_at: '2 Oct', entered_by: 'Morgan Hale' },   /* AI use: the project-wide switch and the data sheet the gate reads (aigate.js) */
+  aiEdit: null, aiMsg: null, aiTab: 'groups',   /* the sheet being changed (nothing is kept until it is saved), the last thing the AI page did, and which list it shows */
   drop: '', openNote: '', impStep: 'verify', mapOver: {}, mapEdit: '', yamlOpen: false, docSel: {}, docVer: {}, docIds: {}, docFocus: 0
 };
 
@@ -199,7 +205,7 @@ const REASONS = [
   ['R-OTH', 'Other (a note is required)']
 ];
 const REASON_NAME = Object.fromEntries(REASONS);
-const BLIND_STYLE = 'min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #8C98A3;border-radius:6px;cursor:pointer';
+const BLIND_STYLE = 'min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:6px;cursor:pointer';
 
 /* ---------- small helpers ---------- */
 function rng(seed) { let a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }

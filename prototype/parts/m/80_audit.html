@@ -28,7 +28,7 @@
                 </div>
                 <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
                   <span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;background:#E8F0FD;color:#123C8C">{{r.state}}</span>
-                  <button onClick="{{r.open}}" style="§BTN§min-height:36px;font-size:13px">Open cluster</button>
+                  <button onClick="{{r.open}}" aria-label="{{r.openAria}}" style="§BTN§min-height:36px;font-size:13px">{{r.openLabel}}</button>
                 </div>
               </div>
             </sc-for>
@@ -42,7 +42,7 @@
             <span style="font-size:13px;color:#4F5B66">{{evNote}}</span>
           </div>
           <sc-if value="{{verifyShown}}" hint-placeholder-val="{{ false }}"><div style="{{verifyStyle}}">{{verifyText}}</div></sc-if>
-          <div style="§CARD§overflow:hidden"><div style="overflow-x:auto"><div style="min-width:960px">
+          <div style="§CARD§overflow:hidden"><div role="region" tabindex="0" aria-label="Record of events" style="overflow-x:auto"><div style="min-width:960px">
             <div style="display:grid;grid-template-columns:40px 70px 120px 190px minmax(0,1fr) 90px 170px;gap:12px;padding:8px 16px;font-size:12px;color:#4F5B66;border-bottom:1px solid #D5DADE"><div>#</div><div>Time</div><div>Source</div><div>Actor</div><div>Event</div><div>About</div><div>Fingerprint</div></div>
             <sc-for list="{{eventRows}}" as="e" hint-placeholder-count="6">
               <div style="{{e.rowStyle}}">

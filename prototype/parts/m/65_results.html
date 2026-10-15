@@ -93,12 +93,33 @@
           </sc-for>
         </section>
 
+        <section aria-labelledby="rs-v" style="§CARD§padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between">
+            <div style="display:flex;flex-direction:column;gap:2px;flex:1 1 360px;min-width:0">
+              <h2 id="rs-v" style="margin:0;font-size:18px;font-weight:700">What this does to each level of the V</h2>
+              <div style="font-size:13px;color:#3C4852">Requirements are counted by the level they sit at. Items to re-point are verification items attached to a requirement that a decision removes or marks superseded.</div>
+            </div>
+            <button onClick="{{openVee}}" style="§BTN§">Open the V</button>
+          </div>
+          <div role="region" tabindex="0" aria-label="Requirements by level of the V" style="overflow-x:auto">
+            <table style="border-collapse:collapse;width:100%;min-width:560px;font-size:13px;font-variant-numeric:tabular-nums">
+              <caption style="text-align:left;color:#54626F;font-size:12px;padding-bottom:6px">Requirements before and after your decisions, by level of the V</caption>
+              <thead><tr style="text-align:left;color:#54626F"><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Level</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Original</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">After</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Change</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Items to re-point</th><th scope="col" style="padding:6px 8px;border-bottom:1px solid #D8DFE6">Gaps</th></tr></thead>
+              <tbody>
+                <sc-for list="{{vResultsRows}}" as="t" hint-placeholder-count="4"><tr><th scope="row" style="text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.lvl}}</th><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.now}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.after}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.gone}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.re}}</td><td style="padding:6px 8px;border-bottom:1px solid #E3E7EA">{{t.gaps}}</td></tr></sc-for>
+                <tr style="font-weight:700"><th scope="row" style="text-align:left;padding:6px 8px">{{vResultsTotal.lvl}}</th><td style="padding:6px 8px">{{vResultsTotal.now}}</td><td style="padding:6px 8px">{{vResultsTotal.after}}</td><td style="padding:6px 8px">{{vResultsTotal.gone}}</td><td style="padding:6px 8px">{{vResultsTotal.re}}</td><td style="padding:6px 8px">{{vResultsTotal.gaps}}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:13px;color:#2A353F">{{vResultsNote}}</div>
+        </section>
+
         <section aria-labelledby="rs-alloc" style="§CARD§overflow:hidden">
           <div style="padding:16px 20px 8px;display:flex;flex-direction:column;gap:2px">
             <h2 id="rs-alloc" style="margin:0;font-size:18px;font-weight:700">Each part of the system, graded on its own</h2>
             <div style="font-size:13px;color:#3C4852">A dashed box means the grade is provisional. “Not graded” means nothing is decided there yet.</div>
           </div>
-          <div style="overflow-x:auto"><div style="min-width:760px">
+          <div role="region" tabindex="0" aria-label="Grades by part of the system" style="overflow-x:auto"><div style="min-width:760px">
             <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 70px minmax(0,1.3fr) 110px 110px 84px 110px;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;color:#54626F;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
               <div>Allocation</div><div>Originals</div><div>Clusters decided</div><div>After so far</div><div>If all suggestions taken</div><div>Grade</div><div></div>
             </div>

@@ -1,7 +1,7 @@
 
 <!-- ========== IMPORT: VERIFY STATEMENTS FOUND IN A DOCUMENT ========== -->
 <sc-if value="{{isVerify}}" hint-placeholder-val="{{ false }}">
-<div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box">
+<main style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:#4F5B66">
     <sc-for list="{{crumbs}}" as="c" hint-placeholder-count="4">
       <sc-if value="{{c.sepBefore}}" hint-placeholder-val="{{ true }}"><span>/</span></sc-if>
@@ -58,12 +58,12 @@
     <button onClick="{{verifyBack}}" style="§BTN§">Back</button>
     <span style="color:#4F5B66;font-size:13px;max-width:520px">Verifying is deliberate and per record. Records you do not verify still come in, and stay marked Extracted on every screen.</span>
   </div>
-</div>
+</main>
 </sc-if>
 
 <!-- ========== IMPORT: MAP FIELDS, CHOOSE SCOPE ========== -->
 <sc-if value="{{isMap}}" hint-placeholder-val="{{ true }}">
-<div style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:28px;box-sizing:border-box">
+<main style="max-width:1180px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:28px;box-sizing:border-box">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:#4F5B66">
     <sc-for list="{{crumbs}}" as="c" hint-placeholder-count="3">
       <sc-if value="{{c.sepBefore}}" hint-placeholder-val="{{ true }}"><span>/</span></sc-if>
@@ -80,13 +80,13 @@
     <p style="margin:0;font-size:16px;color:#3C4852;text-wrap:pretty">Source: <b>{{impFile}}</b> · {{impWhere}}. The review screens fill themselves from these fields. Anything the source lacks shows as an empty slot, never as a guess.</p>
     <p style="margin:0;font-size:13px;color:#4F5B66;text-wrap:pretty">{{impNote}}</p>
     <sc-if value="{{hasQuery}}" hint-placeholder-val="{{ false }}">
-      <div style="font-family:var(--mono);font-size:12px;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre">Read-only query: {{impQuery}}</div>
+      <div role="region" tabindex="0" aria-label="Read-only query" style="font-family:var(--mono);font-size:12px;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre">Read-only query: {{impQuery}}</div>
     </sc-if>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
     <div style="flex:3 1 560px;min-width:0;§CARD§overflow:hidden">
       <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">Mapping profile: {{impProfile}}</div>
-      <div style="overflow-x:auto">
+      <div role="region" tabindex="0" aria-label="Field mapping table" style="overflow-x:auto">
         <div style="min-width:560px">
           <sc-for list="{{fields}}" as="f" hint-placeholder-count="7">
             <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) 74px 84px;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #E3E7EA">
@@ -124,7 +124,7 @@
   </div>
   <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:10px">
     <div style="§CAP§">First three records as the review screens will show them</div>
-    <div style="overflow-x:auto">
+    <div role="region" tabindex="0" aria-label="First three records" style="overflow-x:auto">
       <div style="min-width:640px">
         <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 150px 110px;gap:12px;padding:6px 0;border-bottom:1px solid #BAC3CA;font-family:var(--mono);font-size:11px;color:#4F5B66"><span>ID</span><span>STATEMENT</span><span>VERIFICATION</span><span>ALLOCATED TO</span><span>FIDELITY</span></div>
         <sc-for list="{{preview}}" as="p" hint-placeholder-count="3">
@@ -176,10 +176,10 @@
   <sc-if value="{{yamlOpen}}" hint-placeholder-val="{{ false }}">
     <div style="§CARD§padding:16px;display:flex;flex-direction:column;gap:8px">
       <div style="§CAP§">profile.yaml: the whole mapping, as text you can review and keep in git</div>
-      <pre style="margin:0;font-family:var(--mono);font-size:12px;line-height:1.6;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:12px 14px;overflow-x:auto">{{yamlText}}</pre>
+      <pre role="region" tabindex="0" aria-label="Mapping profile file" style="margin:0;font-family:var(--mono);font-size:12px;line-height:1.6;background:#F1F3F5;border:1px solid #BAC3CA;border-radius:6px;padding:12px 14px;overflow-x:auto">{{yamlText}}</pre>
       <div style="font-size:12px;color:#4F5B66">Prototype: nothing is saved from this page. In the reference code this is the file that <code>reqin propose</code> writes and <code>reqin import --profile</code> replays on the next import.</div>
     </div>
   </sc-if>
   <div style="color:#4F5B66;font-size:13px">Prototype note: whatever source you pick, the workspace that follows uses the same synthetic sample of 1,248 requirements, not your files.</div>
-</div>
+</main>
 </sc-if>

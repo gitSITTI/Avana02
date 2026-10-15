@@ -1,5 +1,5 @@
 {
-  "prototype_page": "6acd083728c4d79b846e5cb317bd4526c9172d29863081b35fe2e4c9e7b585b1",
+  "prototype_page": "1f2684c164d83ce7635a3bc636847d2b71fdda3fadbe4c30930ed5662ad799eb",
   "screens": [
     "01_open.png",
     "02_import_check_the_mapping.png",
@@ -19,6 +19,16 @@
     "16_phone_six_wordings.png",
     "17_results_and_grade.png",
     "18_hand_off_waiting.png",
-    "19_phone_results.png"
+    "19_phone_results.png",
+    "20_the_v.png",
+    "21_cluster_in_the_v.png",
+    "22_phone_the_v.png",
+    "23_label_pairs.png",
+    "24_one_requirement.png",
+    "25_trace_map.png",
+    "26_your_work.png",
+    "27_ai_use.png",
+    "28_held_group_review.png",
+    "29_skip_link.png"
   ]
 }

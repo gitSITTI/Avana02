@@ -52,11 +52,13 @@ const SEED = (function () {
     out.cat[c.id] = cat;
     decided.push(c);
     const req = required(c, dec);
-    const slots = SLOT_KEYS.filter((k) => req[k] !== 'none');
+    const slots = SLOT_KEYS.filter((k) => req[k] === 'req');
+    const picked = SLOT_KEYS.filter((k) => req[k] === 'sample'); /* slots the 20% sample asks for: signed below in approved clusters without drawing random numbers, so the seeded data stays as it was */
     const sg = {};
     let take = cat === 'approved' ? slots : cat === 'review' ? slots.slice(0, Math.max(1, Math.min(slots.length - 1, ri(1, slots.length - 1)))) : [];
     if (cat === 'review' && slots.length < 2) take = [];
     take.forEach((k) => { let who = pk(WHO[k]); if (['SE', 'PE', 'UX', 'NU'].indexOf(k) >= 0 && who === by) who = WHO.SE.find((x) => x !== by); sg[k] = { by: who, at: pk(DATES), rev: 'R3' }; });
+    if (cat === 'approved') picked.forEach((k, i) => { sg[k] = { by: WHO[k][0], at: DATES[(i + 3) % DATES.length], rev: 'R3' }; });
     out.sign[c.id] = sg;
     if (cat === 'review' && !take.length) out.cat[c.id] = 'decided';
   });
@@ -133,6 +135,11 @@ function ledgerRows(S, universe) {
     const day = parseInt(dec.at, 10) || 10;
     rows.push({ cid: c.id, title: c.title, when: dec.at, day, decision: describeDec(dec), reason: REASON_NAME[dec.reason] || dec.reason, by: dec.by, vs: dec.vs, state: STATUS_LABEL[statusOf(S, c)], note: dec.note, share: dec.share ? dec.share.bucket : '' });
   });
+  // requirements decided on their own sit in the same ledger, under their own ID
+  rdList(S, '').forEach((x) => {
+    const d = x.dec, day = parseInt(d.at, 10) || 10;
+    rows.push({ cid: x.r.id, title: x.r.text.length > 70 ? x.r.text.slice(0, 67) + '…' : x.r.text, when: d.at, day, decision: RD_BY[d.outcome].name + (d.cover ? ' (covered by ' + d.cover + ')' : ''), reason: d.outcome === 'ask' ? 'Question for ' + d.to + ': ' + d.q : (RD_REASON_NAME[d.reason] || d.reason), by: d.by, vs: 'One requirement, decided on its own', state: RD_STATUS_LABEL[x.status], note: d.note, share: '' });
+  });
   rows.sort((a, b) => b.day - a.day || (a.cid < b.cid ? -1 : 1));
   return rows;
 }
@@ -147,6 +154,7 @@ function assistReply(S, c, ms, intent, blindHidden) {
   const idx = (m) => 'M' + (ms.indexOf(m) + 1);
   const rk = rankedOf(S, c, ms);
   const refs = [c.id].concat(ms.slice(0, 4).map((m) => m.id));
+  if (c.aiHeld) return { text: 'I am not used on this group, and I have not read it. ' + c.aiHeld.text + ' Review it from the mechanical results, or ask a teammate.', refs: [c.id] };
   if (intent === 'explain') {
     const vals = groupValues(c, ms);
     const nr = ms.length - rk.length;

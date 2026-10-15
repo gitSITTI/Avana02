@@ -8,7 +8,7 @@
         </div>
         <div style="§CARD§overflow:hidden">
           <div style="padding:12px 16px;§CAP§border-bottom:1px solid #D5DADE">Who must sign, by case</div>
-          <div style="overflow-x:auto"><div style="min-width:820px">
+          <div role="region" tabindex="0" aria-label="Who must sign, by case" style="overflow-x:auto"><div style="min-width:820px">
             <div style="display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr)) minmax(0,2fr);gap:12px;padding:8px 16px;border-bottom:1px solid #D5DADE;font-size:12px;color:#4F5B66;font-weight:600"><span>Case</span><span>Systems</span><span>Process</span><span>UI/UX</span><span>New user</span><span>Notes</span></div>
             <sc-for list="{{polRows}}" as="r" hint-placeholder-count="7">
               <div style="display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr)) minmax(0,2fr);gap:12px;padding:10px 16px;border-bottom:1px solid #E3E7EA;align-items:start"><span style="font-weight:600">{{r.a}}</span><span>{{r.b}}</span><span>{{r.c}}</span><span>{{r.d}}</span><span>{{r.e}}</span><span style="font-size:13px;color:#3C4852">{{r.f}}</span></div>
@@ -22,7 +22,7 @@
             <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{polToggles}}" as="t" hint-placeholder-count="3"><button onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button></sc-for></div>
             <div style="display:flex;flex-direction:column;gap:8px;background:#F4F6F8;border-radius:6px;padding:12px">
               <div style="font-weight:600">These must sign</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{polOut}}" as="o" hint-placeholder-count="3"><span style="font-size:13px;font-weight:600;padding:3px 10px;border-radius:4px;background:#FFFFFF;border:1px solid #8C98A3">{{o.label}}</span></sc-for></div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{polOut}}" as="o" hint-placeholder-count="3"><span style="font-size:13px;font-weight:600;padding:3px 10px;border-radius:4px;background:#FFFFFF;border:1px solid #7A8793">{{o.label}}</span></sc-for></div>
               <sc-if value="{{polHasSamples}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{polSamples}}" as="o" hint-placeholder-count="1"><div style="font-size:13px;color:#3C4852">Also: {{o.label}}.</div></sc-for></div></sc-if>
             </div>
             <div style="font-size:13px;color:#3C4852">{{polNote}}</div>

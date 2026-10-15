@@ -1,6 +1,6 @@
 # Requirements Consolidator: CI on GitHub Actions. The same checks as .gitlab-ci.yml and `make check`.
-# THIS FILE has not run on GitHub yet. Each job's commands were run locally in clean virtual environments first; expect to adjust
-# the runner image or the action versions on the first real run.
+# THIS FILE has not run on GitHub yet. Each job's commands were run locally first (the browser tests and the scale test against the same pinned
+# libraries and a local Chromium, in a clean copy of the repository); expect to adjust the runner image or the action versions on the first real run.
 #
 # Safety choices (tools/test_workflows.py keeps them from drifting):
 #   - the workflow token is read-only (permissions: contents: read) and no job asks for more
@@ -153,6 +153,51 @@ jobs:
       - run: cmp "$RUNNER_TEMP/Main.built.dc.html" prototype/project/Main.dc.html
       - run: node verify.js project/Main.dc.html
         working-directory: prototype
+
+  # 3c. The prototype in a real browser (Chromium through Playwright), ten test files at three screen widths: the flows, the V, the gold set, keeping the
+  #     work, the AI gate, and the accessibility scan (axe-core 4.13 plus contrast, keyboard, reflow and chart-colour checks). A full run is 30 runs and took about 17 minutes where it
+  #     was written (a busy machine); the runner prints one line for each and everything a failing one said. The page under test is the committed prototype/project/Main.dc.html.
+  prototype-browser:
+    name: prototype browser tests and accessibility
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - run: npm ci
+        working-directory: prototype/vendor
+      - run: pip install -r prototype/requirements-test.txt
+      - run: python -m playwright install --with-deps chromium
+      - run: python run_browser_tests.py
+        working-directory: prototype
+
+  # 3d. The scale test: a page with 20 times the sample (24,960 requirements, 5,040 clusters) is built in a temporary folder and every page, the gold-set pair
+  #     counts and the project files are timed against limits about three times what a laptop needs. SCALE_SLACK doubles them for a shared runner.
+  prototype-scale:
+    name: prototype scale test (25,000 requirements)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - run: node scale.js
+        working-directory: prototype
+        env:
+          SCALE_SLACK: "2"
 
   # 4. Container image. Manual only (Actions > CI > Run workflow): the Containerfile has never been built, so this is its first real test.
   #    It builds and checks; it does not push anywhere.
