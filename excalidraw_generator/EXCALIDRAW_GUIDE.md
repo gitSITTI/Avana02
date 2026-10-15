@@ -1,6 +1,6 @@
 # How the Excalidraw boards were made, and how an agent can expand and recreate them
 
-The eleven boards (storyboard, wireframes, system flows, UI kit, scale, lenses, group decisions, assistant, more pipelines, any-input, the engineering V) were **not drawn by hand**. Each is produced by a small Python program that writes an `.excalidraw` file. That is why an agent can change one rule (a colour, a banner, a widget) and regenerate every board consistently, or add a screen by writing a function.
+The twelve boards (storyboard, wireframes, system flows, UI kit, scale, lenses, group decisions, assistant, more pipelines, any-input, the engineering V, the newer screens) were **not drawn by hand**. Each is produced by a small Python program that writes an `.excalidraw` file. That is why an agent can change one rule (a colour, a banner, a widget) and regenerate every board consistently, or add a screen by writing a function.
 
 **Checked in this session:** all nine earlier boards rebuild **byte-for-byte identical** to the files you already have (`python build_all.py --check`), the package works from a clean copy (`npm ci`, bundle, build, validate, render), and the example in recipe A runs. **Not checked:** opening the files in the live Excalidraw app. Every check used Excalidraw's own exporter (`@excalidraw/utils`) rather than the app. Open one board in Excalidraw before you build on top of the format.
 
@@ -13,9 +13,9 @@ The eleven boards (storyboard, wireframes, system flows, UI kit, scale, lenses, 
 | `wf2.py` | Higher-level helpers: wrapped paragraphs, tables, checklists, sign-off dots, the sidebar with a lens selector. |
 | `wf_a.py` `wf_b.py` `wf_c.py` | Screens 1 to 10 of the original wireframes (open, map fields, overview, review, actions, methods, audit, export, glossary, phone). |
 | `sb.py` `flows.py` `kit.py` | Boards 01, 03 and 04: storyboard, system flows, information architecture and UI kit. Each has `build(path)`. |
-| `sc.py` `sc2.py` `lens.py` `g7.py` `asst.py` `pipes.py` `screens_input.py` `screens_v.py` | Screens for boards 05 to 11. |
+| `sc.py` `sc2.py` `lens.py` `g7.py` `asst.py` `pipes.py` `screens_input.py` `screens_v.py` `screens_new.py` | Screens for boards 05 to 12. |
 | `build_wf.py` | Composer for board 02 (it also has `build(path)`). |
-| `boards_05_09.py` | Boards 05 to 11 as **data**: title, seed, and the list of screens with their frame sizes. |
+| `boards_05_09.py` | Boards 05 to 12 as **data**: title, seed, and the list of screens with their frame sizes. |
 | `build_all.py` | Builds every board, validates each, and with `--check` compares to files you already have. |
 | `validate.py` | Structural checks (duplicate ids, dangling references, frame order, overflow). |
 | `render.py`, `entry.js`, `make_bundle.sh`, `package.json` | Render a board to PNG with Excalidraw's own exporter in headless Chromium. |
@@ -27,7 +27,7 @@ Deliberately **not** shipped: `bundle.js` (about 20 MB, rebuilt in seconds), `no
 
 ```bash
 # Build boards: standard library only
-python build_all.py --out out                 # all eleven boards, each validated
+python build_all.py --out out                 # all twelve boards, each validated
 python build_all.py --only 02,05 --out out    # a subset
 python build_all.py --check --out ../excalidraw   # fresh build vs. the files you already have: "identical" or "DIFFERS"
 
@@ -135,6 +135,7 @@ Palette (names in `wf.py`): `GREY #f1f3f5` page background, `DARK #343a40` body 
 | 09 Pipelines | same | `pipes.p1_map p2_refresh p3_calibration p4_writeback p5_lint` |
 | 10 Any input | same | `screens_input.i1_open_any i2_map_any i3_extract i4_arch` |
 | 11 The engineering V | same | `screens_v.v1_the_v_page v2_where_it_shows v3_what_a_decision_does v4_how_it_is_counted` (the small V in every wireframe header is `wf.mini_vee`, called from `shell` and `shell2`) |
+| 12 Newer screens | same | `screens_new.n1_label_pairs n2_one_requirement n3_ai_use n4_keeping n5_checked` (every number is the prototype's sample value; a third worked example of recipe A) |
 
 ## 8. Recipes
 

@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from wf2 import *  # noqa: E402,F401,F403  (Doc, INK, notes, palette constants)
-import asst, g7, lens, pipes, sc, sc2, screens_input, screens_v  # noqa: E402
+import asst, g7, lens, pipes, sc, sc2, screens_input, screens_new, screens_v  # noqa: E402
 
 BOARDS = {
     "05_scale_and_multiuser": dict(seed=105, title="05 · Scale and many reviewers: 1,000 to 1,500 requirements", screens=[
@@ -28,6 +28,9 @@ BOARDS = {
         (screens_input.i1_open_any, 1000, 700), (screens_input.i2_map_any, 1000, 780), (screens_input.i3_extract, 1000, 720), (screens_input.i4_arch, 1500, 820)]),
     "11_the_engineering_v": dict(seed=711, title="11 · The engineering V: where every requirement sits, and what a decision does to its verification", screens=[
         (screens_v.v1_the_v_page, 1000, 1060), (screens_v.v2_where_it_shows, 1500, 860), (screens_v.v3_what_a_decision_does, 1500, 890), (screens_v.v4_how_it_is_counted, 1500, 630)]),
+    "12_newer_screens": dict(seed=812, title="12 · Label, decide, trace, gate and keep: the screens added after the V, and how they were checked", screens=[
+        (screens_new.n1_label_pairs, 1500, 1060), (screens_new.n2_one_requirement, 1500, 1000), (screens_new.n3_ai_use, 1500, 1180),
+        (screens_new.n4_keeping, 1500, 860), (screens_new.n5_checked, 1500, 600)]),
 }
 
 

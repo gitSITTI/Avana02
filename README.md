@@ -21,13 +21,13 @@ Everything on these screens is a synthetic sample. Click a picture for full size
 <a href="docs/images/prototype/28_held_group_review.png"><img src="docs/images/prototype/28_held_group_review.png" width="32%" alt="A group held back from the AI: the review page says why no AI answer is shown and carries on from the mechanical results"></a>
 <a href="docs/images/prototype/09_all_requirements.png"><img src="docs/images/prototype/09_all_requirements.png" width="32%" alt="All requirements as a map: each square one requirement, colours that are also patterns and hollow squares, with a list for the keyboard under it"></a>
 
-The eleven design boards (Excalidraw files, rendered here because GitHub cannot show them):
+The twelve design boards (Excalidraw files, rendered here because GitHub cannot show them):
 
 | | | | | |
 |---|---|---|---|---|
 | [![01](docs/images/boards/thumbs/01_storyboard.png)](docs/images/boards/01_storyboard.png)<br>Storyboard | [![02](docs/images/boards/thumbs/02_wireframes.png)](docs/images/boards/02_wireframes.png)<br>Wireframes | [![03](docs/images/boards/thumbs/03_system_flows.png)](docs/images/boards/03_system_flows.png)<br>System flows | [![04](docs/images/boards/thumbs/04_ui_kit_and_IA.png)](docs/images/boards/04_ui_kit_and_IA.png)<br>UI kit | [![05](docs/images/boards/thumbs/05_scale_and_multiuser.png)](docs/images/boards/05_scale_and_multiuser.png)<br>Scale |
 | [![06](docs/images/boards/thumbs/06_lens_views.png)](docs/images/boards/06_lens_views.png)<br>Four lenses | [![07](docs/images/boards/thumbs/07_group_and_decisions.png)](docs/images/boards/07_group_and_decisions.png)<br>Group decisions | [![08](docs/images/boards/thumbs/08_assistant.png)](docs/images/boards/08_assistant.png)<br>The assistant | [![09](docs/images/boards/thumbs/09_more_pipelines.png)](docs/images/boards/09_more_pipelines.png)<br>Pipelines | [![10](docs/images/boards/thumbs/10_input_any_source.png)](docs/images/boards/10_input_any_source.png)<br>Any input |
-| [![11](docs/images/boards/thumbs/11_the_engineering_v.png)](docs/images/boards/11_the_engineering_v.png)<br>The engineering V | | | | |
+| [![11](docs/images/boards/thumbs/11_the_engineering_v.png)](docs/images/boards/11_the_engineering_v.png)<br>The engineering V | [![12](docs/images/boards/thumbs/12_newer_screens.png)](docs/images/boards/12_newer_screens.png)<br>Labelling, one requirement, AI use, keeping the work | | | |
 
 | Folder | What it is |
 |---|---|
@@ -37,7 +37,7 @@ The eleven design boards (Excalidraw files, rendered here because GitHub cannot 
 | `docs/GUI_DESIGN_GUIDE.md`, `docs/images/` | How to design the review screens, how to make the Excalidraw drawings clear and good-looking, and the screenshots and board renders (regenerate with `prototype/shots.py` and `excalidraw_generator/render.py`). |
 | `reqin/` | **Working code.** Reads SysML v2 (files and REST), ReqIF (MSOSA / DOORS), DOORS Next (OSLC), Digital.ai Agility, Excel/CSV, SQL, Word and PDF into one canonical model; can watch a folder of exports. Also a reference server for shared review (`SERVER.md`: no silent overwrite, roles, sign-offs, a record that verifies; the prototype is **not** connected to it yet) and the AI gate library (`aigate.py`). `INPUT_LAYER.md` is the design, `CONNECTORS.md` is how to finish and write connectors, `GUI_CONTRACT.md` is what any screen may rely on (one dataset folder, never a file) plus the 14 datasets it must pass. |
 | `connector_template/` | A working, tested starting point for your own connector, with five `TODO(agent)` seams and a ready prompt for an agent. Installs as its own package. |
-| `excalidraw/` | Eleven Excalidraw boards: storyboard, wireframes, flows, UI kit, scale, lenses, group decisions, assistant, pipelines, any-input, the engineering V. **Generated; do not edit by hand.** |
+| `excalidraw/` | Twelve Excalidraw boards: storyboard, wireframes, flows, UI kit, scale, lenses, group decisions, assistant, pipelines, any-input, the engineering V, and the newer screens (labelling, one requirement, AI use, keeping the work, how it was checked). **Generated; do not edit by hand.** |
 | `excalidraw_generator/` | The Python that produces the boards, with `EXCALIDRAW_GUIDE.md` (recipes, definition of done, prompts for an agent). |
 | `prototype/` | Clickable prototype of the screens (one page, built from `parts/`). Open and Import screens show real `reqin` output; everything else is synthetic. See `prototype/README.md`. |
 | `tools/` | `check_no_real_data.py`, the tripwire that keeps real program data out of the repo, and the tests that keep the licence files, the board and screenshot pictures, the Markdown links and the GitHub workflow honest. `tools/mutation/` breaks the code on purpose, one change at a time, to show that the checks notice (see its README for what the last full run found). |
@@ -49,7 +49,7 @@ The eleven design boards (Excalidraw files, rendered here because GitHub cannot 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e "reqin[test]"
-make check          # guard + 492 reqin tests + the connector template + rebuild all eleven boards and the prototype page, confirm they are identical
+make check          # guard + 492 reqin tests + the connector template + rebuild all twelve boards and the prototype page, confirm they are identical
 ```
 
 Try the CLI on your own export (read-only; the source file is never modified):
