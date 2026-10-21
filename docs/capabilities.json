@@ -1,0 +1,13 @@
+{
+  "format": "reqin-capabilities/1",
+  "capabilities": [
+    {"name": "Source ingestion", "state": "implemented", "code": "reqin/src/reqin/adapters", "evidence": "reqin/tests", "limit": "Synthetic fixtures and fake servers; no real source system verified."},
+    {"name": "Mechanical comparison", "state": "implemented", "code": "reqin/src/reqin/compare", "evidence": "reqin/tests/test_compare.py", "limit": "Draft rules and vocabulary; no general semantic understanding or real-corpus accuracy claim."},
+    {"name": "Portable comparison review", "state": "implemented", "code": "tools/review", "evidence": "reqin/tests/test_review_workspace.py", "limit": "Checked datasets and engine output, review notes and draft export. No sign-offs, source write-back or final approval."},
+    {"name": "Prototype shared decisions", "state": "implemented", "code": "prototype/parts/connect.js", "evidence": "prototype/b21.py", "limit": "Token-based reference server; sample requirements. Does not consume imported comparison output."},
+    {"name": "Reference server", "state": "implemented", "code": "reqin/src/reqin/server", "evidence": "reqin/tests/test_server.py", "limit": "No SSO, token expiry, built-in TLS, disk encryption or authoritative completion policy."},
+    {"name": "AI gateway", "state": "implemented", "code": "reqin/src/reqin/gateway", "evidence": "reqin/tests/test_gateway.py", "limit": "No real model or deployed firewall verified; no semantic leak detection or streaming."},
+    {"name": "AI comparison stages", "state": "planned", "code": "docs/agent_prompts/comparison_engine.md", "evidence": null, "limit": "Later model-assisted stages are not implemented."},
+    {"name": "Human-labelled real-world evaluation", "state": "planned", "code": "docs/GOLD_SET.md", "evidence": null, "limit": "Needs two human labellers and an approved evaluation corpus outside this repository."}
+  ]
+}

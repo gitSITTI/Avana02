@@ -4,7 +4,7 @@ This file is for any coding or chat agent (OpenAI Codex or ChatGPT, Gemini, Clau
 
 ## What this repository is
 
-A research prototype for a **requirements consolidator**: it reads requirements from SysML v2 / MSOSA, ReqIF, DOORS, Excel and other sources, finds near-duplicates mechanically first and with AI late, shows metrics, and treats every result as a **draft that a person verifies** through four review lenses. It holds the research, the Excalidraw design boards and the code that makes them, a clickable prototype of the screens, a design kit and checks for building real screens, and the working code (the input layer, the first mechanical stages of the comparison engine, a reference server, and the AI gate and gateway). The comparison engine stops at those first stages, **no real screen is connected to it yet**, and nothing here has been run on a real requirements set.
+A research prototype for a **requirements consolidator**: it reads requirements from SysML v2 / MSOSA, ReqIF, DOORS, Excel and other sources, finds near-duplicates mechanically first and with AI late, shows metrics, and treats every result as a **draft that a person verifies** through four review lenses. It holds the research, the Excalidraw design boards and the code that makes them, a clickable prototype of the screens, a design kit and checks for building real screens, and the working code (the input layer, the first mechanical stages of the comparison engine, a reference server, and the AI gate and gateway). The comparison engine stops at those first stages, **the prototype does not consume its comparison output yet**. The prototype can share decisions through the reference server when served from it and signed in with a token. Nothing here has been run on a real requirements set.
 
 ## Rules that apply to every task
 
@@ -19,6 +19,8 @@ A research prototype for a **requirements consolidator**: it reads requirements 
 
 ## Where things are
 
+Start with [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) for current implementation boundaries and `python3 tools/doctor.py` for local setup. The capability table is generated from `docs/capabilities.json`; edit that source and run `python3 tools/capabilities.py`. It describes implementation and check locations, not deployment certification.
+
 | Path | What it is | Change it by |
 |---|---|---|
 | `reqin/` | The working Python code: input layer, connectors, reference server (`SERVER.md`), AI gate and gateway | edit `reqin/src`, test in `reqin/tests` |
@@ -31,6 +33,7 @@ A research prototype for a **requirements consolidator**: it reads requirements 
 | `deploy/ai-egress/` | Example network rules for keeping the model host off the internet, and the script that checks them | see its README |
 | `connector_template/` | A working starting point for a new connector | see `reqin/CONNECTORS.md` |
 | `tools/` | The repository's own checks, and `tools/mutation/` | `python3 -m pytest -q tools` |
+| `tools/review/` | Builds a portable review screen from checked datasets and engine output; review notes and exports remain drafts | edit the builder/panel/view model; run `reqin/tests/test_review_workspace.py`, the GUI scan and probe, and `tools/mutation/review.py` |
 
 ## What to run
 

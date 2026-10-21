@@ -83,7 +83,7 @@
         canSign: !!(act && q && reqMine && !sg[mySlot] && !selfMade), signLabel: 'Sign off as ' + (mySlot ? SLOT_NAME[mySlot] : ''), signDisabled: nuBlock, doSign: () => this.rdSignNow(S, pk, mySlot, true),
         signHelp: nuBlock ? 'New user sign-off needs your explain-it-back sentence below (at least ' + RD_NU_MIN + ' characters).' : 'Your sign-off says: ' + LENS_MEANS[mySlot || 'SE'],
         isNU: mySlot === 'NU' && !!q && reqMine && !sg.NU, nuV: nuText, onNu: (e) => this.setState({ lensNote: Object.assign({}, S.lensNote, { [nuKey]: e.target.value }) }),
-        canWithdrawSign: !!(act && q && mySlot && sg[mySlot]), doWithdrawSign: () => this.rdSignNow(S, pk, mySlot, false),
+        canWithdrawSign: !!(act && q && mySlot && sg[mySlot] && sg[mySlot].by === P.name), doWithdrawSign: () => this.rdSignNow(S, pk, mySlot, false),
         canOwn: !!(act && lead && q && q.req.OWN !== 'none' && !sg.OWN), doOwn: () => this.rdSignNow(S, pk, 'OWN', true),
         selfNote: !!(act && q && reqMine && selfMade && !sg[mySlot]), selfText: 'You recorded this decision, so a colleague signs it as a second pair of eyes.',
         canChange: act && !f.edit, change: () => this.rdPatch(S, id, { edit: true, kind: dec.outcome === 'ask' ? '' : dec.outcome, reason: dec.reason || '', text: dec.text || pk.text, note: dec.note || '', q: '' }),

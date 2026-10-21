@@ -304,12 +304,15 @@ class Store:
         target, slot = parts[1], parts[2]
         if slot not in LENS_SLOTS + LEAD_SLOTS:
             raise ServerError(400, "bad_slot", f"A sign-off slot is one of {', '.join(LENS_SLOTS + LEAD_SLOTS)}.")
-        if body is None:
-            return   # withdrawing a sign-off: the revision check above already stops two people withdrawing over each other
         if slot in LEAD_SLOTS and who.role != "lead":
             raise ServerError(403, "lead_only", f"The {slot} slot is for a lead.")
         if slot in LENS_SLOTS and who.lens != slot:
             raise ServerError(403, "wrong_lens", f"You review as {who.lens or 'an observer'}; the {slot} slot is for the {slot} lens.")
+        if body is None:
+            current = self._latest(who.project, doc_id)
+            if current and json.loads(current["body"]) is not None and current["by_person"] != who.key:
+                raise ServerError(403, "not_yours", "Only the signer can withdraw this sign-off. Changing the decision clears its sign-offs automatically.")
+            return
         dec_id = ("rdec/" if not target.startswith("CL-") else "dec/") + target
         dec = self._latest(who.project, dec_id)
         if not dec or json.loads(dec["body"]) is None:

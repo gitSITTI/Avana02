@@ -47,7 +47,7 @@ python3 run_browser_tests.py b20 --width 390   # one file, one width
 python3 b15.py 1440                       # or a file on its own
 ```
 
-CI runs the build comparison, `verify.js`, the browser tests (`run_browser_tests.py`) and the scale test on both GitHub Actions and GitLab; `make check-full` runs the same things here. **Neither CI file has run on its platform yet**; each job's commands were run locally first. A deliberate break of the page makes the jobs fail; `tools/mutation/` shows it for each area (see its README).
+CI runs the build comparison, `verify.js`, the browser tests (`run_browser_tests.py`) and the scale test on both GitHub Actions and GitLab; `make check-full` runs the same things here. GitHub CI ran on 2026-10-21: Chromium and WebKit passed; Firefox reported five keyboard failures in `b20.py` at 1440 px. GitLab execution remains unverified. See the [run](https://github.com/gitSITTI/Avana02/actions/runs/39619948023). A deliberate break of the page makes the jobs fail; `tools/mutation/` shows it for each area (see its README).
 
 **Fonts and network.** The page carries its own fonts: Public Sans (interface), Source Serif 4 (requirement wording) and JetBrains Mono (identifiers), as `.woff2` files in `project/fonts/` with their licences (SIL Open Font License 1.1). It makes no request to any other site, so it looks the same offline and on a locked-down network. `tools/test_prototype_offline.py` fails if a link to an outside host is added.
 

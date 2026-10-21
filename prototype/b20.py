@@ -107,6 +107,9 @@ with session(W, 1000) as (pg, errs):
     # walk the page: every stop is seen, has a visible focus ring, is not hidden or covered by the sticky bar, and the focus never gets stuck
     def walk(label, limit):
         want = pg.evaluate("""() => Array.from(document.body.querySelectorAll('a[href],button,input:not([type=hidden]),select,textarea,summary,[tabindex]')).filter((e) => !e.disabled && e.tabIndex >= 0 && getComputedStyle(e).visibility !== 'hidden' && e.getBoundingClientRect().width > 0 && !e.closest('[aria-hidden="true"]')).length""")
+        # A temporary last control gives every browser the same end-of-page boundary.
+        # Headless Firefox can leave activeElement on the last page control when Tab exits content.
+        pg.evaluate("""() => { const end = document.createElement('button'); end.id = 'keyboard-end'; end.textContent = 'End of keyboard check'; document.body.appendChild(end); }""")
         pg.evaluate("() => { window.scrollTo(0, 0); document.body.tabIndex = -1; document.body.focus(); document.body.removeAttribute('tabindex'); }"); seen = []; stuck = 0; noring = []; offscreen = []; covered = []
         for i in range(limit):
             pg.keyboard.press('Tab')
@@ -114,13 +117,14 @@ with session(W, 1000) as (pg, errs):
               const mx = Math.min(Math.max(r.left + r.width / 2, 1), innerWidth - 1), my = Math.min(Math.max(r.top + Math.min(r.height / 2, 20), 1), innerHeight - 1), top = document.elementFromPoint(mx, my);
               return { key: e.tagName + '|' + (e.getAttribute('aria-label') || e.textContent || '').trim().slice(0, 30) + '|' + Math.round(r.top) + '|' + Math.round(r.left),
                 ring: (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || (cs.boxShadow !== 'none'), onscreen: r.width > 0 && r.height > 0 && r.right > 0 && r.bottom > 0 && r.left < innerWidth && r.top < innerHeight,
-                covered: !!top && !e.contains(top) && !top.contains(e), by: top ? top.tagName + '.' + top.className : '', body: e === document.body }; }""")
-            if s['body']: break
+                covered: !!top && !e.contains(top) && !top.contains(e), by: top ? top.tagName + '.' + top.className : '', body: e === document.body, end: e.id === 'keyboard-end' }; }""")
+            if s['body'] or s['end']: break
             if seen and seen[-1] == s['key']: stuck += 1
             seen.append(s['key'])
             if not s['ring']: noring.append(s['key'])
             if not s['onscreen']: offscreen.append(s['key'])
             if s['covered']: covered.append(s['key'] + ' under ' + s['by'])
+        pg.evaluate("document.getElementById('keyboard-end').remove()")
         ok(len(set(seen)) >= min(want, limit) - 1, 'keyboard, %s: Tab reaches every control (%d of %d)' % (label, len(set(seen)), want))
         ok(stuck == 0, 'keyboard, %s: the focus never sticks in one place' % label)
         ok(not noring, 'keyboard, %s: every Tab stop has a visible focus ring%s' % (label, '' if not noring else ' -> ' + '; '.join(noring[:3])))

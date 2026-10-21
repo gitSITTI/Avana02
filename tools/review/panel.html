@@ -1,0 +1,23 @@
+<section id="review-panel" class="rq-card" aria-labelledby="review-heading" hidden>
+  <h2 id="review-heading">Comparison drafts</h2>
+  <p id="review-status" role="status" aria-live="polite"></p>
+  <a id="review-open" class="rq-button" hidden>Open checked comparison</a>
+  <div id="review-work" hidden>
+  <p class="banner">Human review notes do not approve a merge or change any source requirement. Download your work before closing this page.</p>
+  <dl id="review-counts" class="counts"></dl>
+  <h3>Comparison coverage</h3>
+  <ul id="review-limits" class="plain warnings"></ul>
+  <p>The rules do not understand every paraphrase. An empty queue does not prove that all duplicates were found.</p>
+  <div class="pick">
+    <label>Show <select id="review-kind" class="rq-input" aria-label="Comparison type"></select></label>
+    <button id="review-save" class="rq-button" type="button">Download draft review</button>
+    <label class="rq-button pick-file">Restore draft review<input id="review-load" class="sr" type="file" accept=".json,application/json"></label>
+  </div>
+  <p id="review-progress" role="status"></p>
+  <div id="review-items"></div>
+  <div class="pick">
+    <button id="review-prev" class="rq-button" type="button">Previous comparisons</button>
+    <button id="review-next" class="rq-button" type="button">Next comparisons</button>
+  </div>
+  </div>
+</section>
