@@ -264,11 +264,29 @@ def test_requirement_decisions_work_the_same_way(world):
     assert st.get(who["sam"], "sign/REQ-FCS-0312/PE")["body"] is None
 
 
-def test_a_sign_off_can_be_withdrawn_by_whoever_holds_the_current_revision(world):
+def test_a_sign_off_can_be_withdrawn_by_its_signer_at_the_current_revision(world):
     st, _, who, _ = world
     put(st, who["priya"], "dec/CL-001", DEC, 0); put(st, who["sam"], "sign/CL-001/SE", {"rev": 1}, 0)
     assert put(st, who["sam"], "sign/CL-001/SE", None, 1)[0] == 201 and st.get(who["sam"], "sign/CL-001/SE")["body"] is None
     assert err(put, st, who["sam"], "sign/CL-001/SE", None, 1).status == 409
+
+
+@pytest.mark.parametrize("slot,signer,attacker,code", [
+    ("PE", "priya", "sam", "wrong_lens"),
+    ("OWN", "morgan", "sam", "lead_only"),
+    ("ADJ", "morgan", "priya", "lead_only"),
+    ("SE", "morgan", "sam", "not_yours"),
+])
+def test_withdrawing_a_sign_off_requires_its_slot_and_its_signer(world, slot, signer, attacker, code):
+    st, _, who, _ = world
+    put(st, who["jordan"], "dec/CL-001", DEC, 0)
+    doc = "sign/CL-001/" + slot
+    put(st, who[signer], doc, {"rev": 1}, 0)
+    head = st.events(who[signer])["head"]
+    assert err(put, st, who[attacker], doc, None, 1).code == code
+    assert st.get(who[signer], doc)["body"] == {"rev": 1}
+    assert st.events(who[signer])["head"] == head, "a refused withdrawal leaves no event or revision"
+    assert put(st, who[signer], doc, None, 1)[0] == 201
 
 
 # ---------------------------------------------------------------- a repeated request does not repeat its effect

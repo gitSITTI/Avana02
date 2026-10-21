@@ -515,7 +515,7 @@ html{scroll-padding-top:84px}
 <sc-if value="{{inWorkspace}}" hint-placeholder-val="{{ false }}">
 <div class="ws">
   <a class="skip-link" href="#main-content" onClick="{{skipToMain}}">Skip to the main content</a>
-  <nav class="ws-nav" aria-label="Main">
+  <nav class="ws-nav" aria-label="Main" tabindex="-1">
     <div class="ws-brand" style="display:flex;align-items:center;gap:10px;padding:2px 6px">
       <span aria-hidden="true" style="width:30px;height:30px;border-radius:9px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="8" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><rect x="6.5" y="6.5" width="8" height="8" rx="2" fill="#fff"/></svg></span>
       <span style="font-weight:700;font-size:16px;letter-spacing:-.01em">Consolidator</span>
@@ -1233,7 +1233,7 @@ html{scroll-padding-top:84px}
         </div>
 
         <!-- ---- resolve ---- -->
-        <aside class="rv-resolve" aria-label="Resolve this group" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;border-top:4px solid var(--accent);padding:16px;display:flex;flex-direction:column;gap:12px">
+        <aside class="rv-resolve" aria-label="Resolve this group" tabindex="-1" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;border-top:4px solid var(--accent);padding:16px;display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div style="font-size:13px;font-weight:600;color:#54626F;">Resolve {{d.id}}</div><span style="font-size:12px;color:#4F5B66">{{rp.gSummary}}</span></div>
           <div style="font-size:12px;color:#4F5B66">{{rp.aiHint}}</div>
 
@@ -6417,7 +6417,7 @@ class Component extends DCLogic {
       revLine: dec ? 'Sign-offs bind to revision ' + dec.rev + ' (hash ' + h32(cid + dec.text + dec.rev) + '). Any change to the decision clears them.' : 'No decision yet. Sign-offs open once a decision exists.',
       canSign: !!(actor && decidedOK && reqMine && !signedMine && !selfMade), signLabel: 'Sign off as ' + (mySlot ? SLOT_NAME[mySlot] : ''), signDisabled: nuBlock, doSign: () => logSign(mySlot, true),
       signHelp: nuBlock ? 'New user sign-off needs your explain-it-back sentence in the lens panel.' : 'Your sign-off says: ' + LENS_MEANS[mySlot || 'SE'],
-      canWithdraw: !!(actor && dec && signedMine), doWithdraw: () => logSign(mySlot, false),
+      canWithdraw: !!(actor && dec && signedMine && sg[mySlot].by === P.name), doWithdraw: () => logSign(mySlot, false),
       canObject: !!(actor && decidedOK && reqMine && !signedMine && !selfMade), objV: objText, onObj: (e) => this.setState({ lensNote: Object.assign({}, S.lensNote, { [cid + ':obj']: e.target.value }) }), objDisabled: objText.trim().length < 12,
       doObject: () => this.setState({ objections: Object.assign({}, S.objections, { [cid]: { by: P.name, lens: P.lens, at: TODAY, note: objText.trim() } }), events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Requested changes: ' + objText.trim(), cid), ...this.bump(S, cid) }),
       selfMade: !!(actor && decidedOK && reqMine && selfMade && !signedMine), selfText: 'You recorded this decision, so a colleague signs it as a second pair of eyes. You can still withdraw or reopen it below.',
@@ -7433,7 +7433,7 @@ class Component extends DCLogic {
         canSign: !!(act && q && reqMine && !sg[mySlot] && !selfMade), signLabel: 'Sign off as ' + (mySlot ? SLOT_NAME[mySlot] : ''), signDisabled: nuBlock, doSign: () => this.rdSignNow(S, pk, mySlot, true),
         signHelp: nuBlock ? 'New user sign-off needs your explain-it-back sentence below (at least ' + RD_NU_MIN + ' characters).' : 'Your sign-off says: ' + LENS_MEANS[mySlot || 'SE'],
         isNU: mySlot === 'NU' && !!q && reqMine && !sg.NU, nuV: nuText, onNu: (e) => this.setState({ lensNote: Object.assign({}, S.lensNote, { [nuKey]: e.target.value }) }),
-        canWithdrawSign: !!(act && q && mySlot && sg[mySlot]), doWithdrawSign: () => this.rdSignNow(S, pk, mySlot, false),
+        canWithdrawSign: !!(act && q && mySlot && sg[mySlot] && sg[mySlot].by === P.name), doWithdrawSign: () => this.rdSignNow(S, pk, mySlot, false),
         canOwn: !!(act && lead && q && q.req.OWN !== 'none' && !sg.OWN), doOwn: () => this.rdSignNow(S, pk, 'OWN', true),
         selfNote: !!(act && q && reqMine && selfMade && !sg[mySlot]), selfText: 'You recorded this decision, so a colleague signs it as a second pair of eyes.',
         canChange: act && !f.edit, change: () => this.rdPatch(S, id, { edit: true, kind: dec.outcome === 'ask' ? '' : dec.outcome, reason: dec.reason || '', text: dec.text || pk.text, note: dec.note || '', q: '' }),

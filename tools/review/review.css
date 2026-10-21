@@ -1,0 +1,10 @@
+#review-items { display: grid; gap: var(--space-12); margin: var(--space-12) 0; }
+.review-item { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius-ctl); padding: var(--space-12); overflow-wrap: anywhere; }
+.review-item h3 { margin: 0 0 var(--space-8); }
+.review-wording { white-space: pre-wrap; font-family: var(--serif); background: var(--surface-sunken); padding: var(--space-10); border-radius: var(--radius-ctl); }
+.review-fields { display: grid; gap: var(--space-8); }
+.review-fields label { min-width: 0; display: grid; gap: var(--space-4); }
+.review-fields textarea { min-height: 5rem; width: 100%; }
+.review-meta { font-size: var(--size-small); color: var(--text-secondary); }
+#review-panel .pick { margin-top: var(--space-12); }
+#review-panel select { width: 100%; min-width: 0; max-width: 100%; }

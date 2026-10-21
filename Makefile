@@ -4,8 +4,10 @@ CTR ?= $(shell command -v podman 2>/dev/null || command -v docker 2>/dev/null)
 PY  ?= python3
 IMG ?= requirements-consolidator/reqin:dev
 
-.PHONY: help check check-full guard secrets hooks test template boards proto proto-test proto-scale image image-test render
+.PHONY: help check check-full guard secrets hooks test template boards proto proto-test proto-scale image image-test render doctor capabilities
 help:
+	@echo "doctor      report local setup gaps without displaying secret values"
+	@echo "capabilities regenerate the newcomer capability table from its JSON source"
 	@echo "check       guard + secrets + test + template + boards + proto (needs only Python and Node)"
 	@echo "check-full  check, then proto-test and proto-scale (everything CI runs)"
 	@echo "guard       refuse real-data files (tools/check_no_real_data.py)"
@@ -24,6 +26,12 @@ help:
 check: guard secrets test template boards proto
 
 check-full: check proto-test proto-scale
+
+doctor:
+	$(PY) tools/doctor.py
+
+capabilities:
+	$(PY) tools/capabilities.py
 
 guard:
 	$(PY) -m pytest -q tools

@@ -54,8 +54,9 @@ Everything below has a test in `tests/test_server.py`, and each rule was broken 
 | **Project settings and rulings are for a lead.** `proj/…` (the AI switch and data sheet), `adj/<cluster>` (a ruling on a cluster), `gadj/<a>/<b>` (a ruling on a labelled pair). | `403 lead_only` |
 | **Anyone can raise an objection; only a lead can close it.** A write that withdraws `obj/<cluster>` (`null`) is a lead's. | `403 lead_only` |
 | **A label is its labeller's own.** `label/<a>/<b>/<person>` is written by that person, and has exactly those four parts. | `403 not_yours`, `400 bad_label_id` |
-| **A sign-off sits in the signer's own lens.** `sign/<id>/SE` is for someone who reviews as SE. | `403 wrong_lens` |
+| **A sign-off sits in the signer's own lens, including withdrawal.** `sign/<id>/SE` is for someone who reviews as SE. | `403 wrong_lens` |
 | `OWN` and `ADJ` slots are for leads. | `403 lead_only` |
+| **Only the signer withdraws an active sign-off.** A decision change still clears all its old sign-offs automatically. | `403 not_yours` |
 | **Nobody signs a decision they made**, lead or not. | `403 self_sign` |
 | A sign-off needs a decision to bind to, and names its revision: `{"rev": 2}`. | `409 nothing_to_sign`, `409 stale_signoff` (with `decision_rev`) |
 | **A new revision of a decision clears the sign-offs on the old one**, in the same step, each clearing in the record. Other decisions' sign-offs are untouched. | the reply lists `cleared` |

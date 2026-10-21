@@ -19,6 +19,8 @@ def run():
     return r.stdout
 S='src/reqin/server/store.py'; H='src/reqin/server/http.py'
 muts = [
+ ('withdrawal bypasses slot permissions', S, '        if slot in LEAD_SLOTS and who.role != "lead":', '        if body is None:\n            return\n        if slot in LEAD_SLOTS and who.role != "lead":'),
+ ('another signer withdraws an approval', S, 'current["by_person"] != who.key', 'False'),
  ('a stale revision overwrites', S, "if if_rev != have:", "if False:"),
  ('observers may write', S, 'if who.role == "observer":\n            raise ServerError(403, "observer"', 'if False:\n            raise ServerError(403, "observer"'),
  ('any lens signs any slot', S, "if slot in LENS_SLOTS and who.lens != slot:", "if False:"),

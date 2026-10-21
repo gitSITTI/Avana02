@@ -286,7 +286,7 @@
       revLine: dec ? 'Sign-offs bind to revision ' + dec.rev + ' (hash ' + h32(cid + dec.text + dec.rev) + '). Any change to the decision clears them.' : 'No decision yet. Sign-offs open once a decision exists.',
       canSign: !!(actor && decidedOK && reqMine && !signedMine && !selfMade), signLabel: 'Sign off as ' + (mySlot ? SLOT_NAME[mySlot] : ''), signDisabled: nuBlock, doSign: () => logSign(mySlot, true),
       signHelp: nuBlock ? 'New user sign-off needs your explain-it-back sentence in the lens panel.' : 'Your sign-off says: ' + LENS_MEANS[mySlot || 'SE'],
-      canWithdraw: !!(actor && dec && signedMine), doWithdraw: () => logSign(mySlot, false),
+      canWithdraw: !!(actor && dec && signedMine && sg[mySlot].by === P.name), doWithdraw: () => logSign(mySlot, false),
       canObject: !!(actor && decidedOK && reqMine && !signedMine && !selfMade), objV: objText, onObj: (e) => this.setState({ lensNote: Object.assign({}, S.lensNote, { [cid + ':obj']: e.target.value }) }), objDisabled: objText.trim().length < 12,
       doObject: () => this.setState({ objections: Object.assign({}, S.objections, { [cid]: { by: P.name, lens: P.lens, at: TODAY, note: objText.trim() } }), events: this.mk(S.events, 'human', P.name + ' · ' + P.lens, 'Requested changes: ' + objText.trim(), cid), ...this.bump(S, cid) }),
       selfMade: !!(actor && decidedOK && reqMine && selfMade && !signedMine), selfText: 'You recorded this decision, so a colleague signs it as a second pair of eyes. You can still withdraw or reopen it below.',
