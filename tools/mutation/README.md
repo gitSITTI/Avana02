@@ -13,7 +13,7 @@ temporary folder that is deleted when the script ends.
 | `trace.py` | The trace map: what a decision moves outside the requirement list | `prototype/verify.js` | 30 |
 | `vee.py` | The engineering V: the counts at each level | `prototype/verify.js` | 10 |
 | `server.py` | The reference server: every rule `reqin/SERVER.md` promises (no silent overwrite, roles, sign-offs, the record, idempotency) | `reqin/tests/test_server.py` | 40 |
-| `a11y.py` | The page's accessibility: a faint field edge, no page title, no skip link, no focus ring, faint text, an unnamed button, a click-only control, sideways scrolling at 320 px, look-alike chart colours | `prototype/b20.py` in a browser, **on the check made for that mistake** | 9 |
+| `a11y.py` | The page's accessibility: a faint field edge, no page title, no skip link, no focus ring, faint text, an unnamed button, a click-only control, sideways scrolling at 320 px, look-alike chart colours, look-alike lens colours, a pale lens colour, look-alike gate bars | `prototype/b20.py` in a browser, **on the check made for that mistake** | 12 |
 
 ## Running them
 
@@ -52,7 +52,7 @@ Run on 14 October 2026 on the final code of this commit, one script after the ot
 | `keep.py` | 53 | 52 | 1 | 0 | 17 min |
 | `ai.py` | 93 | 93 | 0 | 0 | 28 min |
 | `server.py` | 40 | 40 | 0 | 0 | 2 min |
-| `a11y.py` | 9 | 9 (each by the check made for it) | 0 | 0 | about 10 min |
+| `a11y.py` | 12 | 12 (each by the check made for it) | 0 | 0 | about 13 min |
 | **All** | **267** | **263** | **4** | **0** | |
 
 The times are with other jobs (the browser tests) running at the same time, so alone they would be shorter.

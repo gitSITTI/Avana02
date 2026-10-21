@@ -27,7 +27,7 @@
               <sc-for list="{{auHolds}}" as="h" hint-placeholder-count="3">
                 <div role="img" aria-label="{{h.aria}}" style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 84px;gap:8px 12px;align-items:center">
                   <span style="font-size:14px">{{h.name}}</span>
-                  <span aria-hidden="true" style="display:block;background:#EEF1F3;border-radius:0 5px 5px 0"><span style="{{h.bar}}"></span></span>
+                  <span aria-hidden="true" style="display:block;background:#EEF1F3;border-radius:0 5px 5px 0"><span data-chart-mark="AI gate bars" data-chart-label="{{h.name}}" style="{{h.bar}}"></span></span>
                   <span aria-hidden="true" style="font-family:var(--mono);font-size:13px;text-align:right">{{h.n}} · {{h.pct}}</span>
                 </div>
               </sc-for>

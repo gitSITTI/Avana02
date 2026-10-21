@@ -19,7 +19,7 @@ a page, with two tools: axe-core 4.13.0 (pinned in `prototype/vendor/package.jso
 | Where you are | Every page has its own title in the tab, one main area, one top heading, a named menu with the current page marked, a "Skip to the main content" link, and a polite announcement ("Now showing: ...") when the page changes | WCAG 2.4.1, 2.4.2, 4.1.3 |
 | Keyboard | The first Tab stop is the skip link; it is on screen and moves focus into the main area. Walking the page with Tab reaches every control, never sticks, shows a focus ring on every stop, scrolls it into view and does not leave it behind the sticky top bar. The window that lines up the wordings keeps Tab inside, closes on Escape and gives focus back | WCAG 2.1.2, 2.4.3, 2.4.7, 2.4.11 |
 | Pictures | Every SVG picture in the V, Overview, Methods and Results is hidden from a screen reader or has a name | WCAG 1.1.1 |
-| Chart colours | The colours in the key of the status map (All requirements) and of the with-and-without-AI chart (Methods) are far enough apart for someone with red-green colour blindness (OKLab distance of 6 or more, 8 is the target, using the Machado 2009 simulation) and for ordinary vision (15 or more), and each mark stands out from the page by 3 to 1. In the status map two of the five marks also differ by pattern (hatched, hollow) | WCAG 1.4.1, 1.4.11 |
+| Chart colours | The colours in the key of the status map (All requirements), of the with-and-without-AI chart (Methods), of the four lenses (the person's avatar in the side bar, for each lens), of the two legs of the V and of the AI gate's bars (open and held) are far enough apart for someone with red-green colour blindness (OKLab distance of 6 or more, 8 is the target, using the Machado 2009 simulation) and for ordinary vision (15 or more), and each mark stands out from the page by 3 to 1. In the status map two of the five marks also differ by pattern (hatched, hollow); the V's two legs differ by shape (circle, square); every lens and every bar has its name beside it. White initials on each lens colour read at 4.5 to 1 | WCAG 1.4.1, 1.4.3, 1.4.11 |
 | Reduced motion | With "reduce motion" asked for, nothing repeats an animation and no control has a transition | WCAG 2.3.3 (level AAA, checked anyway), 2.2.2 |
 | Reflow | At 320 px wide (a 1280 px page at 400 percent zoom) no page needs sideways scrolling | WCAG 1.4.10 |
 
@@ -35,6 +35,8 @@ reduced motion and the announcement of a page change, for example, have not), an
 - The explorer rows reflow at 320 px.
 - The status map is a picture for the mouse; it is hidden from assistive technology, and the list under it is the way in for the keyboard and a screen reader.
 - The "Without AI" mark in the Methods chart changed from slate to blue, because slate and the plum "With AI" mark could not be told apart by someone with red-green colour blindness. The status map's "needs attention" orange and "open" blue were adjusted for the same check.
+- The four lens colours changed (blue `#125AB2`, purple `#660E8C`, orange `#B25D12`, green `#296652`): the old purple and blue, and the old orange and green, were too close for red-green colour blindness. Every pair is now 8.2 or more apart (the target is 8), and 15 or more for ordinary vision.
+- The AI gate's "open" and "held" bars changed (teal `#0A665A` and orange `#B25D12`): the old green and amber were 4.0 apart for red-green colour blindness, and the new check named them the first time it ran.
 
 ## Breaking it on purpose
 
@@ -53,6 +55,8 @@ check, and the real page was never touched.
 | A control that reacts to a click but cannot be reached with the keyboard | "nothing reacts to a click that the keyboard cannot reach" |
 | A page that needs sideways scrolling at 320 px | "reflow", on every page |
 | The "Without AI" chart mark and the "With AI" mark made to look alike for red-green colour blindness | "chart colours: with and without AI" |
+| Two lens colours made to look alike; a lens colour too pale for white initials | "chart colours: the four lenses ..." and "white initials" |
+| The AI gate's open and held bars given the old, too-similar colours | "chart colours: the AI gate bars ..." |
 
 Run it with `python3 tools/mutation/a11y.py` (about a minute per mistake; it needs the same libraries as the browser tests). `--list` shows the names, and `--patterns` checks
 in under a second that each mistake still matches the code; `tools/test_mutation_scripts.py` runs that in CI so the script cannot quietly stop testing anything.
@@ -69,7 +73,7 @@ stays inside, Escape closes), and a background the contrast check cannot measure
 - **No screen reader, switch device or voice control** has been used with the page. Names and roles are checked by a program; whether the page *makes sense* when read aloud is not.
 - **No people with disabilities** have used it, and nobody has run a usability study.
 - **Chromium only.** Not Firefox, Safari or a phone's own browser. The 390 px layout is checked at that width in desktop Chromium, not on a phone.
-- **The lens colours** (SE blue, PE purple, UX orange, NU green) do not pass the colour-blind separation check for two pairs (blue and purple, orange and green). The lens name is always written beside the colour, so nothing depends on telling them apart, but the colour does not help a person with colour blindness find a lens at a glance. They were left as they are because the design boards use the same four colours. The V's circle and square, the result bars and the other chips were not run through the chart-colour check either; each is paired with a word or a number.
+- **Colour pairs that are still not run through the chart-colour check:** the result and progress bars, the chips that name a decision's state or a disposition, and the grade letter's colour. Each is paired with a word or a number, and none depends on colour alone, but nobody has measured them. The design boards (Excalidraw) still draw the four lenses in their older pastel colours; they are drawings, not the page.
 - **Text spacing, 200 percent text-only zoom, high-contrast and forced-colours modes, dark mode, and other languages** have not been tested.
 - **Content in the files the app exports** (the Word, ReqIF, JSON and CSV files) is not checked.
 - **Automated tools find a part of the problems.** A page with no axe violations can still be hard to use.

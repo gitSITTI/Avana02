@@ -263,7 +263,7 @@
       lensName: SLOT_NAME[lens], question: LENS_Q[lens], look: LENS_LOOK[lens], means: LENS_MEANS[lens], rows: lc.rows, evidence: this.lensEvidence(S, c, ms, lens, lc.terms),
       isNU: lens === 'NU', nuV: nuText, onNu: (e) => this.setState({ lensNote: Object.assign({}, S.lensNote, { [nuKey]: e.target.value }) }),
       nuHelp: nuText.trim().length >= 20 ? 'Thank you. This is stored with your sign-off.' : 'Write at least 20 characters. If you cannot, that is a finding: sign off is blocked until a newcomer can say it back.',
-      colorStyle: 'border-top:4px solid ' + { SE: '#1C5CAB', PE: '#6A3FC0', UX: '#B35A00', NU: '#1B6B3A' }[lens] + ';'
+      colorStyle: 'border-top:4px solid ' + LENS_COLOUR[lens] + ';'
     };
     /* sign-off card */
     const forecast = dec ? q.req : required(c, { newWording: res.outcome === 'merge' && ev.newWording, weakening: res.outcome === 'merge' && ev.weakening });

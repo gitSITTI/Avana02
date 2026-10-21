@@ -59,7 +59,7 @@
       ['Marked export controlled, above what the sheet approves', cnt.exp, 'held'], ['Marked CUI, above what the sheet approves', cnt.cui, 'held'],
       ['A marking this page does not recognise', cnt.by.unknown, 'held'], ['No marking recorded, and the sheet keeps those from the AI', cnt.by.unstated, 'held'], ['Classified marking', cnt.by.classified, 'held']
     ].filter((r) => r[1] > 0 || r[2] === 'open');
-    const holds = rowsAll.map(([name, n, tone]) => ({ name, n: nf(n), pct: cnt.total ? Math.round((n / cnt.total) * 100) + '%' : '0%', bar: 'height:10px;border-radius:0 5px 5px 0;background:' + (tone === 'open' ? '#1B6B3A' : '#8A5A00') + ';display:block;width:' + (cnt.total ? Math.max(n ? 1 : 0, (n / cnt.total) * 100).toFixed(1) : 0) + '%', aria: name + ': ' + n + ' of ' + cnt.total + ' groups' }));
+    const holds = rowsAll.map(([name, n, tone]) => ({ name, n: nf(n), pct: cnt.total ? Math.round((n / cnt.total) * 100) + '%' : '0%', bar: 'height:10px;border-radius:0 5px 5px 0;background:' + (tone === 'open' ? '#0A665A' : '#B25D12') + ';display:block;width:' + (cnt.total ? Math.max(n ? 1 : 0, (n / cnt.total) * 100).toFixed(1) : 0) + '%', aria: name + ': ' + n + ' of ' + cnt.total + ' groups' }));
     const marks = [['none', 'No marking'], ['cui', 'CUI'], ['exp', 'Export controlled'], ['classified', 'Classified'], ['unknown', 'Marking not recognised'], ['unstated', 'No marking recorded']].map(([k, name]) => ({ name, n: nf(mk[k]), pct: mk.total ? (mk[k] / mk.total * 100 < 1 && mk[k] ? '<1%' : Math.round(mk[k] / mk.total * 100) + '%') : '0%' }));
     /* the sheet as it is saved */
     const yes = (b) => (b ? 'Yes' : 'No');

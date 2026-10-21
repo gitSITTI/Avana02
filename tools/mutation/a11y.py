@@ -11,6 +11,7 @@ import common
 from common import SRC, MUT, WORK, reset
 
 HEAD, SHELL, METH, BUILD, C3 = 'parts/m/00_head.html', 'parts/m/30_shell_open.html', 'parts/m/70_methods.html', 'build.py', 'parts/c3.js'
+DATA1, C8 = 'parts/data1.js', 'parts/c8.js'
 GLOSSARY = '<button class="tb-icon" onClick="{{openGlossary}}" aria-label="Open the glossary" title="Glossary and help">§IC:help:20§</button>'
 
 # (name, file, old text, new text, text the failing line must contain)
@@ -23,6 +24,9 @@ muts = [
  ('icon button without a name', SHELL, GLOSSARY, GLOSSARY.replace(' aria-label="Open the glossary" title="Glossary and help"', ''), 'axe,'),
  ('click that the keyboard cannot reach', SHELL, GLOSSARY, GLOSSARY.replace('<button class="tb-icon"', '<div style="cursor:pointer" class="tb-icon"').replace('</button>', '</div>'), 'nothing reacts to a click'),
  ('page needs sideways scrolling', SHELL, '<div class="content" id="main-content" tabindex="-1">', '<div class="content" id="main-content" tabindex="-1" style="min-width:700px">', 'reflow:'),
+ ('two lens colours that look alike', DATA1, "PE: '#660E8C'", "PE: '#1A5EB0'", 'four lenses'),
+ ('a lens colour too pale for white initials', DATA1, "NU: '#296652'", "NU: '#7FC4A8'", 'white initials'),
+ ('gate bars that look alike', C8, "(tone === 'open' ? '#0A665A' : '#B25D12')", "(tone === 'open' ? '#1B6B3A' : '#8A5A00')", 'AI gate bars'),
  ('two chart colours that look alike', METH, 'data-chart-mark="with and without AI" style="width:12px;height:12px;background:#2A6FD6;', 'data-chart-mark="with and without AI" style="width:12px;height:12px;background:#54626F;', 'chart colours'),
 ]
 

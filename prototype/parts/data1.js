@@ -140,6 +140,8 @@ const LENSES = [
   { k: 'SE', name: 'Systems engineer', short: 'SE' }, { k: 'PE', name: 'Process engineer', short: 'PE' },
   { k: 'UX', name: 'UI/UX engineer', short: 'UX' }, { k: 'NU', name: 'New user', short: 'NU' }
 ];
+/* The colour of each lens (an avatar, the border of a review card). Checked for red-green colour blindness by b20.py: every pair is 8 or more apart (OKLab x 100), each is 4.5 to 1 against white. The lens name is always written beside it too. */
+const LENS_COLOUR = { SE: '#125AB2', PE: '#660E8C', UX: '#B25D12', NU: '#296652' };
 const SLOT_NAME = { SE: 'Systems engineer', PE: 'Process engineer', UX: 'UI/UX engineer', NU: 'New user', OWN: 'Owners', ADJ: 'Adjudicator' };
 const LENS_Q = {
   SE: 'Is the technical content right, and is anything lost?',

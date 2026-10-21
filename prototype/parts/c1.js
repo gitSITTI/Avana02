@@ -228,7 +228,7 @@
       return o;
     };
     const progOpen = !S.navClosed.prog, outOpen = !S.navClosed.out;
-    const lensColor = (l) => ({ SE: '#1C5CAB', PE: '#6A3FC0', UX: '#B35A00', NU: '#1B6B3A' }[l] || '#54626F');
+    const lensColor = (l) => LENS_COLOUR[l] || '#54626F';
     const init = (n) => n.split(' ').map((w) => w[0]).join('');
     const light = (on) => 'text-align:left;min-height:44px;padding:4px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;border:1px solid ' + (on ? 'var(--accent)' : '#B9C3CD') + ';background:' + (on ? 'color-mix(in srgb,var(--accent) 10%,#fff)' : '#FFFFFF') + ';color:var(--ink);font-weight:' + (on ? 600 : 500);
     const switcher = PEOPLE.map((p) => ({ name: p.name.split(' ')[0], sub: p.lens ? p.lens + (p.role === 'lead' ? ' · lead' : '') : 'observer', pressed: S.person === p.k ? 'true' : 'false', onClick: () => this.setState({ person: p.k, preview: '', just: '' }), style: light(S.person === p.k) }));

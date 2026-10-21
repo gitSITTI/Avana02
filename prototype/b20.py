@@ -148,7 +148,7 @@ with session(W, 1000) as (pg, errs):
     MARKS = """() => Array.from(document.querySelectorAll('[data-chart-mark]')).filter((e) => e.getBoundingClientRect().width > 1).map((e) => {
       const cs = getComputedStyle(e), rgb = (s) => { const m = /rgba?\\((\\d+)[ ,]+(\\d+)[ ,]+(\\d+)(?:[ ,\\/]+([\\d.]+))?\\)/.exec(s || ''); return m ? { hex: '#' + [m[1], m[2], m[3]].map((v) => (+v).toString(16).padStart(2, '0')).join(''), a: m[4] === undefined ? 1 : +m[4] } : null; };
       const img = rgb(cs.backgroundImage), fill = rgb(cs.backgroundColor), edge = rgb(cs.borderTopColor);
-      return { chart: e.getAttribute('data-chart-mark'), label: (e.parentElement.textContent || '').trim().replace(/\\s+/g, ' '), fill: fill && fill.a > 0 ? fill.hex : null, hatch: cs.backgroundImage !== 'none' ? (img || {}).hex : null,
+      return { chart: e.getAttribute('data-chart-mark'), label: (e.getAttribute('data-chart-label') || e.parentElement.textContent || '').trim().replace(/\\s+/g, ' '), fill: fill && fill.a > 0 ? fill.hex : null, hatch: cs.backgroundImage !== 'none' ? (img || {}).hex : null,
                outline: (!fill || fill.a === 0) && cs.backgroundImage === 'none' && parseFloat(cs.borderTopWidth) > 0 && edge ? edge.hex : null }; })"""
     for label, chart, count in [('All requirements', 'status map', 5), ('Methods and metrics', 'with and without AI', 2)]:
         nav(pg, label)
@@ -162,6 +162,30 @@ with session(W, 1000) as (pg, errs):
         for n in notes: print('NOTE', chart, n)
         if chart == 'status map':
             ok(sum(1 for m in marks if m['hatch']) == 1 and sum(1 for m in marks if m['outline']) == 1, 'chart colours: status map, two of the marks differ by pattern as well as colour (a hatched one and a hollow one)')
+
+    # ---- the other places where colour is part of the meaning: the four lenses, the V's two legs, the gate's bars (each also has a name, a shape or a number beside it)
+    lens_fills = []
+    for person, lens_name in [('Sam', 'Systems engineer'), ('Priya', 'Process engineer'), ('Jordan', 'UI/UX engineer'), ('Casey', 'New user')]:
+        who(pg, person)
+        m = [x for x in pg.evaluate(MARKS) if x['chart'] == 'lens']
+        ok(len(m) == 1 and lens_name in m[0]['label'], 'chart colours: the %s lens has one colour and says its name beside it' % lens_name)
+        lens_fills += [x['fill'] for x in m if x['fill']]
+    probs, notes = chart_colours.check(lens_fills, '#FFFFFF')
+    ok(len(lens_fills) == 4 and not probs, 'chart colours: the four lenses are tellable apart with red-green colour blindness and each stands out from white%s' % ('' if not probs else ' -> ' + '; '.join(probs[:3])))
+    ok(all(chart_colours.contrast(c, '#FFFFFF') >= 4.5 for c in lens_fills), 'chart colours: white initials on every lens colour read at 4.5 to 1')
+    who(pg, 'Sam')
+    nav(pg, 'The V')
+    marks = [m for m in pg.evaluate(MARKS) if m['chart'] == 'the V']
+    ok(len(marks) == 2 and all(m['label'] for m in marks), 'chart colours: the V shows its two legs in the key, each named (%d)' % len(marks))
+    probs, notes = chart_colours.check([m['fill'] for m in marks if m['fill']] + [m['outline'] for m in marks if m['outline']], '#FFFFFF')
+    ok(not probs, 'chart colours: the V, the two legs stand out from the page (they also differ by shape: a circle and a square)%s' % ('' if not probs else ' -> ' + '; '.join(probs[:3])))
+    nav(pg, 'AI use')
+    marks = [m for m in pg.evaluate(MARKS) if m['chart'] == 'AI gate bars']
+    fills = sorted({m['fill'] for m in marks if m['fill']})
+    ok(len(fills) == 2 and all(m['label'] for m in marks), 'chart colours: the AI gate bars use two colours (open, held) and every bar has its name beside it (%d bars)' % len(marks))
+    probs, notes = chart_colours.check(fills, '#FFFFFF')
+    ok(not probs, 'chart colours: the AI gate bars, open and held are tellable apart with red-green colour blindness%s' % ('' if not probs else ' -> ' + '; '.join(probs[:3])))
+    for n in notes: print('NOTE AI gate bars', n)
 
     # ---- a screen reader's view of the pictures
     for label in ['The V', 'Overview', 'Methods and metrics', 'Results and grade']:
