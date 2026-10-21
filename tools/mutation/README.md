@@ -12,6 +12,7 @@ temporary folder that is deleted when the script ends.
 | `keep.py` | Keeping the work: the checks on a loaded file, the browser copy, two tabs | `prototype/verify.js` | 53 |
 | `trace.py` | The trace map: what a decision moves outside the requirement list | `prototype/verify.js` | 30 |
 | `vee.py` | The engineering V: the counts at each level | `prototype/verify.js` | 10 |
+| `compare.py` | The comparison engine: every written slot, number and wording rule, the clustering, the quantity and slot extraction, the stemmer and vocabulary, the output folder and its checker | `reqin/tests/test_compare.py` | 144 |
 | `server.py` | The reference server: every rule `reqin/SERVER.md` promises (no silent overwrite, roles, sign-offs, the record, idempotency) | `reqin/tests/test_server.py` | 40 |
 | `a11y.py` | The page's accessibility: a faint field edge, no page title, no skip link, no focus ring, faint text, an unnamed button, a click-only control, sideways scrolling at 320 px, look-alike chart colours, look-alike lens colours, a pale lens colour, look-alike gate bars | `prototype/b20.py` in a browser, **on the check made for that mistake** | 12 |
 
@@ -56,6 +57,8 @@ Run on 14 October 2026 on the final code of this commit, one script after the ot
 | **All** | **267** | **263** | **4** | **0** | |
 
 The times are with other jobs (the browser tests) running at the same time, so alone they would be shorter.
+
+**`compare.py` was run separately, on 15 October 2026,** on the final code of the comparison engine (the table above is the earlier run and does not include it): 144 changes, 143 noticed, 1 not noticed and harmless, 0 not noticed. It took about 20 minutes on one machine (a shared cloud container, with a clean-install check running beside it for part of the time). The one harmless change is "any overlap is enough for a near miss (engine)": the same threshold is applied again inside `classify()`, which a test checks on its own, so removing either copy leaves the other in force.
 
 **Not noticed, and harmless (4).** Each is listed in its script's `EQUIVALENT` table with the reason, and was looked at by hand:
 

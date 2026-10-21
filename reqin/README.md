@@ -4,9 +4,9 @@ Reference implementation of the design in `INPUT_LAYER.md`. Python 3.11+ (tested
 
 ```bash
 pip install -e ".[test]"          # needs: pyyaml openpyxl reqif sqlalchemy python-docx pdfplumber (+ rdflib for OSLC: the "oslc" extra)
-pytest                            # 226 required checks: conformance x 8 formats, behaviour, downstream, live connectors against fakes,
-                                  # the HTTP kit against real local servers, DOORS script, CLI and watch mode, the dataset layer, docs-match-code
-                                  # + 1 optional (PDF made by LibreOffice): skipped, visibly, if `soffice` is not installed
+pytest                            # the whole suite, about a minute: conformance x 8 formats, behaviour, downstream, live connectors against fakes,
+                                  # the HTTP kit against real local servers, DOORS script, CLI and watch mode, the dataset layer, the comparison engine,
+                                  # the reference server, docs-match-code. Some tests skip, visibly, if `soffice` (LibreOffice) or `node` is not installed
 
 reqin sniff     file.reqif                        # which adapter recognises it
 reqin discover  file.xlsx                         # containers, fields, samples
@@ -17,6 +17,9 @@ reqin import    sqlite:///reqs.db --opt "query=SELECT req_uid, statement FROM re
 reqin import    file.xlsx --profile profile.yaml --out-dir ds/file   # the dataset folder the GUI reads, checked against the contract
 reqin check-dataset ds/file                       # is this folder valid under GUI_CONTRACT.md? what is in it?
 reqin make-datasets datasets/                     # the fourteen test datasets (F1-F14) a requirements screen must pass
+
+reqin compare   ds/file ds/other --out-dir cmp    # mechanical comparison of one or more datasets: groups, near misses, the rule behind each (no model; a draft)
+reqin check-compare cmp --dataset ds/file --dataset ds/other   # is this output valid under docs/COMPARE_FORMAT.md, and was it made from these datasets?
 
 reqin connectors                                  # every adapter and how far it has been proven
 reqin sample    sysml+https://HOST:8443/sysmlv2-api --opt project_name=NAME --opt token_env=TWC_TOKEN   # first page only, GET only
@@ -29,7 +32,7 @@ res = ingest(Source("reqs.xlsx"), profile=Profile.from_yaml(open("profiles/xlsx_
 res.requirements   # list[Requirement]   res.links   res.rejected (with reasons)   res.report (counts, invariant_ok, warnings)
 ```
 
-Layout: `src/reqin/{model,adapter,mapping,normalise,ingest,cli,connect,testing,watch,dataset,contract_datasets}.py`, `src/reqin/adapters/*` (one file per source), `profiles/*.yaml` (examples), `connectors/doors9/` (a DXL export script), `tests/` (fixtures are generated, synthetic).
+Layout: `src/reqin/{model,adapter,mapping,normalise,ingest,cli,connect,testing,watch,dataset,contract_datasets}.py`, `src/reqin/compare/` (the comparison engine), `src/reqin/adapters/*` (one file per source), `profiles/*.yaml` (examples), `connectors/doors9/` (a DXL export script), `tests/` (fixtures are generated, synthetic).
 
 **The screen's contract.** Read `GUI_CONTRACT.md`: the GUI reads one dataset folder (`dataset.py`), never a file, and must pass the fourteen datasets in `contract_datasets.py`.
 

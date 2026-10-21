@@ -1,9 +1,11 @@
-"""reqin  sniff | discover | propose | import | sample | connectors | watch | check-dataset | make-datasets | vee
+"""reqin  sniff | discover | propose | import | sample | connectors | watch | check-dataset | make-datasets | vee | compare | check-compare
 
   sniff / discover / propose / import   the four steps the app's Import screen performs (import --out-dir DIR writes the dataset the GUI reads)
   check-dataset DIR                      is this folder a valid dataset under GUI_CONTRACT.md? what is in it?
   make-datasets DIR                      write the fourteen test datasets (F1-F14) a screen must pass
   vee DIR                                the engineering V of a dataset: requirements per level, and how many have a verification method and item
+  compare DIR --out-dir OUT              the comparison engine (no AI): clusters of equivalent requirements and typed pairs, as drafts (docs/COMPARE_FORMAT.md)
+  check-compare OUT [--dataset DIR]      does this output follow docs/COMPARE_FORMAT.md, and does it match the dataset it was made from?
   sample                                 look at what a connector sees (first page only) so you can tune options and profile names
   connectors                             list every adapter with its maturity (fixture-tested / fake-server-tested / live-verified / stub)
   watch                                  re-ingest a folder of exports when they change; never writes to that folder
@@ -115,6 +117,43 @@ def _cmd_check_dataset(a) -> int:
     return 0
 
 
+def _cmd_compare(a) -> int:
+    from .compare import CompareError, Settings, load_vocabulary, run_dataset, write
+    try:
+        vocab = load_vocabulary(a.vocab) if a.vocab else None
+        res, info = run_dataset(a.dirs, vocab, Settings())
+        out = write(res, a.out_dir, info)
+    except (CompareError, ValueError) as e:
+        print(f"compare: {e}", file=sys.stderr)
+        return 2
+    c = res.summary["counts"]
+    if a.json:
+        print(json.dumps({"out_dir": str(out), **res.summary}, indent=2, ensure_ascii=False))
+        return 0
+    n_pairs = sum(c["pairs"].values())
+    kinds = ", ".join(f"{n} {t.lower()}" for t, n in c["pairs"].items() if n)
+    print(f"compared {c['requirements']} requirements: {c['clusters']} cluster(s) holding {c['in_clusters']}, " + (f"{n_pairs} other pair(s) ({kinds})" if n_pairs else "no other pairs"))
+    for n in res.summary["notes"]:
+        print("  note:", n)
+    print(f"written to {out} (drafts, provenance: mechanical)")
+    return 0
+
+
+def _cmd_check_compare(a) -> int:
+    from .compare import check
+    problems = check(a.dir, a.dataset or None)
+    if a.json:
+        print(json.dumps({"valid": not problems, "problems": problems}, indent=2, ensure_ascii=False))
+        return 1 if problems else 0
+    if problems:
+        print(f"NOT a valid comparison output: {a.dir}  ({len(problems)} problem(s))")
+        for x in problems[:30]:
+            print("  -", x)
+        return 1
+    print(f"ok: {a.dir} follows docs/COMPARE_FORMAT.md" + (" and matches the dataset(s) it names" if a.dataset else ""))
+    return 0
+
+
 def _cmd_vee(a) -> int:
     from .dataset import check_dataset
     from .vee import render, vee_report
@@ -201,6 +240,15 @@ def main(argv: list[str] | None = None) -> int:
     vp.add_argument("--level-field", metavar="NAME", help="with --by field: the field that holds the level (1 to 4, L2, system, component ...)")
     vp.add_argument("--json", action="store_true", help="machine-readable result")
     vp.add_argument("--max-gaps", type=int, metavar="N", help="exit 1 when more than N requirements lack a verification method or item (for CI)")
+    cp = sub.add_parser("compare", help="the comparison engine (no AI): clusters of equivalent requirements and typed pairs, written as drafts")
+    cp.add_argument("dirs", nargs="+", metavar="DIR", help="a dataset folder (reqin import --out-dir); give several to compare requirements across imports")
+    cp.add_argument("--out-dir", required=True, metavar="OUT", help="empty folder, or an earlier output folder; nothing else is overwritten")
+    cp.add_argument("--vocab", metavar="FILE", help="JSON: abbreviations, synonyms, phrases, ignore (replaces the default list; its hash is written into compare.json)")
+    cp.add_argument("--json", action="store_true", help="print the summary as JSON")
+    cc = sub.add_parser("check-compare", help="does this folder follow docs/COMPARE_FORMAT.md?")
+    cc.add_argument("dir")
+    cc.add_argument("--dataset", metavar="DIR", action="append", help="a dataset it was made from (repeat for each): also check the ids, the positions and that the dataset is unchanged")
+    cc.add_argument("--json", action="store_true")
     md = sub.add_parser("make-datasets", help="write the fourteen test datasets (F1-F14) a requirements screen must pass")
     md.add_argument("dir")
     md.add_argument("--only", help="comma-separated ids, e.g. F1,F6,F12")
@@ -224,6 +272,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_make_datasets(a)
     if a.cmd == "vee":
         return _cmd_vee(a)
+    if a.cmd == "compare":
+        return _cmd_compare(a)
+    if a.cmd == "check-compare":
+        return _cmd_check_compare(a)
     if a.cmd == "watch":
         return _cmd_watch(a)
     if a.cmd == "sample":

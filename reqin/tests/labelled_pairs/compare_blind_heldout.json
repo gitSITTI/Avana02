@@ -1,0 +1,905 @@
+{
+ "about": "These labelled pairs were written independently by a language model (the same model family as the assistant that wrote the engine) from systems-engineering knowledge and the project's label definitions, without reading any code or docs in the engine repository. All sentences are invented and generic. The order of the pairs was shuffled by the writer. They were scored against the engine once, and the engine was not changed because of what that showed.",
+ "pairs": [
+  {
+   "id": "H001",
+   "a": "The cabin air shall be exchanged 6 times per hour.",
+   "b": "The cabin air shall be exchanged at least 6 times per hour.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "One may mean an exact rate while the other is a minimum."
+  },
+  {
+   "id": "H002",
+   "a": "The controller shall log all alarms.",
+   "b": "The controller should log all alarms.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Shall versus should changes the strength of the obligation."
+  },
+  {
+   "id": "H003",
+   "a": "The HVAC controller shall support BACnet communication.",
+   "b": "The HVAC fans shall be balanced to ISO grade G2.5.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Communication protocol versus mechanical balance quality."
+  },
+  {
+   "id": "H004",
+   "a": "The sensor shall operate at temperatures down to -40 degrees C.",
+   "b": "The sensor shall operate at temperatures up to 85 degrees C.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Cold and hot limits give the full operating temperature range."
+  },
+  {
+   "id": "H005",
+   "a": "The cooling fan shall run continuously while the server is powered.",
+   "b": "The cooling fan shall be off while the server temperature is below 40 degrees C.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "The fan cannot run continuously and also be off at low temperature."
+  },
+  {
+   "id": "H006",
+   "a": "The supply voltage shall not exceed 13.2 V.",
+   "b": "The supply voltage shall not fall below 10.8 V.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Upper and lower bounds of the supply voltage."
+  },
+  {
+   "id": "H007",
+   "a": "The hob shall automatically switch off any heating zone that has been left unattended for 2 h.",
+   "b": "A hob zone shall be turned off without user action after 2 h with no user interaction.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Left unattended is interpreted as no user interaction; automatic means without user action."
+  },
+  {
+   "id": "H008",
+   "a": "The data centre shall be cooled to no more than 27 degrees C.",
+   "b": "The data centre shall be accessible only to authorised staff.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Thermal control and physical access are different functions."
+  },
+  {
+   "id": "H009",
+   "a": "The brine concentration shall be greater than 3 %.",
+   "b": "The brine concentration shall be less than 5 %.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Together they bound the concentration between 3 % and 5 %."
+  },
+  {
+   "id": "H010",
+   "a": "The elevator door shall remain open for at least 5 s after a call is cancelled.",
+   "b": "After a call is cancelled, the elevator door shall remain open for no less than 5 s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Reordered condition, and 'at least' and 'no less than' mean the same."
+  },
+  {
+   "id": "H011",
+   "a": "The container crane shall lift a payload of 40 tonnes.",
+   "b": "The container crane shall have a rated lifting capacity of 40 000 kg.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Rated lifting capacity is the payload it must lift, and 40 tonnes is 40 000 kg."
+  },
+  {
+   "id": "H012",
+   "a": "The infusion pump shall deliver the programmed flow rate to within ±5 %.",
+   "b": "The programmed flow rate shall be delivered by the infusion pump to within ±5 %.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same requirement in active and passive voice."
+  },
+  {
+   "id": "H013",
+   "a": "The pump shall withstand a 1 m drop onto a concrete floor.",
+   "b": "The pump shall withstand a drop of 0.5 m onto a hard surface.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "Concrete is a hard surface and 1 m is a greater drop than 0.5 m."
+  },
+  {
+   "id": "H014",
+   "a": "The satellite shall enter safe mode within 10 s of detecting an under-voltage.",
+   "b": "The satellite shall not enter safe mode on detecting an under-voltage.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Required versus forbidden response to the same event."
+  },
+  {
+   "id": "H015",
+   "a": "The bilge pump shall start automatically when the water level in the bilge reaches 150 mm.",
+   "b": "When the bilge water depth hits 150 mm, the vessel's bilge pump shall be activated without operator intervention.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Level/depth, start/activate and automatically/without intervention are synonyms."
+  },
+  {
+   "id": "H016",
+   "a": "The tank shall hold at least 50 L.",
+   "b": "The tank shall hold at least 80 L.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "A higher minimum capacity satisfies a lower one."
+  },
+  {
+   "id": "H017",
+   "a": "The service shall retain audit logs for 180 days.",
+   "b": "The service shall retain audit logs for 90 days.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different retention periods with no 'at least' or 'no more than', so intent must be decided."
+  },
+  {
+   "id": "H018",
+   "a": "The satellite shall enter safe mode after 24 h without ground contact.",
+   "b": "The satellite shall enter survival mode after 24 h without a ground command.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Safe mode and survival mode, and contact versus command, may or may not coincide."
+  },
+  {
+   "id": "H019",
+   "a": "Personal data shall be stored exclusively on servers located within the country of the user.",
+   "b": "All data, including personal data, shall be replicated to a server in a foreign region.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Replication to a foreign region violates in-country-only storage."
+  },
+  {
+   "id": "H020",
+   "a": "The conveyor shall run at a constant speed.",
+   "b": "The conveyor speed shall be adjusted continuously according to the load.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Constant speed contradicts continuous adjustment."
+  },
+  {
+   "id": "H021",
+   "a": "The alarm panel shall log every event.",
+   "b": "When the system is armed, the alarm panel shall log every event.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "Logging always covers logging only when armed."
+  },
+  {
+   "id": "H022",
+   "a": "The battery pack shall operate at ambient temperatures from -20 degrees C to 60 degrees C.",
+   "b": "The battery pack shall operate across an ambient temperature range of -20 degrees C to 60 degrees C.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same range of operating temperatures, reworded."
+  },
+  {
+   "id": "H023",
+   "a": "The supply voltage shall be 24 V ± 2 V.",
+   "b": "The supply voltage shall be 24 V ± 1 V.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "The narrower tolerance band lies inside the wider one."
+  },
+  {
+   "id": "H024",
+   "a": "The elevator shall announce the arrival floor to passengers.",
+   "b": "The elevator shall display the arrival floor to passengers.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Audible announcement and visual display are different outputs."
+  },
+  {
+   "id": "H025",
+   "a": "The system shall be available at least 99.9 % of the time over any calendar year.",
+   "b": "Total annual downtime of the system shall not exceed 8.76 h.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "0.1 % of 8760 h is 8.76 h, so availability and downtime limits coincide."
+  },
+  {
+   "id": "H026",
+   "a": "The brake controller shall meet the timing in REQ-112 and shall log each activation.",
+   "b": "The brake controller shall meet the timing in REQ-112.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "The first adds a logging obligation to the second."
+  },
+  {
+   "id": "H027",
+   "a": "The satellite shall transmit telemetry at 2000 kbit/s.",
+   "b": "The satellite shall transmit telemetry at a data rate of 2 Mbit/s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "2000 kbit/s equals 2 Mbit/s."
+  },
+  {
+   "id": "H028",
+   "a": "The oven shall preheat to 200 degrees C in no more than 8 min.",
+   "b": "The oven shall preheat to 200 degrees C in approximately 8 min.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A hard limit versus an approximate target."
+  },
+  {
+   "id": "H029",
+   "a": "The infusion pump shall notify the operator when the reservoir is empty.",
+   "b": "An alarm shall be raised for the operator if no fluid remains in the reservoir of the infusion pump.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Empty reservoir equals no fluid remaining, and notify equals raise an alarm for the operator."
+  },
+  {
+   "id": "H030",
+   "a": "The elevator shall display the current floor.",
+   "b": "The wind turbine shall display the current rotor speed.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different systems and displayed quantities."
+  },
+  {
+   "id": "H031",
+   "a": "The pump shall continue infusion when the door is open.",
+   "b": "The pump shall not continue infusion when the door is open.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Shall versus shall not on the same behaviour under the same condition."
+  },
+  {
+   "id": "H032",
+   "a": "The wind turbine shall continue to generate power at wind speeds up to 30 m/s.",
+   "b": "The wind turbine shall shut down when the wind speed exceeds 25 m/s.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Generating at 30 m/s contradicts shutting down above 25 m/s."
+  },
+  {
+   "id": "H033",
+   "a": "The ship shall be able to maintain a speed of 18 knots in sea state 4.",
+   "b": "The ship shall have a maximum speed of 18 knots.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Sustained speed in rough conditions versus top speed are different demands."
+  },
+  {
+   "id": "H034",
+   "a": "The data centre shall provide 2N cooling redundancy.",
+   "b": "The data centre shall provide N+1 cooling redundancy.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "Full duplication (2N) provides at least the spare capacity of N+1."
+  },
+  {
+   "id": "H035",
+   "a": "The turbine shall begin generating power at a wind speed of 3 m/s.",
+   "b": "The turbine shall cut out at a wind speed of 25 m/s.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Cut-in and cut-out speeds together define the generating wind range."
+  },
+  {
+   "id": "H036",
+   "a": "The kitchen mixer shall limit noise to 70 dB(A) at 1 m.",
+   "b": "The mixer motor shall be protected against overheating by a thermal fuse.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same appliance but acoustic emission and thermal protection are separate concerns."
+  },
+  {
+   "id": "H037",
+   "a": "The sampling period shall be exactly 100 ms.",
+   "b": "The sampling period shall be exactly 200 ms.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Two different exact values for the same quantity."
+  },
+  {
+   "id": "H038",
+   "a": "The battery shall provide at least 4 h of operation.",
+   "b": "The display shall have a diagonal of at least 4 inches.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different components and quantities despite the same number."
+  },
+  {
+   "id": "H039",
+   "a": "Each log entry shall contain a timestamp.",
+   "b": "Each log entry shall contain a timestamp and the operator identifier.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "The second adds a required field to the first."
+  },
+  {
+   "id": "H040",
+   "a": "The system will back up the database every night.",
+   "b": "The system shall back up the database every night.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Will (statement of fact) versus shall (binding requirement)."
+  },
+  {
+   "id": "H041",
+   "a": "The user interface shall support both English and Spanish.",
+   "b": "Users shall be able to operate the interface in either English or Spanish.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Supporting both languages is the same as letting users pick either."
+  },
+  {
+   "id": "H042",
+   "a": "The oven shall reach the set temperature within 10 min of start-up.",
+   "b": "Once at the set temperature, the oven shall hold it to within ±5 degrees C.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Warm-up time and steady-state regulation complete the temperature control picture."
+  },
+  {
+   "id": "H043",
+   "a": "The charger shall reduce the charge current when the cell voltage reaches 4.2 V.",
+   "b": "The charger shall terminate charging when the cell voltage reaches 4.2 V.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different action at the same trigger voltage."
+  },
+  {
+   "id": "H044",
+   "a": "The crossing barrier shall be fully lowered at least 20 s before the train reaches the crossing.",
+   "b": "The crossing barrier shall be fully lowered no later than 30 s before the arrival of the train at the crossing.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "meaning",
+   "why": "Lowering 30 s ahead of arrival also satisfies lowering 20 s ahead."
+  },
+  {
+   "id": "H045",
+   "a": "When the ambient temperature is below 5 degrees C, the heater shall switch on.",
+   "b": "When the ambient temperature is below 0 degrees C, the heater shall switch on.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different trigger temperature, so the engineer must decide which was intended."
+  },
+  {
+   "id": "H046",
+   "a": "When the battery charge falls below 20 %, the drone shall return to its launch point.",
+   "b": "On detecting a battery state of charge under 20 %, the UAV shall automatically fly back to its take-off location.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Drone/UAV, launch point/take-off location and charge/state of charge are synonyms."
+  },
+  {
+   "id": "H047",
+   "a": "The turbine shall survive a 50-year extreme gust.",
+   "b": "The turbine shall survive a 10-year extreme gust.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "A 50-year gust is more severe than a 10-year gust, so surviving it covers the smaller event."
+  },
+  {
+   "id": "H048",
+   "a": "The supply air temperature shall be reported by the HVAC controller every 30 s.",
+   "b": "The HVAC controller shall report the supply air temperature every 30 s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Passive versus active voice with identical period."
+  },
+  {
+   "id": "H049",
+   "a": "The yaw system shall align the nacelle to within 5 degrees of the wind direction.",
+   "b": "The yaw system shall align the nacelle to within 2 degrees of the wind direction.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "A 2 degree alignment error limit is tighter than 5 degrees."
+  },
+  {
+   "id": "H050",
+   "a": "The pump shall raise an occlusion alarm when line pressure exceeds 100 kPa.",
+   "b": "The pump shall clear the occlusion alarm when line pressure returns below 60 kPa.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Alarm set and alarm clear thresholds together define the alarm behaviour."
+  },
+  {
+   "id": "H051",
+   "a": "The server shall respond to each query within 500 ms.",
+   "b": "The server shall respond to each query within 200 ms.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "The 200 ms limit is tighter, so meeting it meets the 500 ms limit."
+  },
+  {
+   "id": "H052",
+   "a": "The web service shall tolerate the loss of one availability zone.",
+   "b": "The web service shall tolerate the loss of any two availability zones.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "meaning",
+   "why": "Surviving two zone losses implies surviving one."
+  },
+  {
+   "id": "H053",
+   "a": "The portal shall lock the user account after 5 failed login attempts.",
+   "b": "The portal shall lock the user account after 5 failed login attempts within 10 min.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "Locking on 5 failures at any time also locks on 5 failures within 10 min."
+  },
+  {
+   "id": "H054",
+   "a": "The web service shall encrypt all data in transit.",
+   "b": "All data sent to or from the web service shall be encrypted while on the network.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "In transit means while on the network, in both directions."
+  },
+  {
+   "id": "H055",
+   "a": "The drone shall comply with REQ-41.",
+   "b": "The dishwasher shall comply with REQ-41.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different systems; sharing a reference ID does not make them the same requirement."
+  },
+  {
+   "id": "H056",
+   "a": "The lift shall be rated for a maximum of 8 persons.",
+   "b": "The lift shall be rated for a maximum load of 630 kg.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Person count and mass limit are related ratings whose consistency needs a human decision."
+  },
+  {
+   "id": "H057",
+   "a": "The charging station shall provide an output current of up to 32 A.",
+   "b": "The charging station shall provide an output current of 32 A.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A maximum versus a fixed value; intent must be decided."
+  },
+  {
+   "id": "H058",
+   "a": "The unit mass shall not exceed 10 kg.",
+   "b": "The unit mass shall be at least 12 kg.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "The allowed ranges do not overlap."
+  },
+  {
+   "id": "H059",
+   "a": "The system shall retain session data for no more than 24 h.",
+   "b": "The system shall retain session data for at least 7 days.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Maximum below the minimum for the same retention period."
+  },
+  {
+   "id": "H060",
+   "a": "The cabin temperature shall be at least 18 degrees C.",
+   "b": "The cabin temperature shall be no more than 26 degrees C.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper limits of the same quantity define a range."
+  },
+  {
+   "id": "H061",
+   "a": "The system shall authenticate users before granting access to patient records.",
+   "b": "The system shall authorise users before granting access to patient records.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Authentication and authorisation are different checks."
+  },
+  {
+   "id": "H062",
+   "a": "Boot time shall not exceed 90 s.",
+   "b": "Boot time shall not exceed 1 min.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "60 s is a tighter limit than 90 s."
+  },
+  {
+   "id": "H063",
+   "a": "The user interface shall respond to an operator input within 1 s.",
+   "b": "The user interface should respond to an operator input within 2 s.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Both the modal and the time limit differ."
+  },
+  {
+   "id": "H064",
+   "a": "The drone shall be capable of hovering for 20 min on a fully charged battery.",
+   "b": "The drone shall have a flight endurance of at least 20 min on a fully charged battery.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Hover time and flight endurance are related but not the same measure."
+  },
+  {
+   "id": "H065",
+   "a": "The emergency exit door shall swing outward in the direction of egress.",
+   "b": "The emergency exit door shall swing into the room.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Swinging outward in the direction of exit is incompatible with swinging into the room."
+  },
+  {
+   "id": "H066",
+   "a": "The signalling system shall prevent two trains from occupying the same track section at the same time.",
+   "b": "The signalling system shall ensure that each track section is occupied by at most one train at any time.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Mutual exclusion of occupancy stated two ways."
+  },
+  {
+   "id": "H067",
+   "a": "The infusion pump shall detect air in the line.",
+   "b": "The elevator shall provide an intercom for passengers.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Different systems and unrelated functions."
+  },
+  {
+   "id": "H068",
+   "a": "The signalling interlocking shall reset within 5 s of a power interruption.",
+   "b": "The signalling interlocking shall restart within 5 s of a power interruption.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Reset and restart may or may not mean the same recovery action."
+  },
+  {
+   "id": "H069",
+   "a": "The data centre shall continue operating after the loss of any one power feed.",
+   "b": "The data centre shall tolerate the failure of a single power feed without interruption of service.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Both require single-feed fault tolerance with continued service."
+  },
+  {
+   "id": "H070",
+   "a": "The storage tank shall withstand an internal pressure of 500 kPa.",
+   "b": "The storage tank shall withstand an internal pressure of 0.5 MPa.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "500 kPa equals 0.5 MPa."
+  },
+  {
+   "id": "H071",
+   "a": "The infusion pump shall respond to a keypad entry within 200 ms.",
+   "b": "The web service shall respond to read requests within 200 ms.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same value but different systems and functions."
+  },
+  {
+   "id": "H072",
+   "a": "The ship shall have a design life of 25 years.",
+   "b": "The vending machine shall have a design life of 25 years.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Identical wording and value for different products."
+  },
+  {
+   "id": "H073",
+   "a": "The satellite solar arrays shall generate at least 2 kW at end of life.",
+   "b": "The satellite shall downlink telemetry on S-band.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Power generation and communications are different functions."
+  },
+  {
+   "id": "H074",
+   "a": "The operator shall be able to cancel an infusion at any time.",
+   "b": "Once started, an infusion shall run to completion without user interruption.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Cancellation at any time contradicts uninterruptible completion."
+  },
+  {
+   "id": "H075",
+   "a": "The vendor may provide installation instructions with each machine, as defined in REQ-77.",
+   "b": "The vendor must provide installation instructions with each machine, as defined in REQ-77.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "May versus must changes whether the obligation exists."
+  },
+  {
+   "id": "H076",
+   "a": "The elevator car shall not travel while its door is open.",
+   "b": "Travel of the elevator car shall be inhibited whenever the car door is open.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Prohibiting travel and inhibiting travel are the same behaviour in the same situation."
+  },
+  {
+   "id": "H077",
+   "a": "The access panel shall be secured with at least 4 fasteners.",
+   "b": "The access panel shall be secured with no more than 2 fasteners.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Fastener count limits cannot both hold."
+  },
+  {
+   "id": "H078",
+   "a": "The kiosk shall lock the screen after 5 min of inactivity.",
+   "b": "The kiosk shall unlock the screen when the user enters a valid PIN.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Locking and unlocking are two halves of the same screen-lock function."
+  },
+  {
+   "id": "H079",
+   "a": "The vending machine shall return change within 3 s of completing the sale.",
+   "b": "When exact payment is not made, the vending machine shall return change within 3 s of completing the sale.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "The unconditional version also covers the conditional case."
+  },
+  {
+   "id": "H080",
+   "a": "The vending machine shall accept coins and banknotes.",
+   "b": "The vending machine shall accept coins only.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Banknotes are both required and excluded."
+  },
+  {
+   "id": "H081",
+   "a": "The elevator door closing time shall be at least 3 s.",
+   "b": "The elevator door closing time shall be no more than 6 s.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Minimum and maximum closing time together give a window."
+  },
+  {
+   "id": "H082",
+   "a": "The wind turbine shall begin generating power at a wind speed of 4 m/s.",
+   "b": "The wind turbine shall begin generating power at a wind speed of 3 m/s.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different cut-in speeds; neither is clearly stricter."
+  },
+  {
+   "id": "H083",
+   "a": "When the wind speed exceeds 25 m/s, the wind turbine shall shut down.",
+   "b": "The wind turbine shall shut down when the wind speed is greater than 25 m/s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'Exceeds' and 'is greater than' with the condition reordered."
+  },
+  {
+   "id": "H084",
+   "a": "The gateway shall encrypt all outbound traffic.",
+   "b": "The gateway shall encrypt all outbound traffic using AES-256.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "Specifying the algorithm adds a constraint to the same obligation."
+  },
+  {
+   "id": "H085",
+   "a": "The service shall support at least 500 concurrent users.",
+   "b": "The service shall support at least 200 concurrent users.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "Supporting 500 users satisfies a minimum of 200."
+  },
+  {
+   "id": "H086",
+   "a": "The refrigerator shall keep the cooling compartment at or below 5 degrees C whenever the door is closed.",
+   "b": "While the door is closed, the temperature of the cooling compartment shall not exceed 5 degrees C.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'At or below' and 'shall not exceed' with the same condition."
+  },
+  {
+   "id": "H087",
+   "a": "The web service shall respond to read requests within 200 ms.",
+   "b": "Read requests shall be answered by the web service within 0.2 s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same limit in different units and passive voice."
+  },
+  {
+   "id": "H088",
+   "a": "The pump shall sound an alarm when the battery charge is below 15 %.",
+   "b": "The pump shall sound an alarm when the battery charge is below 10 %.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different trigger thresholds with no clear stricter direction."
+  },
+  {
+   "id": "H089",
+   "a": "The star tracker shall maintain pointing accuracy better than 60 arcseconds.",
+   "b": "The star tracker shall maintain pointing accuracy better than 0.01 degrees.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "meaning",
+   "why": "0.01 degrees is 36 arcseconds, which is tighter than 60 arcseconds."
+  },
+  {
+   "id": "H090",
+   "a": "Under all operating conditions, the pump shall comply with REQ-41.",
+   "b": "The pump shall comply with REQ-41 under all operating conditions.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same obligation and same referenced requirement, clause reordered."
+  },
+  {
+   "id": "H091",
+   "a": "The batch job shall complete within 4 h.",
+   "b": "The batch job shall run for a minimum of 6 h.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A maximum duration shorter than the required minimum."
+  },
+  {
+   "id": "H092",
+   "a": "The motor shall operate continuously at ambient temperatures from -30 degrees C to 70 degrees C.",
+   "b": "The motor shall operate continuously at ambient temperatures from -10 degrees C to 50 degrees C.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "The wider operating range includes the narrower one."
+  },
+  {
+   "id": "H093",
+   "a": "The vending machine shall not dispense a product unless payment has been confirmed.",
+   "b": "The vending machine shall dispense a product only if payment has been confirmed.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "'Unless' and 'only if' are logically the same restriction."
+  },
+  {
+   "id": "H094",
+   "a": "The lift shall have a rated capacity of at least 10 persons.",
+   "b": "The lift shall carry no more than 8 persons.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A minimum above the stated maximum."
+  },
+  {
+   "id": "H095",
+   "a": "The cabin temperature shall be maintained at 22 degrees C ± 2 degrees C.",
+   "b": "The cabin temperature shall be maintained between 20 degrees C and 24 degrees C.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A tolerance band and the explicit limits describe the same interval."
+  },
+  {
+   "id": "H096",
+   "a": "The oven shall switch off the heating element when the door is opened.",
+   "b": "When the door is opened, the oven shall switch off the heating element.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Condition moved to the front of the sentence only."
+  },
+  {
+   "id": "H097",
+   "a": "The pulse width shall be at most 8 ms.",
+   "b": "The pulse width shall be at least 2 ms.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Maximum and minimum pulse width form one allowed range."
+  },
+  {
+   "id": "H098",
+   "a": "The unit mass shall be no more than 12 kg.",
+   "b": "The unit mass shall be no more than 15 kg.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "A lower mass ceiling satisfies the higher one."
+  },
+  {
+   "id": "H099",
+   "a": "Inspection of the turbine blades shall take place once a year.",
+   "b": "The turbine blades shall be inspected every 12 months.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Once a year and every 12 months are the same interval."
+  },
+  {
+   "id": "H100",
+   "a": "The ventilation system shall supply fresh air to all occupied rooms.",
+   "b": "The ventilation system shall supply filtered air to all occupied rooms.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Fresh air and filtered air are different properties of the supply."
+  }
+ ]
+}

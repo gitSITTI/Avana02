@@ -1,0 +1,1355 @@
+{
+ "about": "These labelled pairs were written independently by an LLM from systems-engineering knowledge and the project's label definitions, without reading any code in the engine repository. All sentences are invented and generic; the order of pairs and the a/b sides were shuffled with a fixed seed.",
+ "pairs": [
+  {
+   "id": "B001",
+   "a": "The robot arm shall weigh no more than 5 kg.",
+   "b": "The robot arm shall weigh no more than 8 kg.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "Weighing at most 5 kg implies at most 8 kg."
+  },
+  {
+   "id": "B002",
+   "a": "The pump shall be rated at 2 kW.",
+   "b": "The heater shall be rated at 2 kW.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different actors that happen to share a rating value."
+  },
+  {
+   "id": "B003",
+   "a": "The controller shall persist its configuration across power cycles.",
+   "b": "The controller shall retain its cfg after power is removed and restored.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Persisting across power cycles is retaining after power removal and restoration."
+  },
+  {
+   "id": "B004",
+   "a": "The robot arm shall take at least 1 s to come to rest after an emergency stop.",
+   "b": "The robot arm shall stop within 0.2 s of an emergency stop.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Stopping within 0.2 s excludes taking at least 1 s; the second is a paraphrase."
+  },
+  {
+   "id": "B005",
+   "a": "The pump discharge pressure shall be not more than 600 kPa.",
+   "b": "The pump discharge pressure shall be no more than 6 bar.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "1 bar is 100 kPa so both state the same upper limit."
+  },
+  {
+   "id": "B006",
+   "a": "The lift shall provide emergency lighting during a power failure.",
+   "b": "The lift shall prevent the car from being overloaded.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same device, independent safety functions."
+  },
+  {
+   "id": "B007",
+   "a": "The conveyor shall stop within 2 s of a jam.",
+   "b": "The thermostat shall display the temperature within 2 s of a change.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different actors and functions that share only a time limit."
+  },
+  {
+   "id": "B008",
+   "a": "The lift shall hold the door open for four seconds at each stop.",
+   "b": "At every stop the car door shall stay open for ten seconds.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Reworded sentences with different durations (4 s versus 10 s) and no comparator."
+  },
+  {
+   "id": "B009",
+   "a": "The analyser shall report concentration in mol/L only.",
+   "b": "The analyser shall report concentration in mg/L only.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'only' makes the two reporting units mutually exclusive."
+  },
+  {
+   "id": "B010",
+   "a": "The logger shall store data in volatile memory only.",
+   "b": "The logger shall store data in non-volatile memory only.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Volatile and non-volatile storage are mutually exclusive, and 'only' excludes the other."
+  },
+  {
+   "id": "B011",
+   "a": "The robot arm shall comply with REQ-ARM-014.",
+   "b": "The robot arm shall comply with REQ-ARM-041.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same statement but a different referenced requirement id; a human must decide which is meant."
+  },
+  {
+   "id": "B012",
+   "a": "The thermostat shall switch to night mode at 22:00.",
+   "b": "Night mode shall be entered by the thermostat at 23:00.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Passive paraphrase with a different time of day for the same action."
+  },
+  {
+   "id": "B013",
+   "a": "The sensor shall draw no more than 0.01 A.",
+   "b": "The sensor shall draw no more than 2 mA.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "0.01 A is 10 mA, so at most 2 mA implies at most 10 mA."
+  },
+  {
+   "id": "B014",
+   "a": "The robot arm shall carry a payload of no less than 5000 g.",
+   "b": "The robot arm shall carry a payload of at least 5 kg.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'at least' equals 'no less than' and 5 kg equals 5000 g."
+  },
+  {
+   "id": "B015",
+   "a": "The battery pack mass shall be at least 12 kg.",
+   "b": "The battery pack mass shall not exceed 10 kg.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A minimum of 12 kg and a maximum of 10 kg cannot both be met."
+  },
+  {
+   "id": "B016",
+   "a": "The sensor output shall not exceed 0.25 V.",
+   "b": "The sensor output shall not exceed 250 mV.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "250 mV equals 0.25 V."
+  },
+  {
+   "id": "B017",
+   "a": "The conveyor shall run at 0.6 m/s.",
+   "b": "The robot arm shall move at 0.6 m/s.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different actors; the equal speed is coincidental."
+  },
+  {
+   "id": "B018",
+   "a": "The pump controller shall not start the pump when the tank is full.",
+   "b": "The pump controller shall start the pump when the tank is full.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Opposite polarity for the same action under the same condition."
+  },
+  {
+   "id": "B019",
+   "a": "The battery state of charge of each connected drone shall be displayed by the ground station.",
+   "b": "The ground station shall display the battery state of charge of each connected drone.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Active versus passive voice; same actor, action and object."
+  },
+  {
+   "id": "B020",
+   "a": "Stored logs shall not be deleted.",
+   "b": "Stored logs shall be deleted after 30 days.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Deleting after 30 days contradicts never deleting."
+  },
+  {
+   "id": "B021",
+   "a": "The pump shall run for no more than two hours continuously.",
+   "b": "The pump shall run for no more than 120 min continuously.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "two hours equals 120 min."
+  },
+  {
+   "id": "B022",
+   "a": "The thermostat shall hold the room temperature within ±1 degree C of the setpoint.",
+   "b": "The thermostat shall hold the room temperature within ±0.5 degrees C of the setpoint.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "A tolerance band of ±0.5 degrees C implies the wider ±1 degree C band (tolerances are bounds here, a convention chosen for this file)."
+  },
+  {
+   "id": "B023",
+   "a": "The conveyor shall run at no more than 1.0 m/s.",
+   "b": "The conveyor shall run at no less than 0.2 m/s.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper bound of one speed range."
+  },
+  {
+   "id": "B024",
+   "a": "The thermostat shall have a hysteresis of 0.5 degrees C.",
+   "b": "The thermostat shall have a hysteresis of 1 degree C.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Unqualified hysteresis values differ."
+  },
+  {
+   "id": "B025",
+   "a": "The thermostat shall have a setpoint range of 5 to 30 degrees C.",
+   "b": "The thermostat shall be mounted at a height of 1.5 m.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor, unrelated properties (setpoint range versus mounting height)."
+  },
+  {
+   "id": "B026",
+   "a": "The charger shall hold the float voltage for 4 h.",
+   "b": "The charger shall hold the float voltage for 4 min.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same number with a different unit (h versus min)."
+  },
+  {
+   "id": "B027",
+   "a": "The inverter output voltage shall be 230 V +/- 5 %.",
+   "b": "The inverter output voltage shall be 230 V ± 5 %.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'+/-' and '±' are two spellings of the same tolerance symbol."
+  },
+  {
+   "id": "B028",
+   "a": "The valve shall close 5 s after the stop command.",
+   "b": "The valve shall close 3 s after the stop command.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same delay slot with a different value and no comparator."
+  },
+  {
+   "id": "B029",
+   "a": "The logger shall retain data for no less than thirty days.",
+   "b": "The logger shall retain data for at least 30 days.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'at least' equals 'no less than' and thirty equals 30."
+  },
+  {
+   "id": "B030",
+   "a": "The ground station shall declare link loss after 0.5 min without telemetry.",
+   "b": "The ground station shall declare link loss after 30 s without telemetry.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "0.5 min equals 30 s."
+  },
+  {
+   "id": "B031",
+   "a": "A result shall only be discarded by the analyser after the operator confirms.",
+   "b": "The analyser shall require operator confirmation before discarding a result.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Both make operator confirmation a precondition of discarding a result."
+  },
+  {
+   "id": "B032",
+   "a": "The logger shall retain data for at least 90 days.",
+   "b": "The logger shall retain data for at least 30 days.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "At least 90 days implies at least 30 days."
+  },
+  {
+   "id": "B033",
+   "a": "On loss of power, the robot arm shall keep its pose.",
+   "b": "The robot arm shall hold its position when power is lost.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "hold position equals keep pose and 'when power is lost' equals 'on loss of power'."
+  },
+  {
+   "id": "B034",
+   "a": "The ground station shall display the drone battery voltage.",
+   "b": "The ground station shall display the drone altitude.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor and action but a different object (altitude versus battery voltage)."
+  },
+  {
+   "id": "B035",
+   "a": "The logger shall not overwrite any records when memory is full.",
+   "b": "The logger shall overwrite the oldest records when memory is full.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "One requires overwriting and the other forbids it in the same condition."
+  },
+  {
+   "id": "B036",
+   "a": "The sensor current shall be no more than 20 mA.",
+   "b": "The sensor current shall be at least 4 mA.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper bound of one current range."
+  },
+  {
+   "id": "B037",
+   "a": "The valve shall close in exactly 10 s.",
+   "b": "The valve shall close in exactly 5 s.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Two different exact values for one quantity cannot both hold."
+  },
+  {
+   "id": "B038",
+   "a": "When the tank level falls below 20 %, the pump controller shall start the fill pump.",
+   "b": "When the tank level reaches 90 %, the pump controller shall stop the fill pump.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Start and stop thresholds together specify one fill-control cycle."
+  },
+  {
+   "id": "B039",
+   "a": "The lift shall wait 5 s before closing the door.",
+   "b": "The lift shall wait 8 s before closing the door.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Door-close delay value differs."
+  },
+  {
+   "id": "B040",
+   "a": "The battery pack shall provide a nominal voltage of 48 V.",
+   "b": "The battery pack shall provide a nominal voltage of 24 V.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Nominal voltage value differs; a nominal value is not an exclusive state."
+  },
+  {
+   "id": "B041",
+   "a": "The controller shall reject unauthenticated commands.",
+   "b": "The controller shall reject every command that is malformed, out of range or unauthenticated.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "meaning",
+   "why": "B is one of the three cases A requires to be rejected."
+  },
+  {
+   "id": "B042",
+   "a": "The analyser shall present results as a PDF report.",
+   "b": "The analyser shall calibrate itself at start-up.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same device, independent functions (calibration versus reporting)."
+  },
+  {
+   "id": "B043",
+   "a": "The data logger shall sample the input at 20 Hz.",
+   "b": "The data logger shall sample the input at 10 Hz.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor, action and object; the unqualified sampling rate differs, so a human must choose."
+  },
+  {
+   "id": "B044",
+   "a": "The charger shall hold the float voltage for at least 4 h.",
+   "b": "The charger shall hold the float voltage for at least 1 h.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "At least 4 h implies at least 1 h."
+  },
+  {
+   "id": "B045",
+   "a": "The lift shall travel only when all doors are closed.",
+   "b": "The lift shall not travel unless all doors are closed.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "'not ... unless' and 'only when' express the same necessary condition."
+  },
+  {
+   "id": "B046",
+   "a": "The thermostat setpoint shall be no lower than 5 degrees C.",
+   "b": "The thermostat setpoint shall be no higher than 30 degrees C.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper limits of one setpoint range."
+  },
+  {
+   "id": "B047",
+   "a": "The unit shall be powered from a 12 V supply only.",
+   "b": "The unit shall be powered from a 24 V supply only.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'only' makes the two supply voltages mutually exclusive."
+  },
+  {
+   "id": "B048",
+   "a": "The battery pack shall open the main contactor if the pack voltage drops under 40 V.",
+   "b": "When the pack voltage falls below 40 V, the battery pack shall open its main contactor.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "falls below equals drops under and when equals if here; same threshold and action."
+  },
+  {
+   "id": "B049",
+   "a": "The data logger shall encrypt data in transit.",
+   "b": "The data logger shall encrypt data at rest and in transit.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "B adds encryption at rest to what A requires."
+  },
+  {
+   "id": "B050",
+   "a": "The data logger shall sample at no less than 10 Hz.",
+   "b": "The data logger shall sample at no more than 100 Hz.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper bound of one sampling-rate range; neither implies the other."
+  },
+  {
+   "id": "B051",
+   "a": "The robot arm shall remain stopped until the operator resets the emergency stop.",
+   "b": "The robot arm shall stop within 0.5 s of an emergency stop.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Reaction time and latching behaviour jointly describe the emergency-stop response."
+  },
+  {
+   "id": "B052",
+   "a": "The ground station shall retain mission logs for 90 days.",
+   "b": "The ground station shall retain mission logs for 30 days.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Unqualified retention periods differ; no comparator is given, so a human decides."
+  },
+  {
+   "id": "B053",
+   "a": "The analyser shall finish a run within 52 s.",
+   "b": "The analyser shall finish a run within 25 s.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "Within 25 s implies within 52 s; the transposed digits make the bounds differ."
+  },
+  {
+   "id": "B054",
+   "a": "The logger shall not overwrite records that have not been uploaded.",
+   "b": "the logger SHALL NOT overwrite records that have not been uploaded",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Only letter case and the final full stop differ."
+  },
+  {
+   "id": "B055",
+   "a": "The conveyor shall run at 0.8 m/s.",
+   "b": "The conveyor shall run at 0.5 m/s.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Unqualified belt speeds differ; no 'exactly' or 'only', so this is a value variant for a human to resolve."
+  },
+  {
+   "id": "B056",
+   "a": "The thermostat shall switch the heating on when the temperature is 1 degree C below the setpoint.",
+   "b": "The thermostat shall switch the heating off when the temperature is 1 degree C above the setpoint.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "On and off thresholds together define the hysteresis band."
+  },
+  {
+   "id": "B057",
+   "a": "The command link shall use a 128-bit key.",
+   "b": "The command link shall use a 256-bit key.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Key length differs and neither is qualified as a minimum or maximum."
+  },
+  {
+   "id": "B058",
+   "a": "The analyser shall run a calibration after every 50 measurements.",
+   "b": "The analyser shall run a calibration at start-up.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same action and object; the triggering condition differs and the two can coexist."
+  },
+  {
+   "id": "B059",
+   "a": "The memory buffer shall hold 1000 records.",
+   "b": "The memory buffer shall hold 10000 records.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Capacity differs by one digit (a changed number of zeros)."
+  },
+  {
+   "id": "B060",
+   "a": "The battery pack shall draw no more than 5 A.",
+   "b": "The battery pack shall weigh no more than 5 kg.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor and number but different quantities (mass versus current)."
+  },
+  {
+   "id": "B061",
+   "a": "The conveyor shall stop whenever any guard is opened.",
+   "b": "The conveyor shall stop when the maintenance hatch guard is opened.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "The hatch guard is one of the guards, so A implies B."
+  },
+  {
+   "id": "B062",
+   "a": "The lift shall not move when the door is open.",
+   "b": "The lift shall not move when the door is open or the load exceeds 1000 kg.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "A forbids movement in a superset of the situations B forbids."
+  },
+  {
+   "id": "B063",
+   "a": "The data logger shall be available at least 99.9 % of the time.",
+   "b": "The data logger shall be available at least 99 % of the time.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "For a minimum the larger number is stricter: 99.9 % implies 99 %."
+  },
+  {
+   "id": "B064",
+   "a": "When the link is lost, the ground station shall raise an alarm.",
+   "b": "When the link is lost, the ground station shall log the event.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Two different actions that together specify the response to link loss; neither implies the other."
+  },
+  {
+   "id": "B065",
+   "a": "The relay shall release in exactly 5 s.",
+   "b": "The relay shall release in exactly 5 ms.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same number but different unit with 'exactly': 5 s and 5 ms cannot both be exact."
+  },
+  {
+   "id": "B066",
+   "a": "The battery pack shall be charged at no less than 15 A.",
+   "b": "The battery pack shall be charged at no more than 10 A.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "A current cannot be both at most 10 A and at least 15 A."
+  },
+  {
+   "id": "B067",
+   "a": "Every operator action shall be recorded in the audit log.",
+   "b": "Operator login attempts shall be recorded in the audit log.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "A login attempt is an operator action, so recording every action implies recording login attempts."
+  },
+  {
+   "id": "B068",
+   "a": "The robot arm shall move at no less than 500 mm/s in manual mode.",
+   "b": "The robot arm shall move at no more than 250 mm/s in manual mode.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "No speed is both at most 250 mm/s and at least 500 mm/s."
+  },
+  {
+   "id": "B069",
+   "a": "The thermostat shall report the temperature every 5 min.",
+   "b": "The thermostat shall report the temperature every 5 s.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same number but the unit differs (s versus min), so the reporting period differs by a factor of 60."
+  },
+  {
+   "id": "B070",
+   "a": "The charger shall not start charging below 0 degrees C.",
+   "b": "The charger shall not start charging above 45 degrees C.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Two limits that together define one permitted temperature window; neither implies the other."
+  },
+  {
+   "id": "B071",
+   "a": "The conveyor shall run at exactly 0.5 m/s.",
+   "b": "The conveyor shall run at exactly 0.8 m/s.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Two incompatible exact speeds."
+  },
+  {
+   "id": "B072",
+   "a": "The pump controller shall log every start event.",
+   "b": "The pump controller should log every start event.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Only the modal differs (shall versus should), so the obligation level needs a human decision."
+  },
+  {
+   "id": "B073",
+   "a": "Unauthorised users shall have no access to the configuration menu.",
+   "b": "All users shall have access to the configuration menu.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "All users includes unauthorised ones, so the two cannot both hold."
+  },
+  {
+   "id": "B074",
+   "a": "The battery pack output voltage shall be at least 36 V.",
+   "b": "The battery pack output voltage shall be at most 54 V.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper bound of one voltage window."
+  },
+  {
+   "id": "B075",
+   "a": "The conveyor shall run at 0.5 m/s.",
+   "b": "The conveyor belt speed shall be 2000 m/h.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "2000 m/h is about 0.56 m/s, not 0.5 m/s; wording and unit are paraphrased and the value differs."
+  },
+  {
+   "id": "B076",
+   "a": "The logger shall encrypt stored data as required by REQ-SEC-007.",
+   "b": "The logger shall encrypt stored data as required by REQ-SEC-017.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Only the referenced requirement id differs."
+  },
+  {
+   "id": "B077",
+   "a": "The thermostat shall maintain the room temperature within 0.5 degrees C above or below the setpoint.",
+   "b": "The thermostat shall hold the room temperature within ±0.5 degrees C of the setpoint.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "'0.5 above or below' is the ± 0.5 tolerance; maintain equals hold."
+  },
+  {
+   "id": "B078",
+   "a": "The logger may compress archived files.",
+   "b": "The logger shall compress archived files.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Only the modal differs (shall versus may)."
+  },
+  {
+   "id": "B079",
+   "a": "The pump controller shall stop the pump within 5 s of a dry-run detection.",
+   "b": "The pump controller shall stop the pump within 2 s of a dry-run detection.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "Stopping within 2 s implies stopping within 5 s, not the reverse."
+  },
+  {
+   "id": "B080",
+   "a": "The robot arm shall stop within 0.5 s.",
+   "b": "The robot arm shall be painted grey.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor but entirely different functions."
+  },
+  {
+   "id": "B081",
+   "a": "The pump shall deliver a pressure of at least 300 kPa.",
+   "b": "The pump shall deliver a pressure of at least 4 bar.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "4 bar is 400 kPa, which is stricter than a minimum of 300 kPa."
+  },
+  {
+   "id": "B082",
+   "a": "The thermostat shall operate in heating mode only.",
+   "b": "The thermostat shall operate in cooling mode only.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'only' makes the two modes mutually exclusive."
+  },
+  {
+   "id": "B083",
+   "a": "When the lid is open, the analyser shall pause the measurement.",
+   "b": "When the lid is unlocked, the analyser shall pause the measurement.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor and action; the triggering condition differs (open versus unlocked)."
+  },
+  {
+   "id": "B084",
+   "a": "The valve shall open in less than 500 ms.",
+   "b": "The valve shall open in under 0.5 s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'less than' equals 'under' and 500 ms equals 0.5 s."
+  },
+  {
+   "id": "B085",
+   "a": "The lift shall bring the car to the nearest floor on any fault.",
+   "b": "The lift shall bring the car to the nearest floor on a door fault.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "A door fault is one kind of fault, so the 'any fault' requirement implies the door-fault one."
+  },
+  {
+   "id": "B086",
+   "a": "The system shall log all faults.",
+   "b": "The system shall be painted grey.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same generic template but entirely different functions."
+  },
+  {
+   "id": "B087",
+   "a": "The heater element shall be rated at 2 W.",
+   "b": "The heater element shall be rated at 2 kW.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same number with a different unit (kW versus W), a factor of 1000 apart."
+  },
+  {
+   "id": "B088",
+   "a": "The pump controller shall inhibit pump start-up while the suction pressure is below 0.2 bar.",
+   "b": "The pump controller shall not start the pump when the suction pressure is under 0.2 bar.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Inhibiting start-up is not starting; below equals under; same threshold."
+  },
+  {
+   "id": "B089",
+   "a": "The unit shall respond to a query within 0.1 s.",
+   "b": "The unit shall answer a query in 100 ms or less.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "answer equals respond, '100 ms or less' equals 'within 0.1 s'."
+  },
+  {
+   "id": "B090",
+   "a": "The lift shall stop within 4 s of the stop command.",
+   "b": "The lift shall stop within 3000 ms of the stop command.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "3000 ms is 3 s, which is stricter than 4 s."
+  },
+  {
+   "id": "B091",
+   "a": "Within 0.5 s of E-stop activation, the manipulator shall come to rest.",
+   "b": "The robot arm shall stop within 0.5 s of an emergency stop being pressed.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "E-stop activation is the emergency stop being pressed, a manipulator is the robot arm and coming to rest is stopping; same time limit."
+  },
+  {
+   "id": "B092",
+   "a": "The unit shall transmit while in silent mode.",
+   "b": "The unit must not transmit while in silent mode.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Must not and shall are opposite polarity for the same action and condition."
+  },
+  {
+   "id": "B093",
+   "a": "The battery pack shall not exceed 60 degrees C.",
+   "b": "The pump shall not exceed 60 degrees C.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different actors; each limit applies to its own part."
+  },
+  {
+   "id": "B094",
+   "a": "The ground station shall archive mission logs for audit.",
+   "b": "The ground station shall show the drone position on a map.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same actor, two independent functions (live display versus archiving)."
+  },
+  {
+   "id": "B095",
+   "a": "The lift door shall close automatically after remaining open for 5 s.",
+   "b": "The lift door shall open when the car arrives at a floor.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Opening and closing together specify one door cycle."
+  },
+  {
+   "id": "B096",
+   "a": "The conveyor shall halt when a jam is detected.",
+   "b": "On detection of a jam, the conveyor shall stop.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "halt equals stop and 'on detection of' equals 'when detected'."
+  },
+  {
+   "id": "B097",
+   "a": "The battery pack shall operate between -20 and 60 degrees C.",
+   "b": "The battery pack shall operate between -40 and 85 degrees C.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "Operating over the wider range implies operating over the narrower range inside it."
+  },
+  {
+   "id": "B098",
+   "a": "The heater shall be disabled when the temperature is below 5 degrees C.",
+   "b": "The heater shall be enabled when the temperature is below 5 degrees C.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Enabled and disabled are opposite states under the same condition."
+  },
+  {
+   "id": "B099",
+   "a": "When the tank level falls below 20 %, the pump controller shall start the fill pump.",
+   "b": "The pump controller shall start the fill pump when the tank level falls below 20 %.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same condition, actor and action; only the clause order differs."
+  },
+  {
+   "id": "B100",
+   "a": "The pump discharge pressure shall be at least 2 bar.",
+   "b": "The pump discharge pressure shall be at most 6 bar.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Lower and upper bound of one pressure range."
+  },
+  {
+   "id": "B101",
+   "a": "All records written by the data logger shall carry a UTC time stamp.",
+   "b": "The data logger shall timestamp every record using UTC.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Passive paraphrase: every record gets a UTC time stamp in both."
+  },
+  {
+   "id": "B102",
+   "a": "The analyser shall complete a measurement cycle in no more than 1.5 min.",
+   "b": "The analyser shall complete a measurement cycle in no more than 90 s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "1.5 min equals 90 s with the same comparator."
+  },
+  {
+   "id": "B103",
+   "a": "The lift door shall stay open for at least 10 s.",
+   "b": "The lift door shall stay open for at most 5 s.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "No duration is both at least 10 s and at most 5 s."
+  },
+  {
+   "id": "B104",
+   "a": "The analyser shall store results for 30 days.",
+   "b": "The lift shall announce floors in two languages.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different devices and functions."
+  },
+  {
+   "id": "B105",
+   "a": "The lift shall announce each floor.",
+   "b": "The lift shall carry up to 1000 kg.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor, unrelated functions (load capacity versus announcements)."
+  },
+  {
+   "id": "B106",
+   "a": "The conveyor shall be stopped by the controller if no part is seen for 30 s.",
+   "b": "If the sensor sees no part for 60 s, the controller shall stop the conveyor.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Paraphrased, but the no-part timeout differs (30 s versus 60 s)."
+  },
+  {
+   "id": "B107",
+   "a": "The thermostat shall refresh its display once a minute.",
+   "b": "The thermostat shall refresh its display every ten seconds.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Both are paraphrased periods (60 s versus 10 s); the value differs and a human must decide."
+  },
+  {
+   "id": "B108",
+   "a": "The battery pack shall never exceed 60 degrees C.",
+   "b": "The battery pack shall not exceed 60 degrees C during charging.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "Never exceeding at any time covers the charging case alone."
+  },
+  {
+   "id": "B109",
+   "a": "The battery pack shall not exceed 40 degrees C.",
+   "b": "The battery pack shall not exceed 45 degrees C.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "A ceiling of 40 degrees C implies a ceiling of 45 degrees C."
+  },
+  {
+   "id": "B110",
+   "a": "The ground station shall track at least 50 drones simultaneously.",
+   "b": "The ground station shall track at least 20 drones simultaneously.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "A minimum of 50 implies a minimum of 20."
+  },
+  {
+   "id": "B111",
+   "a": "The thermostat shall display the room temperature in degrees C.",
+   "b": "The  thermostat shall display the room temperature in degrees C",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Only extra whitespace and the missing final full stop differ."
+  },
+  {
+   "id": "B112",
+   "a": "When the lid is open and the rotor is spinning, the analyser shall sound an alarm.",
+   "b": "The analyser shall sound an alarm when the rotor is spinning and the lid is open.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same conjunction of conditions and same action, only reordered."
+  },
+  {
+   "id": "B113",
+   "a": "The data logger shall synchronise its clock with a time server.",
+   "b": "The data logger shall compress archived files.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same device, independent functions (storage versus timekeeping)."
+  },
+  {
+   "id": "B114",
+   "a": "The unit should not transmit during self-test.",
+   "b": "The unit shall not transmit during self-test.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same prohibition but a different modal strength (shall not versus should not)."
+  },
+  {
+   "id": "B115",
+   "a": "The conveyor shall stop within 1 s and sound the alarm.",
+   "b": "The conveyor shall stop within 1 s.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "A adds a conjunct (sound the alarm) on top of B, so A implies B."
+  },
+  {
+   "id": "B116",
+   "a": "The pump controller shall stop the pump within 2 s of a dry-run detection.",
+   "b": "The pump controller shall stop the pump within 2000 ms of a dry-run detection.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "2 s equals 2000 ms and every other slot is identical."
+  },
+  {
+   "id": "B117",
+   "a": "The data logger shall sample at no less than 100 Hz.",
+   "b": "The data logger shall sample at no more than 50 Hz.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "No rate is both at least 100 Hz and at most 50 Hz."
+  },
+  {
+   "id": "B118",
+   "a": "The valve shall not close sooner than 5 s after the stop command.",
+   "b": "The valve shall close within 2 s of the stop command.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Closing within 2 s excludes closing no sooner than 5 s."
+  },
+  {
+   "id": "B119",
+   "a": "The door shall remain open for at most 5 s.",
+   "b": "The door shall remain open for at least 5 s.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "A lower and an upper bound that together pin the duration to exactly 5 s; both can hold, neither implies the other."
+  },
+  {
+   "id": "B120",
+   "a": "The heater shall be switched off if the lid is open.",
+   "b": "The heater shall not be switched off if the lid is open.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Opposite polarity under the same condition."
+  },
+  {
+   "id": "B121",
+   "a": "The ground station shall never send a command without operator confirmation.",
+   "b": "The ground station shall not send a shutdown command without operator confirmation.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "A shutdown command is one kind of command, so the general rule implies the specific one."
+  },
+  {
+   "id": "B122",
+   "a": "The battery pack temperature shall be at most 45 degrees C during charging.",
+   "b": "The battery pack temperature shall be no more than 45 degrees C during charging.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'at most' and 'no more than' state the same upper bound."
+  },
+  {
+   "id": "B123",
+   "a": "The conveyor must stop within 1 s of an emergency stop request.",
+   "b": "The conveyor shall stop within 1 s of an emergency stop request.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Both 'must' and 'shall' mark a binding requirement; this file treats them as the same modal strength."
+  },
+  {
+   "id": "B124",
+   "a": "The logger shall sample at 10 Hz.",
+   "b": "The thermostat shall sample at 10 Hz.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different actors with the same value."
+  },
+  {
+   "id": "B125",
+   "a": "The setpoint shall be adjustable between 5 and 30 degrees C.",
+   "b": "The setpoint shall be adjustable from 5 degrees C to 30 degrees C.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'between 5 and 30' and 'from 5 to 30' describe the same inclusive range."
+  },
+  {
+   "id": "B126",
+   "a": "The thermostat shall offer a child lock on its keypad.",
+   "b": "The thermostat shall minimise energy use when the room is unoccupied.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same device, independent features."
+  },
+  {
+   "id": "B127",
+   "a": "When the pump temperature exceeds 80 degrees C, the controller shall shut down the pump.",
+   "b": "When the pump temperature exceeds 90 degrees C, the controller shall shut down the pump.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "surface",
+   "why": "Shutting down above 80 degrees C covers every case above 90 degrees C, so A implies B."
+  },
+  {
+   "id": "B128",
+   "a": "The pump shall feed the tank.",
+   "b": "The tank shall feed the pump.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Swapped subject and object: different actors and functions; both can hold (for example in a recirculation loop) and neither implies the other."
+  },
+  {
+   "id": "B129",
+   "a": "The pump shall start when the level sensor reports high level.",
+   "b": "The pump shall start when the level sensor reports low level.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Same actor and action; the triggering sensor state differs and both could hold."
+  },
+  {
+   "id": "B130",
+   "a": "All interfaces of the controller shall be galvanically isolated.",
+   "b": "The CAN interface of the controller shall be galvanically isolated.",
+   "type": "SUBSUMES",
+   "direction": "a",
+   "kind": "meaning",
+   "why": "The CAN interface is one of the interfaces, so A implies B."
+  },
+  {
+   "id": "B131",
+   "a": "The tank heater shall draw no more than 1500 W.",
+   "b": "The tank heater shall draw no more than 1.5 kW.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "1.5 kW equals 1500 W."
+  },
+  {
+   "id": "B132",
+   "a": "The valve shall close within 5 s.",
+   "b": "The valve shall close within 5 ms.",
+   "type": "SUBSUMES",
+   "direction": "b",
+   "kind": "surface",
+   "why": "Same number, different unit: within 5 ms implies within 5 s, not the reverse."
+  },
+  {
+   "id": "B133",
+   "a": "The conveyor shall not start if the guard door is open.",
+   "b": "If the guard door is open, the conveyor shall not start.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same prohibition under the same condition; only the clause order differs."
+  },
+  {
+   "id": "B134",
+   "a": "On reset the controller shall run a self-test.",
+   "b": "On power-up the controller shall run a self-test.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same actor, action and object; the triggering event differs."
+  },
+  {
+   "id": "B135",
+   "a": "The enclosure shall be rated IP65.",
+   "b": "The cable gland shall be rated IP65.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different parts with the same rating; neither statement constrains the other."
+  },
+  {
+   "id": "B136",
+   "a": "The lift shall carry a load of not more than 1000 kg.",
+   "b": "The lift shall carry a load of up to 1000 kg.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "'up to' and 'not more than' state the same upper bound."
+  },
+  {
+   "id": "B137",
+   "a": "The analyser shall stop a running measurement when the lid is opened.",
+   "b": "The analyser shall start a measurement only after the lid is closed.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Start interlock and stop interlock jointly specify the lid-safety behaviour."
+  },
+  {
+   "id": "B138",
+   "a": "The lift controller is required to log every door fault.",
+   "b": "The lift controller is recommended to log every door fault.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "The modal is expressed in words: required corresponds to shall and recommended to should."
+  },
+  {
+   "id": "B139",
+   "a": "The ground station shall record all telemetry.",
+   "b": "The ground station shall not record any telemetry.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Recording all telemetry contradicts recording none."
+  },
+  {
+   "id": "B140",
+   "a": "The conveyor shall start automatically on power-up.",
+   "b": "The conveyor shall not start automatically on power-up.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Dropped 'not': the two statements contradict each other."
+  },
+  {
+   "id": "B141",
+   "a": "On loss of power, the pump valve shall fail open.",
+   "b": "On loss of power, the pump valve shall fail closed.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Open and closed are mutually exclusive states of the same valve in the same situation."
+  },
+  {
+   "id": "B142",
+   "a": "The data logger shall be powered by the battery pack.",
+   "b": "The robot arm shall be controlled by the cell controller.",
+   "type": "UNRELATED",
+   "direction": null,
+   "kind": "surface",
+   "why": "Different actors, actions and objects."
+  },
+  {
+   "id": "B143",
+   "a": "The sensor shall be sampled every 10 ms.",
+   "b": "The sensor shall be sampled every 10 s.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Same number with a different unit (ms versus s)."
+  },
+  {
+   "id": "B144",
+   "a": "The ground station shall refresh the telemetry display at 10 Hz.",
+   "b": "The ground station shall refresh the telemetry display at 0.01 kHz.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "0.01 kHz equals 10 Hz."
+  },
+  {
+   "id": "B145",
+   "a": "The controller shall store its cfg in non-volatile memory.",
+   "b": "The controller shall store its configuration in non-volatile memory.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "cfg is a standard abbreviation of configuration."
+  },
+  {
+   "id": "B146",
+   "a": "The data logger shall send a status msg every five seconds.",
+   "b": "The data logger shall send a status message every 5 s.",
+   "type": "EQUIVALENT",
+   "direction": null,
+   "kind": "surface",
+   "why": "msg is an abbreviation of message and five seconds equals 5 s."
+  },
+  {
+   "id": "B147",
+   "a": "The pump shall start no later than 5 s after the valve opens.",
+   "b": "The pump shall start no earlier than 2 s after the valve opens.",
+   "type": "COMPLEMENTARY",
+   "direction": null,
+   "kind": "surface",
+   "why": "Earliest and latest start times jointly define one start window."
+  },
+  {
+   "id": "B148",
+   "a": "Alarms shall be cleared automatically without operator acknowledgement.",
+   "b": "Alarms shall be acknowledged by the operator before they are cleared.",
+   "type": "CONFLICT",
+   "direction": null,
+   "kind": "meaning",
+   "why": "Requiring acknowledgement contradicts clearing without it."
+  },
+  {
+   "id": "B149",
+   "a": "The alarm shall sound when the tank level is above 10 %.",
+   "b": "The alarm shall sound when the tank level is below 10 %.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "The triggering condition differs in its comparator; both could hold together, so this is not a conflict."
+  },
+  {
+   "id": "B150",
+   "a": "The ground station should update the map at 5 Hz.",
+   "b": "The ground station shall update the map at 5 Hz.",
+   "type": "VARIANT",
+   "direction": null,
+   "kind": "surface",
+   "why": "Only the modal differs (shall versus should)."
+  }
+ ]
+}

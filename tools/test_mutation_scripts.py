@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 HERE = Path(__file__).resolve().parent / "mutation"
-SCRIPTS = ["a11y", "ai", "board_spec", "connect", "gateway", "gold", "keep", "trace", "vee", "population", "server", "wall"]
+SCRIPTS = ["a11y", "ai", "board_spec", "connect", "gateway", "gold", "keep", "trace", "vee", "population", "server", "wall", "compare"]
 
 
 @pytest.mark.parametrize("name", SCRIPTS)
