@@ -1,5 +1,7 @@
 # Interactive prototype
 
+> **To build a real screen, do not start from this page.** It is a generated picture of the product with a synthetic sample: its numbers and names are typed in and its colours are literal, so a copy shows the sample in the wrong look. Read `parts/` to see what a screen contains, then build from [`design/`](../design/README.md) and follow [`docs/agent_prompts/build_the_gui.md`](../docs/agent_prompts/build_the_gui.md).
+
 A clickable prototype of the app's screens, built as a single `Main.dc.html` page (the design-canvas format: `<x-dc>` templates with `{{holes}}`, one `Component` class). **Every number in it is synthetic**, except the Open and Import screens, whose counts, mapping labels and locators are the real output of `reqin` run on its fixtures.
 
 | Path | What it is |

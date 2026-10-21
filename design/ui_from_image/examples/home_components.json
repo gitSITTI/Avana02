@@ -1,0 +1,49 @@
+{
+  "format": "reqin-components/1",
+  "about": "An example, made from the prototype's Home screen. It shows what a finished spec looks like: token names only, and every slot saying where its content comes from.",
+  "tokens": "design/tokens.css",
+  "components": [
+    {
+      "name": "primary-button",
+      "kind": "button",
+      "frame": {"image": "03_home.png", "box": [280, 405, 205, 44]},
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "style": {"color": "--text-on-dark", "background": "--accent", "border": "none", "radius": "--radius-ctl", "font": "--sans", "font-size": "--size-body", "font-weight": "600", "padding": "--space-10 --space-16"},
+      "state_style": {"focus-visible": {"outline": "--accent"}},
+      "data": {"label": "STATIC"}
+    },
+    {
+      "name": "secondary-button",
+      "kind": "button",
+      "frame": {"image": "03_home.png", "box": [493, 405, 150, 44]},
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "style": {"color": "--text-strong", "background": "--paper", "border-color": "--border-control", "radius": "--radius-ctl", "font": "--sans", "font-size": "--size-body", "padding": "--space-10 --space-16"},
+      "data": {"label": "STATIC"}
+    },
+    {
+      "name": "clusters-waiting-title",
+      "kind": "heading",
+      "frame": {"image": "03_home.png", "box": [280, 312, 430, 36]},
+      "states": ["default"],
+      "style": {"color": "--ink", "font": "--sans", "font-size": "--size-title-1", "font-weight": "700"},
+      "data": {"count": "CMP.counts.clusters"}
+    },
+    {
+      "name": "fidelity-badge",
+      "kind": "badge",
+      "frame": {"image": "03_home.png", "box": [463, 1500, 82, 20]},
+      "states": ["default"],
+      "style": {"color": "--ok-text", "background": "--ok-fill", "border-color": "--ok-edge", "radius": "--radius-chip", "font-size": "--size-caption", "padding": "--space-2 --space-8"},
+      "data": {"label": "DS.fidelity"}
+    },
+    {
+      "name": "import-summary-card",
+      "kind": "card",
+      "frame": {"image": "03_home.png", "box": [281, 1348, 372, 400]},
+      "states": ["default"],
+      "style": {"background": "--paper", "border-color": "--line", "radius": "--radius-panel", "shadow": "--shadow-lift", "padding": "--space-20"},
+      "data": {"records_read": "RPT.raw_records", "requirements_kept": "RPT.requirements", "rejected": "RPT.rejected", "warnings": "RPT.warnings[]", "title": "STATIC"}
+    }
+  ],
+  "new_tokens": []
+}

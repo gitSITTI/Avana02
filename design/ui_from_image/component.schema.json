@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reqin-components-1",
+  "title": "reqin-components/1",
+  "description": "A list of the components of one screen. Token names only in style; every slot says where its content comes from. scripts/check_component_specs.py enforces more than this schema can: token names exist, field paths exist in real output, no literal colours or sizes.",
+  "type": "object",
+  "required": ["format", "components"],
+  "additionalProperties": false,
+  "properties": {
+    "format": {"const": "reqin-components/1"},
+    "about": {"type": "string"},
+    "tokens": {"type": "string", "description": "which token file the names refer to"},
+    "components": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/component"}},
+    "new_tokens": {"type": "array", "items": {"$ref": "#/$defs/new_token"}}
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": ["name", "kind", "states", "style", "data"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
+        "kind": {"enum": ["button", "link", "input", "select", "checkbox", "radio", "badge", "chip", "card", "panel", "banner", "nav-item", "nav", "table", "table-row", "list-item", "heading", "text", "icon", "chart", "avatar", "tab", "toast", "dialog", "progress", "other"]},
+        "frame": {
+          "type": "object",
+          "required": ["box"],
+          "additionalProperties": false,
+          "properties": {
+            "image": {"type": "string"},
+            "box": {"type": "array", "items": {"type": "integer", "minimum": 0}, "minItems": 4, "maxItems": 4, "description": "x, y, width, height in the picture's pixels"}
+          }
+        },
+        "states": {"type": "array", "minItems": 1, "items": {"enum": ["default", "hover", "focus-visible", "active", "disabled", "selected", "checked", "error", "loading", "empty", "read-only"]}, "contains": {"const": "default"}},
+        "style": {"$ref": "#/$defs/style"},
+        "state_style": {"type": "object", "additionalProperties": {"$ref": "#/$defs/style"}},
+        "data": {
+          "type": "object",
+          "description": "slot name -> STATIC (text that is part of the design), NONE (decoration), or a field path such as CL.members[].uid; a list when a slot combines several fields",
+          "additionalProperties": {"oneOf": [{"$ref": "#/$defs/source"}, {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}}]}
+        },
+        "notes": {"type": "string"}
+      }
+    },
+    "source": {"type": "string", "pattern": "^(STATIC|NONE|(DS|LK|RJ|RPT|MAN|CL|PR|SL|CMP|VEE|WORK)(\\.[A-Za-z_]\\w*|\\[\\])+)$"},
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {"type": "string"}, "background": {"type": "string"}, "border": {"type": "string"}, "border-color": {"type": "string"}, "radius": {"type": "string"},
+        "font": {"type": "string"}, "font-size": {"type": "string"}, "font-weight": {"type": "string"}, "line-height": {"type": "string"}, "padding": {"type": "string"},
+        "gap": {"type": "string"}, "shadow": {"type": "string"}, "outline": {"type": "string"}, "height": {"type": "string"}, "width": {"type": "string"}
+      }
+    },
+    "new_token": {
+      "type": "object",
+      "required": ["name", "value", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "pattern": "^--[a-z0-9][a-z0-9-]*$"},
+        "value": {"type": "string"},
+        "reason": {"type": "string", "minLength": 1, "description": "why no existing token will do"}
+      }
+    }
+  }
+}

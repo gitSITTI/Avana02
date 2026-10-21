@@ -4,7 +4,7 @@ This file is for any coding or chat agent (OpenAI Codex or ChatGPT, Gemini, Clau
 
 ## What this repository is
 
-A research prototype for a **requirements consolidator**: it reads requirements from SysML v2 / MSOSA, ReqIF, DOORS, Excel and other sources, finds near-duplicates mechanically first and with AI late, shows metrics, and treats every result as a **draft that a person verifies** through four review lenses. It holds the research, the Excalidraw design boards and the code that makes them, a clickable prototype of the screens, and the first working code (the input layer, a reference server, and the AI gate and gateway). The comparison engine itself is **not built yet**.
+A research prototype for a **requirements consolidator**: it reads requirements from SysML v2 / MSOSA, ReqIF, DOORS, Excel and other sources, finds near-duplicates mechanically first and with AI late, shows metrics, and treats every result as a **draft that a person verifies** through four review lenses. It holds the research, the Excalidraw design boards and the code that makes them, a clickable prototype of the screens, a design kit and checks for building real screens, and the working code (the input layer, the first mechanical stages of the comparison engine, a reference server, and the AI gate and gateway). The comparison engine stops at those first stages, **no real screen is connected to it yet**, and nothing here has been run on a real requirements set.
 
 ## Rules that apply to every task
 
@@ -22,7 +22,9 @@ A research prototype for a **requirements consolidator**: it reads requirements 
 | Path | What it is | Change it by |
 |---|---|---|
 | `reqin/` | The working Python code: input layer, connectors, reference server (`SERVER.md`), AI gate and gateway | edit `reqin/src`, test in `reqin/tests` |
-| `prototype/` | The clickable prototype: one page built from `prototype/parts/` | edit `parts/`, run `python3 build.py`; never edit `project/Main.dc.html` |
+| `prototype/` | The clickable prototype: one page built from `prototype/parts/`. A picture of the product with a synthetic sample, **not a starting point for code**: never copy markup, styles or data from `project/Main.dc.html` | edit `parts/`, run `python3 build.py`; never edit `project/Main.dc.html` |
+| `design/` | The design language as data (`design/tokens.json`, and the generated `design/tokens.css`), `design/ui_from_image/` (how to turn a picture into components in a site's own look), and `design/reference_viewer/` (a small screen that shows a dataset and passes every check) | edit `design/tokens.json`, run `python3 design/make_tokens.py`; see `design/README.md` |
+| `tools/gui_checks/` | What shows a screen is bound to its data: `tools/gui_checks/hardcode_scan.py`, `tools/gui_checks/probe.py` (a real browser against the fourteen test datasets), `tools/gui_checks/serve.py`, `tools/gui_checks/check_status.py`, `tools/gui_checks/datapaths.py` | see `docs/GUI_TEST_HOOKS.md` |
 | `excalidraw/` | The twelve design boards (generated) | edit `excalidraw_generator/`, rebuild |
 | `excalidraw_generator/` | The Python that makes the boards; **and `board_spec.py`, which makes a board from plain JSON** | see `EXCALIDRAW_GUIDE.md` |
 | `docs/` | Design, data handling, the gateway, the porting guide, task prompts for agents (`docs/agent_prompts/`) | edit the Markdown; every relative link must resolve |
@@ -39,6 +41,7 @@ Set up once: `python3 -m venv .venv && . .venv/bin/activate && pip install -e "r
 | `reqin/` | `cd reqin && python3 -m pytest -q` |
 | A board, or `excalidraw_generator/` | `cd excalidraw_generator && python3 build_all.py --out ../excalidraw && python3 validate.py ../excalidraw/*.excalidraw`, then render and **look at the picture** (`python3 render_previews.py`) |
 | A board written as JSON | `python3 excalidraw_generator/board_spec.py build spec.json out.excalidraw --strict --png out.png --scale 2`, then look at `out.png` |
+| A real screen (a new one, or a restyle) | `python3 tools/gui_checks/hardcode_scan.py APP` and `python3 tools/gui_checks/probe.py --app APP --datasets DIR` (`DIR` from `reqin make-datasets DIR --size 5000`); both must pass. The steps are in [`docs/agent_prompts/build_the_gui.md`](docs/agent_prompts/build_the_gui.md) |
 | The prototype | `cd prototype && python3 build.py && node verify.js project/Main.dc.html` (must end `ISSUES 0`), then the browser tests for the page you touched (`python3 run_browser_tests.py`), then `python3 shots.py` and look |
 | Markdown or any file in `tools/` | `python3 -m pytest -q tools` |
 | A rule in a mutation script's target | `python3 tools/mutation/<name>.py --patterns` (does every change still match?) and, for the part you changed, `python3 tools/mutation/<name>.py <part of a name>` |
@@ -48,6 +51,13 @@ If a command cannot run where you are (no Node, no browser, no network), say whi
 ## If you cannot run code
 
 You can still make useful changes. For a board, write it as JSON in the format `reqin-board/1` (`excalidraw_generator/board_spec.schema.json`; `python3 excalidraw_generator/board_spec.py describe` prints the vocabulary) and ask the person to run the compiler, or run it yourself if a shell is offered. [`docs/agent_prompts/excalidraw_board_without_code.md`](docs/agent_prompts/excalidraw_board_without_code.md) is a prompt that works with no tools at all. For everything else, say plainly that your change is untested and list exactly which commands the person should run.
+
+## Several agents on one task
+
+Start with one. Split only when the pieces are independent and a single agent has first written the shared definition (what each screen takes and gives, who owns which
+file). One writer per file; each agent hands back its files and a status file that `python3 tools/gui_checks/check_status.py` accepts ("done" needs commands run and a list
+of what was not checked); an agent whose gate fails twice stops and reports instead of looping; work is merged one piece at a time and only when the checks pass on it.
+The full protocol is in [`docs/agent_prompts/build_the_gui.md`](docs/agent_prompts/build_the_gui.md).
 
 ## Porting to another language or provider
 

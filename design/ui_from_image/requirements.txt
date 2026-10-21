@@ -1,0 +1,6 @@
+# What the scripts in scripts/ need. palette_from_image.py and frames.py need the first two; target_tokens.py needs the third and a browser.
+# conform.py and check_component_specs.py need only the Python standard library.
+pillow>=10
+numpy>=1.26
+playwright>=1.48
+# after installing playwright, once:  playwright install chromium

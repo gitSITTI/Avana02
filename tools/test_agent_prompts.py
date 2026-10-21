@@ -18,7 +18,7 @@ PROMPTS = sorted((REPO / "docs" / "agent_prompts").glob("*.md"))
 sys.path.insert(0, str(REPO / "excalidraw_generator"))
 
 # what a prompt asks the agent to make, or leaves for the person to fill in: not expected to exist
-TO_CREATE = {"requirements.jsonl", "rejected.jsonl", "spec.json", "out.excalidraw", "out.png", "audit.jsonl", "docs/COMPARE_FORMAT.md", "reqin/src/reqin/compare/", "DIR", "ports/<language>/", "ports/<language>/gateway_core/"}
+TO_CREATE = {"requirements.jsonl", "rejected.jsonl", "spec.json", "out.excalidraw", "out.png", "audit.jsonl", "docs/COMPARE_FORMAT.md", "reqin/src/reqin/compare/", "DIR", "ports/<language>/", "ports/<language>/gateway_core/", "status.json", "work/CONTRACT.md", "paths.json"}
 SEARCH_IN = ("", "excalidraw_generator/", "reqin/", "tools/", "docs/", "connector_template/", "prototype/")       # prompts say "from excalidraw_generator/" for some commands
 PRODUCTS = ["claude", "anthropic", "chatgpt", "openai", "gpt-", "gemini", "copilot", "codex", "cursor", "aider", "llama", "mistral", "deepseek", "grok"]
 
@@ -37,9 +37,9 @@ def exists(tok: str) -> bool:
     return tok in TO_CREATE or any((REPO / (base + tok)).exists() for base in SEARCH_IN) or "<" in tok
 
 
-def test_there_are_the_five_prompts_and_the_porting_guide_lists_every_one():
+def test_there_are_the_six_prompts_and_the_porting_guide_lists_every_one():
     names = {p.name for p in PROMPTS}
-    assert names == {"excalidraw_board_without_code.md", "excalidraw_board_with_code.md", "new_connector.md", "port_gateway_core.md", "comparison_engine.md"}
+    assert names == {"excalidraw_board_without_code.md", "excalidraw_board_with_code.md", "new_connector.md", "port_gateway_core.md", "comparison_engine.md", "build_the_gui.md"}
     porting = (REPO / "docs" / "PORTING.md").read_text(encoding="utf-8")
     for n in names:
         assert f"agent_prompts/{n}" in porting, f"docs/PORTING.md does not list {n}"

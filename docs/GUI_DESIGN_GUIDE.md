@@ -9,6 +9,7 @@ Read this with three other things in the repository:
 | [`reqin/GUI_CONTRACT.md`](../reqin/GUI_CONTRACT.md) | **What data the screen gets.** One folder format, never a file. This guide never repeats it; it says how to show it. |
 | [`excalidraw_generator/EXCALIDRAW_GUIDE.md`](../excalidraw_generator/EXCALIDRAW_GUIDE.md) | **How the boards are built** (the Python, the widgets, the recipes). Section 7 below is the craft on top of it. |
 | [`prototype/README.md`](../prototype/README.md) | **The clickable prototype** these pictures come from. |
+| [`design/README.md`](../design/README.md), [`SCREEN_DATA_MAP.md`](SCREEN_DATA_MAP.md), [`GUI_TEST_HOOKS.md`](GUI_TEST_HOOKS.md) | **What to build a real screen from** (the design language, which dataset field fills which part of which screen) and **how to show it is bound to the data**. |
 
 All screens in the pictures use a synthetic sample. Nothing here has been tested with real users. The prototype's accessibility was checked by programs, not by anyone using assistive technology (see section 10 and [`ACCESSIBILITY.md`](ACCESSIBILITY.md)).
 
@@ -215,7 +216,7 @@ Click a board to see it in full. They are rendered by the repository's own `rend
 4. **Flows and rules.** Where each piece of data comes from and who decides (boards 03, 09).
 5. **Prototype.** The same screens clickable, with synthetic data (`prototype/`). Capture them with `python3 shots.py` and look at the result.
 6. **Run it on the 14 test datasets.** `reqin make-datasets datasets/` builds folders that differ on purpose (no IDs, no links, 50,000 rows, awkward text, unknown fields). A screen that only works on one of them is molded to a sample.
-7. **Real UI.** Build it from the contract and the prototype, with the browser tests from the contract's "Done means".
+7. **Real UI.** Build it from the contract, the design tokens and the data map, **not from the prototype's page** (its numbers are typed in and its colours are literal). Follow [`agent_prompts/build_the_gui.md`](agent_prompts/build_the_gui.md): tokens, then components, then one view-model function per screen; and pass `tools/gui_checks/hardcode_scan.py` and `tools/gui_checks/probe.py` ([`GUI_TEST_HOOKS.md`](GUI_TEST_HOOKS.md)) on all 14 datasets.
 
 At each step the output is a file someone else can open, so nothing depends on a conversation.
 
@@ -249,7 +250,7 @@ At each step the output is a file someone else can open, so nothing depends on a
 
 ## 11. Prompt for an agent
 
-Copy this into a coding agent together with the files named in it.
+Copy this into a coding agent together with the files named in it. For building a screen, the fuller prompt is [`agent_prompts/build_the_gui.md`](agent_prompts/build_the_gui.md).
 
 > You are designing or extending the requirements review screens. Read `reqin/GUI_CONTRACT.md` and `docs/GUI_DESIGN_GUIDE.md` first. Do **not** open any sample requirements file; the screen reads only the dataset folders that `reqin make-datasets datasets/` creates.
 >

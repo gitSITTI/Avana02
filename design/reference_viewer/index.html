@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset viewer</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="viewer.css">
+</head>
+<body data-state="idle">
+<a class="skip-link" href="#list">Skip to the list</a>
+
+<header class="top">
+  <h1>Dataset viewer</h1>
+  <p class="lede">Shows one canonical dataset, or several. It reads nothing else.</p>
+  <div class="pick">
+    <label class="rq-button pick-file">Choose the dataset files
+      <input type="file" id="files" multiple data-testid="dataset-file-input" class="sr">
+    </label>
+    <label class="rq-button pick-file">Choose a dataset folder
+      <input type="file" id="folder" webkitdirectory data-testid="dataset-folder-input" class="sr">
+    </label>
+    <span class="rq-caption" id="where"></span>
+  </div>
+</header>
+
+<main>
+  <p id="loading" class="note" role="status">Choose a dataset, or open this page with ?dataset=FOLDER in the address.</p>
+
+  <section id="error" class="rq-card note-card" data-testid="dataset-error" role="alert" hidden>
+    <h2>This folder is not a complete dataset</h2>
+    <p>Nothing is shown from it, because a half-valid dataset must never look complete.</p>
+    <ul id="problems"></ul>
+  </section>
+
+  <div id="ready" hidden>
+    <section class="rq-card summary" aria-labelledby="sum-h">
+      <h2 id="sum-h">What was in the source</h2>
+      <dl class="counts">
+        <div><dt>Read</dt><dd data-testid="count-read" id="c-read"></dd></div>
+        <div><dt>Kept as requirements</dt><dd data-testid="count-kept" id="c-kept"></dd></div>
+        <div><dt>Rejected</dt><dd data-testid="count-rejected" id="c-rejected"></dd></div>
+        <div><dt>Filtered out</dt><dd data-testid="count-filtered" id="c-filtered"></dd></div>
+      </dl>
+      <p id="mismatch" class="banner" data-testid="count-mismatch" hidden></p>
+      <ul id="filtered-why" class="plain"></ul>
+      <ul id="warnings" class="plain warnings" data-testid="warnings"></ul>
+      <ul id="notices" class="plain warnings" data-testid="viewer-notices"></ul>
+      <p class="rq-caption chips-label">Sources</p>
+      <div class="chips" id="sources" data-testid="sources"></div>
+      <p class="rq-caption chips-label">How the records were read</p>
+      <div class="chips" id="fidelities" data-testid="fidelities"></div>
+      <ul class="plain facts" id="facts"></ul>
+      <p id="verify" class="banner" data-testid="verify-banner" hidden>Found inside prose: verify each one against its page before relying on it.</p>
+    </section>
+
+    <section id="empty" class="rq-card note-card" data-testid="empty-state" hidden>
+      <h2>This dataset holds no requirements</h2>
+      <p>Nothing was kept from the source. The reason the importer gave is in the warnings above.</p>
+    </section>
+
+    <div id="body" class="body">
+      <section class="rq-card listcard" aria-labelledby="list-h">
+        <h2 id="list-h">Requirements <span class="rq-caption">(<span data-testid="row-total" id="row-total"></span> in the list)</span></h2>
+        <p id="tree-note" class="rq-caption" data-testid="tree" hidden></p>
+        <label class="filter"><span class="rq-caption">Filter by ID or wording</span>
+          <input id="filter" class="rq-input" type="search" data-testid="filter-input" autocomplete="off"></label>
+        <div id="head" class="row head" aria-hidden="true"></div>
+        <div id="list" class="scroller" role="listbox" tabindex="0" aria-label="Requirements" data-testid="list"><div id="spacer"><div id="window"></div></div></div>
+      </section>
+
+      <aside class="rq-card detail" id="detail" data-testid="detail" aria-live="polite" aria-labelledby="detail-h">
+        <h2 id="detail-h">Detail</h2>
+        <p id="detail-empty" class="rq-caption">Choose a requirement in the list.</p>
+        <div id="detail-body" hidden></div>
+      </aside>
+    </div>
+
+    <section class="rq-card" aria-labelledby="trace-h">
+      <h2 id="trace-h">Links</h2>
+      <p id="no-links" data-testid="no-links" hidden>This source provides no links.</p>
+      <div id="trace" data-testid="trace-panel" hidden>
+        <ul class="chips plain" id="kinds"></ul>
+        <div class="links-scroll" tabindex="0" role="region" aria-label="Links"><ul class="plain links" id="link-list"></ul></div>
+      </div>
+    </section>
+
+    <section class="rq-card" id="rejected" aria-labelledby="rej-h" hidden>
+      <h2 id="rej-h">Rejected records</h2>
+      <ul class="plain" id="rejected-list" data-testid="rejected-list"></ul>
+    </section>
+  </div>
+</main>
+
+<script src="viewer.js"></script>
+</body>
+</html>
