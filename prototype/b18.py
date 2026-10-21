@@ -59,7 +59,7 @@ with session(W, 1000) as (pg, errs):
     # ---- the card, with nothing decided
     k = keep(pg)
     ok(k.count() == 1 and k.locator('h2').inner_text().strip() == 'Your work', 'card: Home has a "Your work" card')
-    ok('it is kept here by itself' in k.inner_text() and 'not encrypted' in k.inner_text() and 'not connected to' in k.inner_text(), 'card: it says what is kept, that it is not encrypted and that the server is not connected')
+    ok('it is kept here by itself' in k.inner_text() and 'not encrypted' in k.inner_text() and 'sign in to the team’s server' in k.inner_text(), 'card: it says what is kept, that it is not encrypted and that sharing is done by signing in to the team’s server')
     ok(btn(pg, 'Start over').is_disabled() and btn(pg, 'Save to a file').is_enabled() and btn(pg, 'Load from a file').is_enabled(), 'card: Start over is off until there is work; save and load are on')
     ok(all(btn(pg, n).evaluate('e => e.getBoundingClientRect().height') >= 44 for n in ['Save to a file', 'Load from a file', 'Start over']), 'card: every button is at least 44 px tall')
     fi = pg.locator('#keep-file')

@@ -105,15 +105,18 @@ prototype:build-identical:
     - python build.py "$CI_PROJECT_DIR/Main.built.dc.html"
     - cmp "$CI_PROJECT_DIR/Main.built.dc.html" project/Main.dc.html
 
-prototype:verify:
+prototype:verify:                       # the full node image: it has the Python that the shared-project engine test starts the server with
   stage: boards
-  image: "$NODE_IMAGE:22-slim"
+  image: "$NODE_IMAGE:22"
   script:
     - cd prototype
     - node verify.js project/Main.dc.html
+    - node export_seed.js project/Main.dc.html "$CI_PROJECT_DIR/seed.built.json"
+    - cmp "$CI_PROJECT_DIR/seed.built.json" demo/seed.json
+    - python3 run_conn_test.py          # the shared-project engine against a real reference server (standard library only)
 
-# 3c. The prototype in a real browser, ten test files at three screen widths (the flows, the V, the gold set, keeping the work, the AI gate, and the
-#     accessibility scan). The libraries come from the first job as an artifact, so the browser image needs no Node. The 30 runs took about 17 minutes in all where this was written (a busy machine).
+# 3c. The prototype in a real browser, eleven test files at three screen widths (the flows, the V, the gold set, keeping the work, the AI gate, the shared
+#     project with four browsers on one reference server, and the accessibility scan). The libraries come from the first job as an artifact, so the browser image needs no Node. The 30 runs took about 17 minutes in all where this was written (a busy machine).
 prototype:vendor:
   stage: boards
   image: "$NODE_IMAGE:22-slim"

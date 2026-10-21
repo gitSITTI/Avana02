@@ -153,9 +153,14 @@ jobs:
       - run: cmp "$RUNNER_TEMP/Main.built.dc.html" prototype/project/Main.dc.html
       - run: node verify.js project/Main.dc.html
         working-directory: prototype
+      - run: node export_seed.js project/Main.dc.html "$RUNNER_TEMP/seed.built.json"
+        working-directory: prototype
+      - run: cmp "$RUNNER_TEMP/seed.built.json" prototype/demo/seed.json
+      - run: python run_conn_test.py          # the shared-project engine against a real reference server (standard library only)
+        working-directory: prototype
 
-  # 3c. The prototype in a real browser (Chromium through Playwright), ten test files at three screen widths: the flows, the V, the gold set, keeping the
-  #     work, the AI gate, and the accessibility scan (axe-core 4.13 plus contrast, keyboard, reflow and chart-colour checks). A full run is 30 runs and took about 17 minutes where it
+  # 3c. The prototype in a real browser (Chromium through Playwright), eleven test files at three screen widths: the flows, the V, the gold set, keeping the
+  #     work, the AI gate, the shared project (four people in four browsers on one reference server) and the accessibility scan (axe-core 4.13 plus contrast, keyboard, reflow and chart-colour checks). A full run is 30 runs and took about 17 minutes where it
   #     was written (a busy machine); the runner prints one line for each and everything a failing one said. The page under test is the committed prototype/project/Main.dc.html.
   prototype-browser:
     name: prototype browser tests and accessibility

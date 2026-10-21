@@ -500,7 +500,7 @@
     v.isPolicy = S.view === 'policy';
     v.isAi = S.view === 'ai';
     v.isExport = S.view === 'export';
-    Object.assign(v, this.valsOpen(S), this.valsImport(S), this.valsVerify(S), this.valsShell(S), this.valsGlossary(S));
+    Object.assign(v, this.valsOpen(S), this.valsImport(S), this.valsVerify(S), this.valsShell(S), this.valsGlossary(S), this.valsConn(S));
     // the page's name, for the tab, for a screen reader when it changes, and for the skip link
     v.pageTitle = v.isOpen ? 'Open a requirements project' : v.isVerify ? 'Check statements found in a document' : v.isImport ? 'Map fields and choose scope' : v.pageName;
     v.pageAnnounce = 'Now showing: ' + v.pageTitle;

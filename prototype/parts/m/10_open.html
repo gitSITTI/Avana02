@@ -15,8 +15,9 @@
   <div style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
     <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between">
       <h2 style="margin:0;§CAP§font-weight:500">Signed in as</h2>
-      <span style="font-size:13px;color:#4F5B66">Your login decides your lens. In this prototype you can switch person to see each view.</span>
+      <span style="font-size:13px;color:#4F5B66">{{cnHint}}</span>
     </div>
+    <sc-if value="{{cnDemo}}" hint-placeholder-val="{{ true }}">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:8px">
       <sc-for list="{{people}}" as="p" hint-placeholder-count="6">
         <button class="card-btn" onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="{{p.style}}">
@@ -25,7 +26,10 @@
         </button>
       </sc-for>
     </div>
+    </sc-if>
+    <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}"><div style="font-weight:600">{{cnWho}}</div></sc-if>
   </div>
+  §CONN§
   <div style="border:2px dashed #7A8793;border-radius:8px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:4px">
       <h2 style="margin:0;§CAP§font-weight:500">Drop a file, paste a model address, or connect a database</h2>

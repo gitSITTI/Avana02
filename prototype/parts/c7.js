@@ -10,7 +10,7 @@
     } else if (r.refused) st.keepMsg = { bad: true, text: 'The work saved in this browser could not be used and was removed: ' + r.refused, notes: [] };
     this.state = st;
   }
-  setState(o, cb) { super.setState(o, cb); this.keepSoon(); }
+  setState(o, cb) { super.setState(o, cb); this.keepSoon(); this.connSoon(); }
   /* two tabs of one browser share one store: when the other tab writes, this one stops saving until the person says whose work stands */
   componentDidMount() {
     if (typeof window === 'undefined' || !window.addEventListener) return;
@@ -18,7 +18,7 @@
     window.addEventListener('storage', this._onStore);
     // the last change before a tab is closed or hidden is written at once, not after the pause
     this._onHide = () => { clearTimeout(this._keepT); this.keepNow(); };
-    this._onVis = () => { try { if (document.visibilityState === 'hidden') this._onHide(); } catch (x) { /* no document */ } };
+    this._onVis = () => { try { if (document.visibilityState === 'hidden') this._onHide(); else this.connWake(); } catch (x) { /* no document */ } };
     window.addEventListener('pagehide', this._onHide);
     try { document.addEventListener('visibilitychange', this._onVis); } catch (x) { /* no document */ }
   }
@@ -28,10 +28,11 @@
       if (this._onHide) window.removeEventListener('pagehide', this._onHide);
       try { if (this._onVis) document.removeEventListener('visibilitychange', this._onVis); } catch (x) { /* no document */ }
     }
-    clearTimeout(this._keepT);
+    clearTimeout(this._keepT); clearTimeout(this._connT); clearTimeout(this._connF);
   }
-  keepOther() { clearTimeout(this._keepT); this._keepHold = true; super.setState({ keepStatus: 'other' }); }
+  keepOther() { if (this._conn) return; clearTimeout(this._keepT); this._keepHold = true; super.setState({ keepStatus: 'other' }); }
   keepTakeOther() {
+    if (this._conn) return;
     const r = persistRead();
     if (!r.state) { this._keepHold = false; this._keepRaw = ''; super.setState({ keepStatus: r.status, keepMsg: { bad: false, text: 'The other tab has no saved work now, so this tab keeps its own.', notes: [] } }); this.keepSoon(); return; }
     const merged = {}; PERSIST_KEYS.forEach((k) => { merged[k] = DEFAULTS[k]; });
@@ -41,13 +42,13 @@
   }
   keepKeepMine() { this._keepHold = false; this._keepRaw = ''; this.keepNow(); this.setState({ keepMsg: { bad: false, text: 'This tab’s work was saved over what the other tab had.', notes: [] } }); }
   keepSoon() {
-    if (typeof window === 'undefined' || typeof setTimeout === 'undefined' || this._dry) return;
+    if (typeof window === 'undefined' || typeof setTimeout === 'undefined' || this._dry || this._conn) return;   // signed in to a shared project, this browser keeps no copy
     clearTimeout(this._keepT);
     this._keepT = setTimeout(() => this.keepNow(), 350);
   }
   keepNow() {
     const S = this.S;
-    if (this._keepHold || !persistHasWork(S)) return;
+    if (this._keepHold || this._conn || !persistHasWork(S)) return;
     let raw = '';
     try { raw = JSON.stringify(persistPick(S)) + '|' + (S.view === 'open' || S.view === 'import' ? 'o' : 'w'); } catch (x) { return; }
     if (raw === this._keepRaw) return;
@@ -71,6 +72,7 @@
   }
   /* parse, check, then try to draw every screen with it; only then ask the person to replace their work */
   keepRead(text, name) {
+    if (this._conn) { this.setState({ keepMsg: { bad: true, text: 'Sign out of the shared project before loading a file: it would replace what the whole team shares.', notes: [] }, keepAsk: '' }); return; }
     let obj = null;
     try { obj = JSON.parse(text); } catch (x) { this.setState({ keepMsg: { bad: true, text: name + ' is not a saved project: it is not valid JSON.', notes: [] }, keepAsk: '' }); return; }
     const r = persistCheck(obj);
@@ -101,7 +103,7 @@
     return '';
   }
   keepApply(S) {
-    const p = this._pending; if (!p) return;
+    const p = this._pending; if (!p || this._conn) return;
     const merged = {}; PERSIST_KEYS.forEach((k) => { merged[k] = DEFAULTS[k]; });
     Object.assign(merged, p.state);
     merged.openVer = Object.assign({}, merged.liveVer);
@@ -111,6 +113,7 @@
     this.setState(Object.assign(merged, { view: 'home', verified: '', tamper: false, chatOpen: false, keepAsk: '', keepSummary: [], keepRestored: null, keepMsg: { bad: false, text: 'Loaded ' + p.name + '. Your earlier work in this browser was replaced.', notes: p.notes } }));
   }
   keepStartOver() {
+    if (this._conn) return;
     const reset = {}; PERSIST_KEYS.forEach((k) => { reset[k] = DEFAULTS[k]; });
     persistClear(); this._keepRaw = ''; this._pending = null;
     this.setState(Object.assign(reset, { view: 'open', verified: '', tamper: false, chatOpen: false, keepAsk: '', keepSummary: [], keepAt: '', keepRestored: null, keepMsg: { bad: false, text: 'Started over. The work kept in this browser was removed.', notes: [] } }));
@@ -118,22 +121,23 @@
   valsKeep(S) {
     const work = persistHasWork(S), off = S.keepStatus === 'off', full = S.keepStatus === 'full', other = S.keepStatus === 'other', c = persistCounts(S);
     const at = S.keepAt ? S.keepAt.replace('T', ' ').slice(11, 19) : '';
-    const line = other ? 'Another tab of this browser saved or removed work for this project. This tab has stopped saving so it cannot write over that. Choose whose work stands.'
+    const conn = !!this._conn;
+    const line = conn ? 'This project is on the server, so this browser is not keeping a copy of it. “Save to a file” gives you a copy of what you see now.' : other ? 'Another tab of this browser saved or removed work for this project. This tab has stopped saving so it cannot write over that. Choose whose work stands.'
       : off ? 'This browser is not letting the page keep anything (a private window, or storage is blocked). Save a file before you close the tab.'
       : full ? 'Your work is too large to keep in this browser. Save a file.'
       : work ? 'Kept automatically' + (at ? ' at ' + at : '') + ': ' + persistSaid(c, ['decisions', 'signoffs', 'handoffs', 'labels']) + '.'
       : 'Decide a cluster or a requirement and it is kept here by itself.';
     const msg = S.keepMsg;
     return {
-      kHead: other ? 'Another tab changed this project' : off ? 'Your work is not being kept' : full ? 'Your work is too large to keep here' : 'Your work', kLine: line,
-      kOther: other, kTake: () => this.keepTakeOther(), kMine: () => this.keepKeepMine(),
+      kHead: conn ? 'Your work' : other ? 'Another tab changed this project' : off ? 'Your work is not being kept' : full ? 'Your work is too large to keep here' : 'Your work', kLine: line,
+      kOther: other && !conn, kTake: () => this.keepTakeOther(), kMine: () => this.keepKeepMine(),
       kRestored: !!S.keepRestored, kRestoredText: S.keepRestored ? 'Picked up where you left off. This was saved ' + (S.keepRestored.at ? S.keepRestored.at.replace('T', ' ').slice(0, 16) : 'earlier') + ' in this browser.' : '',
-      kWarn: off || full || other, kWarnText: other ? 'This tab is not saving.' : 'Nothing is being kept for you right now.', kScope: 'It stays in this browser and is not encrypted, so a colleague on another computer does not see it. On a shared computer, start over when you finish. Sharing between people needs the server, which this prototype is not connected to.',
+      kWarn: !conn && (off || full || other), kWarnText: other ? 'This tab is not saving.' : 'Nothing is being kept for you right now.', kScope: conn ? 'Loading a file and starting over are off while you are signed in to a shared project, because they would replace what the whole team shares. Sign out first.' : 'It stays in this browser and is not encrypted, so a colleague on another computer does not see it. On a shared computer, start over when you finish. To share work with colleagues, sign in to the team’s server (above).',
       kSave: () => this.keepSave(S), kLoad: () => { try { document.getElementById('keep-file').click(); } catch (x) { /* no DOM */ } }, kFile: (e) => this.keepPick(S, e),
       kStart: () => this.setState({ keepAsk: 'start', keepMsg: null }),
       kAskStart: S.keepAsk === 'start', kAskLoad: S.keepAsk === 'load', kSummary: (S.keepSummary || []).map((t) => ({ t })),
       kDoStart: () => this.keepStartOver(), kDoLoad: () => this.keepApply(S), kCancel: () => { this._pending = null; this.setState({ keepAsk: '', keepSummary: [] }); },
       kHasMsg: !!msg, kMsgText: msg ? msg.text : '', kMsgBad: !!(msg && msg.bad), kMsgNotes: msg ? (msg.notes || []).map((t) => ({ t })) : [], kMsgStyle: 'font-size:13px;display:flex;flex-direction:column;gap:2px;border-radius:6px;padding:8px 12px;' + (msg && msg.bad ? 'background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;' : 'background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;'),
-      kStartDisabled: !work && !S.keepRestored
+      kLoadDisabled: conn, kStartDisabled: conn || (!work && !S.keepRestored)
     };
   }

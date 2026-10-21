@@ -9,6 +9,7 @@ const DEFAULTS = {
   rdec: {}, rcmp: '', rpick: false, rform: {},   /* single-requirement decisions, the requirement put beside the picked one, and the unsaved form for each */
   trTab: 'aliases', trOnly: 'approved', trMsg: '',   /* the trace map in Export: which table is shown, approved changes only or every decided change, and the last thing it did */
   keepAt: '', keepStatus: 'ready', keepRestored: null, keepMsg: null, keepAsk: '', keepSummary: [],   /* what Home says about the saved work: when it was last kept, whether the browser allows it, and a pending file load */
+  conn: { status: 'off', msg: '', bad: false, notices: [], activity: [], pending: 0, at: '', record: null, project: '', me: '', left: 0 }, connToken: '',   /* the shared project (connect.js): not kept in the browser, not part of a saved file */
   aiOn: true, aiSheet: { model: 'Local model v1', where: 'ours', leaves: false, log: 'local', days: 90, approved: 'none', unstated: 'withhold', reviewed_by: 'A. Moreno, security office', reviewed_at: '2 Oct', entered_by: 'Morgan Hale' },   /* AI use: the project-wide switch and the data sheet the gate reads (aigate.js) */
   aiEdit: null, aiMsg: null, aiTab: 'groups',   /* the sheet being changed (nothing is kept until it is saved), the last thing the AI page did, and which list it shows */
   drop: '', openNote: '', impStep: 'verify', mapOver: {}, mapEdit: '', yamlOpen: false, docSel: {}, docVer: {}, docIds: {}, docFocus: 0

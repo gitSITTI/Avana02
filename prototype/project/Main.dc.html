@@ -182,8 +182,9 @@ html{scroll-padding-top:84px}
   <div style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
     <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between">
       <h2 style="margin:0;font-size:13px;font-weight:600;color:#54626F;font-weight:500">Signed in as</h2>
-      <span style="font-size:13px;color:#4F5B66">Your login decides your lens. In this prototype you can switch person to see each view.</span>
+      <span style="font-size:13px;color:#4F5B66">{{cnHint}}</span>
     </div>
+    <sc-if value="{{cnDemo}}" hint-placeholder-val="{{ true }}">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:8px">
       <sc-for list="{{people}}" as="p" hint-placeholder-count="6">
         <button class="card-btn" onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="{{p.style}}">
@@ -192,7 +193,64 @@ html{scroll-padding-top:84px}
         </button>
       </sc-for>
     </div>
+    </sc-if>
+    <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}"><div style="font-weight:600">{{cnWho}}</div></sc-if>
   </div>
+  <section aria-labelledby="conn-h" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between">
+    <h2 id="conn-h" style="margin:0;font-size:16px;font-weight:700">{{cnHead}}</h2>
+    <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}"><span style="{{cnStatusStyle}}">{{cnStatus}}</span></sc-if>
+  </div>
+  <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <sc-if value="{{cnWhoCardOn}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:13px;font-weight:600;color:#2A353F">{{cnWho}}</p></sc-if>
+      <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{cnLine}}</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button onClick="{{cnCheck}}" disabled="{{cnCheckDisabled}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Check the shared record</button>
+      <button onClick="{{cnSignOut}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Sign out</button>
+    </div>
+    <sc-if value="{{cnNotesInCard}}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="display:flex;flex-direction:column;gap:8px">
+  <sc-for list="{{cnNotices}}" as="n" hint-placeholder-count="2">
+    <div style="{{n.style}}">
+      <div style="font-weight:700">{{n.head}}</div>
+      <div style="max-width:70ch">{{n.text}}</div>
+      <sc-if value="{{n.hasDetail}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;color:#2A353F"><span>{{n.mine}}</span><span>{{n.theirs}}</span></div></sc-if>
+      <div><button onClick="{{n.dismiss}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;min-height:36px">Dismiss</button></div>
+    </div>
+  </sc-for>
+</div>
+
+    </sc-if>
+    <sc-if value="{{cnHasActivity}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h3 style="margin:0;font-size:13px;font-weight:700;color:#2A353F">Latest on the server</h3>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#2A353F">
+          <sc-for list="{{cnActivity}}" as="a" hint-placeholder-count="3"><li>{{a.at}} · {{a.who}}: {{a.text}}</li></sc-for>
+        </ul>
+      </div>
+    </sc-if>
+    <div role="status" aria-live="polite">
+      <sc-if value="{{cnRecordOn}}" hint-placeholder-val="{{ false }}"><div style="{{cnRecordStyle}}">{{cnRecordText}}</div></sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{cnAlone}}" hint-placeholder-val="{{ true }}">
+    <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{cnIntro}}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 280px;max-width:480px">
+        <label for="conn-token" style="font-size:13px;font-weight:600;color:#2A353F">Your token</label>
+        <input id="conn-token" type="password" autocomplete="off" spellcheck="false" value="{{cnToken}}" onChange="{{cnTokenChange}}" onKeyDown="{{cnTokenKey}}" style="min-height:44px;padding:0 12px;border:1px solid #7A8793;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;width:100%">
+      </div>
+      <button onClick="{{cnSignIn}}" disabled="{{cnSigning}}" style="min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;padding:0 20px">Sign in</button>
+    </div>
+    <p style="margin:0;font-size:12px;color:var(--slate);max-width:70ch">{{cnOrigin}}</p>
+  </sc-if>
+  <div role="status" aria-live="polite">
+    <sc-if value="{{cnHasMsg}}" hint-placeholder-val="{{ false }}"><div style="{{cnMsgStyle}}">{{cnMsg}}</div></sc-if>
+  </div>
+</section>
+
   <div style="border:2px dashed #7A8793;border-radius:8px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:4px">
       <h2 style="margin:0;font-size:13px;font-weight:600;color:#54626F;font-weight:500">Drop a file, paste a model address, or connect a database</h2>
@@ -505,6 +563,7 @@ html{scroll-padding-top:84px}
         </sc-for></div>
       </div>
     </sc-if>
+    <sc-if value="{{cnDemo}}" hint-placeholder-val="{{ true }}">
     <div style="display:flex;flex-direction:column;gap:6px;border-top:1px dashed #B9C3CD;padding-top:12px">
       <div style="font-size:12px;font-weight:600;color:var(--slate)">Demo only: switch person</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><sc-for list="{{switcher}}" as="p" hint-placeholder-count="6">
@@ -517,6 +576,7 @@ html{scroll-padding-top:84px}
         <button onClick="{{s.onClick}}" disabled="{{s.disabled}}" title="{{s.hint}}" style="{{s.style}}"><span style="font-weight:600;font-size:13px">{{s.label}}</span></button>
       </sc-for>
     </div>
+    </sc-if>
     </div>
   </nav>
   <main class="ws-main">
@@ -527,15 +587,16 @@ html{scroll-padding-top:84px}
         <span style="font-weight:600;white-space:nowrap">{{pageName}}</span>
         <span style="margin-left:4px;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:#EEF2F6;color:#3C4852;white-space:nowrap">{{scopeTxt}}</span>
         <span style="font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:#EEF2F6;color:#3C4852;white-space:nowrap">Pre-baseline</span>
+        <span role="status" aria-live="polite" style="{{cnShortStyle}}">{{cnShort}}</span>
       </div>
       <div class="tb-search">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="8.8" cy="8.8" r="5.3"/><path d="m13 13 3.8 3.8"/></svg>
         <input id="top-search" type="search" value="{{tbSearchV}}" onChange="{{onTbSearch}}" placeholder="Search requirements" aria-label="Search requirements">
       </div>
       <div style="margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px">
-        <span style="display:inline-flex;align-items:center;padding-right:10px" role="group" aria-label="Teammates on this project (sample)">
+        <sc-if value="{{cnDemo}}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;padding-right:10px" role="group" aria-label="Teammates on this project (sample)">
           <sc-for list="{{presence}}" as="a" hint-placeholder-count="3"><span class="av" title="{{a.title}}" style="background:{{a.color}}">{{a.init}}</span></sc-for>
-        </span>
+        </span></sc-if>
         <button class="tb-icon" onClick="{{openVee}}" aria-label="{{vTopAria}}" title="The V: levels and what checks them" style="width:auto;padding:0 8px"><span aria-hidden="true" style="position:relative;display:block;flex:none;width:64px;height:32px"><span aria-hidden="true" style="position:absolute;left:0;top:0;width:88px;height:44px;transform:scale(0.7273);transform-origin:0 0"><svg width="88" height="44" viewBox="0 0 88 44" style="position:absolute;left:0;top:0" aria-hidden="true"><polyline points="8,6 44,38 80,6" fill="none" stroke="#596674" stroke-width="1.5" stroke-linejoin="round"/></svg><span style="position:absolute;left:41.4px;top:35.4px;width:5.2px;height:5.2px;border-radius:50%;background:#596674"></span><sc-for list="{{vTop.left}}" as="gl" hint-placeholder-count="4"><span style="{{gl.style}}">{{gl.n}}</span></sc-for><sc-for list="{{vTop.right}}" as="gr" hint-placeholder-count="4"><span style="{{gr.style}}">{{gr.n}}</span></sc-for></span></span></button>
         <button class="tb-icon" onClick="{{openGlossary}}" aria-label="Open the glossary" title="Glossary and help"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M7.9 8a2.1 2.1 0 1 1 3 1.9c-.7.3-.9.8-.9 1.4M10 14v.1"/></svg></button>
         <button class="tb-icon" onClick="{{openAudit}}" aria-label="Open the audit log" title="Decisions and audit"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.6"/></svg></button>
@@ -547,6 +608,19 @@ html{scroll-padding-top:84px}
       <span style="flex:1 1 320px">Suggestions are drafts until every lens the sign-off policy requires has signed. Nothing is written back to your source model.</span>
     </div>
     <div class="content" id="main-content" tabindex="-1">
+      <sc-if value="{{cnNotesInShell}}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="display:flex;flex-direction:column;gap:8px">
+  <sc-for list="{{cnNotices}}" as="n" hint-placeholder-count="2">
+    <div style="{{n.style}}">
+      <div style="font-weight:700">{{n.head}}</div>
+      <div style="max-width:70ch">{{n.text}}</div>
+      <sc-if value="{{n.hasDetail}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;color:#2A353F"><span>{{n.mine}}</span><span>{{n.theirs}}</span></div></sc-if>
+      <div><button onClick="{{n.dismiss}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;min-height:36px">Dismiss</button></div>
+    </div>
+  </sc-for>
+</div>
+
+      </sc-if>
       <sc-if value="{{glossaryOpen}}" hint-placeholder-val="{{ false }}">
       <section aria-label="Glossary" style="background:#FFFFFF;border:2px solid var(--accent);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
@@ -609,6 +683,61 @@ html{scroll-padding-top:84px}
               </div>
               <button onClick="{{openVee}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Open the V</button>
             </section>
+            <section aria-labelledby="conn-h" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between">
+    <h2 id="conn-h" style="margin:0;font-size:16px;font-weight:700">{{cnHead}}</h2>
+    <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}"><span style="{{cnStatusStyle}}">{{cnStatus}}</span></sc-if>
+  </div>
+  <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <sc-if value="{{cnWhoCardOn}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:13px;font-weight:600;color:#2A353F">{{cnWho}}</p></sc-if>
+      <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{cnLine}}</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button onClick="{{cnCheck}}" disabled="{{cnCheckDisabled}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Check the shared record</button>
+      <button onClick="{{cnSignOut}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Sign out</button>
+    </div>
+    <sc-if value="{{cnNotesInCard}}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="display:flex;flex-direction:column;gap:8px">
+  <sc-for list="{{cnNotices}}" as="n" hint-placeholder-count="2">
+    <div style="{{n.style}}">
+      <div style="font-weight:700">{{n.head}}</div>
+      <div style="max-width:70ch">{{n.text}}</div>
+      <sc-if value="{{n.hasDetail}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;color:#2A353F"><span>{{n.mine}}</span><span>{{n.theirs}}</span></div></sc-if>
+      <div><button onClick="{{n.dismiss}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;min-height:36px">Dismiss</button></div>
+    </div>
+  </sc-for>
+</div>
+
+    </sc-if>
+    <sc-if value="{{cnHasActivity}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h3 style="margin:0;font-size:13px;font-weight:700;color:#2A353F">Latest on the server</h3>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#2A353F">
+          <sc-for list="{{cnActivity}}" as="a" hint-placeholder-count="3"><li>{{a.at}} · {{a.who}}: {{a.text}}</li></sc-for>
+        </ul>
+      </div>
+    </sc-if>
+    <div role="status" aria-live="polite">
+      <sc-if value="{{cnRecordOn}}" hint-placeholder-val="{{ false }}"><div style="{{cnRecordStyle}}">{{cnRecordText}}</div></sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{cnAlone}}" hint-placeholder-val="{{ true }}">
+    <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{cnIntro}}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 280px;max-width:480px">
+        <label for="conn-token" style="font-size:13px;font-weight:600;color:#2A353F">Your token</label>
+        <input id="conn-token" type="password" autocomplete="off" spellcheck="false" value="{{cnToken}}" onChange="{{cnTokenChange}}" onKeyDown="{{cnTokenKey}}" style="min-height:44px;padding:0 12px;border:1px solid #7A8793;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;width:100%">
+      </div>
+      <button onClick="{{cnSignIn}}" disabled="{{cnSigning}}" style="min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;padding:0 20px">Sign in</button>
+    </div>
+    <p style="margin:0;font-size:12px;color:var(--slate);max-width:70ch">{{cnOrigin}}</p>
+  </sc-if>
+  <div role="status" aria-live="polite">
+    <sc-if value="{{cnHasMsg}}" hint-placeholder-val="{{ false }}"><div style="{{cnMsgStyle}}">{{cnMsg}}</div></sc-if>
+  </div>
+</section>
+
             <section aria-labelledby="home-keep" style="background:#FFFFFF;border:1px solid #D8DFE6;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
               <div style="display:flex;flex-direction:column;gap:4px">
                 <h2 id="home-keep" style="margin:0;font-size:16px;font-weight:700">{{kHead}}</h2>
@@ -619,7 +748,7 @@ html{scroll-padding-top:84px}
               </div>
               <div style="display:flex;flex-wrap:wrap;gap:8px">
                 <button onClick="{{kSave}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Save to a file</button>
-                <button onClick="{{kLoad}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Load from a file</button>
+                <button onClick="{{kLoad}}" disabled="{{kLoadDisabled}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Load from a file</button>
                 <button onClick="{{kStart}}" disabled="{{kStartDisabled}}" style="min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #7A8793;border-radius:8px;cursor:pointer;font-weight:500;">Start over</button>
                 <input id="keep-file" type="file" accept=".json,application/json" onChange="{{kFile}}" aria-label="Choose a saved project file" tabindex="-1" style="display:none">
               </div>
@@ -2485,6 +2614,7 @@ const DEFAULTS = {
   rdec: {}, rcmp: '', rpick: false, rform: {},   /* single-requirement decisions, the requirement put beside the picked one, and the unsaved form for each */
   trTab: 'aliases', trOnly: 'approved', trMsg: '',   /* the trace map in Export: which table is shown, approved changes only or every decided change, and the last thing it did */
   keepAt: '', keepStatus: 'ready', keepRestored: null, keepMsg: null, keepAsk: '', keepSummary: [],   /* what Home says about the saved work: when it was last kept, whether the browser allows it, and a pending file load */
+  conn: { status: 'off', msg: '', bad: false, notices: [], activity: [], pending: 0, at: '', record: null, project: '', me: '', left: 0 }, connToken: '',   /* the shared project (connect.js): not kept in the browser, not part of a saved file */
   aiOn: true, aiSheet: { model: 'Local model v1', where: 'ours', leaves: false, log: 'local', days: 90, approved: 'none', unstated: 'withhold', reviewed_by: 'A. Moreno, security office', reviewed_at: '2 Oct', entered_by: 'Morgan Hale' },   /* AI use: the project-wide switch and the data sheet the gate reads (aigate.js) */
   aiEdit: null, aiMsg: null, aiTab: 'groups',   /* the sheet being changed (nothing is kept until it is saved), the last thing the AI page did, and which list it shows */
   drop: '', openNote: '', impStep: 'verify', mapOver: {}, mapEdit: '', yamlOpen: false, docSel: {}, docVer: {}, docIds: {}, docFocus: 0
@@ -5082,7 +5212,8 @@ const persistKind = (v) => (v === null ? 'null' : Array.isArray(v) ? 'array' : t
 const persistPlain = (v) => persistKind(v) === 'object';
 /* a key the map really has: not one every object has ("constructor", "toString", "__proto__") */
 const persistHas = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
-const persistFingerprint = () => trMix(REQS.map((r) => r.id).join(',') + '|' + CLUSTERS.map((c) => c.id).join(',')).toString(16);
+let persistFpMemo = '';   // the requirements and clusters never change while the page is open, and a shared project checks a document at a time
+const persistFingerprint = () => persistFpMemo || (persistFpMemo = trMix(REQS.map((r) => r.id).join(',') + '|' + CLUSTERS.map((c) => c.id).join(',')).toString(16));
 const persistProject = () => ({ name: 'Reference air vehicle', source: 'sample', requirements: REQS.length, clusters: CLUSTERS.length, fingerprint: persistFingerprint() });
 
 /* the one place the event chain is checked: 'ok', or 'fail:<seq>' at the first entry that does not follow from the one before */
@@ -5206,6 +5337,439 @@ function persistWrite(S, opened) {
   } catch (x) { return 'full'; }
 }
 function persistClear() { const s = persistStore(); try { if (s) s.removeItem(PERSIST_STORE); } catch (x) { /* nothing to clear */ } }
+
+/* ---------- the shared project: what the page sends to the reference server and what it takes back ----------
+   Without a server the page works on its own copy, kept in this browser (persist.js). Signed in to the reference server (reqin/src/reqin/server) the
+   decisions, sign-offs, hand-offs, objections, claims, labels and the AI switch and data sheet are ONE copy on the server, and this page is a window on it.
+
+   How it works, in the order it happens:
+     sign in   the person pastes their token (kept in this page's memory only: not in storage, not in the address, gone when the tab is closed). The
+               server says who it is for, and that decides the person, the lens and the role here. Everything the server holds is read, checked
+               by the same checks a saved file gets (persistCheck), and put in place of what the page showed before.
+     change    every change is compared with the last thing the server agreed to and sent as a document that names the revision it was made against
+               (if_rev). If somebody else got there first, the server refuses with what is there now: this page shows that and the change is not
+               made, it is never written over theirs. A change the server's rules refuse (not your lens, not a lead, a sign-off on a decision that
+               moved) is taken back and the reason is shown. A change that cannot be sent (no network) stays waiting and is sent again.
+     others    every few seconds the page asks for what was recorded since it last looked, reads the documents that changed and puts them in place.
+               A document the person is changing at that moment is left alone: their change is sent, the server refuses it, and they see what the
+               other person did.
+     check     the person can ask the server to recompute its record (a SHA-256 chain) and the page says whether it came out whole.
+
+   What this does not do: it does not decide who may do what (the server does, from the token), it does not keep a copy in the browser while connected, and
+   the record the page keeps for itself (the 32-bit chain in the audit log) is still only a local record: the shared one is the server's. A person who can
+   run script in this page can read the token, as in any web page; serve the page and its libraries from the server itself.
+
+   Everything here that does not touch the browser or the network is a plain function and is tested under node against the real server
+   (tools/test_connect_engine.py) as well as in verify.js. */
+const CONN_POLL_MS = 4000;
+const CONN_MAX_PER_POLL = 40;       // more documents than this changed at once: read everything again instead of one by one
+const CONN_EVENT_LIMIT = 500;       // the server's page size for the record
+const CONN_SEG = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/;
+const connSeg = (s) => typeof s === 'string' && CONN_SEG.test(s);
+
+/* what is shared, and under which kind of document. `seed` is what the sample starts with for it, which a shared project must not show (it starts from
+   what the server holds). `empty` is what "nothing here" is in the page's own map: null where the page says null, {} for the sign-offs, and missing
+   where the page has no baseline. */
+const CONN_KINDS = [
+  { key: 'dec', kind: 'dec', seed: () => SEED.dec, empty: null, order: 0 },
+  { key: 'rdec', kind: 'rdec', seed: () => ({}), empty: undefined, order: 0 },
+  { key: 'hand', kind: 'hand', seed: () => ({}), empty: undefined, order: 1 },
+  { key: 'objections', kind: 'obj', seed: () => SEED.dispute, empty: null, order: 1 },
+  { key: 'adjud', kind: 'adj', seed: () => ({}), empty: undefined, order: 1 },
+  { key: 'claims', kind: 'claim', seed: () => SEED.claims, empty: null, order: 1 },
+  { key: 'stale', kind: 'stale', seed: () => SEED.stale, empty: null, order: 1 },
+  { key: 'sib', kind: 'sib', seed: () => SEED.sibs, empty: null, order: 1, wrap: true },
+  { key: 'peeled', kind: 'peel', seed: () => ({}), empty: undefined, order: 1, wrap: true },
+  { key: 'sign', kind: 'sign', seed: () => SEED.sign, empty: {}, order: 2, nested: true }
+];
+const CONN_BY_KIND = {}; CONN_KINDS.forEach((k) => { CONN_BY_KIND[k.kind] = k; });
+/* the keys of the page's state that are shared, for putting back what was there before signing in */
+/* A shared project whose server holds no AI document is CLOSED: the switch is off and the data sheet is empty and unreviewed. That is what the AI gateway reads from the same
+   server (reqin.gateway: "no_sheet"), so the page and the gateway cannot disagree about a project nobody has set up. The stand-alone sample starts with the switch on and a
+   made-up reviewed sheet (DEFAULTS); a shared project gets those only when a lead writes them (the demo seed does, by Morgan). */
+const CONN_NO_AI = { on: false, sheet: { model: '', where: 'ours', leaves: false, log: 'none', days: 0, approved: 'none', unstated: 'withhold', reviewed_by: '', reviewed_at: '', entered_by: '' } };
+const CONN_STATE_KEYS = CONN_KINDS.map((k) => k.key).concat(['gold', 'aiOn', 'aiSheet']);
+/* what a person types and tries on the way to a decision, and the page's own record of what was done in it. These are not shared, and they are put back when the person signs out,
+   so that nothing typed while signed in to a shared project is left in this browser, and the record here still describes the work here. */
+const CONN_DRAFT_KEYS = ['res', 'why', 'ref', 'sendF', 'replyNote', 'chat', 'adjNote', 'sibNote', 'lensNote', 'rform', 'blind', 'blindDone', 'liveVer', 'events', 'person'];
+
+/* the same JSON with the keys in order, so that two bodies are equal when they say the same thing */
+function connCanon(v) {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v === undefined ? null : v);
+  if (Array.isArray(v)) return '[' + v.map(connCanon).join(',') + ']';
+  return '{' + Object.keys(v).sort().filter((k) => v[k] !== undefined).map((k) => JSON.stringify(k) + ':' + connCanon(v[k])).join(',') + '}';
+}
+const connSame = (a, b) => connCanon(a) === connCanon(b);
+
+/* where a document lives in the page's state, or null for a document this page does not keep */
+function connPlace(id) {
+  const p = String(id).split('/');
+  if (p[0] === 'proj') return p.length === 2 && p[1] === 'ai' ? { top: 'ai', path: [] } : null;
+  if (p[0] === 'label') return p.length === 4 && p.slice(1).every(connSeg) ? { top: 'gold', path: ['labels', p[1] + '|' + p[2], p[3]] } : null;
+  if (p[0] === 'gadj') return p.length === 3 && p.slice(1).every(connSeg) ? { top: 'gold', path: ['adj', p[1] + '|' + p[2]] } : null;
+  const k = CONN_BY_KIND[p[0]];
+  if (!k) return null;
+  if (k.nested) return p.length === 3 && connSeg(p[1]) && SLOT_KEYS.indexOf(p[2]) >= 0 ? { top: k.key, path: [p[1], p[2]], k } : null;
+  return p.length === 2 && connSeg(p[1]) ? { top: k.key, path: [p[1]], k } : null;
+}
+
+/* the page's state as documents: { id: body }, only what is there (a decision that was taken back is not a document) */
+function connDocsOf(S) {
+  const out = {};
+  CONN_KINDS.forEach((k) => {
+    const m = S[k.key] || {};
+    Object.keys(m).forEach((id) => {
+      const v = m[id];
+      if (v === null || v === undefined || !connSeg(id)) return;
+      if (k.nested) { Object.keys(v).forEach((slot) => { if (v[slot] && SLOT_KEYS.indexOf(slot) >= 0) out[k.kind + '/' + id + '/' + slot] = v[slot]; }); }
+      else if (k.wrap) { if (Array.isArray(v) && v.length) out[k.kind + '/' + id] = { v }; }
+      else if (persistPlain(v)) out[k.kind + '/' + id] = v;
+    });
+  });
+  const g = S.gold || {};
+  Object.keys(g.labels || {}).forEach((key) => {
+    const pr = key.split('|');
+    if (pr.length !== 2 || !pr.every(connSeg)) return;
+    Object.keys(g.labels[key] || {}).forEach((w) => { if (connSeg(w) && persistPlain(g.labels[key][w])) out['label/' + pr[0] + '/' + pr[1] + '/' + w] = g.labels[key][w]; });
+  });
+  Object.keys(g.adj || {}).forEach((key) => {
+    const pr = key.split('|');
+    if (pr.length === 2 && pr.every(connSeg) && persistPlain(g.adj[key])) out['gadj/' + pr[0] + '/' + pr[1]] = g.adj[key];
+  });
+  const sh = S.aiSheet || DEFAULTS.aiSheet, on = S.aiOn === undefined ? DEFAULTS.aiOn : S.aiOn;
+  if (on !== CONN_NO_AI.on || aiSheetFp(sh) !== aiSheetFp(CONN_NO_AI.sheet)) out['proj/ai'] = { on, sheet: sh };
+  return out;
+}
+
+/* put changes ([{ id, body }], body null = nothing there) into the page's state. Returns only what changed in the state, every map copied, none written to. */
+function connApply(S, changes) {
+  const patch = {};
+  const mine = (top) => {
+    if (patch[top] !== undefined) return patch[top];
+    if (top === 'gold') { const g = S.gold || DEFAULTS.gold; return (patch.gold = Object.assign({}, g, { labels: Object.assign({}, g.labels), adj: Object.assign({}, g.adj) })); }
+    return (patch[top] = Object.assign({}, S[top]));
+  };
+  changes.forEach((c) => {
+    const pl = connPlace(c.id), body = c.body;
+    if (!pl) return;
+    if (pl.top === 'ai') { patch.aiOn = body ? body.on : CONN_NO_AI.on; patch.aiSheet = body ? body.sheet : CONN_NO_AI.sheet; return; }
+    const m = mine(pl.top);
+    if (pl.top === 'gold') {
+      if (pl.path[0] === 'labels') {
+        const L = Object.assign({}, m.labels[pl.path[1]]);
+        if (body) L[pl.path[2]] = body; else delete L[pl.path[2]];
+        if (Object.keys(L).length) m.labels[pl.path[1]] = L; else delete m.labels[pl.path[1]];
+      } else if (body) m.adj[pl.path[1]] = body; else delete m.adj[pl.path[1]];
+      return;
+    }
+    const k = pl.k;
+    if (k.nested) { const sg = Object.assign({}, m[pl.path[0]]); if (body) sg[pl.path[1]] = body; else delete sg[pl.path[1]]; m[pl.path[0]] = sg; }
+    else if (body) m[pl.path[0]] = k.wrap ? body.v : body;
+    else if (k.empty === undefined) delete m[pl.path[0]];
+    else m[pl.path[0]] = k.empty;
+  });
+  return patch;
+}
+
+/* the state a shared project starts from: the sample's own activity cleared out of every shared map, the person's own gold-set settings kept */
+function connSkeleton(S) {
+  const sk = {};
+  CONN_KINDS.forEach((k) => {
+    const m = {};
+    if (k.empty !== undefined) Object.keys(k.seed()).forEach((id) => { m[id] = k.empty; });
+    sk[k.key] = m;
+  });
+  const g = S.gold || DEFAULTS.gold;
+  sk.gold = Object.assign({}, g, { labels: {}, adj: {} });
+  sk.aiOn = CONN_NO_AI.on; sk.aiSheet = CONN_NO_AI.sheet;
+  return sk;
+}
+
+/* does this document, as the server sent it, fit this project? '' if it does, otherwise why not. The same checks a saved file gets. */
+function connCheck(id, body) {
+  const pl = connPlace(id);
+  if (!pl) return 'it is not a kind of document this page keeps';
+  if (body === null) return '';
+  if (!persistPlain(body)) return 'it is not an object';
+  if (pl.top === 'ai') return typeof body.on === 'boolean' && aiSheetOk(body.sheet) ? '' : 'the AI settings are not in the shape this page reads';
+  if (pl.k && pl.k.wrap && !Array.isArray(body.v)) return 'it is not a list';
+  const patch = connApply(DEFAULTS, [{ id, body }]), state = {};
+  Object.keys(patch).forEach((k) => { state[k] = patch[k]; });
+  const r = persistCheck({ format: PERSIST_FORMAT, project: persistProject(), state });
+  return r.ok && r.dropped === 0 ? '' : (r.problems[0] || 'its contents do not fit this project');
+}
+
+/* the whole shared state from every document the server holds: { patch, bad } where bad lists the documents left out and why */
+function connBuild(S, docs) {
+  let changes = Object.keys(docs).map((id) => ({ id, body: docs[id] })).filter((c) => c.body !== null);
+  const bad = [];
+  const make = (list) => { const sk = connSkeleton(S); return Object.assign({}, sk, connApply(sk, list)); };
+  const whole = (list) => {
+    const out = make(list), state = {};
+    Object.keys(out).forEach((k) => { if (k !== 'aiOn' && k !== 'aiSheet') state[k] = out[k]; });
+    return { out, r: persistCheck({ format: PERSIST_FORMAT, project: persistProject(), state }) };
+  };
+  const ai = changes.find((c) => c.id === 'proj/ai');
+  if (ai && connCheck(ai.id, ai.body)) { bad.push({ id: ai.id, why: connCheck(ai.id, ai.body) }); changes = changes.filter((c) => c !== ai); }   // an AI setting that cannot be read is not guessed at: the AI stays off
+  let w = whole(changes);
+  if (!w.r.ok || w.r.dropped > 0) {
+    changes = changes.filter((c) => { const why = c.id === 'proj/ai' ? '' : connCheck(c.id, c.body); if (why) bad.push({ id: c.id, why }); return !why; });
+    w = whole(changes);
+  }
+  const out = w.out;
+  if (ai && bad.some((b) => b.id === 'proj/ai')) { out.aiOn = CONN_NO_AI.on; out.aiSheet = CONN_NO_AI.sheet; }
+  return { patch: out, bad };
+}
+
+/* the changes between what the server last agreed to (base) and what the page shows (local): [{ id, body }], a decision or a ruling first and the
+   sign-offs that depend on it last. body null means the document is to be taken back. */
+function connDiff(base, local) {
+  const out = [];
+  Object.keys(local).forEach((id) => { if (!(id in base) || !connSame(base[id], local[id])) out.push({ id, body: local[id] }); });
+  Object.keys(base).forEach((id) => { if (!(id in local)) out.push({ id, body: null }); });
+  const ord = (id) => { const p = connPlace(id); return p && p.k ? p.k.order : 1; };
+  return out.sort((a, b) => ord(a.id) - ord(b.id) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}
+
+/* a sign-off carries the server's revision of the decision it binds to, and keeps the page's own revision label beside it */
+function connWire(ctx, id, body) {
+  if (id.slice(0, 5) !== 'sign/') return body;
+  const target = id.split('/')[1], dr = ctx.revs['dec/' + target] || ctx.revs['rdec/' + target] || 0;
+  return Object.assign({}, body, { page_rev: typeof body.rev === 'string' ? body.rev : '', rev: dr });
+}
+function connUnwire(id, body) {
+  if (id.slice(0, 5) !== 'sign/' || !body) return body;
+  const o = Object.assign({}, body, { rev: typeof body.page_rev === 'string' ? body.page_rev : '' });
+  delete o.page_rev;
+  return o;
+}
+
+/* words for the person */
+const CONN_WHAT = { dec: 'the decision on', rdec: 'the decision on', sign: 'the sign-off on', hand: 'the hand-off on', obj: 'the objection on', adj: 'the ruling on', claim: 'the claim on', stale: 'the “source changed” flag on', sib: 'the two versions of', peel: 'the members taken out of', label: 'your label on', gadj: 'the ruling on the pair' };
+function connName(id) {
+  const p = String(id).split('/');
+  if (id === 'proj/ai') return 'the AI switch and data sheet';
+  if (p[0] === 'sign') return 'the ' + p[2] + ' sign-off on ' + p[1];
+  if (p[0] === 'label' || p[0] === 'gadj') return (CONN_WHAT[p[0]] || 'the') + ' ' + p[1] + ' and ' + p[2];
+  return (CONN_WHAT[p[0]] || 'the document') + ' ' + p.slice(1).join(' ');
+}
+function connSay(id, body) {
+  if (!body) return 'nothing';
+  const p = String(id).split('/');
+  if (p[0] === 'dec' || p[0] === 'rdec') return (body.outcome || 'a decision') + (body.text ? ' “' + String(body.text).slice(0, 80) + '”' : '');
+  if (p[0] === 'sign') return 'signed by ' + (body.by || 'someone');
+  if (p[0] === 'hand') return 'a hand-off from ' + ((PEOPLE.find((x) => x.k === body.from) || {}).name || 'someone') + ' (' + (body.status || 'open') + ')';
+  if (p[0] === 'label') return '“' + (body.v || 'a label') + '”';
+  if (p[0] === 'obj') return 'an objection by ' + (body.by || 'someone');
+  if (id === 'proj/ai') return 'AI ' + (body.on ? 'on' : 'off') + ', ' + (body.sheet && aiReviewed(body.sheet) ? 'sheet reviewed' : 'sheet not reviewed');
+  return 'a change';
+}
+const connWho = (key) => { const p = PEOPLE.find((x) => x.k === key); return p ? p.name : key || 'someone'; };
+
+/* ---------- the network: one small wrapper, so the rest can be tested without one ---------- */
+function connApi(fetchFn, root, token) {
+  const enc = (id) => String(id).split('/').map(encodeURIComponent).join('/');
+  const proj = (p) => '/v1/projects/' + encodeURIComponent(p);
+  const call = async (method, path, body, headers) => {
+    let res, timer = null;
+    try {
+      const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      if (ctl) timer = setTimeout(() => ctl.abort(), 10000);
+      const h = Object.assign({ Authorization: 'Bearer ' + token }, body !== undefined ? { 'Content-Type': 'application/json' } : {}, headers || {});
+      res = await fetchFn(root + path, { method, headers: h, body: body !== undefined ? JSON.stringify(body) : undefined, cache: 'no-store', credentials: 'omit', redirect: 'error', signal: ctl ? ctl.signal : undefined });
+    } catch (x) { return { status: 0, body: null }; } finally { if (timer) clearTimeout(timer); }
+    let data = null;
+    try { data = await res.json(); } catch (x) { data = null; }
+    return { status: res.status, body: data };
+  };
+  return {
+    me: () => call('GET', '/v1/me'),
+    people: (p) => call('GET', proj(p) + '/people'),
+    list: (p, after) => call('GET', proj(p) + '/docs?withdrawn=1&limit=1000&after=' + encodeURIComponent(after || '')),
+    get: (p, id) => call('GET', proj(p) + '/docs/' + enc(id)),
+    put: (p, id, body, rev, key) => call('PUT', proj(p) + '/docs/' + enc(id), { body, if_rev: rev }, { 'Idempotency-Key': key }),
+    events: (p, after) => call('GET', proj(p) + '/events?limit=' + CONN_EVENT_LIMIT + '&after=' + after),
+    verify: (p, head) => call('GET', proj(p) + '/verify' + (head ? '?expect_head=' + encodeURIComponent(head) : ''))
+  };
+}
+
+/* ---------- the engine ----------
+   ctx = { api, project, me, base, revs, seq, head, idem, bad, busy, again, hooks }
+   hooks: getS() the page's state now; swapPeople(list) and replace(patch, me) for signing in; apply(changes) put changes in the state (each may say who made it);
+          notice(n); status(s, pending); activity(events) */
+function connNew(api, project, me, hooks) {
+  return { api, project, me, base: {}, revs: {}, seq: 0, head: { seq: 0, hash: '' }, idem: {}, bad: {}, busy: false, again: false, hooks };   // head: the end of the record as last seen
+}
+const connLocal = (ctx) => connDocsOf(ctx.hooks.getS());
+/* what the server holds for a request that did not work, in words */
+function connFailText(r, doing) {
+  if (r.status === 0) return 'Could not reach the server to ' + doing + '.';
+  const m = r.body && r.body.error && r.body.error.message;
+  return (m ? m + ' ' : '') + '(' + doing + ': ' + r.status + ')';
+}
+/* after putting changes in the state, what the state really holds is what counts as agreed: it is never different from it, so no change is made up from it */
+function connSet(ctx, changes) {
+  ctx.hooks.apply(changes);
+  const now = connLocal(ctx);
+  changes.forEach((c) => {
+    if (c.rev !== undefined) ctx.revs[c.id] = c.rev;
+    if (c.id in now) ctx.base[c.id] = now[c.id]; else delete ctx.base[c.id];
+  });
+}
+
+/* read everything the server holds and make it the page's state. Returns { ok, problem, bad }. */
+async function connLoad(ctx) {
+  const h = await ctx.api.events(ctx.project, 2147483647);   // asked for nothing after the end: only to learn where the record ends
+  if (h.status !== 200) return { ok: false, problem: connFailText(h, 'read the record') };
+  const docs = {}, meta = {};
+  let after = '';
+  for (let page = 0; page < 1000; page++) {
+    const r = await ctx.api.list(ctx.project, after);
+    if (r.status !== 200 || !r.body || !Array.isArray(r.body.docs)) return { ok: false, problem: connFailText(r, 'read the project') };
+    r.body.docs.forEach((d) => { docs[d.id] = d.body === null ? null : connUnwire(d.id, d.body); meta[d.id] = d.rev; });
+    if (!r.body.next) break;
+    after = r.body.next;
+  }
+  if (ctx.hooks.swapPeople && ctx.people) ctx.hooks.swapPeople(ctx.people);   // the checks below know only the people of this project, so they come first; nothing is drawn between this and replace()
+  const built = connBuild(ctx.hooks.getS(), docs);
+  ctx.revs = meta; ctx.bad = {}; built.bad.forEach((b) => { ctx.bad[b.id] = true; });
+  ctx.seq = h.body.head.seq; ctx.head = h.body.head;
+  ctx.hooks.replace(built.patch, ctx.me);
+  ctx.base = connLocal(ctx);
+  return { ok: true, bad: built.bad };
+}
+
+/* send what the page changed, one document at a time, in an order that lets a decision go before the sign-offs on it */
+async function connFlush(ctx) {
+  if (ctx.busy) { ctx.again = true; return; }
+  ctx.busy = true;
+  try {
+    do {
+      ctx.again = false;
+      for (let n = 0; n < 2000; n++) {
+        const ch = connDiff(ctx.base, connLocal(ctx));
+        if (!ch.length) break;
+        if (await connSend(ctx, ch[0]) === 'stop') return;
+      }
+    } while (ctx.again);
+    ctx.hooks.status('live', 0);
+  } finally { ctx.busy = false; }
+}
+
+async function connSend(ctx, ch) {
+  const rev = ctx.revs[ch.id] || 0, wire = ch.body === null ? null : connWire(ctx, ch.id, ch.body);
+  const ck = ch.id + '@' + rev + '@' + connCanon(wire);
+  const key = ctx.idem[ck] || (ctx.idem[ck] = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));   // the same request sent again after a lost answer does not happen twice
+  const r = await ctx.api.put(ctx.project, ch.id, wire, rev, key);
+  if (r.status === 0 || r.status === 429 || r.status >= 500) { ctx.hooks.status('offline', connDiff(ctx.base, connLocal(ctx)).length); return 'stop'; }
+  if (r.status === 401) { ctx.hooks.status('denied', 0); return 'stop'; }
+  delete ctx.idem[ck];
+  if (r.status === 201) {
+    ctx.revs[ch.id] = r.body.rev;
+    if (ch.body === null) delete ctx.base[ch.id]; else ctx.base[ch.id] = ch.body;
+    (r.body.cleared || []).forEach((cid) => {
+      ctx.revs[cid] = (ctx.revs[cid] || 0) + 1;
+      if (connLocal(ctx)[cid] !== undefined) { connSet(ctx, [{ id: cid, body: null }]); ctx.hooks.notice({ kind: 'cleared', id: cid, text: 'The sign-off on ' + cid.split('/')[1] + ' (' + cid.split('/')[2] + ') was cleared because the decision changed.' }); }
+      delete ctx.base[cid];
+    });
+    return 'ok';
+  }
+  const e = (r.body && r.body.error) || {};
+  const what = connName(ch.id);
+  if (r.status === 409 && e.code === 'conflict') {
+    const cur = e.current || null, theirs = cur && cur.body !== null ? connUnwire(ch.id, cur.body) : null;
+    connSet(ctx, [{ id: ch.id, body: theirs, rev: typeof e.rev === 'number' ? e.rev : rev }]);
+    if (!connSame(theirs, ch.body)) ctx.hooks.notice({ kind: 'conflict', id: ch.id, text: connWho(cur && cur.by) + ' changed ' + what + ' first' + (cur && cur.at ? ' (' + String(cur.at).replace('T', ' ').slice(0, 19) + ')' : '') + '. Your change was not made.', mine: connSay(ch.id, ch.body), theirs: theirs ? connSay(ch.id, theirs) : 'it was taken back' });
+    return 'ok';
+  }
+  if (r.status === 409 && e.code === 'stale_signoff') {
+    const target = ch.id.split('/')[1], dk = (target.slice(0, 3) === 'CL-' ? 'dec/' : 'rdec/') + target;
+    const d = await ctx.api.get(ctx.project, dk);
+    if (d.status === 200) connSet(ctx, [{ id: dk, body: d.body.body === null ? null : d.body.body, rev: d.body.rev }]);
+    connSet(ctx, [{ id: ch.id, body: ctx.base[ch.id] || null }]);
+    ctx.hooks.notice({ kind: 'conflict', id: ch.id, text: 'The decision moved on before your sign-off arrived, so the sign-off was not made. Read the decision as it is now and sign again if you still agree.', mine: connSay(ch.id, ch.body), theirs: 'the decision is now at revision ' + (e.decision_rev || '?') });
+    return 'ok';
+  }
+  // refused by a rule, or the request was not acceptable: take the change back and say why, in the server's words
+  connSet(ctx, [{ id: ch.id, body: ctx.base[ch.id] || null }]);
+  ctx.hooks.notice({ kind: 'refused', id: ch.id, text: 'The server did not accept your change to ' + what + ': ' + (e.message || 'status ' + r.status) });
+  return 'ok';
+}
+
+/* look for what others did since last time and put it in place */
+async function connPoll(ctx) {
+  const r = await ctx.api.events(ctx.project, ctx.seq);
+  if (r.status === 401) { ctx.hooks.status('denied', 0); return 'denied'; }
+  if (r.status !== 200 || !r.body) { ctx.hooks.status('offline', connDiff(ctx.base, connLocal(ctx)).length); return 'offline'; }
+  const evs = r.body.events, head = r.body.head;
+  if (head.seq < ctx.head.seq || (head.seq === ctx.head.seq && ctx.head.hash && head.hash !== ctx.head.hash)) { ctx.hooks.status('rolledback', 0); return 'rolledback'; }   // the record went backwards or was rewritten under us
+  ctx.head = head;
+  if (!evs.length) { ctx.hooks.status('live', connDiff(ctx.base, connLocal(ctx)).length); return 'quiet'; }
+  ctx.seq = evs[evs.length - 1].seq;
+  ctx.hooks.activity(evs);
+  const ids = [];
+  evs.forEach((e) => { if (e.type === 'doc' && e.rev > (ctx.revs[e.target] || 0) && ids.indexOf(e.target) < 0) ids.push(e.target); });
+  if (evs.length >= CONN_EVENT_LIMIT || ids.length > CONN_MAX_PER_POLL) return connReload(ctx);
+  const changes = [];
+  for (const id of ids) {
+    const d = await ctx.api.get(ctx.project, id);
+    if (d.status === 0) { ctx.hooks.status('offline', 0); ctx.seq = Math.min(ctx.seq, evs[0].seq - 1); return 'offline'; }
+    if (d.status !== 200) continue;
+    changes.push({ id, rev: d.body.rev, body: d.body.body === null ? null : connUnwire(id, d.body.body), by: d.body.by });
+  }
+  connTake(ctx, changes);
+  ctx.hooks.status('live', connDiff(ctx.base, connLocal(ctx)).length);
+  return 'changed';
+}
+
+/* put changes that came from the server in place, except where the person has a change of their own waiting on the same document */
+function connTake(ctx, changes) {
+  const local = connLocal(ctx), ok = [];
+  changes.forEach((c) => {
+    if (c.rev <= (ctx.revs[c.id] || 0)) return;
+    if (!connSame(local[c.id], ctx.base[c.id])) return;      // theirs and a change of yours are both waiting: sending yours will be refused, and then you see theirs
+    const why = connCheck(c.id, c.body);
+    if (why) { ctx.revs[c.id] = c.rev; ctx.bad[c.id] = true; ctx.hooks.notice({ kind: 'ignored', id: c.id, text: 'A change by ' + connWho(c.by) + ' to ' + connName(c.id) + ' was left out because ' + why + '.' }); return; }
+    ok.push(c);
+  });
+  if (ok.length) connSet(ctx, ok.map((c) => ({ id: c.id, body: c.body, rev: c.rev, by: c.by })));
+}
+
+/* too much changed to read one by one: read everything again and put the differences in place */
+async function connReload(ctx) {
+  const docs = {};
+  let after = '';
+  for (let page = 0; page < 1000; page++) {
+    const r = await ctx.api.list(ctx.project, after);
+    if (r.status !== 200 || !r.body || !Array.isArray(r.body.docs)) { ctx.hooks.status(r.status === 401 ? 'denied' : 'offline', 0); return 'offline'; }
+    r.body.docs.forEach((d) => { docs[d.id] = d; });
+    if (!r.body.next) break;
+    after = r.body.next;
+  }
+  const changes = [];
+  Object.keys(docs).forEach((id) => {
+    const d = docs[id], body = d.body === null ? null : connUnwire(id, d.body);
+    if (d.rev > (ctx.revs[id] || 0)) changes.push({ id, rev: d.rev, body, by: d.by });
+  });
+  Object.keys(ctx.base).forEach((id) => { if (!(id in docs)) changes.push({ id, rev: (ctx.revs[id] || 0) + 1, body: null }); });
+  connTake(ctx, changes);
+  ctx.hooks.status('live', connDiff(ctx.base, connLocal(ctx)).length);
+  return 'changed';
+}
+
+/* ask the server to recompute its record, against the newest entry it reports a moment before, so a record rewritten while it is being checked is noticed. A record that has become shorter or different from the one this page saw is noticed by the poll (it stops everything: status 'rolledback'). */
+async function connCheckRecord(ctx) {
+  for (let tries = 0; tries < 3; tries++) {
+    const e = await ctx.api.events(ctx.project, 2147483647);
+    if (e.status !== 200) return { ok: false, text: connFailText(e, 'read the end of the record') };
+    const v = await ctx.api.verify(ctx.project, e.body.head.hash);
+    if (v.status !== 200 || !v.body) return { ok: false, text: connFailText(v, 'check the record') };
+    if (v.body.ok) return { ok: true, entries: v.body.entries, head: v.body.head, text: 'The shared record was checked just now: ' + v.body.entries + ' entries, each one follows from the one before, and every document matches the fingerprint in the record. The newest entry’s fingerprint starts ' + v.body.head.slice(0, 12) + '.' };
+    if (/^the newest entry/.test(v.body.why) && tries < 2) continue;   // somebody wrote between the two questions: ask again
+    return { ok: false, at: v.body.at, text: 'The shared record does not check out at entry ' + v.body.at + ': ' + v.body.why + '. Do not rely on it until the person who runs the server has looked.' };
+  }
+  return { ok: false, text: 'The record kept changing while it was checked. Try again.' };
+}
 
 class Component extends DCLogic {
   get S() { return Object.assign({}, DEFAULTS, this.state || {}); }
@@ -5739,7 +6303,7 @@ class Component extends DCLogic {
     if (c.aiHeld) banners.push(this.banner('info', 'No AI answer is shown for this group', [c.aiHeld.text, 'Review it the usual way, from the mechanical results. The AI use page lists what is held back and why.'], [{ label: 'Open AI use', fn: () => this.setState({ view: 'ai' }) }]));
     if (S.preview) banners.push(this.banner('info', 'Previewing the ' + SLOT_NAME[S.preview] + ' lens', ['You see what a ' + SLOT_NAME[S.preview] + ' reviewer sees. Everything is read only while you preview.'], [{ label: 'Back to my own lens', fn: () => this.setState({ preview: '' }), primary: true }]));
     if (cl && cl.by !== P.name && !dec) banners.push(this.banner('claim', cl.by + ' (' + cl.lens + ') is looking at this cluster', [cl.mins + ' minute' + (cl.mins === 1 ? '' : 's') + ' ago. A soft claim expires after 15 minutes and never locks anyone out. If you both decide, the second save is stopped and offered as a sibling version.']));
-    if ((S.liveVer[cid] || 0) > (S.openVer[cid] || 0)) banners.push(this.banner('warn', 'This cluster changed after you opened it', ['Priya Raman added a note while you were reading. Reload so that you decide on what is current. Deciding is paused until you do.'], [{ label: 'Reload the cluster', fn: () => this.setState({ openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) }), primary: true }]));
+    if ((S.liveVer[cid] || 0) > (S.openVer[cid] || 0)) banners.push(this.banner('warn', 'This cluster changed after you opened it', [((this._connBy && this._connBy[cid]) ? this._connBy[cid] + ' changed it on the server while you were reading.' : 'Priya Raman added a note while you were reading.') + ' Reload so that you decide on what is current. Deciding is paused until you do.'], [{ label: 'Reload the cluster', fn: () => this.setState({ openVer: Object.assign({}, S.openVer, { [cid]: S.liveVer[cid] || 0 }) }), primary: true }]));
     const stl = staleOf(S, cid);
     if (stl) banners.push(this.banner('warn', 'Stale: the source changed after this decision', [stl.what, 'The earlier decision and its sign-offs are kept in the record, but they no longer count. Decide again on the current wording (reason code R-SRC).'], [{ label: 'Reopen for review', fn: () => this.setState({ stale: Object.assign({}, S.stale, { [cid]: null }), dec: Object.assign({}, S.dec, { [cid]: null }), sign: Object.assign({}, S.sign, { [cid]: {} }), res: Object.assign({}, S.res, { [cid]: { reason: 'R-SRC' } }), events: this.mk(S.events, 'human', P.name + ' · ' + (P.lens || 'observer'), 'Reopened after source change (R-SRC)', cid), ...this.bump(S, cid) }), primary: true, disabled: !actor }]));
     const dsp = disputeOf(S, cid);
@@ -6575,7 +7139,7 @@ class Component extends DCLogic {
     v.isPolicy = S.view === 'policy';
     v.isAi = S.view === 'ai';
     v.isExport = S.view === 'export';
-    Object.assign(v, this.valsOpen(S), this.valsImport(S), this.valsVerify(S), this.valsShell(S), this.valsGlossary(S));
+    Object.assign(v, this.valsOpen(S), this.valsImport(S), this.valsVerify(S), this.valsShell(S), this.valsGlossary(S), this.valsConn(S));
     // the page's name, for the tab, for a screen reader when it changes, and for the skip link
     v.pageTitle = v.isOpen ? 'Open a requirements project' : v.isVerify ? 'Check statements found in a document' : v.isImport ? 'Map fields and choose scope' : v.pageName;
     v.pageAnnounce = 'Now showing: ' + v.pageTitle;
@@ -6970,7 +7534,7 @@ class Component extends DCLogic {
     } else if (r.refused) st.keepMsg = { bad: true, text: 'The work saved in this browser could not be used and was removed: ' + r.refused, notes: [] };
     this.state = st;
   }
-  setState(o, cb) { super.setState(o, cb); this.keepSoon(); }
+  setState(o, cb) { super.setState(o, cb); this.keepSoon(); this.connSoon(); }
   /* two tabs of one browser share one store: when the other tab writes, this one stops saving until the person says whose work stands */
   componentDidMount() {
     if (typeof window === 'undefined' || !window.addEventListener) return;
@@ -6978,7 +7542,7 @@ class Component extends DCLogic {
     window.addEventListener('storage', this._onStore);
     // the last change before a tab is closed or hidden is written at once, not after the pause
     this._onHide = () => { clearTimeout(this._keepT); this.keepNow(); };
-    this._onVis = () => { try { if (document.visibilityState === 'hidden') this._onHide(); } catch (x) { /* no document */ } };
+    this._onVis = () => { try { if (document.visibilityState === 'hidden') this._onHide(); else this.connWake(); } catch (x) { /* no document */ } };
     window.addEventListener('pagehide', this._onHide);
     try { document.addEventListener('visibilitychange', this._onVis); } catch (x) { /* no document */ }
   }
@@ -6988,10 +7552,11 @@ class Component extends DCLogic {
       if (this._onHide) window.removeEventListener('pagehide', this._onHide);
       try { if (this._onVis) document.removeEventListener('visibilitychange', this._onVis); } catch (x) { /* no document */ }
     }
-    clearTimeout(this._keepT);
+    clearTimeout(this._keepT); clearTimeout(this._connT); clearTimeout(this._connF);
   }
-  keepOther() { clearTimeout(this._keepT); this._keepHold = true; super.setState({ keepStatus: 'other' }); }
+  keepOther() { if (this._conn) return; clearTimeout(this._keepT); this._keepHold = true; super.setState({ keepStatus: 'other' }); }
   keepTakeOther() {
+    if (this._conn) return;
     const r = persistRead();
     if (!r.state) { this._keepHold = false; this._keepRaw = ''; super.setState({ keepStatus: r.status, keepMsg: { bad: false, text: 'The other tab has no saved work now, so this tab keeps its own.', notes: [] } }); this.keepSoon(); return; }
     const merged = {}; PERSIST_KEYS.forEach((k) => { merged[k] = DEFAULTS[k]; });
@@ -7001,13 +7566,13 @@ class Component extends DCLogic {
   }
   keepKeepMine() { this._keepHold = false; this._keepRaw = ''; this.keepNow(); this.setState({ keepMsg: { bad: false, text: 'This tab’s work was saved over what the other tab had.', notes: [] } }); }
   keepSoon() {
-    if (typeof window === 'undefined' || typeof setTimeout === 'undefined' || this._dry) return;
+    if (typeof window === 'undefined' || typeof setTimeout === 'undefined' || this._dry || this._conn) return;   // signed in to a shared project, this browser keeps no copy
     clearTimeout(this._keepT);
     this._keepT = setTimeout(() => this.keepNow(), 350);
   }
   keepNow() {
     const S = this.S;
-    if (this._keepHold || !persistHasWork(S)) return;
+    if (this._keepHold || this._conn || !persistHasWork(S)) return;
     let raw = '';
     try { raw = JSON.stringify(persistPick(S)) + '|' + (S.view === 'open' || S.view === 'import' ? 'o' : 'w'); } catch (x) { return; }
     if (raw === this._keepRaw) return;
@@ -7031,6 +7596,7 @@ class Component extends DCLogic {
   }
   /* parse, check, then try to draw every screen with it; only then ask the person to replace their work */
   keepRead(text, name) {
+    if (this._conn) { this.setState({ keepMsg: { bad: true, text: 'Sign out of the shared project before loading a file: it would replace what the whole team shares.', notes: [] }, keepAsk: '' }); return; }
     let obj = null;
     try { obj = JSON.parse(text); } catch (x) { this.setState({ keepMsg: { bad: true, text: name + ' is not a saved project: it is not valid JSON.', notes: [] }, keepAsk: '' }); return; }
     const r = persistCheck(obj);
@@ -7061,7 +7627,7 @@ class Component extends DCLogic {
     return '';
   }
   keepApply(S) {
-    const p = this._pending; if (!p) return;
+    const p = this._pending; if (!p || this._conn) return;
     const merged = {}; PERSIST_KEYS.forEach((k) => { merged[k] = DEFAULTS[k]; });
     Object.assign(merged, p.state);
     merged.openVer = Object.assign({}, merged.liveVer);
@@ -7071,6 +7637,7 @@ class Component extends DCLogic {
     this.setState(Object.assign(merged, { view: 'home', verified: '', tamper: false, chatOpen: false, keepAsk: '', keepSummary: [], keepRestored: null, keepMsg: { bad: false, text: 'Loaded ' + p.name + '. Your earlier work in this browser was replaced.', notes: p.notes } }));
   }
   keepStartOver() {
+    if (this._conn) return;
     const reset = {}; PERSIST_KEYS.forEach((k) => { reset[k] = DEFAULTS[k]; });
     persistClear(); this._keepRaw = ''; this._pending = null;
     this.setState(Object.assign(reset, { view: 'open', verified: '', tamper: false, chatOpen: false, keepAsk: '', keepSummary: [], keepAt: '', keepRestored: null, keepMsg: { bad: false, text: 'Started over. The work kept in this browser was removed.', notes: [] } }));
@@ -7078,23 +7645,24 @@ class Component extends DCLogic {
   valsKeep(S) {
     const work = persistHasWork(S), off = S.keepStatus === 'off', full = S.keepStatus === 'full', other = S.keepStatus === 'other', c = persistCounts(S);
     const at = S.keepAt ? S.keepAt.replace('T', ' ').slice(11, 19) : '';
-    const line = other ? 'Another tab of this browser saved or removed work for this project. This tab has stopped saving so it cannot write over that. Choose whose work stands.'
+    const conn = !!this._conn;
+    const line = conn ? 'This project is on the server, so this browser is not keeping a copy of it. “Save to a file” gives you a copy of what you see now.' : other ? 'Another tab of this browser saved or removed work for this project. This tab has stopped saving so it cannot write over that. Choose whose work stands.'
       : off ? 'This browser is not letting the page keep anything (a private window, or storage is blocked). Save a file before you close the tab.'
       : full ? 'Your work is too large to keep in this browser. Save a file.'
       : work ? 'Kept automatically' + (at ? ' at ' + at : '') + ': ' + persistSaid(c, ['decisions', 'signoffs', 'handoffs', 'labels']) + '.'
       : 'Decide a cluster or a requirement and it is kept here by itself.';
     const msg = S.keepMsg;
     return {
-      kHead: other ? 'Another tab changed this project' : off ? 'Your work is not being kept' : full ? 'Your work is too large to keep here' : 'Your work', kLine: line,
-      kOther: other, kTake: () => this.keepTakeOther(), kMine: () => this.keepKeepMine(),
+      kHead: conn ? 'Your work' : other ? 'Another tab changed this project' : off ? 'Your work is not being kept' : full ? 'Your work is too large to keep here' : 'Your work', kLine: line,
+      kOther: other && !conn, kTake: () => this.keepTakeOther(), kMine: () => this.keepKeepMine(),
       kRestored: !!S.keepRestored, kRestoredText: S.keepRestored ? 'Picked up where you left off. This was saved ' + (S.keepRestored.at ? S.keepRestored.at.replace('T', ' ').slice(0, 16) : 'earlier') + ' in this browser.' : '',
-      kWarn: off || full || other, kWarnText: other ? 'This tab is not saving.' : 'Nothing is being kept for you right now.', kScope: 'It stays in this browser and is not encrypted, so a colleague on another computer does not see it. On a shared computer, start over when you finish. Sharing between people needs the server, which this prototype is not connected to.',
+      kWarn: !conn && (off || full || other), kWarnText: other ? 'This tab is not saving.' : 'Nothing is being kept for you right now.', kScope: conn ? 'Loading a file and starting over are off while you are signed in to a shared project, because they would replace what the whole team shares. Sign out first.' : 'It stays in this browser and is not encrypted, so a colleague on another computer does not see it. On a shared computer, start over when you finish. To share work with colleagues, sign in to the team’s server (above).',
       kSave: () => this.keepSave(S), kLoad: () => { try { document.getElementById('keep-file').click(); } catch (x) { /* no DOM */ } }, kFile: (e) => this.keepPick(S, e),
       kStart: () => this.setState({ keepAsk: 'start', keepMsg: null }),
       kAskStart: S.keepAsk === 'start', kAskLoad: S.keepAsk === 'load', kSummary: (S.keepSummary || []).map((t) => ({ t })),
       kDoStart: () => this.keepStartOver(), kDoLoad: () => this.keepApply(S), kCancel: () => { this._pending = null; this.setState({ keepAsk: '', keepSummary: [] }); },
       kHasMsg: !!msg, kMsgText: msg ? msg.text : '', kMsgBad: !!(msg && msg.bad), kMsgNotes: msg ? (msg.notes || []).map((t) => ({ t })) : [], kMsgStyle: 'font-size:13px;display:flex;flex-direction:column;gap:2px;border-radius:6px;padding:8px 12px;' + (msg && msg.bad ? 'background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;' : 'background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;'),
-      kStartDisabled: !work && !S.keepRestored
+      kLoadDisabled: conn, kStartDisabled: conn || (!work && !S.keepRestored)
     };
   }
 
@@ -7210,6 +7778,163 @@ class Component extends DCLogic {
         'A group marked above what the sheet approves is held back. Export-controlled text can only be approved for a model on your own servers.',
         'A requirement with no marking recorded is kept from the AI, unless the sheet says to treat it as unmarked.'
       ].map((t) => ({ t }))
+    };
+  }
+
+  /* ----- the shared project: sign in to the reference server, send changes, take in other people's (the rules and the checks are in connect.js) ----- */
+  connOrigin() { try { return /^https?:$/.test(window.location.protocol) ? window.location.origin : ''; } catch (x) { return ''; } }
+  connSignedIn(S) { return !!this._conn && ['live', 'offline', 'denied', 'rolledback'].indexOf((S.conn || {}).status) >= 0; }
+  connClock() { return new Date().toTimeString().slice(0, 8); }
+  connUi(patch) { const S = this.S; super.setState({ conn: Object.assign({}, DEFAULTS.conn, S.conn, patch) }); }
+  connFail(text) { this.connUi({ status: 'off', msg: text, bad: true }); }
+  /* the people of the project replace the page's sample people for as long as the person is signed in */
+  connValidPeople(list, me) {
+    if (!Array.isArray(list) || !list.length || list.length > 200) return 'The server did not list the people of this project.';
+    const ok = list.every((p) => p && typeof p.key === 'string' && /^[a-z][a-z0-9_-]{0,31}$/.test(p.key) && typeof p.name === 'string' && p.name.trim() && p.name.length <= 80 && ROLE_NAME[p.role] !== undefined && (p.lens === '' || LENSES.some((l) => l.k === p.lens)) && (p.role === 'observer') === (p.lens === ''));
+    if (!ok) return 'The server’s list of people is not in a shape this page reads.';
+    const mine = list.find((p) => p.key === me.key);
+    if (!mine || mine.role !== me.role || mine.lens !== me.lens) return 'The server’s list of people does not agree with who your token is for.';
+    return '';
+  }
+  async connSignIn() {
+    const S = this.S, token = String(S.connToken || '').trim();
+    if (this._connBusy || this._conn) return;
+    const origin = this.connOrigin();
+    if (!token) { this.connFail('Paste the token you were given, then sign in.'); return; }
+    if (!origin) { this.connFail('This page was not opened from a server, so there is nothing to sign in to. Open it from the address the person who runs the server gave you; it ends in /app/.'); return; }
+    this._connBusy = true;
+    this.connUi({ status: 'signing', msg: 'Signing in…', bad: false });
+    try {
+      const api = connApi((u, o) => fetch(u, o), origin, token);
+      const me = await api.me();
+      if (me.status === 0) { this.connFail('Could not reach the server at ' + origin + '. Check that it is running and that this page was opened from it.'); return; }
+      if (me.status === 401) { this.connFail('That token is not recognised. Check that it was copied whole, or ask for a new one.'); return; }
+      if (me.status !== 200 || !me.body || typeof me.body.key !== 'string' || typeof me.body.project !== 'string') { this.connFail('That address did not answer like a reqin server (it said ' + me.status + '). Open this page from the server’s own /app/ address.'); return; }
+      const pp = await api.people(me.body.project);
+      const bad = pp.status === 200 && pp.body ? this.connValidPeople(pp.body.people, me.body) : 'Could not read the people of the project (' + pp.status + ').';
+      if (bad) { this.connFail(bad); return; }
+      const before = {}; CONN_STATE_KEYS.concat(CONN_DRAFT_KEYS).forEach((k) => { before[k] = S[k]; });
+      const peopleBefore = PEOPLE.slice();
+      const ctx = connNew(api, me.body.project, me.body, this.connHooks());
+      ctx.people = pp.body.people;
+      let r;
+      try { r = await connLoad(ctx); } catch (x) { PEOPLE.length = 0; peopleBefore.forEach((p) => PEOPLE.push(p)); throw x; }
+      if (!r.ok) { this.connFail(r.problem); return; }
+      this._conn = ctx; this._connBefore = before; this._peopleBefore = peopleBefore; this._connBy = {};
+      clearTimeout(this._keepT); this._keepHold = true;      // while connected this browser keeps no copy: the server has the one
+      super.setState({ connToken: '', conn: Object.assign({}, DEFAULTS.conn, { status: 'live', project: me.body.project, me: me.body.key, at: this.connClock(), pending: 0, msg: 'Signed in as ' + me.body.name + '.', bad: false, left: r.bad.length,
+        notices: r.bad.slice(0, 5).map((b) => ({ kind: 'ignored', at: this.connClock(), text: connName(b.id) + ' on the server was left out because ' + b.why + '.' })) }) });
+      this.connSchedule();
+    } catch (x) {
+      this.connFail('Signing in did not work: ' + String(x && x.message).slice(0, 120));
+    } finally { this._connBusy = false; }
+  }
+  connSignOut(msg) {
+    const ctx = this._conn; if (!ctx) return;
+    clearTimeout(this._connT); clearTimeout(this._connF);
+    this._conn = null; this._keepHold = false; this._keepRaw = '';
+    PEOPLE.length = 0; this._peopleBefore.forEach((p) => PEOPLE.push(p));
+    const back = Object.assign({}, this._connBefore);
+    this._connBefore = null;
+    super.setState(Object.assign(back, { preview: '', conn: Object.assign({}, DEFAULTS.conn, { msg: msg || 'Signed out. This page is showing the work kept in this browser again.', bad: false }) }));
+    this.keepSoon();
+  }
+  connHooks() {
+    const self = this;
+    return {
+      getS: () => self.S,
+      swapPeople: (list) => { PEOPLE.length = 0; list.forEach((p) => PEOPLE.push({ k: p.key, name: p.name, lens: p.lens, role: p.role })); },
+      replace: (patch, me) => super.setState(Object.assign({}, patch, { person: me.key, preview: '', events: self.connAiEvents(Object.assign({}, self.S, patch), patch) })),
+      apply: (changes) => {
+        const S = self.S, patch = connApply(S, changes), me = self._conn ? self._conn.me.key : '';
+        const lv = {};
+        changes.forEach((c) => { if (!c.by || c.by === me) return; const pl = connPlace(c.id); const cid = pl && pl.path[0]; if (pl && pl.k && CL_BY[cid]) { lv[cid] = (S.liveVer[cid] || 0) + 1; self._connBy[cid] = connWho(c.by); } });
+        if (Object.keys(lv).length) patch.liveVer = Object.assign({}, S.liveVer, lv);
+        const ai = changes.find((c) => c.id === 'proj/ai');
+        if (ai) patch.events = self.connAiEvents(Object.assign({}, S, patch), patch, ai.by);
+        super.setState(patch);
+      },
+      notice: (n) => { const S = self.S; super.setState({ conn: Object.assign({}, DEFAULTS.conn, S.conn, { notices: [Object.assign({ at: self.connClock() }, n)].concat((S.conn || {}).notices || []).slice(0, 20) }) }); },
+      status: (s, pending) => { const S = self.S; if (!self._conn) return; self.connUi({ status: s, pending: pending || 0, at: s === 'live' ? self.connClock() : (S.conn || {}).at, msg: s === 'denied' ? 'The server no longer accepts your token. Sign in again with a current one.' : s === 'rolledback' ? 'The server’s record is shorter than, or different from, the one this page saw a moment ago. Nothing more is sent or read. Tell the person who runs the server.' : (S.conn || {}).msg, bad: s === 'denied' || s === 'rolledback' }); },
+      activity: (evs) => { const S = self.S; const add = evs.filter((e) => e.type === 'doc').map((e) => ({ seq: e.seq, who: connWho(e.actor), text: e.text, at: String(e.at).replace('T', ' ').slice(11, 19) })).reverse(); super.setState({ conn: Object.assign({}, DEFAULTS.conn, S.conn, { activity: add.concat((S.conn || {}).activity || []).slice(0, 8) }) }); }
+    };
+  }
+  /* the page's own record of AI use has to say what the switch and the sheet say, or a saved file would be refused: after a change that came from the server, say so in it */
+  connAiEvents(S, patch, by) {
+    if (patch.aiOn === undefined && patch.aiSheet === undefined) return S.events;
+    let ev = S.events;
+    const want = aiFromEvents(ev), on = patch.aiOn === undefined ? S.aiOn : patch.aiOn, sh = patch.aiSheet || S.aiSheet, actor = by ? connWho(by) + ' · shared project' : 'Shared project';
+    if (want.on !== on) ev = this.mk(ev, 'human', actor, 'AI use switched ' + (on ? 'on' : 'off') + ' for the whole project (as the shared project has it)', 'AI use');
+    if (want.fp !== aiSheetFp(sh)) ev = this.mk(ev, 'human', actor, 'AI data sheet set to what the shared project has [sheet ' + aiSheetFp(sh) + ']', 'AI use');
+    return ev;
+  }
+  connSchedule() {
+    clearTimeout(this._connT);
+    const ctx = this._conn; if (!ctx || typeof setTimeout === 'undefined') return;
+    const ms = (typeof window !== 'undefined' && window.__reqinPollMs) || CONN_POLL_MS;
+    this._connT = setTimeout(() => this.connTick(ctx), ms);
+  }
+  async connTick(ctx) {
+    if (this._conn !== ctx) return;
+    let stop = false;
+    try {
+      stop = ['denied', 'rolledback'].indexOf((this.S.conn || {}).status) >= 0;
+      if (!stop) await connFlush(ctx);
+      if (this._conn !== ctx) return;
+      stop = ['denied', 'rolledback'].indexOf((this.S.conn || {}).status) >= 0;
+      if (!stop) await connPoll(ctx);
+    } catch (x) { if (this._conn === ctx) this.connUi({ status: 'offline' }); }
+    if (this._conn === ctx && ['denied', 'rolledback'].indexOf((this.S.conn || {}).status) < 0) this.connSchedule();
+  }
+  /* a change was made here: send it in a moment, once the person has stopped typing */
+  connSoon() {
+    const ctx = this._conn;
+    if (!ctx || this._dry || typeof setTimeout === 'undefined') return;
+    clearTimeout(this._connF);
+    this._connF = setTimeout(() => { if (this._conn === ctx) connFlush(ctx).catch(() => { if (this._conn === ctx) this.connUi({ status: 'offline' }); }); }, 120);
+  }
+  connWake() { const ctx = this._conn; if (ctx && this._connT) { clearTimeout(this._connT); this._connT = setTimeout(() => this.connTick(ctx), 50); } }
+  async connCheckNow() {
+    const ctx = this._conn; if (!ctx || this._connChecking) return;
+    this._connChecking = true;
+    this.connUi({ record: { busy: true, ok: false, text: 'Asking the server to recompute its record…' } });
+    try {
+      const r = await connCheckRecord(ctx);
+      if (this._conn === ctx) this.connUi({ record: { busy: false, ok: r.ok, text: r.text } });
+    } catch (x) { if (this._conn === ctx) this.connUi({ record: { busy: false, ok: false, text: 'The check did not finish: ' + String(x && x.message).slice(0, 100) } }); }
+    finally { this._connChecking = false; }
+  }
+  valsConn(S) {
+    const c = Object.assign({}, DEFAULTS.conn, S.conn), signed = this.connSignedIn(S), origin = this.connOrigin();
+    const stName = { live: 'Live', offline: 'Offline', denied: 'Signed out by the server', rolledback: 'Stopped' }[c.status] || '';
+    const P = this.person(S), pend = c.pending || 0;
+    const line = c.status === 'live' ? 'Everyone who signs in to ' + c.project + ' sees the same decisions, sign-offs, hand-offs and labels. Last checked ' + (c.at || 'just now') + (pend ? '; ' + pend + (pend === 1 ? ' change is' : ' changes are') + ' being sent.' : '; nothing is waiting to be sent.')
+      : c.status === 'offline' ? 'The server cannot be reached. ' + (pend ? pend + (pend === 1 ? ' change is' : ' changes are') + ' waiting here and will be sent when it can.' : 'Nothing is waiting.') + ' What you see is what the server last said.'
+      : c.status === 'denied' ? 'The server no longer accepts your token. Nothing more is sent or read.'
+      : c.status === 'rolledback' ? 'The record on the server looks shorter or different than a moment ago. Nothing more is sent or read.' : '';
+    const kindWord = { conflict: 'Not made: someone got there first', refused: 'Not made: the server’s rules', cleared: 'Cleared', ignored: 'Left out' };
+    return {
+      cnSigned: signed, cnAlone: !signed && c.status !== 'signing', cnSigning: c.status === 'signing', cnCanTry: !!origin && c.status !== 'signing',
+      cnHead: signed ? 'Shared with your team: ' + c.project : 'Work with your team on a shared server',
+      cnLine: line, cnStatus: stName, cnStatusStyle: 'font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;white-space:nowrap;' + (c.status === 'live' ? 'background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;' : 'background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;'),
+      cnWhoCardOn: signed && S.view !== 'open', cnWho: signed ? P.name + ' · ' + (P.lens ? SLOT_NAME[P.lens] + ' lens' : 'no lens') + ' · ' + ROLE_NAME[P.role] : '',
+      cnIntro: 'This page is working on its own: what you decide is kept in this browser and nobody else sees it. If your team runs the reference server, paste the token you were given and everyone works on one copy. A token is a password for one person: it decides your lens and what you may change. It is kept in this page only until you close it.',
+      cnOrigin: origin ? 'Server: ' + origin : 'This page was not opened from a server, so it cannot sign in. Open it from the address the person who runs the server gave you; it ends in /app/.',
+      cnToken: S.connToken || '', cnTokenChange: (e) => this.setState({ connToken: e.target.value }),
+      cnTokenKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.connSignIn(); } },
+      cnSignIn: () => this.connSignIn(), cnSignOut: () => this.connSignOut(), cnCheck: () => this.connCheckNow(),
+      cnMsg: c.msg, cnHasMsg: !!c.msg, cnMsgStyle: 'font-size:13px;border-radius:6px;padding:8px 12px;font-weight:600;' + (c.bad ? 'background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;' : 'background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;'),
+      cnNotices: (c.notices || []).map((n, i) => ({ head: kindWord[n.kind] || 'Note', text: n.text, at: n.at || '', hasDetail: !!n.mine, mine: 'You: ' + (n.mine || ''), theirs: 'Now: ' + (n.theirs || ''), dismiss: () => { const cur = (this.S.conn || {}).notices || []; this.connUi({ notices: cur.filter((x, j) => j !== i) }); },
+        style: 'border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:4px;font-size:13px;' + (n.kind === 'cleared' || n.kind === 'ignored' ? 'background:#FFF7E6;border:1px solid #A15C00;' : 'background:#FDE3E0;border:1px solid #A6261E;') })),
+      cnNotesInCard: (c.notices || []).length > 0 && S.view === 'open', cnNotesInShell: (c.notices || []).length > 0 && S.view !== 'open',
+      cnActivity: (c.activity || []).map((a) => ({ at: a.at, who: a.who, text: a.text })), cnHasActivity: (c.activity || []).length > 0,
+      cnRecordOn: !!c.record, cnRecordText: c.record ? c.record.text : '', cnRecordOk: !!(c.record && c.record.ok), cnRecordBusy: !!(c.record && c.record.busy),
+      cnRecordStyle: 'font-size:13px;border-radius:6px;padding:8px 12px;font-weight:600;' + (c.record && c.record.ok ? 'background:#E1F2E7;color:#14502B;border:1px solid #1B6B3A;' : c.record && c.record.busy ? 'background:#F1F6FF;color:#10337F;border:1px solid var(--accent);' : 'background:#FDE3E0;color:#7A1510;border:1px solid #A6261E;'),
+      cnCheckDisabled: !signed || !!(c.record && c.record.busy),
+      cnShort: signed ? (c.status === 'live' ? 'Shared · live' : c.status === 'offline' ? 'Shared · offline' + (pend ? ', ' + pend + ' waiting' : '') : 'Shared · stopped') : 'Not shared · this browser only',
+      cnShortStyle: 'font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;white-space:nowrap;' + (!signed ? 'background:#EEF2F6;color:#3C4852;' : c.status === 'live' ? 'background:#E1F2E7;color:#14502B;' : 'background:#FDE3E0;color:#7A1510;'),
+      cnHint: signed ? 'Your login decides your lens.' : 'Your login decides your lens. Not signed in to a server, you can switch person to see each view.',
+      cnDemo: !signed
     };
   }
 }

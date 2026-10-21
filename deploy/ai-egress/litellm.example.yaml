@@ -1,0 +1,18 @@
+# LiteLLM in front of the model, inside the inner network. Check each setting against the documentation of the version you run
+# (https://docs.litellm.ai/docs/proxy/config_settings): the wall, not this file, is what keeps prompts from leaving.
+model_list:
+  - model_name: reqin-local                       # the gateway sends this name (upstream.model in its settings); the data sheet's "Model" must name the same model
+    litellm_params:
+      model: ollama/YOUR-MODEL                    # replace: the provider/model your model server speaks
+      api_base: http://model:11434                # the `model` service of compose.example.yaml; replace the port with your server's
+
+litellm_settings:
+  turn_off_message_logging: true                  # no prompt or answer text goes to any logging callback
+  success_callback: []
+  failure_callback: []
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  store_prompts_in_spend_logs: false
+  disable_spend_logs: true                        # no database of requests at all
+  background_health_checks: false

@@ -48,7 +48,7 @@ After a file is accepted and the person confirms, loading adds one entry to the 
 
 ## What this is not
 
-- **Not a shared store.** Two people in two browsers each have their own copy. The reference server (`reqin/src/reqin/server`, see [`reqin/SERVER.md`](../reqin/SERVER.md)) is the shared one: one copy, who may change what, no silent overwrites, a record that verifies. **The page is not connected to it yet.**
+- **Not a shared store, until you sign in.** Two people in two browsers each have their own copy. The reference server (`reqin/src/reqin/server`, see [`reqin/SERVER.md`](../reqin/SERVER.md)) is the shared one: one copy, who may change what, no silent overwrites, a record that verifies. Open the page from the server and sign in with a token and the browser keeps **nothing** (the server has the one copy; *Load from a file* and *Start over* are off, because they would replace what everyone shares); signing out puts back what the browser had before. See *Working with a team* in [`prototype/README.md`](../prototype/README.md).
 - **Not encrypted.** The browser copy and the file are plain text. On a shared computer, start over when you finish. A real deployment would keep the work on the server, behind its sign-in.
 - **Not tamper-proof.** The fingerprint on each entry of the record is a short demonstration hash. It finds accidents and hand edits; it does not stop a person who understands it from writing a consistent record. The server's record uses SHA-256 and is checked by the server.
 - **Not a backup.** Clearing the browser's site data removes the browser copy. Save a file.

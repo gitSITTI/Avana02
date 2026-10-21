@@ -1,0 +1,27 @@
+{
+  "format": "reqin-wall/1",
+  "note": "For compose.example.yaml on one machine. Roles: app = a process on the host that runs the pipeline; gateway = run inside the gateway's network namespace; team-probe = a throwaway container on the team network; inner-probe = a throwaway container on the inner (model) network; admin = a machine with internet access. See deploy/ai-egress/README.md for the commands. This plan does NOT claim the gateway cannot reach the internet: on one machine that takes rules on the host (see the README).",
+  "checks": [
+    {"id": "app-to-gateway", "from": "app", "to": "127.0.0.1:8790", "expect": "open",
+     "why": "the pipeline reaches the gateway",
+     "http": {"path": "/v1/health", "status": 200, "contains": "ok"}},
+    {"id": "gateway-to-server", "from": "gateway", "to": "172.30.20.30:8780", "expect": "open",
+     "why": "the gateway reads the AI switch and data sheet from the reference server"},
+    {"id": "gateway-to-litellm", "from": "gateway", "to": "172.30.10.10:4000", "expect": "open",
+     "why": "the gateway reaches the model's front door"},
+    {"id": "gateway-to-model", "from": "gateway", "to": "172.30.10.11:11434", "expect": "open",
+     "why": "stand-in: shows the model's own port answers from inside, so blocked means blocked and not 'switched off'"},
+
+    {"id": "team-to-litellm", "from": "team-probe", "to": "172.30.10.10:4000", "expect": "blocked", "target_up_from": "gateway-to-litellm",
+     "why": "something else on the team network cannot reach the model's front door"},
+    {"id": "team-to-model", "from": "team-probe", "to": "172.30.10.11:11434", "expect": "blocked", "target_up_from": "gateway-to-model",
+     "why": "nor the model itself"},
+
+    {"id": "admin-to-internet", "from": "admin", "to": "1.1.1.1:443", "expect": "open",
+     "why": "stand-in for the outside: shows the address answers from a machine that is allowed out"},
+    {"id": "inner-to-internet", "from": "inner-probe", "to": "1.1.1.1:443", "expect": "blocked", "target_up_from": "admin-to-internet",
+     "why": "a container on the model's network has no route to the internet"},
+    {"id": "inner-to-server", "from": "inner-probe", "to": "172.30.20.30:8780", "expect": "blocked", "target_up_from": "gateway-to-server",
+     "why": "nor into the team network"}
+  ]
+}

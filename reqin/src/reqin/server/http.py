@@ -11,8 +11,13 @@ Routes (details and examples in SERVER.md):
   GET  /v1/projects/<p>/events?after=N&limit=      the record, from entry N+1 (poll this to see what others did)
   GET  /v1/projects/<p>/verify?expect_head=        recompute the record and say where it first breaks
 
+Given an app directory it also serves the page itself, read only:
+  GET  /                                           sends you to /app/
+  GET  /app/<file>                                 a file from the app directory (no token: it holds no project data), /app/ being its start page
+
 The server speaks plain HTTP and binds to loopback unless told otherwise: tokens are bearer secrets, so anything beyond one machine goes
-behind a reverse proxy that adds TLS. It sends no CORS headers, so a web page from another origin cannot call it.
+behind a reverse proxy that adds TLS. It sends no CORS headers, so a web page from another origin cannot call it; the page it serves is from
+the same origin, so the connected page needs none.
 """
 from __future__ import annotations
 
@@ -21,13 +26,21 @@ import re
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from ipaddress import ip_address
+from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .store import ServerError, Store
 
 MAX_REQUEST_BYTES = 1024 * 1024
+MAX_STATIC_BYTES = 20 * 1024 * 1024
 VERSION = "0.1"
+# what the app directory may hand out; anything else is a 404, whatever is in the directory
+STATIC_TYPES = {
+    ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".css": "text/css; charset=utf-8",
+    ".woff2": "font/woff2", ".woff": "font/woff", ".ttf": "font/ttf", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon", ".txt": "text/plain; charset=utf-8",
+}
+APP_START = "Main.dc.html"
 _P = r"[a-z0-9][a-z0-9_-]{0,63}"
 ROUTES = [
     ("GET", re.compile(r"/v1/health"), "health"),
@@ -55,9 +68,9 @@ class Server(ThreadingHTTPServer):
     daemon_threads = True
     request_queue_size = 64
 
-    def __init__(self, addr: tuple[str, int], store: Store, log: Callable[[str], None] | None):
+    def __init__(self, addr: tuple[str, int], store: Store, log: Callable[[str], None] | None, app_dir: Path | None = None):
         super().__init__(addr, Handler)
-        self.store, self.log = store, log
+        self.store, self.log, self.app_dir = store, log, app_dir
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -74,9 +87,16 @@ class Handler(BaseHTTPRequestHandler):
         if self.server.log:
             self.server.log(f"{self.command} {urlsplit(self.path).path} {status}")
 
+    def _unread(self) -> bool:
+        """The caller sent a body this request never read. On a kept-alive connection it would be taken for the next request line, so the connection is closed."""
+        n = self.headers.get("Content-Length")
+        return bool(n and n.isdigit() and int(n) > 0 and not self._read)
+
     def _send(self, status: int, payload: Any, headers: dict[str, str] | None = None) -> None:
         data = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         self.send_response(status)
+        if self._unread():
+            self.send_header("Connection", "close")
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-store")
@@ -106,6 +126,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
             raise ServerError(415, "json_only", "Send Content-Type: application/json.")
         raw = self.rfile.read(int(n))
+        self._read = True
 
         def no_constants(c: str) -> Any:
             raise ValueError(c)
@@ -118,8 +139,47 @@ class Handler(BaseHTTPRequestHandler):
             raise ServerError(400, "bad_request", 'Send {"body": {...} or null, "if_rev": N}, and nothing else.')
         return obj
 
+    def _static(self, rel: str) -> None:
+        """A file from the app directory: GET and HEAD only, an allowed extension only, nothing that starts with a dot, nothing that resolves outside the directory."""
+        root = self.server.app_dir
+        if self.command not in ("GET", "HEAD"):
+            raise ServerError(405, "method_not_allowed", f"{self.command} is not allowed here.")
+        rel = unquote(rel) or APP_START
+        parts = rel.split("/")
+        if "\x00" in rel or "\\" in rel or any(p == "" or p.startswith(".") for p in parts) or Path(parts[-1]).suffix.lower() not in STATIC_TYPES:
+            raise ServerError(404, "no_route", "There is no such file.")
+        target = (root / rel).resolve()
+        if root not in target.parents or not target.is_file() or target.stat().st_size > MAX_STATIC_BYTES:
+            raise ServerError(404, "no_route", "There is no such file.")
+        data = target.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", STATIC_TYPES[target.suffix.lower()])
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.end_headers()
+        if self.command != "HEAD":
+            self.wfile.write(data)
+        self._log(200)
+
     def _route(self) -> None:
         path = urlsplit(self.path)
+        if self.server.app_dir is not None:
+            if path.path == "/":
+                self.send_response(302)
+                self.send_header("Location", "/app/")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return self._log(302)
+            if path.path == "/app" or path.path.startswith("/app/"):
+                if path.path == "/app":
+                    self.send_response(302)
+                    self.send_header("Location", "/app/")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return self._log(302)
+                return self._static(path.path[len("/app/"):])
         q = {k: v[-1] for k, v in parse_qs(path.query, keep_blank_values=True).items()}
         matched_path = False
         for method, rx, name in ROUTES:
@@ -159,6 +219,7 @@ class Handler(BaseHTTPRequestHandler):
         raise ServerError(404, "no_route", "There is no such path.")
 
     def _handle(self) -> None:
+        self._read = False
         try:
             self._route()
         except ServerError as e:
@@ -176,10 +237,15 @@ def _int(v: str | None, default: int) -> int:
         raise ServerError(400, "bad_number", "That should be a whole number.") from None
 
 
-def make_server(store: Store, host: str = "127.0.0.1", port: int = 8780, allow_remote: bool = False, log: Callable[[str], None] | None = None) -> Server:
+def make_server(store: Store, host: str = "127.0.0.1", port: int = 8780, allow_remote: bool = False, log: Callable[[str], None] | None = None, app_dir: str | Path | None = None) -> Server:
     if not allow_remote and not is_loopback(host):
         raise ServerError(400, "remote_refused", f"{host} is not a loopback address. Tokens travel in the clear over plain HTTP: put a TLS reverse proxy in front and pass --allow-remote, or bind to 127.0.0.1.")
-    return Server((host, port), store, log)
+    root = None
+    if app_dir is not None:
+        root = Path(app_dir).resolve()
+        if not (root / APP_START).is_file():
+            raise ServerError(400, "bad_app_dir", f"{app_dir} has no {APP_START}, so there is no page to serve.")
+    return Server((host, port), store, log, root)
 
 
 def serve_in_thread(srv: Server) -> threading.Thread:

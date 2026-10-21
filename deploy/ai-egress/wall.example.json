@@ -1,0 +1,31 @@
+{
+  "format": "reqin-wall/1",
+  "note": "An example for the layout in compose.example.yaml and nftables-model-host.example.nft. Replace every address with yours. Roles: admin = a machine that has internet access (it proves the outside is reachable); app = the host that runs the pipeline; workstation = where a person works; gateway; server = the reference server; model = the host the model runs on.",
+  "checks": [
+    {"id": "app-to-gateway", "from": "app", "to": "10.20.0.20:8790", "expect": "open",
+     "why": "the pipeline reaches the gateway",
+     "http": {"path": "/v1/health", "status": 200, "contains": "ok"}},
+    {"id": "workstation-to-gateway", "from": "workstation", "to": "10.20.0.20:8790", "expect": "blocked", "target_up_from": "app-to-gateway",
+     "why": "only the pipeline reaches the gateway, so a person's machine cannot send a prompt of their own"},
+
+    {"id": "gateway-to-server", "from": "gateway", "to": "10.20.0.30:8780", "expect": "open",
+     "why": "the gateway reads the AI switch and data sheet from the reference server"},
+    {"id": "gateway-to-model", "from": "gateway", "to": "10.20.1.10:4000", "expect": "open",
+     "why": "the gateway reaches the model (through LiteLLM)"},
+    {"id": "app-to-model", "from": "app", "to": "10.20.1.10:4000", "expect": "blocked", "target_up_from": "gateway-to-model",
+     "why": "the pipeline cannot reach the model except through the gateway"},
+    {"id": "workstation-to-model", "from": "workstation", "to": "10.20.1.10:4000", "expect": "blocked", "target_up_from": "gateway-to-model",
+     "why": "nobody's machine reaches the model except through the gateway"},
+    {"id": "server-to-model", "from": "server", "to": "10.20.1.10:4000", "expect": "blocked", "target_up_from": "gateway-to-model",
+     "why": "the reference server holds shared work, not a way to the model"},
+
+    {"id": "admin-to-internet", "from": "admin", "to": "1.1.1.1:443", "expect": "open",
+     "why": "stand-in for the outside: shows an address that answers from a machine that is allowed out"},
+    {"id": "model-to-internet", "from": "model", "to": "1.1.1.1:443", "expect": "blocked", "target_up_from": "admin-to-internet",
+     "why": "the model host has no route to the internet: it cannot send a prompt, an answer or a log anywhere"},
+    {"id": "model-to-server", "from": "model", "to": "10.20.0.30:8780", "expect": "blocked", "target_up_from": "gateway-to-server",
+     "why": "the model host starts no connections into the network"},
+    {"id": "gateway-to-internet", "from": "gateway", "to": "1.1.1.1:443", "expect": "blocked", "target_up_from": "admin-to-internet",
+     "why": "the gateway talks to the server and the model and to nothing else"}
+  ]
+}

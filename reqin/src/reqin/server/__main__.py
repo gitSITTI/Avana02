@@ -1,4 +1,4 @@
-"""Command line for the reference server:  python -m reqin.server init|serve|verify|rotate-token  (or `reqin-server`)."""
+"""Command line for the reference server:  python -m reqin.server init|serve|demo|verify|rotate-token  (or `reqin-server`)."""
 from __future__ import annotations
 
 import argparse
@@ -6,6 +6,7 @@ import json
 import os
 import sys
 
+from .demo import make_demo
 from .http import make_server
 from .store import ServerError, Store
 
@@ -16,20 +17,34 @@ def main(argv: list[str] | None = None) -> int:
     a = sub.add_parser("init", help="create a project from a people file and print each person's token once")
     a.add_argument("--db", required=True); a.add_argument("--project", required=True); a.add_argument("--people", required=True, help='JSON list: [{"key","name","role":"lead|reviewer|observer","lens":"SE|PE|UX|NU"}]')
     a.add_argument("--tokens-out", help="write the tokens to this file (mode 600) instead of printing them")
+    a.add_argument("--seed", help="put the sample activity from this seed file into the new project (demos only)")
     r = sub.add_parser("rotate-token", help="replace one person's token (the old one stops working)")
     r.add_argument("--db", required=True); r.add_argument("--project", required=True); r.add_argument("--person", required=True)
     s = sub.add_parser("serve", help="run the server")
     s.add_argument("--db", required=True); s.add_argument("--host", default="127.0.0.1"); s.add_argument("--port", type=int, default=8780)
     s.add_argument("--allow-remote", action="store_true", help="bind to a non-loopback address (put a TLS reverse proxy in front)")
+    s.add_argument("--app", help="also serve the page from this folder (it must hold Main.dc.html), read only, at /app/")
+    d = sub.add_parser("demo", help="make a new demo project with sample activity, write each person's token to a file, and serve the page")
+    d.add_argument("--db", required=True, help="a database file that does not exist yet"); d.add_argument("--seed", required=True, help="the seed file written by prototype/export_seed.js")
+    d.add_argument("--app", required=True, help="the folder holding Main.dc.html (prototype/project)"); d.add_argument("--host", default="127.0.0.1"); d.add_argument("--port", type=int, default=8780)
+    d.add_argument("--tokens-out", help="where to write the tokens (default: <db>.tokens.json, mode 600)")
     v = sub.add_parser("verify", help="recompute the record of a project; exit 1 if it was changed")
     v.add_argument("--db", required=True); v.add_argument("--project", required=True); v.add_argument("--expect-head", default="", help="the head hash you wrote down last time")
     args = ap.parse_args(argv)
     try:
+        if args.cmd == "demo" and os.path.exists(args.db):
+            print(f"error: {args.db} already exists. A demo is always a new database: delete it or choose another name.", file=sys.stderr)
+            return 2
         st = Store(args.db)
+        if args.cmd == "demo":
+            return _demo(st, args)
         if args.cmd == "init":
             with open(args.people, encoding="utf-8") as f:
                 people = json.load(f)
             tokens = st.init_project(args.project, people)
+            if args.seed:
+                from .demo import load_seed
+                st.seed(args.project, load_seed(args.seed)["docs"])
             if args.tokens_out:
                 fd = os.open(args.tokens_out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
                 with os.fdopen(fd, "w", encoding="utf-8") as f:
@@ -46,8 +61,8 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(res, indent=2))
             return 0 if res["ok"] else 1
         else:
-            srv = make_server(st, args.host, args.port, args.allow_remote, log=lambda line: print(line, flush=True))
-            print(f"Serving on http://{args.host}:{srv.server_address[1]} (Ctrl-C to stop)", flush=True)
+            srv = make_server(st, args.host, args.port, args.allow_remote, log=lambda line: print(line, flush=True), app_dir=args.app)
+            print(f"Serving on http://{args.host}:{srv.server_address[1]}" + (" (the page is at /app/)" if args.app else "") + " (Ctrl-C to stop)", flush=True)
             try:
                 srv.serve_forever()
             except KeyboardInterrupt:
@@ -61,6 +76,35 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, json.JSONDecodeError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
+
+
+def _demo(st: Store, args: argparse.Namespace) -> int:
+    out = args.tokens_out or args.db + ".tokens.json"
+    try:
+        srv = make_server(st, args.host, args.port, False, log=lambda line: print(line, flush=True), app_dir=args.app)   # first, so a busy port or a wrong folder leaves nothing behind
+        project, tokens, n = make_demo(st, args.seed)
+        fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(tokens, f, indent=2)
+    except BaseException:
+        st.close()
+        for suffix in ("", "-wal", "-shm"):
+            try:
+                os.remove(args.db + suffix)
+            except OSError:
+                pass
+        raise
+    base = f"http://{args.host}:{srv.server_address[1]}"
+    print(f"Demo project {project!r}: {len(tokens)} people, {n} sample documents. Tokens are in {out} (mode 600).")
+    print(f"Open the page at {base}/app/ and paste a person's token to sign in. A token is a password: this is a demo, with made-up data.")
+    print(f"Serving on {base} (Ctrl-C to stop)", flush=True)
+    try:
+        srv.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        srv.server_close()
+    return 0
 
 
 if __name__ == "__main__":

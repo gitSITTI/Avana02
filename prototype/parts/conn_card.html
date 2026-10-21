@@ -1,0 +1,44 @@
+<section aria-labelledby="conn-h" style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between">
+    <h2 id="conn-h" style="margin:0;font-size:16px;font-weight:700">{{cnHead}}</h2>
+    <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}"><span style="{{cnStatusStyle}}">{{cnStatus}}</span></sc-if>
+  </div>
+  <sc-if value="{{cnSigned}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <sc-if value="{{cnWhoCardOn}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:13px;font-weight:600;color:#2A353F">{{cnWho}}</p></sc-if>
+      <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{cnLine}}</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button onClick="{{cnCheck}}" disabled="{{cnCheckDisabled}}" style="§BTN§">Check the shared record</button>
+      <button onClick="{{cnSignOut}}" style="§BTN§">Sign out</button>
+    </div>
+    <sc-if value="{{cnNotesInCard}}" hint-placeholder-val="{{ false }}">
+§CONNNOTES§
+    </sc-if>
+    <sc-if value="{{cnHasActivity}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h3 style="margin:0;font-size:13px;font-weight:700;color:#2A353F">Latest on the server</h3>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#2A353F">
+          <sc-for list="{{cnActivity}}" as="a" hint-placeholder-count="3"><li>{{a.at}} · {{a.who}}: {{a.text}}</li></sc-for>
+        </ul>
+      </div>
+    </sc-if>
+    <div role="status" aria-live="polite">
+      <sc-if value="{{cnRecordOn}}" hint-placeholder-val="{{ false }}"><div style="{{cnRecordStyle}}">{{cnRecordText}}</div></sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{cnAlone}}" hint-placeholder-val="{{ true }}">
+    <p style="margin:0;font-size:13px;color:#2A353F;max-width:70ch">{{cnIntro}}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 280px;max-width:480px">
+        <label for="conn-token" style="font-size:13px;font-weight:600;color:#2A353F">Your token</label>
+        <input id="conn-token" type="password" autocomplete="off" spellcheck="false" value="{{cnToken}}" onChange="{{cnTokenChange}}" onKeyDown="{{cnTokenKey}}" style="§INP§width:100%">
+      </div>
+      <button onClick="{{cnSignIn}}" disabled="{{cnSigning}}" style="§PRI§padding:0 20px">Sign in</button>
+    </div>
+    <p style="margin:0;font-size:12px;color:var(--slate);max-width:70ch">{{cnOrigin}}</p>
+  </sc-if>
+  <div role="status" aria-live="polite">
+    <sc-if value="{{cnHasMsg}}" hint-placeholder-val="{{ false }}"><div style="{{cnMsgStyle}}">{{cnMsg}}</div></sc-if>
+  </div>
+</section>

@@ -49,6 +49,7 @@
               </div>
               <button onClick="{{openVee}}" style="§BTN§">Open the V</button>
             </section>
+            §CONN§
             <section aria-labelledby="home-keep" style="§CARD§padding:16px 20px;display:flex;flex-direction:column;gap:12px">
               <div style="display:flex;flex-direction:column;gap:4px">
                 <h2 id="home-keep" style="margin:0;font-size:16px;font-weight:700">{{kHead}}</h2>
@@ -59,7 +60,7 @@
               </div>
               <div style="display:flex;flex-wrap:wrap;gap:8px">
                 <button onClick="{{kSave}}" style="§BTN§">Save to a file</button>
-                <button onClick="{{kLoad}}" style="§BTN§">Load from a file</button>
+                <button onClick="{{kLoad}}" disabled="{{kLoadDisabled}}" style="§BTN§">Load from a file</button>
                 <button onClick="{{kStart}}" disabled="{{kStartDisabled}}" style="§BTN§">Start over</button>
                 <input id="keep-file" type="file" accept=".json,application/json" onChange="{{kFile}}" aria-label="Choose a saved project file" tabindex="-1" style="display:none">
               </div>

@@ -31,7 +31,8 @@ const persistKind = (v) => (v === null ? 'null' : Array.isArray(v) ? 'array' : t
 const persistPlain = (v) => persistKind(v) === 'object';
 /* a key the map really has: not one every object has ("constructor", "toString", "__proto__") */
 const persistHas = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
-const persistFingerprint = () => trMix(REQS.map((r) => r.id).join(',') + '|' + CLUSTERS.map((c) => c.id).join(',')).toString(16);
+let persistFpMemo = '';   // the requirements and clusters never change while the page is open, and a shared project checks a document at a time
+const persistFingerprint = () => persistFpMemo || (persistFpMemo = trMix(REQS.map((r) => r.id).join(',') + '|' + CLUSTERS.map((c) => c.id).join(',')).toString(16));
 const persistProject = () => ({ name: 'Reference air vehicle', source: 'sample', requirements: REQS.length, clusters: CLUSTERS.length, fingerprint: persistFingerprint() });
 
 /* the one place the event chain is checked: 'ok', or 'fail:<seq>' at the first entry that does not follow from the one before */

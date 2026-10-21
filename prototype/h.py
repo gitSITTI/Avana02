@@ -38,3 +38,35 @@ def session(w=1440, h=1000, page='Main.dc.html'):
         finally:
             b.close()
             srv.shutdown(); srv.server_close()
+
+
+@contextlib.contextmanager
+def launch():
+    """One browser and a way to open pages in it as different people: every call to new_page() is a separate context (its own storage, its own tokens), with
+    the libraries served from node_modules as in session(). The page itself is opened by the test, from wherever it is served (the reference server)."""
+    exe = [os.environ['CHROMIUM_PATH']] if os.environ.get('CHROMIUM_PATH') else glob.glob('/opt/pw-browsers/chromium-*/chrome-linux*/chrome')
+    vend = os.path.join(HERE, 'vendor', 'node_modules')
+    files = {'react@18.3.1/umd/react.production.min.js': vend + '/react/umd/react.production.min.js',
+             'react-dom@18.3.1/umd/react-dom.production.min.js': vend + '/react-dom/umd/react-dom.production.min.js',
+             '@babel/standalone@7.29.0/babel.min.js': vend + '/@babel/standalone/babel.min.js'}
+    with sync_playwright() as p:
+        b = p.chromium.launch(executable_path=exe[0] if exe else None, args=['--no-sandbox'])
+        def new_page(w=1440, h=1000):
+            ctx = b.new_context(viewport={'width': w, 'height': h})
+            pg = ctx.new_page()
+            errs = []
+            pg.on('console', lambda m: errs.append(m.type + ': ' + m.text) if m.type in ('error', 'warning') else None)
+            pg.on('pageerror', lambda e: errs.append('pageerror: ' + str(e)))
+            def route(r):
+                u = r.request.url
+                for k, v in files.items():
+                    if k in u:
+                        return r.fulfill(path=v, content_type='application/javascript')
+                if 'fonts.g' in u: return r.abort()
+                return r.continue_()
+            ctx.route('**/*', route)
+            return pg, errs
+        try:
+            yield new_page
+        finally:
+            b.close()

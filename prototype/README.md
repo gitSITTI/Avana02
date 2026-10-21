@@ -85,7 +85,24 @@ What is not real: nothing is read from your computer, no server is contacted, an
 
 ## Keeping the work
 
-What people decide, sign, write and label is kept in this browser by itself (about 350 ms after a change, and when the tab closes), and can be saved to a file and read back. A file is checked before it replaces anything: its format, the project it belongs to, the kind of every item, the chain of the record of events, that the AI switch and data sheet agree with their own record, and that every screen can draw it. A file that fails is refused; entries for things the project does not have are left out and counted. Two tabs of one browser cannot write over each other. The card is on Home. [`docs/KEEPING_THE_WORK.md`](../docs/KEEPING_THE_WORK.md) has the whole list, and says what this is not: **not shared between people** (the reference server in `reqin/` is, and the page is not connected to it), **not encrypted**, not tamper-proof (the fingerprints in the record are a short demonstration hash, not SHA-256), not a backup. The code is `parts/persist.js` and `parts/c7.js`.
+What people decide, sign, write and label is kept in this browser by itself (about 350 ms after a change, and when the tab closes), and can be saved to a file and read back. A file is checked before it replaces anything: its format, the project it belongs to, the kind of every item, the chain of the record of events, that the AI switch and data sheet agree with their own record, and that every screen can draw it. A file that fails is refused; entries for things the project does not have are left out and counted. Two tabs of one browser cannot write over each other. The card is on Home. [`docs/KEEPING_THE_WORK.md`](../docs/KEEPING_THE_WORK.md) has the whole list, and says what this is not: **not shared between people** unless you sign in to the reference server (next section), **not encrypted**, not tamper-proof (the fingerprints in the record are a short demonstration hash, not SHA-256), not a backup. The code is `parts/persist.js` and `parts/c7.js`.
+
+## Working with a team: the shared project
+
+Open the page from the reference server (`http://<server>/app/`, see [`reqin/SERVER.md`](../reqin/SERVER.md)), paste the token you were given into the card on the opening screen or Home, and press *Sign in*. From then on the project is the server's one copy: your login decides who you are, your lens and what you may change; what you decide, sign, hand off, claim, object to and label is sent a moment later; what others do appears within a few seconds; the lead's AI switch and data sheet are everyone's. Without signing in the page is the stand-alone one it was.
+
+What it does when things go wrong, each with a browser test (`b21.py`, four people in four browsers on one real server, at three screen widths):
+
+* **Someone got there first.** The second change to the same decision is refused by the server. A notice on top of the page you are working on (not only on Home) says who changed it, when, what you tried and what stands now; the page shows what stands. Nothing is merged silently, and the same body is never sent again.
+* **A cluster you have open was changed.** A banner names who changed it; deciding is paused until you reload it.
+* **No network.** The shell says *Shared · offline* and how many changes wait; they are sent once when the server answers (a lost answer is retried with the same key, so the server does it once).
+* **The server stops accepting your token**, or its record becomes shorter or different from the one the page saw: the page stops sending and reading and says so.
+* **The record.** *Check the shared record* asks the server to recompute its whole record; a document edited on the server's disk is named, at its entry.
+* **Nothing is kept in this browser while you are signed in** (the autosave stops; *Load from a file* and *Start over* are off); the token is held in the page only. Signing out puts back what the browser had before, including what you had typed. *Save to a file* still saves what you see.
+
+What it is **not**: there is no sign-in to a company directory (a token is a password for one person, made by whoever runs the server), no TLS in the server itself (put a proxy in front), the page polls every 4 seconds rather than being pushed to, and nobody has used it on a real project. The policy engine, results grade and trace map are still computed in the page from the shared documents.
+
+To try it: `python3 reqin/serve_standalone.py demo --db /tmp/demo.db --seed prototype/demo/seed.json --app prototype/project` starts a demo project (six people, sample activity) and writes one token per person to `/tmp/demo.db.tokens.json`. Nothing needs installing but Python.
 
 ## AI use
 

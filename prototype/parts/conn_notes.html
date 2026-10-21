@@ -1,0 +1,10 @@
+      <div role="alert" style="display:flex;flex-direction:column;gap:8px">
+  <sc-for list="{{cnNotices}}" as="n" hint-placeholder-count="2">
+    <div style="{{n.style}}">
+      <div style="font-weight:700">{{n.head}}</div>
+      <div style="max-width:70ch">{{n.text}}</div>
+      <sc-if value="{{n.hasDetail}}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;color:#2A353F"><span>{{n.mine}}</span><span>{{n.theirs}}</span></div></sc-if>
+      <div><button onClick="{{n.dismiss}}" style="§BTN§min-height:36px">Dismiss</button></div>
+    </div>
+  </sc-for>
+</div>

@@ -14,6 +14,7 @@ test = ["pytest", "reportlab", "rdflib>=7", "trustme"]
 [project.scripts]
 reqin = "reqin.cli:main"
 reqin-server = "reqin.server.__main__:main"
+reqin-gateway = "reqin.gateway.__main__:main"
 
 [project.entry-points."reqin.adapters"]
 # third-party packages add their adapter here:  myadapter = "my_pkg.adapter"

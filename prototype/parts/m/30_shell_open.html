@@ -51,6 +51,7 @@
         </sc-for></div>
       </div>
     </sc-if>
+    <sc-if value="{{cnDemo}}" hint-placeholder-val="{{ true }}">
     <div style="display:flex;flex-direction:column;gap:6px;border-top:1px dashed #B9C3CD;padding-top:12px">
       <div style="font-size:12px;font-weight:600;color:var(--slate)">Demo only: switch person</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><sc-for list="{{switcher}}" as="p" hint-placeholder-count="6">
@@ -63,6 +64,7 @@
         <button onClick="{{s.onClick}}" disabled="{{s.disabled}}" title="{{s.hint}}" style="{{s.style}}"><span style="font-weight:600;font-size:13px">{{s.label}}</span></button>
       </sc-for>
     </div>
+    </sc-if>
     </div>
   </nav>
   <main class="ws-main">
@@ -73,15 +75,16 @@
         <span style="font-weight:600;white-space:nowrap">{{pageName}}</span>
         <span style="margin-left:4px;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:#EEF2F6;color:#3C4852;white-space:nowrap">{{scopeTxt}}</span>
         <span style="font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:#EEF2F6;color:#3C4852;white-space:nowrap">Pre-baseline</span>
+        <span role="status" aria-live="polite" style="{{cnShortStyle}}">{{cnShort}}</span>
       </div>
       <div class="tb-search">
         §IC:search:16§
         <input id="top-search" type="search" value="{{tbSearchV}}" onChange="{{onTbSearch}}" placeholder="Search requirements" aria-label="Search requirements">
       </div>
       <div style="margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px">
-        <span style="display:inline-flex;align-items:center;padding-right:10px" role="group" aria-label="Teammates on this project (sample)">
+        <sc-if value="{{cnDemo}}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;padding-right:10px" role="group" aria-label="Teammates on this project (sample)">
           <sc-for list="{{presence}}" as="a" hint-placeholder-count="3"><span class="av" title="{{a.title}}" style="background:{{a.color}}">{{a.init}}</span></sc-for>
-        </span>
+        </span></sc-if>
         <button class="tb-icon" onClick="{{openVee}}" aria-label="{{vTopAria}}" title="The V: levels and what checks them" style="width:auto;padding:0 8px">§VG:vTop:64:h§</button>
         <button class="tb-icon" onClick="{{openGlossary}}" aria-label="Open the glossary" title="Glossary and help">§IC:help:20§</button>
         <button class="tb-icon" onClick="{{openAudit}}" aria-label="Open the audit log" title="Decisions and audit">§IC:clock:20§</button>
@@ -93,6 +96,9 @@
       <span style="flex:1 1 320px">Suggestions are drafts until every lens the sign-off policy requires has signed. Nothing is written back to your source model.</span>
     </div>
     <div class="content" id="main-content" tabindex="-1">
+      <sc-if value="{{cnNotesInShell}}" hint-placeholder-val="{{ false }}">
+§CONNNOTES§
+      </sc-if>
       <sc-if value="{{glossaryOpen}}" hint-placeholder-val="{{ false }}">
       <section aria-label="Glossary" style="background:#FFFFFF;border:2px solid var(--accent);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">

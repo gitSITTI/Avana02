@@ -567,5 +567,5 @@ def test_the_guide_names_every_route_and_every_error_code():
 
 def test_the_guide_keeps_its_honesty_caveats():
     low = GUIDE.lower()
-    for phrase in ("not connected to it yet", "never been run with real program data", "no tls", "not encrypted", "stays in the page", "head", "has never"):
+    for phrase in ("is not connected to it", "keeps its own copy", "never been run with real program data", "no tls", "not encrypted", "stays in the page", "head", "has never", "no push", "not moved to the server"):
         assert phrase in low, f"SERVER.md lost the statement: {phrase!r}"

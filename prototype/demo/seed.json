@@ -1,0 +1,4037 @@
+{
+ "format": "reqin-demo-seed/1",
+ "project": "demo",
+ "note": "Made-up sample data for the prototype: the same air vehicle project the page shows without a server. Written by prototype/export_seed.js; do not edit by hand.",
+ "people": [
+  {
+   "key": "sam",
+   "name": "Sam Okafor",
+   "role": "reviewer",
+   "lens": "SE"
+  },
+  {
+   "key": "priya",
+   "name": "Priya Raman",
+   "role": "reviewer",
+   "lens": "PE"
+  },
+  {
+   "key": "jordan",
+   "name": "Jordan Ellis",
+   "role": "reviewer",
+   "lens": "UX"
+  },
+  {
+   "key": "casey",
+   "name": "Casey Whitfield",
+   "role": "reviewer",
+   "lens": "NU"
+  },
+  {
+   "key": "morgan",
+   "name": "Morgan Hale",
+   "role": "lead",
+   "lens": "SE"
+  },
+  {
+   "key": "lee",
+   "name": "Lee Park",
+   "role": "observer",
+   "lens": ""
+  }
+ ],
+ "docs": [
+  {
+   "id": "claim/CL-019",
+   "by": "jordan",
+   "body": {
+    "by": "Jordan Ellis",
+    "lens": "UX",
+    "mins": 9
+   }
+  },
+  {
+   "id": "claim/CL-021",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "lens": "NU",
+    "mins": 11
+   }
+  },
+  {
+   "id": "claim/CL-073",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "lens": "PE",
+    "mins": 6
+   }
+  },
+  {
+   "id": "claim/CL-092",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "lens": "NU",
+    "mins": 1
+   }
+  },
+  {
+   "id": "claim/CL-177",
+   "by": "jordan",
+   "body": {
+    "by": "Jordan Ellis",
+    "lens": "UX",
+    "mins": 2
+   }
+  },
+  {
+   "id": "claim/CL-241",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "lens": "PE",
+    "mins": 4
+   }
+  },
+  {
+   "id": "dec/CL-009",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-SYS-0039",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Kept separate: the conditions differ and should not be folded together.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "5 Oct",
+      "note": "Kept separate: the conditions differ and should not be folded together."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-011",
+   "by": "morgan",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-FCS-0040",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "2 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-012",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-PWR-0025",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-014",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "ai",
+    "member": "REQ-FCS-0047",
+    "text": "The Flight Control Subsystem shall transmit a heartbeat message every 500 milliseconds.",
+    "newWording": true,
+    "weakening": false,
+    "covers": [
+     "REQ-NAV-0044",
+     "REQ-FCS-0042",
+     "REQ-FCS-0047"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": {
+     "r": 0,
+     "pct": 0,
+     "bucket": "as-is"
+    },
+    "revs": [
+     {
+      "rev": "R2",
+      "how": "ai",
+      "text": "The Flight Control Subsystem shall transmit a heartbeat message every 500 milliseconds.",
+      "by": "AI draft",
+      "at": "2 Oct"
+     },
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Flight Control Subsystem shall transmit a heartbeat message every 500 milliseconds.",
+      "by": "Morgan Hale",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-018",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-LNK-0036",
+    "text": "A status beacon shall be sent by the Data Link at intervals of 30000 milliseconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-LNK-0036",
+     "REQ-LNK-0038"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "A status beacon shall be sent by the Data Link at intervals of 30000 milliseconds.",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-029",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-PWR-0073",
+    "text": "The Power Subsystem shall hold 50000 fault records or more.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-PWR-0068",
+     "REQ-PWR-0073"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Power Subsystem shall hold 50000 fault records or more.",
+      "by": "Sam Okafor",
+      "at": "5 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-036",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-SYS-0063",
+    "text": "The Data Recorder shall respond to a status request within 150 milliseconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-SYS-0061",
+     "REQ-SYS-0063"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "3 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Recorder shall respond to a status request within 150 milliseconds.",
+      "by": "Sam Okafor",
+      "at": "3 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-038",
+   "by": "morgan",
+   "body": {
+    "outcome": "supersede",
+    "strategy": "",
+    "member": "REQ-FCS-0117",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-043",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-MSN-0042",
+    "text": "Upon receipt of a fault query, the Mission Computer shall respond within 250 ms.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-MSN-0042",
+     "REQ-MSN-0044"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "Upon receipt of a fault query, the Mission Computer shall respond within 250 ms.",
+      "by": "Morgan Hale",
+      "at": "8 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-044",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-MSN-0045",
+    "text": "Fault events shall be kept by the Data Link for 365 days or longer.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-MSN-0045",
+     "REQ-LNK-0060"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "Fault events shall be kept by the Data Link for 365 days or longer.",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-045",
+   "by": "sam",
+   "body": {
+    "outcome": "reject",
+    "strategy": "",
+    "member": "REQ-PWR-0080",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-NOT",
+    "note": "Kept separate: the conditions differ and should not be folded together.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "6 Oct",
+      "note": "Kept separate: the conditions differ and should not be folded together."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-046",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-SYS-0066",
+    "text": "The Data Recorder shall achieve an availability of at least 99.95 percent.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-SYS-0066",
+     "REQ-SYS-0069"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Recorder shall achieve an availability of at least 99.95 percent.",
+      "by": "Sam Okafor",
+      "at": "5 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-049",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-GCS-0080",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-053",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-NAV-0072",
+    "text": "Time from power application to operational state of the Navigation Subsystem shall be at most 10000 milliseconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-NAV-0067",
+     "REQ-NAV-0070",
+     "REQ-NAV-0069"
+    ],
+    "kept": [
+     "REQ-NAV-0072"
+    ],
+    "reason": "R-STR",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "Time from power application to operational state of the Navigation Subsystem shall be at most 10000 milliseconds.",
+      "by": "Sam Okafor",
+      "at": "6 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-055",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-PWR-0084",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "5 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-057",
+   "by": "morgan",
+   "body": {
+    "outcome": "reject",
+    "strategy": "",
+    "member": "REQ-LNK-0069",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-NOT",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "6 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-058",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-LNK-0074",
+    "text": "The Data Link shall have a mass of at most 8 kg.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-LNK-0071",
+     "REQ-LNK-0073",
+     "REQ-LNK-0074"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Link shall have a mass of at most 8 kg.",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-059",
+   "by": "sam",
+   "body": {
+    "outcome": "reject",
+    "strategy": "",
+    "member": "REQ-LNK-0084",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-NOT",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-060",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-THM-0081",
+    "text": "The Data Recorder shall indicate link quality to the operator.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-THM-0081",
+     "REQ-SYS-0081",
+     "REQ-SYS-0077"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Recorder shall indicate link quality to the operator.",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-061",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-PWR-0086",
+    "text": "The Power Subsystem shall update position data at a rate of at least 1 Hz.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-PWR-0085",
+     "REQ-PWR-0086"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "3 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Power Subsystem shall update position data at a rate of at least 1 Hz.",
+      "by": "Sam Okafor",
+      "at": "3 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-062",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-LNK-0087",
+    "text": "The Data Link shall be available for at least 99 percent of mission time.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-LNK-0087",
+     "REQ-LNK-0088"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Link shall be available for at least 99 percent of mission time.",
+      "by": "Morgan Hale",
+      "at": "9 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-066",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-GCS-0098",
+    "text": "The mass of the Ground Station shall be 35 kg or less.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-GCS-0098",
+     "REQ-GCS-0101"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The mass of the Ground Station shall be 35 kg or less.",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-067",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "ai",
+    "member": "REQ-PWR-0087",
+    "text": "The Power Subsystem shall be operational in 10 seconds of power application.",
+    "newWording": true,
+    "weakening": false,
+    "covers": [
+     "REQ-PWR-0087",
+     "REQ-PWR-0091"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": {
+     "r": 0.08333333333333333,
+     "pct": 8,
+     "bucket": "light edit"
+    },
+    "revs": [
+     {
+      "rev": "R2",
+      "how": "ai",
+      "text": "The Power Subsystem shall be operational within 10 seconds of power application.",
+      "by": "AI draft",
+      "at": "8 Oct"
+     },
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Power Subsystem shall be operational in 10 seconds of power application.",
+      "by": "Sam Okafor",
+      "at": "8 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-068",
+   "by": "sam",
+   "body": {
+    "outcome": "supersede",
+    "strategy": "",
+    "member": "REQ-PWR-0094",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "6 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-071",
+   "by": "morgan",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-LNK-0119",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "8 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-072",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-PWR-0105",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "The parent requirement sets this value; the others are older copies.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": "The parent requirement sets this value; the others are older copies."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-075",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-GCS-0106",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "3 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "3 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-076",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-PWR-0107",
+    "text": "The Power Subsystem shall transmit a heartbeat message every 2000 milliseconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-FCS-0151",
+     "REQ-PWR-0107",
+     "REQ-PWR-0108"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Power Subsystem shall transmit a heartbeat message every 2000 milliseconds.",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-078",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "ai",
+    "member": "REQ-FCS-0159",
+    "text": "The Flight Control Subsystem shall achieve an availability of a minimum of 99.5 percent.",
+    "newWording": true,
+    "weakening": false,
+    "covers": [
+     "REQ-FCS-0158",
+     "REQ-FCS-0159"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": {
+     "r": 0.21428571428571427,
+     "pct": 21,
+     "bucket": "heavy edit"
+    },
+    "revs": [
+     {
+      "rev": "R2",
+      "how": "ai",
+      "text": "The Flight Control Subsystem shall achieve an availability of at least 99.5 percent.",
+      "by": "AI draft",
+      "at": "8 Oct"
+     },
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Flight Control Subsystem shall achieve an availability of a minimum of 99.5 percent.",
+      "by": "Sam Okafor",
+      "at": "8 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-080",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-MSN-0058",
+    "text": "The Mission Computer shall be operational within 60000 ms of power application.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-MSN-0050",
+     "REQ-MSN-0053",
+     "REQ-MSN-0058"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Mission Computer shall be operational within 60000 ms of power application.",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-081",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-PWR-0121",
+    "text": "The Power Subsystem shall transmit a status beacon every 500 ms.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-PWR-0119",
+     "REQ-PWR-0121"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Power Subsystem shall transmit a status beacon every 500 ms.",
+      "by": "Sam Okafor",
+      "at": "5 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-082",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "ai",
+    "member": "REQ-THM-0082",
+    "text": "The Thermal Control Subsystem shall transmit a keep-alive message every 30 seconds.",
+    "newWording": true,
+    "weakening": false,
+    "covers": [
+     "REQ-THM-0082",
+     "REQ-THM-0083"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": {
+     "r": 0,
+     "pct": 0,
+     "bucket": "as-is"
+    },
+    "revs": [
+     {
+      "rev": "R2",
+      "how": "ai",
+      "text": "The Thermal Control Subsystem shall transmit a keep-alive message every 30 seconds.",
+      "by": "AI draft",
+      "at": "9 Oct"
+     },
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Thermal Control Subsystem shall transmit a keep-alive message every 30 seconds.",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-088",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-FCS-0166",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-102",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-MSN-0118",
+    "text": "The Navigation Subsystem shall store calibration records for a minimum of 90 days.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-SYS-0119",
+     "REQ-MSN-0118"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Navigation Subsystem shall store calibration records for a minimum of 90 days.",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-115",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "ai",
+    "member": "REQ-LNK-0161",
+    "text": "The Data Link shall operate at ambient temperatures up to 55 degrees Celsius.",
+    "newWording": true,
+    "weakening": false,
+    "covers": [
+     "REQ-LNK-0156",
+     "REQ-LNK-0161"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": {
+     "r": 0,
+     "pct": 0,
+     "bucket": "as-is"
+    },
+    "revs": [
+     {
+      "rev": "R2",
+      "how": "ai",
+      "text": "The Data Link shall operate at ambient temperatures up to 55 degrees Celsius.",
+      "by": "AI draft",
+      "at": "6 Oct"
+     },
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Link shall operate at ambient temperatures up to 55 degrees Celsius.",
+      "by": "Morgan Hale",
+      "at": "6 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-119",
+   "by": "morgan",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-LNK-0169",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Kept separate: the conditions differ and should not be folded together.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "6 Oct",
+      "note": "Kept separate: the conditions differ and should not be folded together."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-130",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-GCS-0205",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "9 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-140",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-GCS-0236",
+    "text": "After power-up, the Navigation Subsystem shall reach operational state within 90000 ms.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-SYS-0160",
+     "REQ-GCS-0236"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "After power-up, the Navigation Subsystem shall reach operational state within 90000 ms.",
+      "by": "Morgan Hale",
+      "at": "6 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-155",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-SYS-0180",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "5 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-157",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "ai",
+    "member": "REQ-FCS-0263",
+    "text": "The Data Link shall have a mass of at most 20 kg.",
+    "newWording": true,
+    "weakening": false,
+    "covers": [
+     "REQ-FCS-0263",
+     "REQ-LNK-0208",
+     "REQ-LNK-0209"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": {
+     "r": 0,
+     "pct": 0,
+     "bucket": "as-is"
+    },
+    "revs": [
+     {
+      "rev": "R2",
+      "how": "ai",
+      "text": "The Data Link shall have a mass of at most 20 kg.",
+      "by": "AI draft",
+      "at": "7 Oct"
+     },
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Link shall have a mass of at most 20 kg.",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-158",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-GCS-0274",
+    "text": "The Ground Station shall emit a keep-alive message once every 1000 milliseconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-GCS-0272",
+     "REQ-GCS-0274",
+     "REQ-GCS-0269"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Ground Station shall emit a keep-alive message once every 1000 milliseconds.",
+      "by": "Morgan Hale",
+      "at": "8 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-159",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-PWR-0186",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-161",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-PWR-0207",
+    "text": "The Power Subsystem shall have a maximum mass of 5 kilograms.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-PWR-0204",
+     "REQ-PWR-0206",
+     "REQ-PWR-0207",
+     "REQ-PWR-0212",
+     "REQ-PWR-0199"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Power Subsystem shall have a maximum mass of 5 kilograms.",
+      "by": "Morgan Hale",
+      "at": "5 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-167",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "median",
+    "member": "REQ-MSN-0158",
+    "text": "The Mission Computer shall remain operational at 60 degrees Celsius or higher.",
+    "newWording": false,
+    "weakening": true,
+    "covers": [
+     "REQ-MSN-0157",
+     "REQ-MSN-0165",
+     "REQ-PWR-0223",
+     "REQ-MSN-0158",
+     "REQ-MSN-0171",
+     "REQ-MSN-0160",
+     "REQ-LNK-0217",
+     "REQ-MSN-0170"
+    ],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "The parent requirement sets this value; the others are older copies.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Mission Computer shall remain operational at 60 degrees Celsius or higher.",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": "The parent requirement sets this value; the others are older copies."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-171",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-SYS-0188",
+    "text": "The Data Recorder shall have a maximum mass of 2.5 kilograms.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-SYS-0188",
+     "REQ-SYS-0192",
+     "REQ-SYS-0183"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "The parent requirement sets this value; the others are older copies.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Recorder shall have a maximum mass of 2.5 kilograms.",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": "The parent requirement sets this value; the others are older copies."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-175",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-SYS-0203",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-181",
+   "by": "sam",
+   "body": {
+    "outcome": "reject",
+    "strategy": "",
+    "member": "REQ-MSN-0185",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-NOT",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-187",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "median",
+    "member": "REQ-SYS-0207",
+    "text": "Position data shall be refreshed by the Data Recorder at a minimum rate of 20 Hz.",
+    "newWording": false,
+    "weakening": true,
+    "covers": [
+     "REQ-SYS-0211",
+     "REQ-GCS-0312",
+     "REQ-SYS-0207"
+    ],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "Position data shall be refreshed by the Data Recorder at a minimum rate of 20 Hz.",
+      "by": "Sam Okafor",
+      "at": "8 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-192",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-PWR-0240",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "6 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-196",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-LNK-0244",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-199",
+   "by": "morgan",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-FCS-0328",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Kept separate: the conditions differ and should not be folded together.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "6 Oct",
+      "note": "Kept separate: the conditions differ and should not be folded together."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-204",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-GCS-0335",
+    "text": "A status beacon shall be sent by the Ground Station at intervals of 500 milliseconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-GCS-0342",
+     "REQ-FCS-0354",
+     "REQ-GCS-0335",
+     "REQ-GCS-0337",
+     "REQ-GCS-0341"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "A status beacon shall be sent by the Ground Station at intervals of 500 milliseconds.",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-209",
+   "by": "morgan",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-FCS-0361",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "3 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "3 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-210",
+   "by": "morgan",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-FCS-0385",
+    "text": "Upon receipt of a fault query, the Flight Control Subsystem shall respond within 250 ms.",
+    "newWording": false,
+    "weakening": true,
+    "covers": [
+     "REQ-FCS-0377",
+     "REQ-FCS-0381",
+     "REQ-FCS-0385",
+     "REQ-FCS-0386",
+     "REQ-FCS-0371",
+     "REQ-FCS-0374",
+     "REQ-FCS-0366",
+     "REQ-FCS-0373"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "The two owners agreed on one value in the weekly sync.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "Upon receipt of a fault query, the Flight Control Subsystem shall respond within 250 ms.",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": "The two owners agreed on one value in the weekly sync."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-221",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-NAV-0197",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "5 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "5 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-222",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-SYS-0239",
+    "text": "The Data Recorder shall report position to within 10 meters.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-SYS-0237",
+     "REQ-SYS-0239",
+     "REQ-SYS-0242",
+     "REQ-SYS-0243"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Data Recorder shall report position to within 10 meters.",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-223",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-PWR-0260",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "8 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "8 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-224",
+   "by": "morgan",
+   "body": {
+    "outcome": "supersede",
+    "strategy": "",
+    "member": "REQ-NAV-0206",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-227",
+   "by": "sam",
+   "body": {
+    "outcome": "reject",
+    "strategy": "",
+    "member": "REQ-MSN-0222",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-NOT",
+    "note": "Kept separate: the conditions differ and should not be folded together.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "Overrode AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "6 Oct",
+      "note": "Kept separate: the conditions differ and should not be folded together."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-228",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-NAV-0217",
+    "text": "The mass of the Navigation Subsystem shall be 20 kg or less.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-NAV-0213",
+     "REQ-NAV-0217",
+     "REQ-NAV-0221"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "6 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The mass of the Navigation Subsystem shall be 20 kg or less.",
+      "by": "Sam Okafor",
+      "at": "6 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-229",
+   "by": "sam",
+   "body": {
+    "outcome": "escalate",
+    "strategy": "",
+    "member": "REQ-GCS-0376",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Owner confirmed the strictest value in the review thread.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": "Owner confirmed the strictest value in the review thread."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-230",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-PWR-0267",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-234",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-THM-0185",
+    "text": "The Thermal Control Subsystem shall have a mass of at most 20 kg.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-THM-0180",
+     "REQ-THM-0185"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "3 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Thermal Control Subsystem shall have a mass of at most 20 kg.",
+      "by": "Sam Okafor",
+      "at": "3 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-235",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-GCS-0384",
+    "text": "The Ground Station shall update bus voltage at a rate of at least 5 Hz.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-GCS-0380",
+     "REQ-GCS-0383",
+     "REQ-GCS-0384"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Ground Station shall update bus voltage at a rate of at least 5 Hz.",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-236",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "member",
+    "member": "REQ-MSN-0234",
+    "text": "The Mission Computer shall store calibration records for a minimum of 365 days.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-MSN-0234",
+     "REQ-MSN-0238",
+     "REQ-MSN-0241",
+     "REQ-MSN-0243"
+    ],
+    "kept": [],
+    "reason": "R-PAR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "The Mission Computer shall store calibration records for a minimum of 365 days.",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-239",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-GCS-0395",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Kept separate: the conditions differ and should not be folded together.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "2 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "2 Oct",
+      "note": "Kept separate: the conditions differ and should not be folded together."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-245",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-GCS-0406",
+    "text": "After power-up, the Ground Station shall reach operational state within 60 seconds.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-GCS-0401",
+     "REQ-GCS-0406"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "Strictest value satisfies every other member, so nothing is lost.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "After power-up, the Ground Station shall reach operational state within 60 seconds.",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": "Strictest value satisfies every other member, so nothing is lost."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-246",
+   "by": "sam",
+   "body": {
+    "outcome": "merge",
+    "strategy": "stringent",
+    "member": "REQ-PWR-0292",
+    "text": "Reported position error of the Flight Control Subsystem shall be 5 m or less.",
+    "newWording": false,
+    "weakening": false,
+    "covers": [
+     "REQ-FCS-0420",
+     "REQ-PWR-0292"
+    ],
+    "kept": [],
+    "reason": "R-STR",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "3 Oct",
+    "rev": "R3",
+    "vs": "No AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "Reported position error of the Flight Control Subsystem shall be 5 m or less.",
+      "by": "Sam Okafor",
+      "at": "3 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-247",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-FCS-0427",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "7 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-249",
+   "by": "morgan",
+   "body": {
+    "outcome": "supersede",
+    "strategy": "",
+    "member": "REQ-NAV-0230",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-OWN",
+    "note": "Checked against the interface control document. The longer period is the one tested.",
+    "by": "Morgan Hale",
+    "lens": "SE",
+    "at": "7 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Morgan Hale",
+      "at": "7 Oct",
+      "note": "Checked against the interface control document. The longer period is the one tested."
+     }
+    ]
+   }
+  },
+  {
+   "id": "dec/CL-250",
+   "by": "sam",
+   "body": {
+    "outcome": "link",
+    "strategy": "",
+    "member": "REQ-LNK-0335",
+    "text": "",
+    "newWording": false,
+    "weakening": false,
+    "covers": [],
+    "kept": [],
+    "reason": "R-SEP",
+    "note": "",
+    "by": "Sam Okafor",
+    "lens": "SE",
+    "at": "9 Oct",
+    "rev": "R3",
+    "vs": "Agreed with AI",
+    "share": null,
+    "revs": [
+     {
+      "rev": "R3",
+      "how": "human",
+      "text": "",
+      "by": "Sam Okafor",
+      "at": "9 Oct",
+      "note": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "obj/CL-055",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "lens": "PE",
+    "at": "9 Oct",
+    "note": "This keeps a looser value than the one the owner confirmed in the thread. I do not think it is defensible as written."
+   }
+  },
+  {
+   "id": "obj/CL-067",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "lens": "PE",
+    "at": "9 Oct",
+    "note": "The change request is not linked to the record. I cannot sign until it is."
+   }
+  },
+  {
+   "id": "obj/CL-115",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "lens": "PE",
+    "at": "9 Oct",
+    "note": "Two requirements that look alike carry different verification methods, and the merge drops one of them."
+   }
+  },
+  {
+   "id": "proj/ai",
+   "by": "morgan",
+   "body": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Moreno, security office",
+     "reviewed_at": "2 Oct",
+     "entered_by": "Morgan Hale"
+    }
+   }
+  },
+  {
+   "id": "sib/CL-043",
+   "by": "sam",
+   "body": {
+    "v": [
+     {
+      "rev": "R3a",
+      "by": "Sam Okafor",
+      "lens": "SE",
+      "at": "9 Oct",
+      "text": "Upon receipt of a fault query, the Mission Computer shall respond within 250 ms."
+     },
+     {
+      "rev": "R3b",
+      "by": "Morgan Hale",
+      "lens": "SE",
+      "at": "9 Oct",
+      "text": "The Mission Computer shall respond to a fault query within 250 milliseconds."
+     }
+    ]
+   }
+  },
+  {
+   "id": "sib/CL-062",
+   "by": "sam",
+   "body": {
+    "v": [
+     {
+      "rev": "R3a",
+      "by": "Sam Okafor",
+      "lens": "SE",
+      "at": "9 Oct",
+      "text": "The Data Link shall be available for at least 99 percent of mission time."
+     },
+     {
+      "rev": "R3b",
+      "by": "Morgan Hale",
+      "lens": "SE",
+      "at": "9 Oct",
+      "text": "The Data Link shall achieve an availability of at least 99 percent."
+     }
+    ]
+   }
+  },
+  {
+   "id": "sign/CL-009/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-009/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-009/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-009/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-011/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-011/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-012/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-012/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-012/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-012/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-014/NU",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-014/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-014/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-014/UX",
+   "by": "jordan",
+   "body": {
+    "by": "Jordan Ellis",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-029/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-036/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-038/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-038/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-043/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-043/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-043/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-044/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-044/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-045/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-045/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-045/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-045/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-046/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-053/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-053/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-055/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-055/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-055/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-058/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-060/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-060/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-061/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-062/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-066/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-067/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-068/NU",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-068/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-068/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-072/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-072/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-072/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-072/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-075/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-076/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-081/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-082/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-082/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-088/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-102/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-102/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-115/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-115/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-119/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-130/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-130/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-130/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-130/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-140/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-140/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-155/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-155/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-155/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-155/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-157/NU",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-157/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-157/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-157/UX",
+   "by": "jordan",
+   "body": {
+    "by": "Jordan Ellis",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-158/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-158/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-158/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-159/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-159/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-159/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-161/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-161/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-167/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-167/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-167/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-171/NU",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-171/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-171/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-171/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-175/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-175/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-181/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-181/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-187/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-187/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-192/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-192/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-192/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-192/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-196/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-199/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-199/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-199/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-209/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-209/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-209/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-209/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-210/NU",
+   "by": "casey",
+   "body": {
+    "by": "Casey Whitfield",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-210/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-210/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-210/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-221/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-222/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-223/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "3 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-223/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-223/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-224/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-224/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-229/ADJ",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-229/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-229/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-229/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-230/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-236/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-239/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-239/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-246/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-246/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "6 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-247/OWN",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "9 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-247/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "7 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-247/SE",
+   "by": "morgan",
+   "body": {
+    "by": "Morgan Hale",
+    "at": "8 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-249/PE",
+   "by": "priya",
+   "body": {
+    "by": "Priya Raman",
+    "at": "2 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "sign/CL-249/SE",
+   "by": "sam",
+   "body": {
+    "by": "Sam Okafor",
+    "at": "5 Oct",
+    "rev": 1,
+    "page_rev": "R3"
+   }
+  },
+  {
+   "id": "stale/CL-014",
+   "by": "morgan",
+   "body": {
+    "req": "REQ-NAV-0044",
+    "when": "9 Oct",
+    "what": "The source text of REQ-NAV-0044 changed in the model after this decision was made.",
+    "hash": "099c3f8f"
+   }
+  },
+  {
+   "id": "stale/CL-044",
+   "by": "morgan",
+   "body": {
+    "req": "REQ-MSN-0045",
+    "when": "9 Oct",
+    "what": "The source text of REQ-MSN-0045 changed in the model after this decision was made.",
+    "hash": "f08af5d2"
+   }
+  },
+  {
+   "id": "stale/CL-060",
+   "by": "morgan",
+   "body": {
+    "req": "REQ-THM-0081",
+    "when": "9 Oct",
+    "what": "The source text of REQ-THM-0081 changed in the model after this decision was made.",
+    "hash": "812accd0"
+   }
+  },
+  {
+   "id": "stale/CL-072",
+   "by": "morgan",
+   "body": {
+    "req": "REQ-PWR-0102",
+    "when": "9 Oct",
+    "what": "The source text of REQ-PWR-0102 changed in the model after this decision was made.",
+    "hash": "d2cf5ad3"
+   }
+  },
+  {
+   "id": "stale/CL-102",
+   "by": "morgan",
+   "body": {
+    "req": "REQ-SYS-0119",
+    "when": "9 Oct",
+    "what": "The source text of REQ-SYS-0119 changed in the model after this decision was made.",
+    "hash": "a439866d"
+   }
+  }
+ ]
+}

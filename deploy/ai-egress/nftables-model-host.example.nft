@@ -1,0 +1,29 @@
+#!/usr/sbin/nft -f
+# Firewall for the MODEL host, the machine the model (or LiteLLM in front of it) runs on.
+# What it says: the only thing that may start a connection to this host is the gateway, on the model's port; this host starts connections to nothing.
+# Replace the two addresses. Check the syntax before loading:   nft -c -f nftables-model-host.example.nft
+# Then load it, and prove it from the other machines with wall_check.py (see docs/AI_GATEWAY.md). A firewall nobody tried to get through is a hope.
+# This file does not replace your own network rules: keep the host off any network that routes to the internet, and review it with your network staff.
+
+define gateway = 10.20.0.20
+define admin   = 10.20.9.5
+define model_port = 4000
+
+table inet reqin_model {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state invalid drop
+        ct state established,related accept
+        iif "lo" accept
+        ip saddr $gateway tcp dport $model_port accept
+        ip saddr $admin tcp dport 22 accept
+    }
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+    }
+    chain output {
+        type filter hook output priority 0; policy drop;
+        ct state established,related accept
+        oif "lo" accept
+    }
+}

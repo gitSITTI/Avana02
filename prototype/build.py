@@ -8,6 +8,11 @@ MAC = {
  'PRI': "min-height:44px;padding:0 16px;background:var(--accent);color:#FFFFFF;border:0;border-radius:8px;font-weight:600;cursor:pointer;",
  'INP': "min-height:44px;padding:0 12px;border:1px solid #7A8793;border-radius:8px;background:#FFFFFF;font-family:inherit;font-size:14px;box-sizing:border-box;",
 }
+def _macro_file(name):
+    t = open(os.path.join(P, name)).read()
+    return re.sub(r'§(\w+)§', lambda m: MAC[m.group(1)], t)
+MAC['CONNNOTES'] = _macro_file('conn_notes.html')      # the notices of the shared project: in the card on the Open screen, on top of every other page
+MAC['CONN'] = _macro_file('conn_card.html')
 def icons(v):
     sv = '<svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:none;margin-top:1px">%s</svg>'
     pas = sv % '<circle cx="10" cy="10" r="9" fill="#E1F2E7" stroke="#1B6B3A" stroke-width="1.5"/><path d="M6 10.5l2.7 2.7L14 7.8" fill="none" stroke="#1B6B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
@@ -76,7 +81,7 @@ def expand(t):
     return t
 markup = ''.join(open(f).read() for f in sorted(glob.glob(os.path.join(P, 'm', '*.html'))))
 markup = expand(markup)
-js_order = ['data1', 'data2', 'data3', 'data4', 'logic1', 'misc', 'logic2', 'logic3', 'gold', 'single', 'trace', 'aigate', 'persist']
+js_order = ['data1', 'data2', 'data3', 'data4', 'logic1', 'misc', 'logic2', 'logic3', 'gold', 'single', 'trace', 'aigate', 'persist', 'connect']
 js = '\n'.join(open(os.path.join(P, n + '.js')).read() for n in js_order)
 # A test build with a bigger project, for the scale test (tools in tests/scale.js): REQIN_SCALE=20 makes 20 times as many requirements and clusters.
 # It never writes the shipped page: give it another destination.
@@ -86,7 +91,7 @@ if SCALE > 1:
     for pat, rep in [(r"const TOTAL_REQS = 1248;", "const TOTAL_REQS = 1248 * %d;" % SCALE), (r"n <= 252; n\+\+", "n <= 252 * %d; n++" % SCALE)]:
         js, n = re.subn(pat, rep, js); assert n == 1, pat
     js, n = re.subn(r"add\('(\w+)', (\d+)\);", lambda m: "add('%s', %d);" % (m.group(1), int(m.group(2)) * SCALE), js); assert n == 7, n
-cls = 'class Component extends DCLogic {\n' + '\n'.join(open(os.path.join(P, n + '.js')).read() for n in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']) + '}\n'
+cls = 'class Component extends DCLogic {\n' + '\n'.join(open(os.path.join(P, n + '.js')).read() for n in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9']) + '}\n'
 props = '{"accent":{"editor":"color","default":"#1A4DB5","options":["#1A4DB5","#0B6E6E","#7A3E00","#2F3B46"]},"showHints":{"editor":"boolean","default":true}}'
 out = markup + "\n</x-dc>\n" if not markup.rstrip().endswith('</x-dc>') else markup
 out = out.rstrip() + "\n<script type=\"text/x-dc\" data-dc-script data-props='" + props + "'>\n" + js + "\n" + cls + "</script>\n</body>\n</html>\n"

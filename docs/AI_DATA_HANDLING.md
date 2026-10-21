@@ -11,6 +11,7 @@ check is, what it is not, and what your IT and security staff still have to do t
 | **The gate is** | a check inside the application that stops it from sending text the data sheet does not cover, refuses everything while the sheet is unreviewed or contradicts itself, and refuses everything while the project-wide switch is off. |
 | **The gate is not** | a decision about what is lawful or allowed. Your security and export-control reviewers decide that and write it into the data sheet. The gate will not go beyond what they wrote, and nobody can make it. |
 | **The gate is not** | a wall. A switch in a web page is not a security control. The wall is the network: no route from the model host to the internet, no logging at the model host, and a gateway that only the pipeline can reach. The gate stops the application from knocking on that door with the wrong text. |
+| **The gateway is** | the same rules applied to a real request in front of the model, using the switch and sheet the lead set on the shared project's server, not anything the caller says: [`AI_GATEWAY.md`](AI_GATEWAY.md). |
 
 ## The AI data sheet
 
@@ -70,6 +71,8 @@ The first rule that says no wins, and every no carries a code:
 5. The group's marking is above what the sheet approves: `marking`.
 6. Otherwise: `open`.
 
+The gateway ([`AI_GATEWAY.md`](AI_GATEWAY.md)) adds to this: before rule 1 it checks who is asking (observers do not use the AI) and that it knows every requirement named; with no AI document on the server it answers `no_sheet` (a shared project nobody has set up is closed); after rule 5 it checks that the model it really forwards to is the one the sheet describes (`sheet_mismatch`) and that the prompt holds no wording of a requirement that was not named (`undeclared_text`).
+
 ## Where the rules live
 
 The rules are written twice, because the pipeline is Python and the page is JavaScript, and they are tested against one table so they cannot drift apart.
@@ -79,6 +82,8 @@ The rules are written twice, because the pipeline is Python and the page is Java
 | `reqin/src/reqin/aigate.py` | the library the pipeline uses: `gate(...)` returns a decision, `ensure(...)` raises `AiBlocked`, `load_use_file(...)` reads the page's `ai-use.json` |
 | `prototype/parts/aigate.js` | the same rules in the prototype page |
 | `docs/ai_gate_cases.json` | the one table of cases: markings, groups, sheets and complete gate decisions. `reqin/tests/test_aigate.py` and `prototype/verify.js` both run all of it |
+| `reqin/src/reqin/gateway/` | the gateway: `ensure(...)` in front of a real model call, reading the switch and sheet from the reference server on every request ([`AI_GATEWAY.md`](AI_GATEWAY.md)) |
+| `reqin/tests/test_gateway_page.py` | for each of the sample's 252 groups, under every sheet in the table, reviewed or not, switch on or off, the page and the gateway give the same code and level |
 | `reqin/tests/test_aigate_page.py` | feeds the Python library and the page's JavaScript the same tens of thousands of generated markings, groups and sheets (odd spaces, letters from other alphabets, control characters, every combination of sheet answers) and requires the same answer from both. It needs Node.js. It found that the two had read letters from other alphabets differently; the page now follows the Python rules above |
 
 In the pipeline, put `ensure(...)` in front of the code that builds a prompt, and put no text in the prompt when it raises:
@@ -108,7 +113,7 @@ else:
 
 These are not in the application and cannot be:
 
-1. **Network.** The model host has no route to the internet. The gateway is the only thing that can reach it, and only the pipeline can reach the gateway. This is what a malicious or mistaken change to the page cannot undo.
+1. **Network.** The model host has no route to the internet. The gateway is the only thing that can reach it, and only the pipeline can reach the gateway. This is what a malicious or mistaken change to the page cannot undo. [`deploy/ai-egress/`](../deploy/ai-egress/README.md) has examples and `wall_check.py`, the check to run from each machine and combine; it has only been run against sockets on one machine.
 2. **Logging at the model host.** What the sheet says about prompt retention has to be true. Check it on the host rather than trusting the sheet.
 3. **The marking source.** Markings come from the requirements system. If they are wrong or missing there, the gate cannot know. Decide whether an empty marking means "no marking" for your data (the sheet's last question) and who owns fixing markings at the source.
 4. **Review of the sheet.** Who reviews it, how often, and when a new model version needs a new review. The page only records a name and a date.
@@ -122,11 +127,12 @@ These are not in the application and cannot be:
 | The page and the library agree | `reqin/tests/test_aigate_page.py` (with the other gate tests, 115 tests): the same generated inputs go to both and the answers must match. The comparison itself was shown to fail (a test breaks one side on purpose). It skips itself when Node.js is not installed. The first time it ran it found a real difference, which was fixed |
 | The page in a browser | `prototype/b19.py`: 75 checks at each of 1440, 900 and 390 px (the switch, the sheet form, a held group in review and in the assistant, what is kept and written) |
 | The checks bite | `tools/mutation/ai.py` changes the gate 93 ways (markings, the sheet's problems, the order of the rules, the switch, what is written to the record, what Home says about a loaded file); every change was noticed, 17 of them only because the page crashed, not by a case written for them (see [`tools/mutation/README.md`](../tools/mutation/README.md)) |
-| **Not checked** | Any real program's markings or rules. That a reviewer reads the sheet before signing it. The network wall, which is not in the application. A marking style nobody has listed yet (it reads as `unknown` and is held back, which is the safe side, but it is a hold nobody asked for) |
+| The gateway | 82 tests over real HTTP against a real reference server and a fake model; `tools/mutation/gateway.py` breaks it 56 ways and every change is noticed ([`AI_GATEWAY.md`](AI_GATEWAY.md)) |
+| **Not checked** | Any real program's markings or rules. That a reviewer reads the sheet before signing it. The network wall on a real network: the wall check script is tested, the example firewall and container files are syntax-checked, and none was started. A real model or LiteLLM behind the gateway. A marking style nobody has listed yet (it reads as `unknown` and is held back, which is the safe side, but it is a hold nobody asked for) |
 
 ## Limits
 
 - The page keeps the switch and the sheet in the browser (not encrypted) and in project files. The record-of-events check catches accidents and hand edits, not a determined person: the page's fingerprint is a short demonstration hash, and the reference server's chain uses SHA-256. Anyone who can edit browser storage can edit what the page believes. The wall is the network.
-- The prototype page is not connected to the reference server, so the sheet is per browser and per project file, not shared.
-- Prompt and response logging, redaction of text inside a prompt, and per-user permissions on who may ask the AI are not built.
+- The page keeps the switch and sheet per browser and per project file **until someone signs in to the reference server**; then the lead's switch and sheet (`proj/ai`, which only a lead may write) are everyone's, and a change by the lead shows on every other page within seconds and in each page's own record of AI use. The server stores the switch and sheet; it does **not** enforce them on a model call, because it never makes one. The gateway in front of the model does ([`AI_GATEWAY.md`](AI_GATEWAY.md)), and a shared project that has no AI document starts **closed** on the page as well. A pipeline that does not go through the gateway is not stopped by anything here: that is what the network wall is for.
+- The gateway keeps a tamper-evident record of who asked, which requirements were named, the code, and the model's status; it never keeps a prompt or an answer. Redaction of text inside a prompt is not built. Who may ask the AI is the project's role (observers may not), nothing finer.
 - Nothing here has been validated against a real program's data, markings or rules.

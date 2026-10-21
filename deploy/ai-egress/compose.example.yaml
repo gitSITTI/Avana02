@@ -1,0 +1,72 @@
+# An EXAMPLE of the wall on one machine: the model lives on a network with no route out, and the only container that touches both that network and the
+# team's is the gateway. Docker Compose and Podman Compose both read this file. Nothing here has been started by the author (no container engine was
+# running where it was written): `docker compose config` accepts it; `wall_check.py` is how you find out whether it holds on YOUR machine.
+#
+#   export MODEL_IMAGE=...     the model server's image, pinned by digest (it needs its model files in the volume before the network is closed)
+#   export LITELLM_IMAGE=...   LiteLLM's image, pinned by digest
+#   export LITELLM_MASTER_KEY=...   any long random string: the gateway uses it to talk to LiteLLM; people never see it
+#   docker compose -f compose.example.yaml up -d
+#
+# Fill in gateway.compose.example.json's markings file and create the project and the people on the reference server first (docs/AI_GATEWAY.md, "Setting it up").
+name: reqin-ai
+
+networks:
+  inner:                                   # the model's network. `internal: true` means a container on it has no route to anything outside it
+    internal: true
+    ipam: {config: [{subnet: 172.30.10.0/24}]}
+  team:                                    # the reference server and the gateway's front door
+    ipam: {config: [{subnet: 172.30.20.0/24}]}
+
+volumes:
+  server-data: {}
+  gateway-data: {}
+  model-files: {}
+
+services:
+  model:
+    image: ${MODEL_IMAGE:?set MODEL_IMAGE to the model server image, pinned by digest}
+    volumes: [model-files:/root/.model]
+    networks: {inner: {ipv4_address: 172.30.10.11}}          # only the inner network: no route to the internet, and not reachable from team
+    restart: unless-stopped
+
+  litellm:
+    image: ${LITELLM_IMAGE:?set LITELLM_IMAGE to the LiteLLM image, pinned by digest}
+    command: ["--config", "/etc/litellm/config.yaml", "--host", "0.0.0.0", "--port", "4000"]
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:?set LITELLM_MASTER_KEY}
+      LITELLM_LOCAL_MODEL_COST_MAP: "True"               # use the cost table that ships with LiteLLM instead of fetching it (confirm for your version)
+    volumes: ["./litellm.example.yaml:/etc/litellm/config.yaml:ro"]
+    networks: {inner: {ipv4_address: 172.30.10.10}}          # no `ports:`: nothing outside the inner network can reach it, except through the gateway
+    depends_on: [model]
+    restart: unless-stopped
+
+  gateway:
+    image: ${PY_IMAGE:-docker.io/library/python:3.13-slim}
+    command: ["python", "/reqin/serve_standalone.py", "gateway", "serve", "--config", "/etc/reqin/gateway.json"]
+    environment:
+      UPSTREAM_KEY: ${LITELLM_MASTER_KEY:?set LITELLM_MASTER_KEY}      # the name `upstream.key_env` in the gateway settings points at
+    volumes:
+      - ../../reqin:/reqin:ro                                          # the gateway is standard library only: no pip install
+      - ./gateway.compose.example.json:/etc/reqin/gateway.json:ro
+      - ./markings.json:/etc/reqin/markings.json:ro                    # made by `reqin-gateway markings ...`; holds fingerprints, not wording
+      - gateway-data:/var/lib/reqin-gateway                            # the gateway's record of what it let through and held back
+    networks:
+      team: {ipv4_address: 172.30.20.20}
+      inner: {ipv4_address: 172.30.10.20}                              # the one container on both networks
+    ports: ["127.0.0.1:8790:8790"]                                     # this machine only. For other machines, put a TLS reverse proxy in front.
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    depends_on: [litellm, server]
+    restart: unless-stopped
+
+  server:
+    image: ${PY_IMAGE:-docker.io/library/python:3.13-slim}
+    command: ["python", "/reqin/serve_standalone.py", "serve", "--db", "/data/project.db", "--host", "0.0.0.0", "--port", "8780", "--allow-remote"]
+    volumes: ["../../reqin:/reqin:ro", "server-data:/data"]
+    networks: {team: {ipv4_address: 172.30.20.30}}
+    ports: ["127.0.0.1:8780:8780"]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped

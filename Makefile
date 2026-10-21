@@ -14,7 +14,7 @@ help:
 	@echo "test        reqin tests (file adapters, live connectors against fakes, HTTP kit, watch mode)"
 	@echo "template    the connector template's own tests, in a throwaway virtualenv (.cache/tpl-venv)"
 	@echo "boards      rebuild all Excalidraw boards and confirm they match the committed ones"
-	@echo "proto       rebuild the prototype page, confirm it matches the committed one, run the static check"
+	@echo "proto       rebuild the prototype page, confirm it and the demo seed match the committed ones, run the static check and the shared-project engine against a real server"
 	@echo "proto-test  prototype browser tests, accessibility included, at three screen widths (needs npm, Playwright for Python, Chromium)"
 	@echo "proto-scale prototype scale test: 25,000 requirements, timed (needs node and python3)"
 	@echo "image       build the runtime image with podman (or docker)"
@@ -53,6 +53,8 @@ boards:
 
 proto:
 	cd prototype && $(PY) build.py /tmp/Main.built.dc.html >/dev/null && cmp /tmp/Main.built.dc.html project/Main.dc.html && node verify.js project/Main.dc.html | grep -E "^ISSUES 0$$"
+	cd prototype && node export_seed.js project/Main.dc.html /tmp/seed.built.json && cmp /tmp/seed.built.json demo/seed.json
+	cd prototype && $(PY) run_conn_test.py
 
 proto-test:
 	cd prototype/vendor && npm ci

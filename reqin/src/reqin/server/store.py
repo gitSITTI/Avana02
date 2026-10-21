@@ -8,7 +8,8 @@ Everything here is tested in tests/test_server.py. What the store promises:
   the write is refused with 409 and the current revision is returned, so the second person sees what changed before deciding again.
 * Who may change what is decided here, from the token, never from what the request claims: observers cannot write; a sign-off must be in the
   signer's own lens slot (OWN and ADJ are for leads); nobody signs a decision they made; a sign-off names the revision it binds to, and a new
-  revision of a decision clears the sign-offs on the old one.
+  revision of a decision clears the sign-offs on the old one; project settings (`proj/...`) and rulings (`adj/...`, `gadj/...`) are for a lead, and so is resolving an objection (`obj/...`: anyone with a lens can raise one); a
+  label (`label/<req>/<req>/<person>`) can only be written by the person it names.
 * A repeated request does not repeat its effect (`idempotency_key`).
 * The record is a SHA-256 chain: each entry's hash covers the one before it and the fingerprint of the document revision it describes.
   `verify` recomputes all of it from the stored documents and says where the first break is.
@@ -35,6 +36,8 @@ SCHEMA_VERSION = 1
 GENESIS = "0" * 64
 LENS_SLOTS = ("SE", "PE", "UX", "NU")
 LEAD_SLOTS = ("OWN", "ADJ")
+LEAD_ONLY_KINDS = ("proj", "adj", "gadj")   # project settings (the AI switch and data sheet), a lead's ruling on a cluster, a lead's ruling on a labelled pair
+MAX_SEED_DOCS = 20000
 ROLES = ("lead", "reviewer", "observer")
 MAX_BODY_BYTES = 64 * 1024
 MAX_DOC_ID = 200
@@ -282,6 +285,18 @@ class Store:
     def _rules(self, who: Person, doc_id: str, body: Any) -> None:
         """The few rules the server can enforce without knowing the sign-off policy."""
         parts = doc_id.split("/")
+        if parts[0] in LEAD_ONLY_KINDS:
+            if who.role != "lead":
+                raise ServerError(403, "lead_only", "Project settings and rulings are for a lead.")
+            return
+        if parts[0] == "obj" and body is None and who.role != "lead":
+            raise ServerError(403, "lead_only", "Only a lead can resolve an objection: anyone can raise one, and the adjudicator closes it.")
+        if parts[0] == "label":
+            if len(parts) != 4:
+                raise ServerError(400, "bad_label_id", "A label is label/<requirement>/<requirement>/<person>.")
+            if parts[3] != who.key:
+                raise ServerError(403, "not_yours", "A label is its labeller's own: you can only write labels under your own key.")
+            return
         if parts[0] != "sign":
             return
         if len(parts) != 3:
@@ -319,6 +334,47 @@ class Store:
             self.db.execute("INSERT INTO revs (project, doc_id, rev, body, body_hash, by_person, lens, at, event_seq) VALUES (?,?,?,?,?,?,?,?,?)", (who.project, r["doc_id"], cur["rev"] + 1, canon(None), bh, "server", "", ev["at"], seq))
             cleared.append(r["doc_id"])
         return cleared
+
+    def seed(self, project: str, docs: list[dict[str, Any]]) -> int:
+        """Put sample activity into a new project: documents that look as if people had already worked, each at revision 1 under the person it names.
+
+        Used for the demo only. Nothing is checked against the rules above (that is the point: a seed can hold a sign-off made before the policy was
+        set), but every document is a valid one, every author is a person of the project who can write, and each document is in the record like any
+        other, so `verify` passes. A project that already has documents is refused, so a seed can never overwrite real work."""
+        if not isinstance(docs, list) or len(docs) > MAX_SEED_DOCS:
+            raise ServerError(400, "bad_seed", f"A seed is a list of at most {MAX_SEED_DOCS} documents.")
+        with self._lock:
+            self.db.execute("BEGIN IMMEDIATE")
+            try:
+                if not self.db.execute("SELECT 1 FROM projects WHERE id=?", (project,)).fetchone():
+                    raise ServerError(404, "no_project", f"There is no project {project!r}.")
+                if self.db.execute("SELECT 1 FROM revs WHERE project=? LIMIT 1", (project,)).fetchone():
+                    raise ServerError(409, "not_empty", f"{project!r} already has documents, so it is not seeded.")
+                people = {r["key"]: r for r in self.db.execute("SELECT key, role, lens FROM people WHERE project=?", (project,)).fetchall()}
+                seen: set[str] = set()
+                for d in docs:
+                    if not isinstance(d, dict) or set(d) - {"id", "body", "by"} or not isinstance(d.get("body"), dict):
+                        raise ServerError(400, "bad_seed", 'Each seeded document is {"id": ..., "body": {...}, "by": <person key>}.')
+                    doc_id, by = d.get("id"), d.get("by")
+                    _check_doc_id(doc_id)
+                    if doc_id in seen:
+                        raise ServerError(400, "bad_seed", f"{doc_id} appears twice in the seed.")
+                    seen.add(doc_id)
+                    if not isinstance(by, str) or by not in people or people[by]["role"] == "observer":
+                        raise ServerError(400, "bad_seed", f"{doc_id}: {by!r} is not a person in {project!r} who can write.")
+                    text = canon(d["body"])
+                    if len(text.encode("utf-8")) > MAX_BODY_BYTES:
+                        raise ServerError(413, "too_large", f"{doc_id}: a document is at most {MAX_BODY_BYTES // 1024} KB.")
+                    seq = self._next_seq(project)
+                    bh = sha256(text)
+                    ev = self._append(project, "doc", by, doc_id, 1, bh, f"Sample activity: {doc_id}", seq=seq)
+                    self.db.execute("INSERT INTO revs (project, doc_id, rev, body, body_hash, by_person, lens, at, event_seq) VALUES (?,?,?,?,?,?,?,?,?)", (project, doc_id, 1, text, bh, by, people[by]["lens"], ev["at"], seq))
+                self.db.execute("COMMIT")
+            except BaseException:
+                if self.db.in_transaction:
+                    self.db.execute("ROLLBACK")
+                raise
+        return len(docs)
 
     # ------------------------------------------------------------------ the record
     def _next_seq(self, project: str) -> int:
@@ -377,7 +433,7 @@ class Store:
 
 
 def _check_doc_id(doc_id: str) -> None:
-    if len(doc_id or "") > MAX_DOC_ID or not DOC_ID.fullmatch(doc_id or "") or ".." in doc_id:
+    if not isinstance(doc_id, str) or len(doc_id) > MAX_DOC_ID or not DOC_ID.fullmatch(doc_id) or ".." in doc_id:
         raise ServerError(400, "bad_doc_id", "A document id looks like dec/CL-014 or sign/CL-014/SE: a kind, then one to three names of letters, digits, . _ : or -.")
 
 

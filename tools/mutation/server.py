@@ -1,4 +1,4 @@
-"""Mutation run for the reference server (reqin/src/reqin/server): each rule it promises in reqin/SERVER.md is broken in a copy, one at a time, and tests/test_server.py must fail.
+"""Mutation run for the reference server (reqin/src/reqin/server): each rule it promises in reqin/SERVER.md is broken in a copy, one at a time, and tests/test_server.py or tests/test_server_app.py must fail.
 
 Usage: python3 tools/mutation/server.py [part of a name ...]     See README.md in this folder."""
 import subprocess, shutil, os, sys
@@ -13,8 +13,9 @@ def reset():
     shutil.copytree(SRC+'/src', MUT+'/src', ignore=shutil.ignore_patterns('__pycache__'))
     shutil.copytree(SRC+'/tests', MUT+'/tests', ignore=shutil.ignore_patterns('__pycache__','fixtures_approved'))
     shutil.copy(SRC+'/SERVER.md', MUT+'/SERVER.md')
+    shutil.copy(SRC+'/serve_standalone.py', MUT+'/serve_standalone.py')
 def run():
-    r = subprocess.run('PYTHONPATH=src python3 -m pytest tests/test_server.py -q -x -p no:cacheprovider 2>&1 | tail -4', cwd=MUT, shell=True, capture_output=True, text=True, timeout=300)
+    r = subprocess.run('PYTHONPATH=src python3 -m pytest tests/test_server.py tests/test_server_app.py -q -x -p no:cacheprovider 2>&1 | tail -4', cwd=MUT, shell=True, capture_output=True, text=True, timeout=300)
     return r.stdout
 S='src/reqin/server/store.py'; H='src/reqin/server/http.py'
 muts = [
@@ -40,7 +41,7 @@ muts = [
  ('a document may be any size', S, "if len(text.encode(\"utf-8\")) > MAX_BODY_BYTES:", "if False:"),
  ('a failed write stays half done', S, "                if self.db.in_transaction:\n                    self.db.execute(\"ROLLBACK\")", "                pass"),
  ('projects see each other', S, 'return self.db.execute("SELECT * FROM revs WHERE project=? AND doc_id=? ORDER BY rev DESC LIMIT 1", (project, doc_id)).fetchone()', 'return self.db.execute("SELECT * FROM revs WHERE doc_id=? ORDER BY rev DESC LIMIT 1", (doc_id,)).fetchone()'),
- ('an id may end in a newline', S, "DOC_ID.fullmatch(doc_id or \"\")", "DOC_ID.match(doc_id or \"\")"),
+ ('an id may end in a newline', S, "not DOC_ID.fullmatch(doc_id)", "not DOC_ID.match(doc_id)"),
  ('a prefix is a pattern', S, 'return prefix.replace("\\\\", "\\\\\\\\").replace("%", "\\\\%").replace("_", "\\\\_") + "%"', 'return prefix + "%"'),
  ('if_rev of true counts', S, "isinstance(if_rev, bool) or ", ""),
  ('the actor can be forged', S, 'ev = self._append(who.project, "doc", who.key, doc_id,', 'ev = self._append(who.project, "doc", (body or {}).get("by", who.key) if isinstance(body, dict) else who.key, doc_id,'),
@@ -57,6 +58,17 @@ muts = [
  ('a huge request is read', H, "if int(n) > MAX_REQUEST_BYTES:", "if False:"),
  ('a missing revision means new', H, 'req.get("if_rev", None)', 'req.get("if_rev", 0)'),
  ('a 401 does not say how to sign in', H, "h = {\"WWW-Authenticate\": 'Bearer realm=\"reqin\"'} if e.status == 401 else {}", "h = {}"),
+ ('project settings are open to reviewers', S, 'if parts[0] in LEAD_ONLY_KINDS:\n            if who.role != "lead":', 'if parts[0] in LEAD_ONLY_KINDS:\n            if False:'),
+ ('rulings on labelled pairs are open to reviewers', S, 'LEAD_ONLY_KINDS = ("proj", "adj", "gadj")', 'LEAD_ONLY_KINDS = ("proj", "adj")'),
+ ('anyone closes an objection', S, 'if parts[0] == "obj" and body is None and who.role != "lead":', 'if False:'),
+ ('a label under someone else\'s key', S, 'if parts[3] != who.key:', 'if False:'),
+ ('a label of the wrong shape', S, 'if len(parts) != 4:\n                raise ServerError(400, "bad_label_id"', 'if False:\n                raise ServerError(400, "bad_label_id"'),
+ ('a seed overwrites a project that has work', S, 'if self.db.execute("SELECT 1 FROM revs WHERE project=? LIMIT 1", (project,)).fetchone():', 'if False:'),
+ ('a seed names an observer as an author', S, 'if not isinstance(by, str) or by not in people or people[by]["role"] == "observer":', 'if not isinstance(by, str) or by not in people:'),
+ ('the page can read files outside its folder', H, 'if root not in target.parents or not target.is_file()', 'if not target.is_file()'),
+ ('files that start with a dot are served', H, 'any(p == "" or p.startswith(".") for p in parts)', 'any(p == "" for p in parts)'),
+ ('the page can be changed through the server', H, 'if self.command not in ("GET", "HEAD"):\n            raise ServerError(405, "method_not_allowed", f"{self.command} is not allowed here.")', 'if False:\n            raise ServerError(405, "method_not_allowed", f"{self.command} is not allowed here.")'),
+ ('any file type is served', H, 'or Path(parts[-1]).suffix.lower() not in STATIC_TYPES:', 'or False:'),
  ('an unexpected failure shows its cause', H, "self._send(500, {\"error\": {\"code\": \"server_error\", \"message\": \"The server could not do that.\"}})", "raise"),
 ]
 only = sys.argv[1:]

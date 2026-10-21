@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runs the prototype's browser tests (b11.py to b20.py) at the screen widths each one is meant for, and says which failed.
+"""Runs the prototype's browser tests (b11.py to b21.py) at the screen widths each one is meant for, and says which failed.
 
 It is the one place that lists them, so `make proto-test`, the GitHub workflow and the GitLab pipeline all run the same thing.
 Needs the vendored libraries (cd vendor && npm ci), Playwright for Python and a Chromium it can start. The page under test is project/Main.dc.html.
@@ -26,6 +26,7 @@ PLAN = [                       # (file, what it checks, widths)
     ('b18.py', 'keeping the work: autosave, files, two tabs', [DESK, MID, PHONE]),
     ('b19.py', 'AI use: the switch, the data sheet, held groups', [DESK, MID, PHONE]),
     ('b20.py', 'accessibility: axe, contrast, keyboard, reflow, chart colours', [DESK, MID, PHONE]),
+    ('b21.py', 'the shared project: four people in four browsers on one reference server', [DESK, MID, PHONE]),
 ]
 
 

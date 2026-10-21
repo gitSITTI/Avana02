@@ -1,0 +1,9 @@
+{
+  "listen": {"host": "0.0.0.0", "port": 8790},
+  "allow_remote": true,
+  "server": "http://server:8780",
+  "upstream": {"url": "http://litellm:4000/v1/chat/completions", "key_env": "UPSTREAM_KEY", "model": "reqin-local", "where": "ours", "leaves": false, "log": "none"},
+  "markings": "/etc/reqin/markings.json",
+  "log": "/var/lib/reqin-gateway/audit.jsonl",
+  "limits": {"max_body_bytes": 262144, "max_requirements": 200, "leak_min_windows": 2, "timeout_s": 120}
+}

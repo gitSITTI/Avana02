@@ -42,20 +42,20 @@ muts = [
  ('a good file is loaded without asking', K, "    this._pending = { state: r.state, name, saved: r.saved, counts: r.counts, notes: r.notes };\n    const c = r.counts;", "    this._pending = { state: r.state, name, saved: r.saved, counts: r.counts, notes: r.notes };\n    this.keepApply(this.S);\n    const c = r.counts;"),
  ('a file that cannot be drawn is loaded', K, "const probe = this.keepProbe(r.state);", "const probe = '';"),
  ('nothing is drawn to check a file', K, "const tries = ['home', 'review', 'explorer', 'results', 'vee', 'export', 'audit', 'gold', 'methods', 'policy', 'ai', 'overview'].map((view) => ({ view }))", "const tries = [].map((view) => ({ view }))"),
- ('an empty page writes itself', K, "if (this._keepHold || !persistHasWork(S)) return;", "if (this._keepHold) return;"),
+ ('an empty page writes itself', K, "if (this._keepHold || this._conn || !persistHasWork(S)) return;", "if (this._keepHold || this._conn) return;"),
  ('every change writes again', K, "    if (raw === this._keepRaw) return;\n", ""),
  ('a save is not debounced', K, "    clearTimeout(this._keepT);\n", ""),
  ('start over leaves the store', K, "    persistClear(); this._keepRaw = ''; this._pending = null;", "    this._keepRaw = ''; this._pending = null;"),
  ('start over keeps some work', K, "const reset = {}; PERSIST_KEYS.forEach((k) => { reset[k] = DEFAULTS[k]; });", "const reset = {}; PERSIST_KEYS.forEach((k) => { if (k !== 'rdec') reset[k] = DEFAULTS[k]; });"),
  ('start over does not ask', K, "kStart: () => this.setState({ keepAsk: 'start', keepMsg: null }),", "kStart: () => this.keepStartOver(),"),
  ('work saved before opening restores into the middle', K, "view: r.opened ? 'home' : 'open'", "view: 'home'"),
- ('start over is always available', K, "kStartDisabled: !work && !S.keepRestored", "kStartDisabled: false"),
+ ('start over is always available', K, "kStartDisabled: conn || (!work && !S.keepRestored)", "kStartDisabled: conn"),
  ('the scope text leaves out that it is not encrypted', K, "It stays in this browser and is not encrypted, so", "It stays in this browser, so"),
 ]
 
 muts += [
  ('another tab writing is ignored', K, "e.storageArea !== window.localStorage) return; } catch (x) { return; } this.keepOther(); };", "e.storageArea !== window.localStorage) return; } catch (x) { return; } };"),
- ('a held tab still writes', K, "if (this._keepHold || !persistHasWork(S)) return;", "if (!persistHasWork(S)) return;"),
+ ('a held tab still writes', K, "if (this._keepHold || this._conn || !persistHasWork(S)) return;", "if (this._conn || !persistHasWork(S)) return;"),
  ('taking the other tab leaves the hold on', K, "    this._keepHold = false; this._keepRaw = ''; this._pending = null;\n    this.setState(Object.assign(merged, { view: 'home', verified: '', tamper: false, chatOpen: false, keepAsk: '', keepSummary: [], keepStatus: 'saved'", "    this._keepRaw = ''; this._pending = null;\n    this.setState(Object.assign(merged, { view: 'home', verified: '', tamper: false, chatOpen: false, keepAsk: '', keepSummary: [], keepStatus: 'saved'"),
  ('keeping this tab does not write it', K, "this._keepHold = false; this._keepRaw = ''; this.keepNow(); this.setState({ keepMsg: { bad: false, text: 'This tab", "this._keepHold = false; this._keepRaw = ''; this.setState({ keepMsg: { bad: false, text: 'This tab"),
  ('closing the tab does not write', K, "this._onHide = () => { clearTimeout(this._keepT); this.keepNow(); };", "this._onHide = () => {};"),
