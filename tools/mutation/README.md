@@ -12,7 +12,7 @@ temporary folder that is deleted when the script ends.
 | `keep.py` | Keeping the work: the checks on a loaded file, the browser copy, two tabs | `prototype/verify.js` | 53 |
 | `trace.py` | The trace map: what a decision moves outside the requirement list | `prototype/verify.js` | 30 |
 | `vee.py` | The engineering V: the counts at each level | `prototype/verify.js` | 10 |
-| `compare.py` | The comparison engine: every written slot, number and wording rule, the clustering, the quantity and slot extraction, the stemmer and vocabulary, the output folder and its checker | `reqin/tests/test_compare.py` | 144 |
+| `compare.py` | The comparison engine: every written slot, number and wording rule, the clustering, the quantity and slot extraction, the stemmer and vocabulary, the output folder and its checker | `reqin/tests/test_compare.py` | 199 |
 | `server.py` | The reference server: every rule `reqin/SERVER.md` promises (no silent overwrite, roles, sign-offs, the record, idempotency) | `reqin/tests/test_server.py` | 40 |
 | `a11y.py` | The page's accessibility: a faint field edge, no page title, no skip link, no focus ring, faint text, an unnamed button, a click-only control, sideways scrolling at 320 px, look-alike chart colours, look-alike lens colours, a pale lens colour, look-alike gate bars | `prototype/b20.py` in a browser, **on the check made for that mistake** | 12 |
 
@@ -58,7 +58,9 @@ Run on 14 October 2026 on the final code of this commit, one script after the ot
 
 The times are with other jobs (the browser tests) running at the same time, so alone they would be shorter.
 
-**`compare.py` was run separately, on 15 October 2026,** on the final code of the comparison engine (the table above is the earlier run and does not include it): 144 changes, 143 noticed, 1 not noticed and harmless, 0 not noticed. It took about 20 minutes on one machine (a shared cloud container, with a clean-install check running beside it for part of the time). The one harmless change is "any overlap is enough for a near miss (engine)": the same threshold is applied again inside `classify()`, which a test checks on its own, so removing either copy leaves the other in force.
+**`compare.py` was run separately, on 15 October 2026,** on the code of the comparison engine after the adversarial review (the table above is the earlier run and does not include it): 199 changes. The first full run noticed 192, listed 1 as harmless and did not notice 6. For five of those six a test was added (two pairs that must never be called equivalent, the stemmer leaving short words and words with other characters alone, a bound with no direction having no interval in the slots, and a number such as `0,500,500` not stopping the run), and those five changes were then run again on their own: all five were noticed. The sixth was read by hand and judged harmless (below). **The full run was not repeated after the tests were added**, so "197 noticed, 2 harmless" is the full run plus the five re-runs plus one reading of the code. The full run took about half an hour on one machine (a shared cloud container).
+
+The two harmless ones, each listed in `compare.py`'s `EQUIVALENT` table with its reason: "any overlap is enough for a near miss (engine)", because the same threshold is applied again inside `classify()`, which a test checks on its own, so removing either copy leaves the other in force; and "COND-REGION is said when the other side has no region trigger", because a number in a condition is only compared when the two conditions have equal keys and a key starts with its trigger word, so both sides have the same trigger and the check on side B repeats the check on side A (this one rests on reading the code, not on a test).
 
 **Not noticed, and harmless (4).** Each is listed in its script's `EQUIVALENT` table with the reason, and was looked at by hand:
 

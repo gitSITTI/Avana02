@@ -29,6 +29,16 @@ def test_markup_is_stripped_from_text():
     assert normalise_text("<xhtml:div><p>The   system&nbsp;shall–go.</p></xhtml:div>") == "The system shall-go."
 
 
+def test_angle_brackets_that_are_not_markup_are_text():
+    # a loose "<anything>" pattern deleted everything between the first < and the next >: "If a<b and c>d" became "If ad", "<5 V and ... >3 V" lost a bound
+    assert normalise_text("The input shall be <5 V and the output shall be >3 V.") == "The input shall be <5 V and the output shall be >3 V."
+    assert normalise_text("If a<b and c>d then stop") == "If a<b and c>d then stop"
+    assert normalise_text("Use <b and c> here") == "Use <b and c> here"
+    assert normalise_text("The temperature shall be <5 degrees C and >-40 degrees C.") == "The temperature shall be <5 degrees C and >-40 degrees C."
+    assert normalise_text('<p>One</p><div class="x">Two</div>') == "One Two" and normalise_text("x<!-- note -->y") == "xy"
+    assert normalise_text("&lt;5 V and &gt;3 V") == "<5 V and >3 V"
+
+
 def test_proposed_profile_is_flagged_and_labelled(fx):
     r = ingest(Source(str(fx["xlsx"])))
     assert r.report["profile_proposed"] and any("PROPOSED" in w for w in r.report["warnings"])

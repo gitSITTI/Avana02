@@ -6,18 +6,20 @@
 
 The first four stages of the nine in the research report, with **no AI, no network, and no model**: read a dataset, find the numbers, units, comparators, modals, negations and conditions in each requirement, compare requirements by written rules, and group the ones that are provably the same. Everything it writes is a **draft** with provenance `mechanical`. It never writes to a requirement, and a person's decision (in the page, or on the shared server) always outranks it.
 
-It is strict on purpose. **Two requirements are called EQUIVALENT only when every slot is equal**: same subject, same kind of modal (`shall` and `must` are one kind), same polarity, same words after a short written list of spellings and synonyms, same condition, same numbers in the same units. Anything it cannot prove equal stays a *pair* a person (or, later, the AI stage) looks at. So its recall on paraphrase is low by design, and its pairs of "nearly the same words" are the work queue, not the result. [`COMPARE_RESULTS.md`](COMPARE_RESULTS.md) says how low, measured on made-up requirements.
+It is strict on purpose. **Two requirements are called EQUIVALENT only when every slot is equal**: same subject, same kind of modal (`shall` and `must` are one kind), same polarity, same words after a short written list of spelling variants (and any synonyms a project adds), same condition, same numbers in the same units. Anything it cannot prove equal stays a *pair* a person (or, later, the AI stage) looks at. So its recall on paraphrase is low by design, and its pairs of "nearly the same words" are the work queue, not the result. [`COMPARE_RESULTS.md`](COMPARE_RESULTS.md) says how low, measured on made-up requirements.
 
 ## Running it
 
 ```bash
 reqin compare DATASET_DIR [DATASET_DIR2 ...] --out-dir OUT_DIR [--vocab FILE] [--json]
-reqin check-compare OUT_DIR [--dataset DATASET_DIR ...] [--json]
+reqin check-compare OUT_DIR [--dataset DATASET_DIR ...] [--recompute [--vocab FILE]] [--json]
+reqin compare-vocab FILE [--starter]
 ```
 
 - `compare` takes one dataset, or several (two imports of the same specification are the usual reason). It refuses a dataset that fails its own contract (`reqin check-dataset`) and two datasets that share an internal key, and writes nothing (exit 2). **When there is nothing to compare it still exits 0 and says so** in `notes`.
 - `OUT_DIR` must be empty or an earlier output folder; nothing else is ever overwritten (exit 2 if it holds other files).
-- `check-compare` exits 1 and lists the problems when the folder does not follow this page. With `--dataset` (once for each dataset used) it also checks that the folder was made from exactly those datasets, unchanged, and that every position in it is real.
+- `check-compare` exits 1 and lists the problems when the folder does not follow this page. With `--dataset` (once for each dataset used) it also checks that the folder was made from exactly those datasets, unchanged, and that every position in it is real. With `--recompute` as well it runs the engine again and requires the three files to be byte for byte what it writes now (give the same `--vocab FILE` the folder was made with); without it, a file edited together with the checksum that names it passes.
+- `compare-vocab FILE` writes the vocabulary the engine uses as a file to edit and pass to `compare --vocab` (it refuses to overwrite). `--starter` adds a few optional synonyms (display/show, record/log, enable/activate, ...). Each is a decision that two words mean the same everywhere in your requirements, and some do not, so none is on by default.
 - The same dataset and the same vocabulary give **byte-identical files** on every run, whatever order the requirements were read in.
 
 ## The folder
@@ -130,7 +132,7 @@ Pairs are listed most serious first: CONFLICT, VARIANT, SUBSUMES, COMPLEMENTARY,
 - `settings`: `tau_pair` is the share of rarity-weighted words two *different* wordings must have in common before a near miss between them is listed (it never changes a cluster or a type); `max_posting` is how many wordings a word may appear in and still be used to find near misses; `max_family` is how many different numberings of one wording are compared pairwise; `max_related` is the most pairs listed on a cluster. None of the four was tuned on the corpus in `COMPARE_RESULTS.md`; `tau_pair` was moved from 0.6 to 0.5 after a four-word example, before anything was measured.
 - `limits` counts what was left out, so a screen can say so. `tokens_too_common_to_find_pairs` is the number of words not used to find near misses; `families_not_compared_pairwise` appears when a wording had more than `max_family` numberings. Requirements with equal keys are always grouped whatever these say.
 - `notes` says plainly, in words, what a screen should say when something is missing: **nothing to compare** (no requirements, or one), **nothing found** (no two requirements are equivalent and no pair overlaps enough to list), how many requirements have no text, no modal or several modals, ids invented by the importer, no hierarchy, and any limit above that applied. "Nothing to compare" is an answer, not an error.
-- `vocabulary_sha256` is the checksum of the vocabulary used (the shipped one, or `--vocab FILE`, which replaces it completely and is checked for shape); two runs with different vocabularies can be told apart.
+- `vocabulary_sha256` is the checksum of the vocabulary used, including its `fold_plurals` setting (the shipped one, or `--vocab FILE`, which replaces it completely and is checked for shape); two runs with different vocabularies can be told apart.
 
 ## The ladder: how candidates are found
 
@@ -139,13 +141,13 @@ Pairs are listed most serious first: CONFLICT, VARIANT, SUBSUMES, COMPLEMENTARY,
 | 1 `exact` | the words, lower-cased, with spacing and punctuation collapsed | the fast path |
 | 2 `masked` | the words with each quantity replaced by one placeholder (and a fuzzy ratio on that) | finding pairs that differ only by a number or unit, which is the commonest and most dangerous difference |
 | 3 `overlap` | the set of words, each weighted by how rare it is in this dataset | finding pairs whose wording differs, and ranking them |
-| 4 `canonical` | the same after the vocabulary (spellings, abbreviations, a short list of synonyms), plain-suffix stemming and dropping the words in the ignore list | removing differences that are only spelling |
+| 4 `canonical` | the same after the vocabulary (spelling variants, abbreviations, and the synonyms a project adds), `-ed`/`-ing` stemming (plurals only when the vocabulary sets `fold_plurals`) and dropping the few words in the ignore list (the, a, an, that, which) | removing differences that are only spelling |
 
 Rungs 1 to 4 produce **features and candidates**. They never decide a type. Types come only from the rules.
 
 ## How two requirements are compared
 
-1. **Slots.** Each requirement is cut into: quantities (a number with a unit, how it is bounded, an optional tolerance), a leading condition (up to the first comma, or in a comma-less sentence up to the last *the/a/an* before the modal), the first modal and a `not`, `never` or `no longer` straight after it (a `not` inside a bound such as "not exceed 5 kg" is part of the bound), a trailing condition (`when`, `if`, `while`, `after`, `before`, `during`, `upon`, `once`, `until`, `unless`, ...), then the subject (before the modal) and the predicate (after it).
+1. **Slots.** Each requirement is cut into: quantities (a number with a unit, how it is bounded, an optional tolerance; a number is a bound only after a comparator word such as 'at least', 'within' or 'not more than': a bare number, a version-like number and a count after 'under' or 'above' are compared as written, and 'up to' is bounded in no direction), a leading condition (up to the first comma, or in a comma-less sentence up to the last *the/a/an* before the modal), the first modal and a `not`, `never` or `no longer` straight after it (a `not` inside a bound such as "not exceed 5 kg" is part of the bound), a trailing condition (`when`, `if`, `while`, `after`, `before`, `during`, `upon`, `once`, `until`, `unless`, ...), then the subject (before the modal) and the predicate (after it).
 2. **Equal keys.** Requirements with equal subject, modal kind, polarity, predicate words, conditions and numbers are one group; two or more make a cluster.
 3. **Families.** Requirements with the same subject and predicate words but different keys are compared slot by slot by the *slot* and *number* rules below. These are the pairs whose difference is a modal, a negation, a condition or a number.
 4. **Near misses.** Wordings that differ in subject or predicate words are only compared when they share enough rare words (`tau_pair`). Then only two statements are made: the same predicate about a different subject (`SUBJ-DIFF`, `UNRELATED`) and the same subject with different predicate words (`WORDS-DIFF`, `VARIANT`).
@@ -160,21 +162,21 @@ Every rule has an id, a type and a sentence saying what it does, and a test that
 |---|---|---|
 | `EQ-DIGEST` | EQUIVALENT | Same subject, modal, polarity, predicate words, conditions and quantities after the vocabulary and unit conversion. |
 | `MODAL-DIFF` | VARIANT | Everything else is equal but the modal differs in kind: shall or must (mandatory), should (goal), will (fact), may (optional). A person decides which applies. |
-| `NEG-CONFLICT` | CONFLICT | The same subject, words and conditions, one saying 'shall' and the other 'shall not' (or never): both cannot hold. |
+| `NEG-CONFLICT` | CONFLICT | The same subject, words, conditions, modal and numbers, one saying 'shall' and the other 'shall not' (or never): both cannot hold. |
 | `NEG-COND` | VARIANT | One is negated and the other is not, but their conditions differ, so they might both hold in different situations. |
 | `COND-ABSENT` | SUBSUMES | Everything else is equal, one has a condition and the other has none: the one with no condition applies always, so it is stricter. |
 | `COND-DIFF` | VARIANT | Both have conditions and the conditions differ (different words, or a different kind: when, if, while, after, ...). |
 | `COND-VALUE` | VARIANT | The conditions use the same words but a different number or unit, and the two trigger ranges are not nested (or one has no stated bound), so a person decides. |
-| `COND-REGION` | SUBSUMES | The conditions use the same words and one trigger range contains the other ('when above 80' contains 'when above 90'). The requirement that applies in more situations is stricter. |
+| `COND-REGION` | SUBSUMES | The conditions begin with when, if or while, use the same words, and one trigger range contains the other ('when above 80' contains 'when above 90'). The requirement that applies in more situations is stricter. Not said for 'unless', 'until', 'after' and the like: which side applies is not read. |
 | `Q-SUBSUMES` | SUBSUMES | One number's allowed values lie strictly inside the other's (within 2 s is inside within 5 s; at least 99.9 percent is inside at least 99 percent). The narrower one is stricter. |
-| `Q-CONFLICT` | CONFLICT | The allowed values do not overlap: exactly 5 s and exactly 10 s; at most 5 s and at least 10 s. No value can satisfy both. |
+| `Q-CONFLICT` | CONFLICT | The allowed values do not overlap: exactly 5 s and exactly 10 s; at most 5 s and at least 10 s. No value can satisfy both. Said only when the conditions and the modal are the same: 'within 2 s when the tank is full' and 'at least 10 s when the tank is empty' may both hold, and are left as differing in condition. |
 | `Q-BOUNDS` | COMPLEMENTARY | One is only a lower bound and the other only an upper bound of the same quantity, and they overlap: together they give a range. |
-| `Q-UNSTATED` | VARIANT | A number is written without a bound on one or both sides ('5 s' against 'at most 5 s', or two bare numbers that differ). Without the direction nothing stronger can be said. |
+| `Q-UNSTATED` | VARIANT | A number is written without a bound on one or both sides ('5 s' against 'at most 5 s', or two bare numbers that differ), or with 'up to', which is a limit in one requirement and a capacity in another. Without the direction nothing stronger can be said. |
 | `Q-TOLERANCE` | VARIANT | The same value and bound but a plus-or-minus tolerance on one side only; or different values where at least one has a tolerance (the engine does not combine a tolerance with a bound, so it says only that they differ). |
 | `Q-TOLERANCE-TIGHTER` | SUBSUMES | The same value and bound, both with a plus-or-minus tolerance, and one tolerance is smaller. The tighter band is stricter. |
 | `Q-EXTRA` | SUBSUMES | One states a bounded quantity of a kind the other does not mention. The one with the extra constraint is stricter. |
 | `Q-EXTRA-UNSTATED` | VARIANT | One has a number of a kind the other lacks, and that number has no stated bound. |
-| `Q-NEGATED` | VARIANT | The requirement is negated ('shall not ... below 0'), so which side of a bound is allowed is reversed and the engine does not read the direction: only that the numbers differ. |
+| `Q-NEGATED` | VARIANT | A requirement is negated ('shall not ... below 0'), so which side of a bound is allowed is reversed and the engine does not read the direction: only that the numbers differ. Also written when one is negated and the other is not and their numbers differ ('shall not open within 2 s' does not contradict 'shall open within 10 s'). |
 | `Q-RANGE` | VARIANT | At least one number is a range ('between 5 and 10 s'). Whether the wider range is the stricter ('shall operate between') or the narrower ('shall respond between') depends on the meaning, so nothing stronger than 'differs' is said. |
 | `Q-MULTI` | VARIANT | Several numbers of the same kind that cannot be matched one to one. |
 | `MIXED` | VARIANT | Different slots point in different directions (one is stricter in one way and looser in another), or a range bound comes with another difference. |
@@ -187,13 +189,16 @@ Where the rules came from is in [`COMPARE_RESULTS.md`](COMPARE_RESULTS.md): the 
 
 ## What the engine does not do
 
-- **Paraphrase and meaning.** Different words for the same idea stay pairs unless the idea is on the short written vocabulary. A person owns that list (`--vocab FILE`).
+- **Paraphrase and meaning.** Different words for the same idea stay different unless the idea is on the short written vocabulary, and the default vocabulary holds only spelling variants (initialise/initialize). A person owns that list (`--vocab FILE`; `reqin compare-vocab FILE --starter` writes one with a few synonyms to start from). Plural words are different words ("the pump", "the pumps") unless the vocabulary sets `fold_plurals`.
 - **Another language**, and anything in a script the word rules do not know.
 - **Extra clauses.** "shall contain a timestamp" against "shall contain a timestamp and the operator identifier" is a `WORDS-DIFF` variant, not a subsumes: the engine does not read "and ..." as an added obligation, and does not read "only" at all.
 - **Which way a number points under a negation** ("shall not start below 0 s") or inside a range ("between 5 and 10 s"): it says the numbers differ (`Q-NEGATED`, `Q-RANGE`), never which is stricter.
 - **A tolerance combined with a bound**: "5 s ± 1 s" against "6 s ± 1 s" is a variant that says the numbers differ; the tolerance is not applied.
 - **Number words** other than a short list ("five seconds"; only next to a unit), fractions, numbers with their unit far from them ("a rate of 5, in seconds"), rates written with words ("10 litres per minute"; only the form "10 l/min" is read), and data sizes in different units (1 GB and 1000 MB are not called equal: nobody can tell whether 1000 or 1024 was meant).
-- **Voice.** Active and passive are matched only in the plain form `... shall be <verb>ed by <agent>`, with a short list of irregular verbs.
+- **Voice.** Active and passive are matched only in the plain form `... shall be <verb>ed by <agent>`, with a short list of irregular verbs. A `by` phrase that is a place ("by the door"), a manner ("by default") or a method ("by dividing ...") is not an agent. One that names a means ("sent by encrypted link") is read as an agent and merged with the active; the cluster's `why` says some members are active and some passive.
+- **Case.** Words are compared without case, except in the units on the table (`mHz` and `MHz`). "pump P1" and "pump p1", or two unknown units that differ only in case, are one wording.
+- **`Up to`.** "up to 5 s" is not read as a bound in either direction ('a delay of up to 5 s' is a limit, 'support up to 100 users' a capacity), so it differs from "at most 5 s" (`Q-UNSTATED`).
+- **A relative clause** ("the time when the fault occurred") is read as a condition, so it can be typed `COND-ABSENT` against the same words without it. It is never merged, and the type and direction are a guess.
 - **Subject and object swapped** ("the charger powers the battery" against "the battery powers the charger"): not merged, and not described either.
 - **The hierarchy and the links** between requirements: the engine does not use them.
 - Requirements with several sentences or several modals are compared **as written**: equivalent only when everything matches.

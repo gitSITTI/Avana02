@@ -7,7 +7,11 @@ import re
 
 from .model import Slots, nfkc
 
-_TAG = re.compile(r"<[^>]+>")
+# Markup is a tag with a known HTML/XHTML name and name="value" attributes, a comment, a processing instruction or a CDATA mark. Anything else between < and > is text: "<5 V and the output shall be >3 V"
+# and "if a<b and c>d" must survive, and a loose "<[^>]+>" removes everything from the first < to the next >.
+_TAGNAME = (r"(?:[A-Za-z][\w.-]*:)?(?:a|abbr|address|b|big|blockquote|body|br|caption|center|cite|code|col|colgroup|dd|del|div|dl|dt|em|font|h[1-6]|head|hr|html|i|img|ins|li|object|ol|p|param|pre|q|"
+            r"s|small|span|strike|strong|sub|sup|table|tbody|td|tfoot|th|thead|title|tr|tt|u|ul|var|xhtml)")
+_TAG = re.compile(rf"</?{_TAGNAME}(?![\w-])(?:\s+[\w:.-]+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s\"'<>]+))*\s*/?>|<!--.*?-->|<\?[^>]*\?>|<!\[CDATA\[|\]\]>", re.I | re.S)
 _WS = re.compile(r"\s+")
 _MODAL = re.compile(r"\b(shall|should|will|may|must)\b", re.I)
 _NEG = re.compile(r"\b(shall|should|will|must|may)\s+not\b|\bnever\b|\bwithout\b", re.I)

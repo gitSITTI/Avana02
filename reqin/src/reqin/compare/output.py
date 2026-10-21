@@ -30,7 +30,7 @@ class CompareError(RuntimeError):
 
 
 def _line(obj: Any) -> str:
-    return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False)      # NaN and Infinity are not JSON: a file that holds them is refused, not written
 
 
 def _atomic(path: Path, data: bytes) -> None:
@@ -83,7 +83,7 @@ def write(res: Result, out_dir: str | Path, datasets: list[dict[str, Any]]) -> P
     summary = {"format": FORMAT, "status": "draft", "provenance": "mechanical", "engine": res.summary["engine"],
                "datasets": datasets,
                "settings": res.summary["settings"], "counts": res.summary["counts"], "limits": res.summary["limits"], "notes": res.summary["notes"], "files": entries}
-    _atomic(out / SUMMARY, (json.dumps(summary, sort_keys=True, ensure_ascii=False, indent=1) + "\n").encode("utf-8"))      # last: its presence means "complete"
+    _atomic(out / SUMMARY, (json.dumps(summary, sort_keys=True, ensure_ascii=False, indent=1, allow_nan=False) + "\n").encode("utf-8"))      # last: its presence means "complete"
     return out
 
 
@@ -104,8 +104,19 @@ def _span_ok(x: Any, limit: int | None = None) -> bool:
     return x is None or (isinstance(x, list) and len(x) == 2 and all(isinstance(i, int) and not isinstance(i, bool) and i >= 0 for i in x) and x[0] <= x[1] and (limit is None or x[1] <= limit))
 
 
-def check(out_dir: str | Path, dataset_dirs: str | Path | list[str | Path] | None = None) -> list[str]:
-    """Does this folder follow docs/COMPARE_FORMAT.md? With the dataset it was made from, also: does it name that dataset, and are the ids and positions real?"""
+def check(out_dir: str | Path, dataset_dirs: str | Path | list[str | Path] | None = None, recompute: bool = False, vocab: Vocabulary | None = None) -> list[str]:
+    """Does this folder follow docs/COMPARE_FORMAT.md? With the dataset it was made from, also: does it name that dataset, and are the ids and positions real?
+
+    With `recompute=True` (needs the dataset) the engine is run again on the dataset, with the settings written in compare.json and the vocabulary (the default one, or `vocab`, whose checksum must
+    be the one written), and the three files must be byte for byte what it writes now. That is the one check that catches a file edited together with its checksum, a result that does not follow from
+    the rules, or an output made by something other than this engine. It returns problems, and never raises on a malformed folder."""
+    try:
+        return _check(out_dir, dataset_dirs, recompute, vocab)
+    except (AttributeError, TypeError, KeyError, IndexError, ValueError, OSError, UnicodeDecodeError) as e:
+        return [f"the folder has content of a shape the format does not allow ({type(e).__name__}: {e}); nothing more could be checked"]
+
+
+def _check(out_dir: str | Path, dataset_dirs: str | Path | list[str | Path] | None, recompute: bool, vocab: Vocabulary | None) -> list[str]:
     root = Path(out_dir)
     problems: list[str] = []
     if not root.is_dir():
@@ -215,6 +226,10 @@ def check(out_dir: str | Path, dataset_dirs: str | Path | list[str | Path] | Non
         for pid in (c.get("related") or []) if isinstance(c, dict) else []:
             if pid not in pids:
                 problems.append(f"clusters line {i}: related names {pid}, which is not in pairs.jsonl")
+    digest_of = {s["mid"]: s.get("key_digest") for s in slots if isinstance(s, dict) and isinstance(s.get("mid"), str)}
+    for i, c in enumerate(clusters, 1):
+        if isinstance(c, dict) and len({digest_of.get(m.get("mid")) for m in c.get("members", []) if isinstance(m, dict)}) > 1:
+            problems.append(f"clusters line {i}: the members do not all have the same key_digest in slots.jsonl, so they are not requirements the engine calls the same")
     counts = man.get("counts", {})
     if counts.get("clusters") != len(clusters) or counts.get("requirements") != len(slots):
         problems.append(f"{SUMMARY} counts do not match the files")
@@ -249,4 +264,29 @@ def check(out_dir: str | Path, dataset_dirs: str | Path | list[str | Path] | Non
             for q in s_.get("quantities", []):
                 if not _span_ok(q.get("span"), len(r["norm_text"])):
                     problems.append(f"slots line {i}: a quantity span runs past the end of the text")
+        if recompute and not problems:
+            problems += _recompute(root, man, dirs, vocab)
+    elif recompute:
+        problems.append("recompute needs the dataset the output was made from")
     return problems
+
+
+def _recompute(root: Path, man: dict[str, Any], dirs: list[Any], vocab: Vocabulary | None) -> list[str]:
+    voc = vocab or load_vocabulary()
+    want = (man.get("engine") or {}).get("vocabulary_sha256")
+    if voc.sha256 != want:
+        return [f"cannot re-run the engine: the output used the vocabulary with checksum {str(want)[:12]}, and the one given has {voc.sha256[:12]} (pass the vocabulary file it was made with)"]
+    known = Settings.__dataclass_fields__
+    st = Settings(**{k: v for k, v in (man.get("settings") or {}).items() if k in known})
+    try:
+        res, info = run_dataset(dirs, voc, st)
+    except CompareError as e:
+        return [f"cannot re-run the engine: {e}"]
+    fresh = {FILES["clusters"]: "".join(_line(c) + "\n" for c in res.clusters).encode("utf-8"),
+             FILES["pairs"]: "".join(_line(p) + "\n" for p in res.pairs).encode("utf-8"),
+             FILES["slots"]: "".join(_line(s.to_json()) + "\n" for s in res.slots).encode("utf-8")}
+    out = []
+    for name, data in fresh.items():
+        if (root / name).read_bytes() != data:
+            out.append(f"{name} is not what this engine writes for this dataset: it was edited, or made by something else (re-run `reqin compare` to see the difference)")
+    return out

@@ -5,7 +5,8 @@
   make-datasets DIR                      write the fourteen test datasets (F1-F14) a screen must pass
   vee DIR                                the engineering V of a dataset: requirements per level, and how many have a verification method and item
   compare DIR --out-dir OUT              the comparison engine (no AI): clusters of equivalent requirements and typed pairs, as drafts (docs/COMPARE_FORMAT.md)
-  check-compare OUT [--dataset DIR]      does this output follow docs/COMPARE_FORMAT.md, and does it match the dataset it was made from?
+  check-compare OUT [--dataset DIR]      does this output follow docs/COMPARE_FORMAT.md, and does it match the dataset it was made from? (--recompute: run the engine again and compare)
+  compare-vocab FILE [--starter]         write the default vocabulary (or the default plus the optional starter synonyms) as a file to edit and pass to compare --vocab
   sample                                 look at what a connector sees (first page only) so you can tune options and profile names
   connectors                             list every adapter with its maturity (fixture-tested / fake-server-tested / live-verified / stub)
   watch                                  re-ingest a folder of exports when they change; never writes to that folder
@@ -139,9 +140,26 @@ def _cmd_compare(a) -> int:
     return 0
 
 
+def _cmd_compare_vocab(a) -> int:
+    from .compare import vocabulary
+    path = Path(a.file)
+    if path.exists():
+        print(f"compare-vocab: {path} exists; nothing was overwritten", file=sys.stderr)
+        return 2
+    data = vocabulary.starter() if a.starter else vocabulary.DEFAULT
+    path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"wrote {path}: edit it, then `reqin compare DIR --out-dir OUT --vocab {path}`. Every synonym in it is a decision that two words mean the same in your requirements.")
+    return 0
+
+
 def _cmd_check_compare(a) -> int:
-    from .compare import check
-    problems = check(a.dir, a.dataset or None)
+    from .compare import check, load_vocabulary
+    try:
+        vocab = load_vocabulary(a.vocab) if a.vocab else None
+    except ValueError as e:
+        print(f"check-compare: {e}", file=sys.stderr)
+        return 2
+    problems = check(a.dir, a.dataset or None, recompute=a.recompute, vocab=vocab)
     if a.json:
         print(json.dumps({"valid": not problems, "problems": problems}, indent=2, ensure_ascii=False))
         return 1 if problems else 0
@@ -150,7 +168,7 @@ def _cmd_check_compare(a) -> int:
         for x in problems[:30]:
             print("  -", x)
         return 1
-    print(f"ok: {a.dir} follows docs/COMPARE_FORMAT.md" + (" and matches the dataset(s) it names" if a.dataset else ""))
+    print(f"ok: {a.dir} follows docs/COMPARE_FORMAT.md" + (" and matches the dataset(s) it names" if a.dataset else "") + (", and is what the engine writes for them now" if a.recompute else ""))
     return 0
 
 
@@ -243,12 +261,17 @@ def main(argv: list[str] | None = None) -> int:
     cp = sub.add_parser("compare", help="the comparison engine (no AI): clusters of equivalent requirements and typed pairs, written as drafts")
     cp.add_argument("dirs", nargs="+", metavar="DIR", help="a dataset folder (reqin import --out-dir); give several to compare requirements across imports")
     cp.add_argument("--out-dir", required=True, metavar="OUT", help="empty folder, or an earlier output folder; nothing else is overwritten")
-    cp.add_argument("--vocab", metavar="FILE", help="JSON: abbreviations, synonyms, phrases, ignore (replaces the default list; its hash is written into compare.json)")
+    cp.add_argument("--vocab", metavar="FILE", help="JSON: abbreviations, synonyms, phrases, ignore, fold_plurals (replaces the default list; its hash is written into compare.json). `reqin compare-vocab FILE` writes one to start from")
     cp.add_argument("--json", action="store_true", help="print the summary as JSON")
     cc = sub.add_parser("check-compare", help="does this folder follow docs/COMPARE_FORMAT.md?")
     cc.add_argument("dir")
     cc.add_argument("--dataset", metavar="DIR", action="append", help="a dataset it was made from (repeat for each): also check the ids, the positions and that the dataset is unchanged")
+    cc.add_argument("--recompute", action="store_true", help="needs --dataset: run the engine again and require the three files to be byte for byte what it writes (catches an edit made together with its checksum)")
+    cc.add_argument("--vocab", metavar="FILE", help="with --recompute: the vocabulary file the output was made with (the default list is used when this is not given)")
     cc.add_argument("--json", action="store_true")
+    cv = sub.add_parser("compare-vocab", help="write the vocabulary the engine uses as a file you can edit")
+    cv.add_argument("file")
+    cv.add_argument("--starter", action="store_true", help="include the optional starter synonyms (display/show, record/log, ...): each one is a decision that two words mean the same")
     md = sub.add_parser("make-datasets", help="write the fourteen test datasets (F1-F14) a requirements screen must pass")
     md.add_argument("dir")
     md.add_argument("--only", help="comma-separated ids, e.g. F1,F6,F12")
@@ -276,6 +299,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_compare(a)
     if a.cmd == "check-compare":
         return _cmd_check_compare(a)
+    if a.cmd == "compare-vocab":
+        return _cmd_compare_vocab(a)
     if a.cmd == "watch":
         return _cmd_watch(a)
     if a.cmd == "sample":

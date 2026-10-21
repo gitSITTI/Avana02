@@ -1,6 +1,6 @@
 # Prompt: build the first mechanical stages of the comparison engine
 
-How to use this: give an agent that can run commands in a checkout of this repository the text below the line. **This engine does not exist yet**; this is the first slice, and it is deliberately small and measured. Review what comes back before anything is built on it.
+How to use this: give an agent that can run commands in a checkout of this repository the text below the line. **Status (October 2026): this first slice has since been built** (`reqin/src/reqin/compare/`, described in `docs/COMPARE_FORMAT.md` and `docs/COMPARE_RESULTS.md`, and broken on purpose by `tools/mutation/compare.py`). This prompt is kept as the specification the slice was built from and as a starting point for another provider; an agent that continues the work should start from those documents and the tests, not from the sentence "the engine itself is missing" below. The slice was deliberately small and measured. Review what comes back before anything is built on it.
 
 ----------------------------------------------------------------------------------------------------
 

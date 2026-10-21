@@ -16,6 +16,8 @@ from dataclasses import dataclass, field, replace
 from itertools import combinations
 from typing import Any
 
+from reqin.compare.vocabulary import Vocabulary, load as load_vocabulary
+
 SEED = 20241015
 
 SUBJECTS = ["pump controller", "battery pack", "conveyor drive", "lift controller", "thermostat", "data logger", "robot arm", "ground station", "lab analyser", "water heater",
@@ -41,6 +43,7 @@ SYN_IN = {"transmit": "send", "send": "transmit", "display": "show", "enable": "
 SYN_OUT = {"start": "begin", "stop": "halt", "close": "shut", "sound": "raise", "report": "indicate", "apply": "engage", "reset": "zero", "store": "save", "acknowledge": "accept",
            "open": "unlock", "disable": "inhibit"}
 ABBR_IN = {"message": "msg", "configuration": "config", "information": "info", "command": "cmd"}
+VOCAB = None          # set by make_corpus; the vocabulary the wordings are flagged against
 ABBR_OUT = {"temperature": "temp", "diagnostic": "diag.", "calibration": "cal", "supply": "supp", "measured": "meas"}
 NUM_WORDS = {1: "one", 2: "two", 3: "three", 5: "five", 10: "ten", 12: "twelve", 20: "twenty", 28: "twenty-eight", 40: "forty", 50: "fifty"}
 RELATIONS = [("pump", "feed", "tank"), ("charger", "power", "battery pack"), ("fan", "cool", "inverter"), ("controller", "monitor", "heater"), ("logger", "calibrate", "sensor"), ("gateway", "forward", "radio module")]
@@ -99,8 +102,9 @@ def render(m: Meaning, *, style: str = "base", cmp_word: str | None = None, alt_
     else:
         a, vb, b = RELATIONS[m.relation]
         verb, obj, pp = vb, f"the {b}", vb + "ed"
-    outside = False
+    outside = cmp_word == "up to"            # 'up to' is ambiguous (a limit or a capacity): the engine does not call it the same as 'within', so it counts as outside what the engine holds
     if syn == "in" and verb in SYN_IN:
+        outside = outside or VOCAB.canon(verb) != VOCAB.canon(SYN_IN[verb])
         verb = SYN_IN[verb]
         pp = {"send": "sent"}.get(verb, verb + ("d" if verb.endswith("e") else "ed"))
     elif syn == "out" and verb in SYN_OUT:
@@ -131,6 +135,7 @@ def render(m: Meaning, *, style: str = "base", cmp_word: str | None = None, alt_
     s += "."
     for k, v in ABBR_IN.items():
         if abbr == "in" and k in s:
+            outside = outside or VOCAB.canon(k) != VOCAB.canon(v)
             s = s.replace(k, v)
     for k, v in ABBR_OUT.items():
         if abbr == "out" and k in s:
@@ -206,7 +211,11 @@ _BASE_OF = {"s": 1000.0, "ms": 1.0, "min": 60000.0, "h": 3600000.0, "kg": 1.0, "
             "A": 1.0, "mA": 1e-3}
 
 
-def make_corpus(n_meanings: int = 150, seed: int = SEED) -> list[Req]:
+def make_corpus(n_meanings: int = 150, seed: int = SEED, vocab: Vocabulary | None = None) -> list[Req]:
+    """`vocab` is the vocabulary the corpus is being scored against (the engine's default when None). It changes only which wordings are flagged 'outside the vocabulary', never the text:
+    the same seed gives the same requirements."""
+    global VOCAB
+    VOCAB = vocab or load_vocabulary()
     rng = random.Random(seed)
     meanings: dict[Meaning, None] = {}
     while len(meanings) < n_meanings:

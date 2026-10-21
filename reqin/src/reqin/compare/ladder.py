@@ -35,10 +35,22 @@ def weighted_jaccard(a: frozenset[str] | set[str], b: frozenset[str] | set[str],
     return inter / union if union else 0.0
 
 
+# SequenceMatcher takes time in proportion to (words in A) x (words in B). Past this many cells the ratio is the share of words the two have in common instead (same scale, 0 to 1, a little more
+# generous because it ignores order). It is a feature shown to a person, never what decides a type.
+_MAX_CELLS = 250_000
+
+
+def _ratio(a: tuple[str, ...], b: tuple[str, ...]) -> float:
+    if len(a) * len(b) <= _MAX_CELLS:
+        return SequenceMatcher(None, a, b, autojunk=False).ratio()
+    common = sum((Counter(a) & Counter(b)).values())
+    return 2.0 * common / (len(a) + len(b)) if a or b else 1.0
+
+
 def features(a: Slots, b: Slots, idf_raw: dict[str, float], idf_raw_default: float, idf_canon: dict[str, float], idf_canon_default: float) -> dict[str, object]:
     exact = a.exact == b.exact
     masked_equal = a.masked == b.masked
-    ratio = 1.0 if masked_equal else SequenceMatcher(None, a.masked, b.masked, autojunk=False).ratio()
+    ratio = 1.0 if masked_equal else _ratio(a.masked, b.masked)
     return {
         "exact": exact,
         "masked_equal": masked_equal,

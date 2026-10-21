@@ -23,11 +23,15 @@ from .vocabulary import Vocabulary
 
 MODAL_CLASS = {"shall": "mandatory", "must": "mandatory", "should": "goal", "will": "fact", "may": "optional", "": "none"}
 _MODAL = re.compile(r"\b(shall|should|will|may|must)\b", re.I)
-_LEAD = re.compile(r"^\s*(if|when|whenever|while|during|upon|after|before|once|unless|in the event of|in the event that|in case of|in case|on|at|following|prior to|until|as soon as|where)\b", re.I)
+_LEAD = re.compile(r"^\s*(if|when|whenever|while|during|upon|after|before|once|unless|in the event of|in the event that|in case of|in case|on|at(?!\s+(?:least|most|a\s+minimum|a\s+maximum)\b)|following|prior to|until|as soon as|where)\b", re.I)
 _TRAIL = re.compile(r"\b(when|whenever|if|while|unless|during|upon|after|before|once|until|as soon as|in the event of|in the event that|in case of|in case|following|prior to|where)\b", re.I)
 _DET = re.compile(r"\b(?:the|a|an)\b", re.I)
 _NEG_AFTER_MODAL = re.compile(r"\s+(not|never|no longer)\b", re.I)
-_TOKEN = re.compile(r"[A-Za-z0-9]+(?:[-_/.'’][A-Za-z0-9]+)*")
+_TOKEN = re.compile(r"[^\W_]+(?:[-_/.'’][^\W_]+)*")
+# A capital A is the article only at the start of a clause or after one of these words ("when A pump stops"); anywhere else ("Pump A shall start") it names something and is kept as "A".
+_BEFORE_ARTICLE = frozenset("""shall should will may must not never be is are been being of to in for with by from on at as than when whenever if while unless until after before once upon during
+and or but per via into onto over under through within without between against among around whether that which who where then also each every no""".split())
+_CLAUSE_PUNCT = re.compile(r"[,;:.()\[\]]")
 _TRIGGER_CANON = {"whenever": "when", "in the event of": "if", "in the event that": "if", "in case of": "if", "in case": "if", "prior to": "before"}
 # the plain passive "shall be <participle> by <agent>" is turned into the active form, which needs the verb the participle comes from. Regular participles (-ed) are handled by the stemmer;
 # these are the common irregular ones. A participle not on this list is not recognised as passive, and the requirement is compared as written.
@@ -37,8 +41,35 @@ _IRREGULAR_PARTICIPLES = {"sent": "send", "built": "build", "kept": "keep", "hel
                           "run": "run", "set": "set", "reset": "reset", "preset": "preset", "read": "read", "put": "put", "shut": "shut", "cut": "cut", "hit": "hit", "let": "let"}
 
 
+def _loose(w: str) -> str:
+    """A key as the search for similar requirements sees it: a plural is the singular ('pumps' and 'pump' are looked at together, though they are not merged)."""
+    return w[:-1] if len(w) > 3 and w.endswith("s") and not w.endswith(("ss", "us", "is")) and w.isascii() and w.isalpha() else w
+
+
+# "shall be placed by the door", "shall be calculated by dividing", "shall be disabled by default": the word after 'by' is a place, a method or a manner, not the one who acts, so the sentence is not turned
+# into the active. A participle or a 'by' phrase that is not on these lists is still read as an agent, and a cluster that holds both a passive and an active wording says so.
+_LOCATIVE_PARTICIPLES = frozenset({"placed", "located", "positioned", "situated", "mounted", "installed", "fitted", "stationed", "parked", "seated", "housed", "attached", "secured", "fixed",
+                                   "laid", "hung", "stood", "sited", "anchored", "kept", "held", "set", "put"})
+_NOT_AN_AGENT = frozenset({"default", "hand", "design", "definition", "reference", "convention", "means", "law", "contract", "itself", "themselves"})
+
+
+def _agent_is_one_who_acts(participle: str, agent: list[str]) -> bool:
+    lead = next((w for w in agent if w not in ("the", "a", "an")), "")
+    gerund = agent[0].endswith("ing") and len(agent[0]) > 4          # "by dividing the load" (a method); "by the cooling fan" starts with 'the' and is an agent
+    return participle not in _LOCATIVE_PARTICIPLES and not gerund and lead not in _NOT_AN_AGENT
+
+
 def words(s: str) -> list[str]:
-    return [t.lower() for t in _TOKEN.findall(s)]
+    out: list[str] = []
+    prev_end, prev = 0, ""
+    for m in _TOKEN.finditer(s):
+        t = m.group(0)
+        if t == "A" and prev and prev not in _BEFORE_ARTICLE and not _CLAUSE_PUNCT.search(s, prev_end, m.start()):
+            out.append("A")                    # an identifier, not the article
+        else:
+            out.append(t.lower())
+        prev_end, prev = m.end(), t.lower()
+    return out
 
 
 @dataclass
@@ -83,9 +114,9 @@ class Slots:
 
     def canon_tokens(self) -> frozenset[str]:
         """The words and slot kinds this requirement is found by when looking for similar ones: subject, predicate and condition words, and the kind of each number."""
-        t = {"s:" + w for w in self.subject_key} | {"p:" + w for w in self.predicate_key}
+        t = {"s:" + _loose(w) for w in self.subject_key} | {"p:" + _loose(w) for w in self.predicate_key}
         for c in self.conditions:
-            t |= {"c:" + w for w in c.key}
+            t |= {"c:" + _loose(w) for w in c.key}
         for q in self.quantities:
             t.add("q:" + q.role + ":" + q.key_dim)
         return frozenset(t)
@@ -111,13 +142,18 @@ def _inside(pos: int, spans: list[tuple[int, int]]) -> bool:
     return any(a <= pos < b for a, b in spans)
 
 
+_COPULA_BEFORE = re.compile(r"\b(?:be|is|are|am|was|were|been|being)\s*$", re.I)
+
+
 def _cut(text: str, lo: int, hi: int, spans: list[tuple[int, int]]) -> str:
-    """text[lo:hi] with every span that lies in it removed (replaced by a space)."""
+    """text[lo:hi] with every span that lies in it removed (replaced by a space), and with the 'is' or 'be' that stood right in front of it: 'the mass shall be at least 12 kg' and 'the mass
+    shall not exceed 12 kg' say the same thing about the same words, and the copula only joins the subject to the number."""
     out, p = [], lo
     for a, b in sorted(spans):
         if b <= lo or a >= hi:
             continue
-        out.append(text[p:max(a, lo)])
+        before = text[p:max(a, lo)]
+        out.append(_COPULA_BEFORE.sub("", before))
         out.append(" ")
         p = min(b, hi)
     out.append(text[p:hi])
@@ -133,10 +169,14 @@ def _keyify(tokens: list[str], v: Vocabulary) -> tuple[str, ...]:
     return tuple(out)
 
 
+# words that say which comes first: "the door opens and then the lid closes" is not "the lid closes and then the door opens"
+_ORDER_WORDS = frozenset({"then", "before", "after", "once", "until", "followed", "next", "subsequently", "finally", "first", "second", "third", "afterwards", "later", "earlier", "previously", "thereafter"})
+
+
 def _condition_key(tokens: list[str], v: Vocabulary) -> tuple[str, ...]:
     """The words of a condition. A list of conditions joined only by 'and' means the same in any order ('the lid is open and the rotor is spinning'), so those clauses are sorted;
     a condition that also contains 'or' is kept in the order written, because which 'and' binds which 'or' is not something to guess."""
-    if "and" in tokens and "or" not in tokens:
+    if "and" in tokens and "or" not in tokens and not _ORDER_WORDS.intersection(tokens):
         clauses, cur = [], []
         for t in tokens:
             if t == "and":
@@ -250,7 +290,7 @@ def extract(norm_text: str, v: Vocabulary, mid: str = "", uid: str = "", text: s
         part = pred_raw[1]
         j = pred_raw.index("by", 2)
         agent = pred_raw[j + 1:]
-        if agent and (part.endswith("ed") or part in _IRREGULAR_PARTICIPLES):
+        if agent and (part.endswith("ed") or part in _IRREGULAR_PARTICIPLES) and _agent_is_one_who_acts(part, agent):
             sl.passive = True
             pred_raw = [_IRREGULAR_PARTICIPLES.get(part, part)] + subj_raw + pred_raw[2:j]
             subj_raw = agent

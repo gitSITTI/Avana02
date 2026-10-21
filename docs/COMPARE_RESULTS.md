@@ -6,72 +6,77 @@
 
 **This measures the engine against a corpus its own author generated, and against two sets of pairs labelled by a language model (a Claude model, the same family as the assistant that wrote the engine) that was told not to read the code. It has never been run on a real requirements set.** Nothing here says how the engine will do on yours. What it does show is that the written rules do what the rules page says, that the traps built to catch a careless merge are caught, and, from the two labelled sets, roughly how often an engine of this kind agrees with someone else's reading of a pair, and where it stops reading.
 
-Two numbers carry the honest summary:
+Three things carry the honest summary:
 
-- **It does not merge what differs.** No false merge in the corpus (0 wrongly merged pairs out of 1,017) and none in either labelled set (0 in 250 pairs).
-- **It finds little of what a person would call the same.** On the 100 held-out pairs it agreed with the label on 45. Of the 25 labelled EQUIVALENT it clustered 4. By design: anything it cannot prove equal it leaves as a pair for a person.
+- **No false merge has been found, which is weaker than it sounds.** None in the corpus (0 wrongly merged pairs out of 865) and none in either labelled set (0 in 250 pairs). But the corpus is the engine author's own and the labelled sets hold few pairs written to tempt a merge. An earlier version of this page said "it does not merge what differs". That was false: an adversarial review on 15 October 2026 wrote 30 pairs to make the engine merge things that differ, and the engine then put 22 of them in one cluster (section 4). Those are fixed and each is a test. The engine merges none of the 30 now. The kinds of pair it still merges although they differ are listed in section 6. Expect more.
+- **It finds little of what a person would call the same.** On the 100 held-out pairs it agreed with the label on 45. Of the 25 labelled EQUIVALENT it clustered 4.
+- **It does not show a person everything it did not merge.** Of the 90 held-out pairs the label calls related in some way (anything but UNRELATED), 34 were not shown as a pair at all: the engine said nothing about them. Anything it cannot prove equal is *not* reliably left as a pair for a person; the pairs it lists are the near misses it found, not all of them.
+
+The defaults are the strict ones. Plural words are different words, only spelling variants are synonyms, and 'up to' has no direction. Turning the optional synonym list on (section 2) raises the corpus recall from 66.8 % to 77.3 %; the corpus cannot say whether those synonyms merge anything that differs in your requirements, because its words were written to be matched by them.
 
 ## 1. The three sets, and how each was used
 
 | Set | Who wrote it | Size | How it was used |
 |---|---|---|---|
 | Corpus (`reqin/tests/compare_corpus.py`) | The engine's author, as a generator with a fixed seed: sentence templates, wordings of each, and *traps* (a requirement changed in exactly one way) | 1,390 requirements, 681 meanings, 794 traps | While the engine was being built. Its failures found bugs in the engine, and the engine was fixed. **It is therefore not independent of the engine.** No numeric setting was tuned on it. |
-| Seen pairs (`reqin/tests/labelled_pairs/compare_blind_seen.json`) | A language model, from systems-engineering knowledge and the six label definitions, without reading the code | 150 labelled pairs | Scored, and the disagreements were read and used to fix the engine (several bugs, below). **Not held out.** Kept as a regression floor. |
-| Held-out pairs (`reqin/tests/labelled_pairs/compare_blind_heldout.json`) | The same kind of writer, asked afresh with a different brief and told to write realistic pairs and not to read the repository | 100 labelled pairs | Scored once, after the last change to how requirements are read, compared and typed. **The engine was not changed because of what it showed.** The gaps it found are listed below as gaps. Two later changes (the output checker, and a capital `L` read as litres, found while adding number tests) did not change any of the 100 answers; that was checked by scoring again. |
+| Seen pairs (`reqin/tests/labelled_pairs/compare_blind_seen.json`) | A language model, from systems-engineering knowledge and the six label definitions, without reading the code | 150 labelled pairs | Scored, and the disagreements were read and used to fix the engine (several bugs, below). **Not held out.** Kept as a regression floor. One pair (B136) disagrees only since the review. |
+| Held-out pairs (`reqin/tests/labelled_pairs/compare_blind_heldout.json`) | The same kind of writer, asked afresh with a different brief and told to write realistic pairs and not to read the repository | 100 labelled pairs | Scored once, after the last change to how requirements were read, compared and typed then. The engine was not changed to fit what it showed; the gaps it found are listed below as gaps. **The engine was changed afterwards for another reason**, the adversarial review in section 4. It scored 45 of 100 before that review and 45 of 100 after. The review was not aimed at these pairs, but two of them (H058 and H083) fell during that work, and one fix, ignoring an 'is' or 'be' right in front of a number, was shaped by them. **The set is therefore no longer untouched.** Treat it as a second regression floor, and write a new one before claiming anything about quality. |
 
 How to read the labelled sets: for each pair the engine's answer is EQUIVALENT if both sentences are in one cluster; otherwise the type of the pair line with one sentence on each side (SUBSUMES also has to name the stricter sentence correctly); otherwise *nothing said*, which counts as agreement for a pair labelled UNRELATED and as a miss for any other label. A pair labelled `surface` is one the writer says can be read from the words, numbers and modals alone; `meaning` needs understanding of what the words mean. The writer, not the engine's author, chose those tags.
 
 ## 2. The corpus
 
-|  |  |
-|---|---|
-| Requirements / different meanings / traps | 1,390 / 681 / 794 |
-| Pairs of requirements that mean the same (truth) | 1,295 |
-| Pairs the engine put in one cluster | 1,017 |
-| Right / wrong / missed | 1,017 / 0 / 278 |
-| Precision (of the pairs it merged, how many were right) | 100.0 % |
-| Recall (of the pairs that mean the same, how many it merged) | 78.5 % |
-| B-cubed precision / recall (per requirement, so one big cluster does not dominate) | 100.0 % / 89.4 % |
-
-**Recall depends almost entirely on whether the words are on the vocabulary.** The corpus has two kinds of wordings: those that use only words the engine's vocabulary knows (spelling, abbreviations and synonyms the author put in the list) and those that use synonyms and abbreviations the author deliberately left out of it. Of the first kind the engine joined 364/364 = 100 % (95 % interval 99 to 100 %). Of the second kind: 7/82 = 9 % (95 % interval 4 to 17 %). So the corpus says the vocabulary is the limit. The in-vocabulary figure is not a measure of the engine on real wording: the corpus's word lists were written by the same person who wrote the vocabulary, and that half of the corpus was built to be matched by it.
-
-Recall by the way a meaning was reworded (a wording can have several; a wording that uses words outside the vocabulary counts under `syn_out` or `abbr_out`):
-
-| Reworded by | joined with the plain wording | share |
+|  | default vocabulary | with the optional starter synonyms |
 |---|---|---|
-| abbr_in | 54/60 | 90.0 % |
-| abbr_out | 50/73 | 68.5 % |
-| comp | 50/58 | 86.2 % |
-| cond_first | 23/25 | 92.0 % |
-| det | 88/97 | 90.7 % |
-| modal | 67/74 | 90.5 % |
-| noise | 104/114 | 91.2 % |
-| numwords | 20/24 | 83.3 % |
-| passive | 90/97 | 92.8 % |
-| syn_in | 71/79 | 89.9 % |
-| syn_out | 32/92 | 34.8 % |
-| units | 47/54 | 87.0 % |
+| Requirements / different meanings / traps | 1,390 / 681 / 794 | 1,390 / 681 / 794 |
+| Pairs of requirements that mean the same (truth) | 1,295 | 1,295 |
+| Pairs the engine put in one cluster | 865 | 1,001 |
+| Right / wrong / missed | 865 / 0 / 430 | 1,001 / 0 / 294 |
+| Precision (of the pairs it merged, how many were right) | 100.0 % | 100.0 % |
+| Recall (of the pairs that mean the same, how many it merged) | 66.8 % | 77.3 % |
+| B-cubed precision / recall (per requirement, so one big cluster does not dominate) | 100.0 % / 84.0 % | 100.0 % / 88.7 % |
 
-The traps are requirements derived from another by changing one thing. The question is whether the engine says the right type for the pair (the base wording, the trap wording), and for SUBSUMES which one is stricter. Traps worded with words outside the vocabulary are not typed (the engine cannot be expected to relate them) and are left out of this table (46 of them). `plain` is the trap in its plain wording, `varied` is the trap reworded in the ways above.
+The starter synonyms (`reqin compare-vocab FILE --starter` writes them) are display/show, record/log, enable/activate and a few more. Each one says two words mean the same everywhere in a project's requirements, and some do not ('record' and 'log' are also nouns), so they are off unless a project turns them on. **The corpus cannot judge them**: its synonym wordings were written to be matched by exactly this list, so the second column is what the engine does when the vocabulary is right for the corpus, not evidence that the list is right for anything else. Before the review the same words were in the default list, and the corpus recall was 78.5 %. The default now scores 66.8 %; with the starter list back it scores 77.3 %. The remaining 1.2 points are the review's other changes (how comparators, units, some passives and a capital `A` are read), which make the engine stricter; the by-transform table below shows where they fall, and they were not measured one at a time. Precision did not move: no wrongly merged pair in the corpus before, and none now.
+
+**Recall depends almost entirely on whether the words are on the vocabulary.** The corpus has two kinds of wordings: those that use only words the engine's vocabulary knows (spelling variants and abbreviations, and with the starter list its synonyms) and those that use synonyms and abbreviations the author deliberately left out of every list. With the default vocabulary, of the first kind the engine joined 326/327 = 100 % (95 % interval 98 to 100 %). Of the second kind (which now includes the synonyms that used to be in the list): 4/119 = 3 % (95 % interval 1 to 8 %). With the starter synonyms the two figures are 361/362 = 100 % (95 % interval 98 to 100 %) and 7/84 = 8 % (95 % interval 4 to 16 %). So the corpus says the vocabulary is the limit. The in-vocabulary figure is not a measure of the engine on real wording: the corpus's word lists were written by the same person who wrote the vocabulary, and that half of the corpus was built to be matched by it.
+
+Recall by the way a meaning was reworded (a wording can have several). `syn_in` and `abbr_in` are the corpus author's names for wordings the *starter* vocabulary covers, so with the default vocabulary the `syn_in` wordings are in fact outside it; `syn_out` and `abbr_out` use words no list covers:
+
+| Reworded by | default: joined | share | starter synonyms: joined | share |
+|---|---|---|---|---|
+| abbr_in | 47/60 | 78.3 % | 54/60 | 90.0 % |
+| abbr_out | 42/73 | 57.5 % | 49/73 | 67.1 % |
+| comp | 44/58 | 75.9 % | 48/58 | 82.8 % |
+| cond_first | 20/25 | 80.0 % | 23/25 | 92.0 % |
+| det | 82/97 | 84.5 % | 87/97 | 89.7 % |
+| modal | 66/74 | 89.2 % | 67/74 | 90.5 % |
+| noise | 97/114 | 85.1 % | 104/114 | 91.2 % |
+| numwords | 17/24 | 70.8 % | 20/24 | 83.3 % |
+| passive | 85/97 | 87.6 % | 89/97 | 91.8 % |
+| syn_in | 33/79 | 41.8 % | 71/79 | 89.9 % |
+| syn_out | 28/92 | 30.4 % | 32/92 | 34.8 % |
+| units | 43/54 | 79.6 % | 45/54 | 83.3 % |
+
+The traps are requirements derived from another by changing one thing. The question is whether the engine says the right type for the pair (the base wording, the trap wording), and for SUBSUMES which one is stricter. Traps worded with words outside the vocabulary are not typed (the engine cannot be expected to relate them) and are left out of this table (67 of them). `plain` is the trap in its plain wording, `varied` is the trap reworded in the ways above.
 
 | Trap (what changed) | plain: right | varied: right |
 |---|---|---|
-| bounds | 22/22 | 8/8 |
+| bounds | 22/22 | 7/7 |
 | bounds-conflict | 11/11 | 5/5 |
-| condition-added | 38/38 | 20/20 |
+| condition-added | 38/38 | 19/19 |
 | condition-changed | 14/14 | 4/4 |
-| condition-dropped | 15/15 | 7/7 |
-| extra-constraint | 33/33 | 15/15 |
-| modal | 60/60 | 26/26 |
-| negation | 68/68 | 26/26 |
-| number | 32/32 | 16/16 |
+| condition-dropped | 15/15 | 5/5 |
+| extra-constraint | 33/33 | 13/13 |
+| modal | 60/60 | 23/23 |
+| negation | 68/68 | 24/24 |
+| number | 32/32 | 15/15 |
 | other-reference | 11/11 | 6/6 |
 | qualifier | 60/60 | 20/20 |
-| subject | 58/58 | 24/24 |
+| subject | 58/58 | 21/21 |
 | swapped | 10/10 | 0/0 |
-| unit | 15/15 | 10/10 |
-| unstated | 29/29 | 11/11 |
-| verb | 56/56 | 18/18 |
+| unit | 15/15 | 8/8 |
+| unstated | 29/29 | 10/10 |
+| verb | 56/56 | 15/15 |
 
 Two groups of kinds in that table are weaker tests than the rest. For `qualifier`, `verb` and `other-reference` the only expectation is that the pair is not EQUIVALENT (not in one cluster); any other answer, or none, counts as right. For `swapped` and `subject` the expectation is UNRELATED, which the engine meets by saying nothing or by listing a near miss with a different subject; it passes when it makes no stronger claim. The other kinds need the exact type, and for SUBSUMES the stricter side.
 
@@ -82,7 +87,7 @@ What this does not show. The expected type of each trap is the generator author'
 
 ## 3. Pairs labelled by someone else
 
-### Held-out set: 100 pairs, scored once
+### Held-out set: 100 pairs (scored once, then the engine changed: see section 1)
 
 | Pairs | engine agrees with the label |
 |---|---|
@@ -94,7 +99,7 @@ What this does not show. The expected type of each trap is the generator author'
 
 | Labelled as | pairs | says EQUIVALENT | VARIANT | SUBSUMES | CONFLICT | COMPLEMENTARY | UNRELATED | says nothing |
 |---|---|---|---|---|---|---|---|---|
-| **EQUIVALENT** | 25 | 4 | 5 | . | . | . | . | 16 |
+| **EQUIVALENT** | 25 | 4 | 4 | . | . | . | . | 17 |
 | **VARIANT** | 20 | . | 13 | 2 | . | . | . | 5 |
 | **SUBSUMES** | 20 | . | 10 | 9 | . | . | . | 1 |
 | **CONFLICT** | 15 | . | 2 | . | 5 | . | . | 8 |
@@ -109,10 +114,10 @@ What the engine said, and how often the label agreed:
 | CONFLICT | 5 | 5 | 100.0 % |
 | SUBSUMES | 11 | 9 | 81.8 % |
 | COMPLEMENTARY | 4 | 4 | 100.0 % |
-| VARIANT | 33 | 13 | 39.4 % |
-| UNRELATED or nothing said | 43 | 10 | 23.3 % |
+| VARIANT | 32 | 13 | 40.6 % |
+| UNRELATED or nothing said | 44 | 10 | 22.7 % |
 
-When the engine commits to a strong claim it has been right on this set: 4 of 4 EQUIVALENT, 5 of 5 CONFLICT, 4 of 4 COMPLEMENTARY, and 9 of 11 SUBSUMES (the two that were not are the label calling it a variant; whenever the label was SUBSUMES and the engine agreed it named the stricter side correctly, 9 of 9). It missed a lot. The two SUBSUMES calls the label disagreed with are the rule `COND-REGION`: 'when below 5 degrees C' against 'when below 0 degrees C'. The rule says the wider trigger is the stricter requirement, which is true as logic; both labels call it a variant because a person would ask which threshold was meant. A reasonable person may side with the label; the pair is typed SUBSUMES and not marked for review.
+When the engine commits to a strong claim it has been right on this set: 4 of 4 EQUIVALENT, 5 of 5 CONFLICT, 4 of 4 COMPLEMENTARY, and 9 of 11 SUBSUMES (the two that were not are the label calling it a variant; whenever the label was SUBSUMES and the engine agreed it named the stricter side correctly, 9 of 9). It missed a lot, and not only by merging too little: 34 of the 90 pairs the label calls related were not shown as any pair. With the optional starter synonyms the same set scores 45 of 100 (default: 45), so those synonyms make no difference here. The two SUBSUMES calls the label disagreed with are the rule `COND-REGION`: 'when below 5 degrees C' against 'when below 0 degrees C'. The rule says the wider trigger is the stricter requirement, which is true as logic; both labels call it a variant because a person would ask which threshold was meant. A reasonable person may side with the label; the pair is typed SUBSUMES and not marked for review.
 
 Why it disagreed (the cause of each is a reading by the engine's author; every one is listed in the appendix):
 
@@ -137,28 +142,28 @@ Of the 60 pairs the writer called `surface` the engine agreed on 37. The misses 
 | Pairs | engine agrees with the label |
 |---|---|
 | meaning | 11/45 = 24 % (95 % interval 14 to 39 %) |
-| surface | 94/105 = 90 % (95 % interval 82 to 94 %) |
-| both | 105/150 = 70 % (95 % interval 62 to 77 %) |
+| surface | 93/105 = 89 % (95 % interval 81 to 93 %) |
+| both | 104/150 = 69 % (95 % interval 62 to 76 %) |
 
 | Labelled as | pairs | says EQUIVALENT | VARIANT | SUBSUMES | CONFLICT | COMPLEMENTARY | UNRELATED | says nothing |
 |---|---|---|---|---|---|---|---|---|
-| **EQUIVALENT** | 35 | 24 | 2 | . | . | . | . | 9 |
+| **EQUIVALENT** | 35 | 23 | 3 | . | . | . | . | 9 |
 | **VARIANT** | 30 | . | 27 | . | . | . | . | 3 |
-| **SUBSUMES** | 25 | . | 7 | 14 | . | . | 1 | 3 |
-| **CONFLICT** | 25 | . | 7 | . | 12 | . | . | 6 |
+| **SUBSUMES** | 25 | . | 7 | 14 | . | . | . | 4 |
+| **CONFLICT** | 25 | . | 8 | . | 12 | . | . | 5 |
 | **COMPLEMENTARY** | 15 | . | 3 | . | . | 8 | . | 4 |
-| **UNRELATED** | 20 | . | . | . | . | . | 1 | 19 |
+| **UNRELATED** | 20 | . | . | . | . | . | 2 | 18 |
 
 | The engine said | times | label agreed | share |
 |---|---|---|---|
-| EQUIVALENT | 24 | 24 | 100.0 % |
+| EQUIVALENT | 23 | 23 | 100.0 % |
 | CONFLICT | 12 | 12 | 100.0 % |
 | SUBSUMES | 14 | 14 | 100.0 % |
 | COMPLEMENTARY | 8 | 8 | 100.0 % |
-| VARIANT | 46 | 27 | 58.7 % |
-| UNRELATED or nothing said | 46 | 20 | 43.5 % |
+| VARIANT | 48 | 27 | 56.2 % |
+| UNRELATED or nothing said | 45 | 20 | 44.4 % |
 
-**Do not read the surface figure here as a measure.** The disagreements in this set were read and the engine was changed to fix those that were bugs (below), so the 89.5 % on `surface` pairs is what the engine scores on pairs it was fixed against. The same engine scored 61.7 % on the same kind of pair it had not seen. The first is the figure to distrust; the second is closer to what to expect. The number of agreements before the first fix was not written down.
+**Do not read the surface figure here as a measure.** The disagreements in this set were read and the engine was changed to fix those that were bugs (below), so the 88.6 % on `surface` pairs is what the engine scores on pairs it was fixed against. The same engine scored 61.7 % on the same kind of pair it had not seen. The first is the figure to distrust; the second is closer to what to expect. The number of agreements before the first fix was not written down. Before the adversarial review the set agreed on 105 of 150; now 104 (with the starter synonyms: 104). The one pair that fell (B136) is the 'up to' decision. The engine did not show 25 of the 130 seen pairs the label calls related.
 
 | Cause | pairs | What it means |
 |---|---|---|
@@ -169,6 +174,7 @@ Of the 60 pairs the writer called `surface` the engine agreed on 37. The misses 
 | `neg-cond` | 1 | A negation with a different condition is a variant by the written rule `NEG-COND`; the label says conflict. |
 | `negated-bound` | 1 | The direction of a bound under 'not' is not read (rule `Q-NEGATED`). |
 | `range` | 1 | The direction of a range is not read (rule `Q-RANGE`): the engine says the numbers differ, never which range is stricter. |
+| `up-to` | 1 | 'Up to 1000 kg' is not read as an upper bound, because 'up to' can also name a capacity ('shall support up to 100 users'). 'Not more than 1000 kg' against 'up to 1000 kg' is therefore a variant by the rule `Q-UNSTATED`, where the label says equivalent. |
 
 ## 4. What changed while this was measured
 
@@ -179,6 +185,38 @@ Found while writing the rule tests, after the held-out set had been requested an
 Found after the held-out set was scored (none of its 100 answers changed): `check-compare` did not notice that a dataset had changed since the output was made, and a capital `L` was not read as litres, so "5 L" and "5000 ml" were different quantities. Neither was found by a labelled pair.
 
 One setting moved: `tau_pair` from 0.6 to 0.5, after a four-word toy example fell between the two, and before the corpus was measured. It only decides which pairs of *different* wordings are listed; it never changes a cluster or a type.
+
+### The adversarial review of 15 October 2026
+
+A review written to break the engine, not to measure it, found that the headline of an earlier version of this page ("it does not merge what differs") was false. It was true of the pairs the engine had been tested on and of nothing wider. The review wrote 30 pairs designed to be merged although they differ. The engine as it then was put 22 of them in one cluster. Each is a case in `reqin/tests/test_compare.py` (`NEVER_EQUIVALENT`, `REVIEW_TYPED`, `QUANTITY_CASES`), and most fixes have a mutant in `tools/mutation/compare.py` that fails when the fix is taken out. What it merged:
+
+- **Words that were ignored although they carry meaning.** `is`, `be`, `also` and `then` were on the ignore list, so "shall be open" and "shall open", "is notified" and "notify", "shall not also open" and "shall not open", the country codes `BE` and `IS`, and "stop when A and then B" and "stop when B and then A" were each one wording. A capital `A` was read as an article ("Pump A" and "the pump").
+- **Text the engine could not read, treated as empty.** Anything outside the letters a to z and the digits (Greek, Cyrillic, Chinese) was dropped, so two requirements written in such a script, or differing only by a Greek letter, had the same empty key.
+- **Numbers and units.** `mHz` and `MHz`, `mPa` and `MPa` (case was folded), `1 000 s` and `1 000 ms`, `0,5` and `0,05` (a decimal comma), firmware `2.10` and `2.1` (read as one number), "5 V and 10 V" and "5 V to 10 V" (a list read as a range), and two twenty-digit numbers that differ at the end (rounded to one float).
+- **Words.** `taped` and `tapped`, `plane` and `plan` (the stemmer dropped the e a suffix hides), `log` and `record`, `enable` and `activate`, `display` and `show` (synonyms that only overlap in meaning), and "monitor the pump" and "monitor the pumps".
+- **A passive that was not one.** "The relay shall be placed by the door" and "The door shall place the relay": a place after `by` was read as the agent.
+
+It also *typed* some pairs wrongly without merging them: "at least 3 of the sensors" against "at least 5" was read as a condition, "unless the level exceeds 80" against "90" as a trigger region, "up to 10 A" against "up to 5 A" and "under 3 conditions" against "under 5" as bounds, and a number conflict between two requirements about different situations, or with different modals, as a CONFLICT. Around the engine: text such as `<5 V ... >3 V` was removed as if it were markup; `check-compare` accepted a folder whose files had been edited together with their checksums (it now has `--recompute`, which runs the engine again and requires the same bytes); a very long or deeply nested requirement took far too long to compare, and a number too large for a float could be written as `Infinity`, which is not JSON.
+
+|  | before the review | after |
+|---|---|---|
+| Probe pairs merged that differ | 22 of 30 | 0 of 30 |
+| Corpus: wrongly merged pairs | 0 | 0 |
+| Corpus: recall, default vocabulary | 78.5 % | 66.8 % |
+| Corpus: recall, with the optional starter synonyms | (they were the default) | 77.3 % |
+| Seen pairs: agreements | 105 of 150 | 104 of 150 |
+| Held-out pairs: agreements | 45 of 100 | 45 of 100 |
+
+The "before" column was measured once, on the engine as it was, and is not regenerated. The corpus recall fell, and so did the number of probes merged: the engine now merges less, which was the aim, and finds less of what a person would call the same. **Six decisions were taken to get there. They are the author's, made on made-up evidence, and are yours to reverse:**
+
+1. Plural words are different words ("the pump" and "the pumps" are one pump and every pump). To fold them, set `"fold_plurals": true` in the vocabulary file.
+2. By default only spelling variants are synonyms (initialise/initialize). The overlapping ones (display/show, record/log, enable/activate, ...) are in `STARTER_SYNONYMS`, for a project to copy what fits (`reqin compare-vocab FILE --starter`).
+3. 'Up to' has no direction: it is a limit in "a delay of up to 5 s" and a capacity in "support up to 100 users". It costs the seen pair B136, and it cannot be switched back.
+4. A passive is still merged with its active when what follows `by` looks like an agent. The cluster says "some members are active and some passive" so a person sees it. A place, a manner ("by default") and a method ("by dividing ...") are not agents.
+5. A bare number after under, below or above ("under 3 conditions"), and a version-like number ("2.10"), is compared as written and not as a bound.
+6. A negation with numbers that differ ("shall not open within 2 s" against "shall open within 10 s") is a variant (`Q-NEGATED`), and a number conflict is only written when the conditions and the modals are equal.
+
+What the review did not do: it was written by the same family of model as the engine, from the engine's source and a list of what such engines usually get wrong; it was 30 pairs and a handful of later ones, not a search; and nobody has run the engine on a requirement the review did not imagine.
 
 ## 5. Where the rules came from
 
@@ -191,16 +229,16 @@ One setting moved: `tau_pair` from 0.6 to 0.5, after a four-word toy example fel
 | `COND-ABSENT` | SUBSUMES | adapted | The report says a dropped condition downgrades EQUIVALENT to VARIANT or SUBSUMES. Choosing SUBSUMES, with the unconditional requirement as the stricter, is the author's. |
 | `COND-DIFF` | VARIANT | research | 'A different trigger or state means not duplicate'; VARIANT is 'a slot value differs (... condition)'. |
 | `COND-VALUE` | VARIANT | made up | Same condition words with a different number. |
-| `COND-REGION` | SUBSUMES | made up | A wider trigger region is the stricter requirement. Two labels written independently called such pairs VARIANT (held-out H045, H088). |
+| `COND-REGION` | SUBSUMES | made up | A wider trigger region is the stricter requirement. Read only for 'when', 'if' and 'while': for 'after', 'before', 'unless', 'until' the engine says only that the numbers differ. Two labels written independently called such pairs VARIANT (held-out H045, H088). |
 | `Q-SUBSUMES` | SUBSUMES | research | The report's comparator-direction rule: 'within 2 s' satisfies 'within 5 s'; for a minimum the larger number is the stricter. |
-| `Q-CONFLICT` | CONFLICT | research | CONFLICT includes 'incompatible values for one quantity'. |
+| `Q-CONFLICT` | CONFLICT | research | CONFLICT includes 'incompatible values for one quantity'. Not written when the conditions or the modals differ: two requirements about different situations can both hold. |
 | `Q-BOUNDS` | COMPLEMENTARY | adapted | COMPLEMENTARY is 'jointly specify one behaviour'. Reading a lower and an upper bound of one quantity as that is the author's. |
-| `Q-UNSTATED` | VARIANT | made up | A number with no stated bound cannot be called stricter or looser. |
+| `Q-UNSTATED` | VARIANT | made up | A number with no stated bound cannot be called stricter or looser. 'Up to' counts as no stated bound (it is a limit in 'a delay of up to 5 s' and a capacity in 'support up to 100 users'), and so does a bare count after 'under' or 'above' ('under 3 conditions'). |
 | `Q-TOLERANCE` | VARIANT | adapted | The report lists tolerance among the slots whose difference makes a VARIANT. Not applying a tolerance to a bound, and so never calling such a pair a conflict, is the author's. |
 | `Q-TOLERANCE-TIGHTER` | SUBSUMES | made up | Two tolerances on the same value: the smaller is stricter. |
 | `Q-EXTRA` | SUBSUMES | adapted | SUBSUMES is 'A is stricter or adds a constraint'. Reading an extra bounded number as the added constraint is the author's. |
 | `Q-EXTRA-UNSTATED` | VARIANT | made up | An extra number with no bound is a variant. |
-| `Q-NEGATED` | VARIANT | made up | Added after a labelled pair showed that the direction of a bound flips under 'shall not'. The engine gives up on the direction instead of reading it. |
+| `Q-NEGATED` | VARIANT | made up | Added after a labelled pair showed that the direction of a bound flips under 'shall not'. The engine gives up on the direction instead of reading it. Also used when only one side is negated and the numbers differ: 'shall not open within 2 s' and 'shall open within 10 s' are not a contradiction. |
 | `Q-RANGE` | VARIANT | made up | Added after a labelled pair showed that a wider range can be the stricter or the looser requirement depending on meaning. The engine gives up on the direction. |
 | `Q-MULTI` | VARIANT | made up | Several numbers of one kind that cannot be matched one to one. |
 | `MIXED` | VARIANT | made up | Stricter in one slot and looser in another. |
@@ -221,11 +259,14 @@ The machinery around the rules:
 | Which member to show first | adapted | The report proposes baseline, then authority, centrality, completeness and quality. Here: baseline, approved status, filled fields, real id, lowest id. The report found no evidence for any such rule. |
 | The modal, number and condition checks as equality in the key | adapted | The report has them as vetoes on an AI judge. Here they are part of what 'equal' means, so no model is needed to enforce them. |
 | Unit tables, comparator phrases, number words, irregular verbs, the vocabulary and the stemmer | made up | Written lists, chosen by the author, owner-editable through `--vocab` for the vocabulary only. |
+| What is off by default: plural folding (`fold_plurals`) and every synonym that is not a spelling variant (`reqin compare-vocab --starter`) | made up | Turned off after the adversarial review showed they merged requirements that differ. A project that wants them writes them into its own vocabulary file. |
 | The settings `tau_pair`, `max_posting`, `max_family`, `max_related` | made up | None tuned on the corpus below. `tau_pair` was moved from 0.6 to 0.5 once, after one four-word example and before any measurement. |
 
 "Research" means the report states it; it does not mean anyone has shown it right on real requirements. The report itself says no study validates slot-wise comparison against human judgements of equivalence.
 
-## 6. Known gaps (found by the held-out set, deliberately not fixed)
+## 6. Known gaps (deliberately not fixed)
+
+### Found by the held-out set
 
 These are the surface-readable cases the held-out set showed the engine cannot read. They were left alone so that the set stays a measure of an engine that had not seen it. Each fix should be made, and then measured on a new set written afresh.
 
@@ -240,7 +281,14 @@ These are the surface-readable cases the held-out set showed the engine cannot r
 - **Two labels call a wider trigger region a variant where the written rule `COND-REGION` says it is the stricter requirement. Not a slip in the code, a disagreement about the rule.** (2 pair(s): H045, H088)
 - **Words that mean the same but are not on the vocabulary, or one extra word ('all' against 'any').** (8 pair(s): H014, H022, H032, H043, H086, H087, H091, H094)
 
-And what the engine does not attempt at all, so no set could show it: paraphrase and anything that needs the meaning of the words (32 of the 40 held-out `meaning` pairs it missed), another language, the hierarchy and links between requirements, and several sentences in one requirement. The list of limits is also at the end of [`COMPARE_FORMAT.md`](COMPARE_FORMAT.md).
+### Limits the adversarial review found and left
+
+- **Case is ignored, except in the units on the table.** "pump P1" and "pump p1", and "5 Foo" and "5 foo" for a unit the table does not know, are one wording. A project where two identifiers differ only by case will see them merged.
+- **A passive `by` phrase that names a means can still look like an agent.** "The data shall be sent by encrypted link" and "Encrypted link shall send the data" are merged. A place, a manner and a method are recognised; other uses of `by` may not be. The cluster is marked as mixing active and passive.
+- **A relative clause is read as a condition.** "The logger shall store the time when the fault occurred" against "The logger shall store the time" is typed `COND-ABSENT`, SUBSUMES, with the unconditional sentence named stricter. It is never merged, but the type and the direction are a guess.
+- **Several sentences in one requirement** are compared as written, so the same two sentences in another order are not merged.
+
+And what the engine does not attempt at all, so no set could show it: paraphrase and anything that needs the meaning of the words (32 of the 40 held-out `meaning` pairs it missed), another language, and the hierarchy and links between requirements. The list of limits is also at the end of [`COMPARE_FORMAT.md`](COMPARE_FORMAT.md).
 
 ## 7. How big it can get
 
@@ -252,7 +300,8 @@ Measured once on one machine (a shared cloud container), by `reqin/tests/compare
 - The labels in both labelled sets were written by a language model of the same family as the one that wrote the engine. They are not human judgements and share this family's habits of reading. No person has labelled a pair for this engine.
 - The held-out set is 100 pairs. The intervals above are wide, and one set is one draw.
 - The output format ([`COMPARE_FORMAT.md`](COMPARE_FORMAT.md)) has not been read by a person other than its author, and no screen uses it yet.
-- The vocabulary is a short starting list chosen by the author and measured on nothing real.
+- The vocabulary is a short starting list chosen by the author and measured on nothing real. The six decisions in section 4 that make the engine stricter were the author's; nobody who owns real requirements has said whether they are the right defaults.
+- The claim "no false merge" rests on a corpus the author generated, 250 labelled pairs, and 30 pairs written by a review that found 22 faults the other two had not. It is not evidence about a real set.
 - Languages other than English, and requirements in table or diagram form, were not tried.
 
 ## Appendix A: every disagreement in the held-out set
@@ -290,7 +339,7 @@ Measured once on one machine (a shared cloud container), by `reqin/tests/compare
 - **H020** (meaning): label CONFLICT; engine said nothing. Cause: needs-meaning.
   - A: The conveyor shall run at a constant speed.
   - B: The conveyor speed shall be adjusted continuously according to the load.
-- **H022** (surface): label EQUIVALENT; engine VARIANT. Cause: different-words.
+- **H022** (surface): label EQUIVALENT; engine said nothing. Cause: different-words.
   - A: The battery pack shall operate at ambient temperatures from -20 degrees C to 60 degrees C.
   - B: The battery pack shall operate across an ambient temperature range of -20 degrees C to 60 degrees C.
 - **H025** (meaning): label EQUIVALENT; engine said nothing. Cause: needs-meaning.
@@ -452,7 +501,7 @@ Measured once on one machine (a shared cloud container), by `reqin/tests/compare
 - **B033** (meaning): label EQUIVALENT; engine said nothing. Cause: needs-meaning.
   - A: On loss of power, the robot arm shall keep its pose.
   - B: The robot arm shall hold its position when power is lost.
-- **B035** (surface): label CONFLICT; engine said nothing. Cause: different-words.
+- **B035** (surface): label CONFLICT; engine VARIANT. Cause: different-words.
   - A: The logger shall not overwrite any records when memory is full.
   - B: The logger shall overwrite the oldest records when memory is full.
 - **B038** (meaning): label COMPLEMENTARY; engine VARIANT. Cause: needs-meaning.
@@ -545,9 +594,12 @@ Measured once on one machine (a shared cloud container), by `reqin/tests/compare
 - **B121** (meaning): label SUBSUMES (a stricter); engine VARIANT. Cause: needs-meaning.
   - A: The ground station shall never send a command without operator confirmation.
   - B: The ground station shall not send a shutdown command without operator confirmation.
-- **B130** (meaning): label SUBSUMES (a stricter); engine UNRELATED. Cause: needs-meaning.
+- **B130** (meaning): label SUBSUMES (a stricter); engine said nothing. Cause: needs-meaning.
   - A: All interfaces of the controller shall be galvanically isolated.
   - B: The CAN interface of the controller shall be galvanically isolated.
+- **B136** (surface): label EQUIVALENT; engine VARIANT. Cause: up-to.
+  - A: The lift shall carry a load of not more than 1000 kg.
+  - B: The lift shall carry a load of up to 1000 kg.
 - **B137** (meaning): label COMPLEMENTARY; engine said nothing. Cause: needs-meaning.
   - A: The analyser shall stop a running measurement when the lid is opened.
   - B: The analyser shall start a measurement only after the lid is closed.
