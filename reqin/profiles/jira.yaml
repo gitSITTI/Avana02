@@ -1,0 +1,17 @@
+# Jira Cloud / Data Center / Server. Connector: jira.
+# Raw fields: key, id, project, project_name, summary, description, status, issuetype, priority, labels, parent, created, updated, resolution, plus every
+# other field you asked for under its id (customfield_NNNNN) or under the name you gave it with field_names / resolve_field_names.
+# CONFIRM BEFORE TRUSTING: `reqin sample jira+https://site.atlassian.net --opt jql='project = ABC' ...` and read the field names it shows.
+#   * description is plain text (Cloud, api_version 3: flattened from Atlassian Document Format) or the author's wiki markup (api_version 2, kept as written).
+#   * Many teams write the requirement in the SUMMARY and leave the description empty, so summary is the fallback. Remove it if you want an issue with no
+#     description to be rejected (with a reason) instead of read as its title.
+#   * Read only the issue types that are requirements: put that in the JQL (issuetype = Requirement) or filter here:
+#         where:
+#           issuetype: {regex: "^(Requirement|Epic)$"}
+#   * Your requirement id is probably the issue KEY. If you keep a separate requirement id in a custom field, name that field (field_names) and add it first.
+profile: jira
+adapter: jira
+namespace: JIRA          # set to your project key and keep it stable across re-imports: it is part of every MID
+fields:
+  uid:  {from: ["key"]}
+  text: {from: ["description", "summary"]}

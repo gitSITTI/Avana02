@@ -116,7 +116,7 @@ def ingest(src: Source, profile: Profile | None = None, adapter: Adapter | None 
     clash = [m for m, c in mids.items() if c > 1]
     if clash:
         warnings.append(f"{len(clash)} MID collisions: two records share the same native ID; check the profile's uid rule")
-    unresolved = sum(1 for l in links if l.target_mid is None)
+    unresolved = sum(1 for l in links if l.source_mid is None or l.target_mid is None)     # either end: a design that satisfies a requirement is the usual outside end
     if unresolved:
         warnings.append(f"{unresolved} links point outside this import (kept by UID)")
     if not raws:

@@ -12,6 +12,9 @@ These rules are enforced HERE, once, so no individual connector can forget them:
 * Every request is recorded in an audit list (method, URL with secrets removed, status, bytes) that the CLI
   can write out with --audit: this is what you hand to IT security to show what the connector touched.
 * Bounded: response size, request count and page count are capped, so a wrong setting cannot run forever.
+* Polite: a custom User-Agent, back-off on 429 and 5xx, and a server's "retry after" (header, or the JSON body some vendors use) is
+  obeyed up to a cap; a server that asks for longer than the cap is not waited for.
+* XML from a server or a file is parsed without DOCTYPE or entity declarations (`safe_xml`).
 """
 from __future__ import annotations
 
@@ -25,11 +28,14 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping, Protocol
 
 SENSITIVE_PARAMS = {"token", "access_token", "accesstoken", "key", "apikey", "api_key", "password", "pwd", "secret", "auth", "sig", "signature"}
 _HEADER_NAME = re.compile(r"^[A-Za-z0-9!#$%&'*+.^_`|~-]+$")
+_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,31}$")
+USER_AGENT = "reqin-connector/0.2 (read-only; GET only)"
 
 
 class ConnectError(RuntimeError):
@@ -112,7 +118,8 @@ def load_auth_hook(spec: str) -> Callable[[dict, Mapping[str, str]], dict[str, s
 def auth_from_options(options: Mapping[str, Any], env: Mapping[str, str] | None = None) -> tuple[dict[str, str], set[str]]:
     """Build request headers from options. Returns (headers, secret values to scrub from messages).
 
-    token_env=NAME                       -> Authorization: Bearer <value of $NAME>
+    token_env=NAME                       -> Authorization: Bearer <value of $NAME>   (token_scheme=Token sends "Authorization: Token <value>", which
+                                            Teamwork Cloud's REST API and some others use instead of Bearer)
     basic_user_env=U basic_password_env=P-> Authorization: Basic base64(user:password)
     cookie_env=NAME                      -> Cookie: <value of $NAME>   (a session cookie from an authenticated session: pilots only)
     auth_hook=pkg.mod:func               -> headers returned by your function (see load_auth_hook)
@@ -121,13 +128,16 @@ def auth_from_options(options: Mapping[str, Any], env: Mapping[str, str] | None 
     env = os.environ if env is None else env
     headers: dict[str, str] = {}
     secrets: set[str] = set()
+    scheme = str(options.get("token_scheme") or "Bearer")
+    if not _SCHEME.match(scheme):
+        raise ConnectError(f"option 'token_scheme' must be one word such as Bearer or Token, got {scheme!r}")
     if options.get("token_env"):
         t = _need_env(str(options["token_env"]), env)
-        headers["Authorization"] = f"Bearer {t}"
+        headers["Authorization"] = f"{scheme} {t}"
         secrets.add(t)
     elif options.get("token"):
         t = str(options["token"])
-        headers["Authorization"] = f"Bearer {t}"
+        headers["Authorization"] = f"{scheme} {t}"
         secrets.add(t)
     elif options.get("basic_user_env"):
         u = _need_env(str(options["basic_user_env"]), env)
@@ -150,6 +160,41 @@ def auth_from_options(options: Mapping[str, Any], env: Mapping[str, str] | None 
     return headers, {s for s in secrets if len(s) >= 4}
 
 
+_RETRY_BODY = re.compile(r"retry[_-]?after[\"'>\s:=]+(\d+(?:\.\d+)?)", re.I)
+
+
+def retry_after_seconds(header: str, body: bytes = b"") -> float | None:
+    """How long the server asked us to wait, in seconds, or None. The HTTP header first (a number of seconds; the HTTP-date form is not
+    read and counts as 'not said'), then a `RetryAfter` value in the first 4 KB of the body, which is where Digital.ai Agility puts it."""
+    h = (header or "").strip()
+    if re.fullmatch(r"\d+(?:\.\d+)?", h):
+        return float(h)
+    m = _RETRY_BODY.search(body[:4096].decode("utf-8", errors="replace")) if body else None
+    return float(m.group(1)) if m else None
+
+
+_DTD = re.compile(rb"<!(?:doctype|entity)", re.I)
+
+
+def has_dtd(raw: bytes) -> bool:
+    """True when the bytes contain a DOCTYPE or ENTITY declaration ANYWHERE. The whole input is searched: a declaration can sit behind a comment of any
+    length, so looking only at the first part of the file lets it through. The price is that a file that merely MENTIONS one inside a comment or a CDATA
+    section is refused too, which is the safe way round."""
+    return _DTD.search(raw) is not None
+
+
+def safe_xml(data: bytes | str, what: str = "the XML") -> ET.Element:
+    """Parse XML from a server or a file. A DOCTYPE or an ENTITY declaration is refused: no requirement export needs one, and they are how
+    entity-expansion and external-entity attacks are written."""
+    raw = data.encode("utf-8") if isinstance(data, str) else data
+    if has_dtd(raw):
+        raise ConnectError(f"{what} has a DOCTYPE or ENTITY declaration; refusing to parse it (no export of requirements needs one)")
+    try:
+        return ET.fromstring(raw)
+    except ET.ParseError as e:
+        raise ConnectError(f"{what} is not well-formed XML ({e})") from None
+
+
 # ---- the real transport -----------------------------------------------------------------------------
 class _SameHostRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ANN001
@@ -166,11 +211,11 @@ class UrllibTransport:
     RETRY = {429, 502, 503, 504}
 
     def __init__(self, timeout: float = 60, ca_bundle: str | None = None, retries: int = 3, backoff: float = 1.0,
-                 max_bytes: int = 512 * 1024 * 1024, sleep: Callable[[float], None] = time.sleep):
+                 max_bytes: int = 512 * 1024 * 1024, sleep: Callable[[float], None] = time.sleep, max_wait: float = 120.0):
         ca = ca_bundle or os.environ.get("REQIN_CA_BUNDLE") or None
         ctx = ssl.create_default_context(cafile=ca) if ca else ssl.create_default_context()
         self._opener = urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx), _SameHostRedirect())
-        self.timeout, self.retries, self.backoff, self.max_bytes, self._sleep = timeout, retries, backoff, max_bytes, sleep
+        self.timeout, self.retries, self.backoff, self.max_bytes, self._sleep, self.max_wait = timeout, retries, backoff, max_bytes, sleep, max_wait
 
     def get(self, url: str, headers: dict[str, str]) -> Response:
         last: Exception | None = None
@@ -180,11 +225,16 @@ class UrllibTransport:
                 with self._opener.open(req, timeout=self.timeout) as r:
                     return Response(r.status, self._hdrs(r.headers), self._read(r), url)
             except urllib.error.HTTPError as e:
+                body = e.read(65536) if e.fp else b""
                 if e.code in self.RETRY and attempt < self.retries:
-                    ra = e.headers.get("Retry-After", "") if e.headers else ""
-                    self._sleep(float(ra) if ra.replace(".", "", 1).isdigit() else self.backoff * 2 ** attempt)
-                    continue
-                return Response(e.code, self._hdrs(e.headers), e.read(65536) if e.fp else b"", url)
+                    asked = retry_after_seconds(e.headers.get("Retry-After", "") if e.headers else "", body)
+                    wait = self.backoff * 2 ** attempt if asked is None else asked
+                    if wait <= self.max_wait:
+                        self._sleep(wait)
+                        continue
+                    # the server wants longer than we are willing to wait: say so instead of hanging
+                    return Response(e.code, {**self._hdrs(e.headers), "x-reqin-retry-after-refused": str(wait)}, body, url)
+                return Response(e.code, self._hdrs(e.headers), body, url)
             except ConnectError:
                 raise
             except (urllib.error.URLError, TimeoutError, OSError) as e:
@@ -262,7 +312,13 @@ class ReadOnlyHttp:
         if resp.status in ok or resp.status in allow:
             return resp
         hint = {401: " (credentials missing or rejected)", 403: " (the account is not allowed to read this: check the read-only service account's permissions)",
-                404: " (not found: check the URL, project or id)"}.get(resp.status, "")
+                404: " (not found: check the URL, project or id)",
+                429: " (rate limited: the server asked the client to slow down; retries are used up, so lower the page size or run later)"}.get(resp.status, "")
+        if resp.status == 400:
+            said = self.scrub(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", resp.text()[:600]))).strip()[:200]
+            hint = " (the server rejected the request: often a name that does not exist, such as an attribute on this type" + (f"; it said: {said!r}" if said else "") + ")"
+        if resp.headers.get("x-reqin-retry-after-refused"):
+            hint = f" (rate limited: the server asked for a wait of {resp.headers['x-reqin-retry-after-refused']} s, longer than max_wait)"
         raise ConnectError(self.scrub(f"GET {self.safe_url(url)} -> HTTP {resp.status}{hint}"), status=resp.status)
 
     def parse_json(self, resp: Response) -> Any:
@@ -285,8 +341,12 @@ def make_http(options: Mapping[str, Any], transport: Transport | None = None, en
     """The one way a connector builds its client: credentials from options, transport from the caller (tests) or real."""
     headers, secrets = auth_from_options(options, env)
     t = transport or UrllibTransport(timeout=opt_int(options, "timeout", 60), ca_bundle=options.get("ca_bundle"),
-                                     retries=opt_int(options, "retries", 3), max_bytes=opt_int(options, "max_bytes", 512 * 1024 * 1024))
-    return ReadOnlyHttp(t, {**(base_headers or {}), **headers}, secrets, max_requests=opt_int(options, "max_requests", 1_000_000))
+                                     retries=opt_int(options, "retries", 3), max_bytes=opt_int(options, "max_bytes", 512 * 1024 * 1024),
+                                     max_wait=float(opt_int(options, "max_wait", 120)))
+    ua = str(options.get("user_agent") or USER_AGENT)
+    if any(c in ua for c in "\r\n"):
+        raise ConnectError("option 'user_agent' must be one line")
+    return ReadOnlyHttp(t, {"User-Agent": ua, **(base_headers or {}), **headers}, secrets, max_requests=opt_int(options, "max_requests", 1_000_000))
 
 
 def next_link(link_header: str | None) -> str | None:

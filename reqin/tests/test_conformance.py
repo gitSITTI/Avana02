@@ -24,6 +24,8 @@ CASES = {
     "doors_csv": ("tabular",    6,     2),     # 2 heading rows have no text: rejected WITH a reason, never dropped silently
     "reqif":     ("reqif",      COUNT, 0),
     "sysml":     ("sysml_text", COUNT, 0),
+    "xmi":       ("sysml1_xmi", COUNT, 0),
+    "mdzip":     ("sysml1_xmi", COUNT, 0),
     "sqlite":    ("sql",        COUNT, 0),
     "docx":      ("docx",       COUNT, 0),
     "pdf":       ("pdf",        COUNT, 0),

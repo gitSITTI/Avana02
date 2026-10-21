@@ -10,9 +10,10 @@ What it checks (structure first, because that is what can be checked honestly):
   2. Folders named data/, private/, exports/ are refused.
   3. Files in fixtures_approved/ must each be named in fixtures_approved/APPROVALS.md (who approved, when, ticket).
   4. Any file over 3 MB is refused (database dumps, bundles, node_modules by accident).
-  5. ALLOW_FILES: a short list of exact paths that are CODE with a blocked extension (today only the DOORS export script,
-     reqin/connectors/doors9/export_requirements.dxl). Only that exact path is exempt from check 1; the size and term checks
-     still apply to it, and a .dxl anywhere else is still refused.
+  5. ALLOW_FILES: a short list of exact paths that are CODE with a blocked extension (today the DOORS export script,
+     reqin/connectors/doors9/export_requirements.dxl, and the two Enterprise Architect query files, reqin/connectors/ea/requirements.sql
+     and links.sql: SELECT statements over table names, no data). Only those exact paths are exempt from check 1; the size and term
+     checks still apply to them, and a .dxl or .sql anywhere else is still refused.
   6. OPTIONAL: your own list of terms (program code names, part-number patterns, document-number prefixes) as regexes.
      Keep that list OUT of the repo: pass it as a masked CI variable FORBIDDEN_TERMS (newline-separated) or a local
      file that is git-ignored. If neither is given the script says so; it does not pretend to have scanned for terms.
@@ -37,7 +38,7 @@ BLOCKED_EXT = {
 }
 # Reviewed code files that happen to carry a blocked extension. Exact repo-relative paths only; never a folder, never a pattern.
 # Adding a path here is a code-review decision: the file must contain a script, not requirements.
-ALLOW_FILES = {"reqin/connectors/doors9/export_requirements.dxl"}
+ALLOW_FILES = {"reqin/connectors/doors9/export_requirements.dxl", "reqin/connectors/ea/requirements.sql", "reqin/connectors/ea/links.sql"}
 BLOCKED_DIRS = {"data", "private", "exports"}
 # The private-term lists (tools/denylist_check.py, and the regex list above) hold exactly the names they exist to hide, so they must never be tracked.
 TERM_LIST_FILES = {".denylist", ".forbidden-terms"}

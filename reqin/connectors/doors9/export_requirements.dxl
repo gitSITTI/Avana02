@@ -2,18 +2,33 @@
 // reqin / DOORS 9.x  --  READ-ONLY export of ONE module to a CSV that reqin reads with profiles/doors_csv.yaml
 //
 // STATUS: UNTESTED INSIDE DOORS. This file has never been run in DOORS (no DOORS exists where it was written). It is built
-//         from patterns in public DXL examples (jazz.net/dxl: Stream out = write(path); out << ...; close(out);
-//         for o in m do { ... o."Absolute Number" ... o."Object Text" }). DXL is strict: expect to fix a compile error or
-//         two the first time you run it. The Python side (reading this CSV shape) IS tested: tests/test_doors9.py.
+//         from patterns in community DXL code on IBM's DXL archive (jazz.net/dxl: pages 41, 1830, 2271, 3296, 3351), which are forum
+//         posts and not the manual. The DXL Reference Manual's function signatures could NOT be read when this was written, so
+//         every call marked [community] below is a pattern seen in that code and every call marked [memory] is recalled and
+//         UNVERIFIED. DXL is strict: expect to fix a compile error or two the first time you run it.
+//         The Python side (reading this CSV shape) IS tested: tests/test_doors9.py.
 //
-// RUN:  DOORS > Tools > Edit DXL..., paste this file, set the TODO(agent) values below, Run.
+// RUN, interactively:  DOORS > Tools > Edit DXL..., paste this file, set the TODO(agent) values below, Run.
+// RUN, unattended:     doors -batch export_requirements.dxl   (documented for headless runs in the DOORS 9.2 API manual; it still needs a
+//                      DOORS client install and a login, and probably a client licence [memory]). Run ONE module per batch job: opening a
+//                      module also opens its link modules hidden, and a loop over many large modules can run out of memory (community advice).
 //
 // READ-ONLY: it opens the module with read() (not edit/share), loops the objects and writes a text file.
 //            It never saves, deletes, creates or modifies anything in DOORS. tests/test_doors9.py scans this file for such calls.
 //
 // OUTPUT COLUMNS (must match what profiles/doors_csv.yaml reads):
-//   Absolute Number, Object Identifier, Object Level, Object Heading, Object Text, Verification Method
-// Heading rows have no Object Text; the profile rejects them WITH a reason, so you can see what was skipped.
+//   Module, Absolute Number, Object Identifier, Object Level, Object Heading, Object Text, Verification Method, Deleted, Links
+// - Absolute Number is unique only INSIDE a module. Module says which one. If you export several modules, give each its own
+//   namespace in the profile, because the identifier prefix may repeat.
+// - Heading rows have no Object Text; the profile rejects them WITH a reason, so you can see what was skipped.
+// - Deleted objects are skipped unless includeDeleted is true; with true they are written and the Deleted column says 1.
+// - Links holds the outgoing links of each object as  <target module path>#<target absolute number>, joined with ";". That form is
+//   NOT a requirement identifier, so a link joins to a requirement in the import only if the target is the same module AND you make
+//   the uid the same form. By default the profile keeps such links with the note "points outside this import (kept by UID)".
+// - Rich text: whether o."Object Text" gives plain text or RTF markup, how tables (cells are separate objects) and OLE objects come
+//   out, and whether pictures are exported, were NOT verified. Look at one module with bold text, a table and a picture first.
+// - Baselines: the DXL manual's contents list has chapters on baselines and baseline sets, but their signatures were not readable.
+//   This script reads the CURRENT version of the module. Add a baseline option only after reading that chapter.
 // =====================================================================================================================
 pragma encoding, "UTF-8"
 
@@ -22,6 +37,13 @@ const string modulePath = "/PROJECT/FOLDER/Module"
 
 // TODO(agent) 2: where to write. With Citrix / remote DOORS this path is on the machine RUNNING DOORS, not your desktop.
 const string outPath = "C:\\Temp\\reqin_doors_export.csv"
+
+// TODO(agent) 3: true writes soft-deleted objects too (Deleted = 1). Default false: they are skipped and counted.
+const bool includeDeleted = false
+
+// TODO(agent) 4: true adds the outgoing links of every object. It opens the link modules and the target modules hidden, which uses
+//   memory; leave false for a first run on a big module.
+const bool includeLinks = true
 
 // Write one CSV field: always quoted, quotes doubled, line breaks kept (the CSV reader handles them).
 void putField(Stream out, string s)
@@ -42,16 +64,33 @@ void comma(Stream out)
     out << ","
 }
 
-// TODO(agent) 3: EXTRA COLUMNS. One extra attribute = one line in HEADER and one pair of lines in writeRow() below.
+// The outgoing links of one object as "<module path>#<absolute number>;..."  [community: for lnk in obj->"*", target lnk, fullName();
+// targetAbsNo(lnk) is [memory]]. Needs the module's links to be loaded, which DOORS does when it opens the module.
+string outgoingLinks(Object o)
+{
+    string result = ""
+    Link lnk
+    for lnk in o->"*" do
+    {
+        ModName_ tm = target lnk
+        if (length(result) > 0) result = result ";"
+        result = result fullName(tm) "#" (targetAbsNo(lnk) "")
+    }
+    return result
+}
+
+// TODO(agent) 5: EXTRA COLUMNS. One extra attribute = one name in HEADER and one pair of lines in writeRow() below.
 //   The attribute must exist in this module under exactly that name, or DOORS stops with an error: run it once with only the
 //   standard columns, then add yours one at a time. Typical: "Rationale", "Allocation", "Status", "Source".
-const string HEADER = "Absolute Number,Object Identifier,Object Level,Object Heading,Object Text,Verification Method\n"
+const string HEADER = "Module,Absolute Number,Object Identifier,Object Level,Object Heading,Object Text,Verification Method,Deleted,Links\n"
 
-void writeRow(Stream out, Object o)
+void writeRow(Stream out, Object o, bool wasDeleted)
 {
+    putField(out, modulePath)
+    comma(out)
     putField(out, o."Absolute Number" "")
     comma(out)
-    putField(out, o."Object Identifier" "")
+    putField(out, identifier(o))
     comma(out)
     putField(out, level(o) "")
     comma(out)
@@ -60,18 +99,23 @@ void writeRow(Stream out, Object o)
     putField(out, o."Object Text" "")
     comma(out)
     putField(out, o."Verification Method" "")
+    comma(out)
+    if (wasDeleted) putField(out, "1")
+    else putField(out, "0")
+    comma(out)
+    if (includeLinks) putField(out, outgoingLinks(o))
+    else putField(out, "")
     out << "\n"
 }
 
-// TODO(agent) 4 (optional): LINKS. Not done here because link syntax is the part most likely to differ per site. Add a column
-//   "Links" holding the identifiers of the objects this one links TO (loop the outgoing links of o), then add to
-//   profiles/doors_csv.yaml:   links: [{kind: trace, from: "Links", direction: out}]
-//   Look at jazz.net/dxl for "outgoing links" examples before writing it.
-
-Module m = read(modulePath, false)
+// [community] trap the error instead of letting a failed read stop the script with a dialog.
+noError()
+Module m = read(modulePath, false, true)      // [community] read(name, display, standard view): not displayed, standard view
+string openError = lastError()
 if (null m)
 {
     print "reqin: cannot open " modulePath " (wrong path, or this account cannot read it)\n"
+    if (length(openError) > 0) print "reqin: DOORS said: " openError "\n"
 }
 else
 {
@@ -85,13 +129,31 @@ else
         out << HEADER
         Object o
         int n = 0
-        for o in m do
+        int skippedDeleted = 0
+        int failed = 0
+        // [community] 'entire' also yields soft-deleted objects, so every object is tested with isDeleted() and counted either way.
+        for o in entire m do
         {
-            writeRow(out, o)
-            n++
+            bool gone = isDeleted(o)
+            if (gone && !includeDeleted)
+            {
+                skippedDeleted++
+            }
+            else
+            {
+                noError()
+                writeRow(out, o, gone)
+                string rowError = lastError()
+                if (length(rowError) > 0)
+                {
+                    failed++
+                    print "reqin: object " (o."Absolute Number" "") ": " rowError "\n"
+                }
+                n++
+            }
         }
         close(out)
-        print "reqin: wrote " n " objects to " outPath "\n"
+        print "reqin: wrote " n " objects to " outPath "; skipped " skippedDeleted " deleted; " failed " rows reported an error\n"
     }
     close(m)
 }

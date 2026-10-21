@@ -9,19 +9,22 @@ import pytest
 import trustme
 
 from reqin.connect import (ConnectError, ReadOnlyHttp, UrllibTransport, auth_from_options, make_http, next_link, opt_dict, opt_int,
-                           opt_list)
+                           opt_list, retry_after_seconds, safe_xml)
 
 
 class _H(BaseHTTPRequestHandler):
     seen: list = []
+    agents: list = []
     flaky = {"n": 0}
     rate = {"n": 0}
+    body_rate = {"n": 0}
 
     def log_message(self, *a):  # silence
         pass
 
     def do_GET(self):  # noqa: N802
         _H.seen.append(("GET", self.path, self.headers.get("Authorization")))
+        _H.agents.append(self.headers.get("User-Agent"))
         if self.path == "/ok":
             return self._send(200, b'{"ok": true}')
         if self.path == "/flaky":
@@ -30,6 +33,11 @@ class _H(BaseHTTPRequestHandler):
         if self.path == "/rate":
             _H.rate["n"] += 1
             return self._send(200 if _H.rate["n"] > 1 else 429, b"{}", {"Retry-After": "2"})
+        if self.path == "/rate-body":      # Digital.ai Agility puts the wait in the body, not in a header
+            _H.body_rate["n"] += 1
+            return self._send(200 if _H.body_rate["n"] > 1 else 429, b'{"error": "rate limit", "RetryAfter": 4}' if _H.body_rate["n"] == 1 else b"{}")
+        if self.path == "/rate-forever":
+            return self._send(429, b"{}", {"Retry-After": "3600"})
         if self.path == "/redirect-same":
             return self._send(302, b"", {"Location": "/ok"})
         if self.path == "/redirect-other":
@@ -71,7 +79,7 @@ def _serve(ctx: ssl.SSLContext | None = None):
 
 @pytest.fixture
 def server():
-    _H.seen.clear(); _H.flaky["n"] = 0; _H.rate["n"] = 0
+    _H.seen.clear(); _H.agents.clear(); _H.flaky["n"] = 0; _H.rate["n"] = 0; _H.body_rate["n"] = 0
     s = _serve()
     yield f"http://127.0.0.1:{s.server_port}"
     s.shutdown()
@@ -180,3 +188,54 @@ def test_link_header_parsing_and_option_helpers():
     assert opt_list({"l": "a, b"}, "l", []) == ["a", "b"] and opt_dict({"d": '{"a": 1}'}, "d") == {"a": 1}
     with pytest.raises(ConnectError, match="JSON object"):
         opt_dict({"d": "nope"}, "d")
+
+
+def test_a_wait_the_server_puts_in_the_body_is_obeyed_and_a_wait_that_is_too_long_is_not(server):
+    sleeps = []
+    t = UrllibTransport(retries=3, backoff=1.0, sleep=sleeps.append, max_wait=60)
+    assert ReadOnlyHttp(t).get(server + "/rate-body").status == 200 and sleeps == [4.0]
+    sleeps.clear()
+    with pytest.raises(ConnectError, match="asked for a wait of 3600.0 s, longer than max_wait") as e:
+        ReadOnlyHttp(t).get(server + "/rate-forever")
+    assert e.value.status == 429 and sleeps == []                # it did not sit for an hour, and it did not retry
+
+
+def test_retry_after_is_read_from_the_header_or_the_body_and_nothing_else():
+    assert retry_after_seconds("7") == 7.0 and retry_after_seconds(" 2.5 ") == 2.5
+    assert retry_after_seconds("Wed, 21 Oct 2026 07:28:00 GMT") is None            # the date form is not read: back-off applies
+    assert retry_after_seconds("", b'{"RetryAfter": 12}') == 12.0 and retry_after_seconds("", b"<e><RetryAfter>9</RetryAfter></e>") == 9.0
+    assert retry_after_seconds("", b'{"retry_after": 3}') == 3.0 and retry_after_seconds("", b"no hint here") is None
+    assert retry_after_seconds("5", b'{"RetryAfter": 99}') == 5.0                     # the header wins
+
+
+def test_the_user_agent_says_what_the_client_is_and_can_be_changed(server):
+    make_http({}).get(server + "/ok")
+    make_http({"user_agent": "acme-sync/1 (ops@example.test)"}).get(server + "/ok")
+    assert _H.agents[0].startswith("reqin-connector/") and "GET only" in _H.agents[0] and _H.agents[1] == "acme-sync/1 (ops@example.test)"
+    with pytest.raises(ConnectError, match="one line"):
+        make_http({"user_agent": "a\r\nX: 1"})
+
+
+def test_a_token_can_be_sent_under_another_scheme_name():
+    h, s = auth_from_options({"token_env": "T", "token_scheme": "Token"}, {"T": "tok-value-1"})
+    assert h == {"Authorization": "Token tok-value-1"} and "tok-value-1" in s
+    assert auth_from_options({"token_env": "T"}, {"T": "tok-value-1"})[0] == {"Authorization": "Bearer tok-value-1"}
+    for bad in ("two words", "Bearer\r\nX: 1", "", "9lives"):
+        if bad:
+            with pytest.raises(ConnectError, match="token_scheme"):
+                auth_from_options({"token_env": "T", "token_scheme": bad}, {"T": "tok-value-1"})
+
+
+def test_xml_with_a_doctype_or_an_entity_is_refused_and_ordinary_xml_is_read():
+    assert safe_xml(b"<a><b x='1'/></a>").find("b").get("x") == "1" and safe_xml("<a/>").tag == "a"
+    bomb = b'<?xml version="1.0"?><!DOCTYPE lolz [<!ENTITY lol "lol"><!ENTITY lol2 "&lol;&lol;">]><a>&lol2;</a>'
+    with pytest.raises(ConnectError, match="DOCTYPE or ENTITY"):
+        safe_xml(bomb, "the export")
+    with pytest.raises(ConnectError, match="DOCTYPE or ENTITY"):
+        safe_xml(b'<?xml version="1.0"?>\n<!ENTITY x SYSTEM "file:///etc/passwd"><a/>')
+    with pytest.raises(ConnectError, match="not well-formed"):
+        safe_xml(b"<a><b></a>")
+    hidden = b'<!--' + b"x" * 70000 + b'--><!DOCTYPE lolz [<!ENTITY lol "lol">]><a>&lol;</a>'        # behind a comment longer than the first 64 KB
+    with pytest.raises(ConnectError, match="DOCTYPE or ENTITY"):
+        safe_xml(hidden)
+    assert safe_xml(b'<!--' + b"x" * 70000 + b'--><a/>').tag == "a"

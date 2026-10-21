@@ -1,5 +1,8 @@
-# DOORS "export to CSV/Excel" with the standard DOORS attributes. Headings (no Object Text) are filtered, by choice.
-# DOORS attribute names are the standard built-ins; your module may add more (verify against your own export).
+# DOORS 9.x "export to CSV/Excel" and the output of connectors/doors9/export_requirements.dxl.
+# Headings (no Object Text) are filtered, by choice. Attribute names are the DOORS built-ins; your module may add more (verify against your own export).
+# The DXL script also writes Module, Deleted and Links. Module and Deleted stay in `extra` (nothing is dropped). Links are kept as
+# "<module path>#<absolute number>"; they join to a requirement in the same import only if you make the uid that same form, so by default
+# they are reported as pointing outside the import. Absolute Number is unique only inside one module: one module per run, one namespace per module.
 profile: doors-csv
 adapter: tabular
 namespace: DEMO-DOORS
@@ -9,3 +12,5 @@ fields:
   uid:          {from: ["Object Identifier", "Absolute Number"]}
   text:         {from: "Object Text", strip_markup: true}
   verification: {from: "Verification Method"}
+links:
+  - {kind: trace, from: "Links", split: ";", direction: out}

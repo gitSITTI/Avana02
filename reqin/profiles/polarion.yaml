@@ -1,0 +1,17 @@
+# Siemens Polarion ALM. Connector: polarion.
+# Raw fields: id (the short work item id, WI-123), _resource_id (project/WI-123), title, description (HTML or text, as stored), description_type,
+# status, type, plus every attribute the server sent, one field each (fields=@all by default).
+# CONFIRM BEFORE TRUSTING: `reqin sample polarion+https://host/polarion --opt project=<id> --opt token_env=NAME` and read the names it shows. The attribute names
+# here are the ones Polarion's work item model is generally known by; the vendor pages this was built from do not list them.
+#   * description is stored as HTML or as plain text; description_type says which. strip_markup removes HTML tags and is harmless on plain text.
+#   * Title is the fallback for work items with no description. Remove it if you want those rejected (with a reason) instead of read as their title.
+#   * A project mixes requirements, test cases, tasks and headings. Read only requirements with the connector's query (query='type:requirement') or here:
+#         where:
+#           type: ["requirement"]
+#   * The short id is unique INSIDE a project. Reading several projects: one source each, each with its own namespace.
+profile: polarion
+adapter: polarion
+namespace: POLARION          # set to your project id and keep it stable across re-imports: it is part of every MID
+fields:
+  uid:  {from: ["id"]}
+  text: {from: ["description", "title"], strip_markup: true}

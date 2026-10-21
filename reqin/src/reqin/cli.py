@@ -31,7 +31,10 @@ URI_HINTS = {
     "docx": "path/to/spec.docx (prose: every record needs human verification)", "pdf": "path/to/spec.pdf (prose: every record needs human verification)",
     "sysml_api": "sysml+https://host:8443/sysmlv2-api --opt project_name=... --opt token_env=NAME",
     "oslc_rm": "oslc+https://host/rm/rootservices --opt project=... --opt cookie_env=NAME", "agility": "agility+https://host/Instance --opt token_env=NAME",
-    "mdzip": "(stub) export ReqIF from MSOSA instead",
+    "sysml1_xmi": "path/to/model.xmi|mdzip  (SysML 1.x / MSOSA model; see adapters/sysml1_xmi.py)",
+    "jira": "jira+https://host --opt jql='project = KEY' --opt token_env=NAME",
+    "polarion": "polarion+https://host/polarion --opt project=ID --opt token_env=NAME",
+    "jama": "jama+https://host --opt project=ID --opt token_env=NAME  (or auth_hook; see connectors/jama)",
 }
 
 

@@ -1,6 +1,6 @@
 # Connectors: reading live systems, and finishing each one against yours
 
-`reqin` reads files (CSV, Excel, ReqIF, SysML text, SQL, Word, PDF) and, through the connectors on this page, three live systems.
+`reqin` reads files (CSV, Excel, ReqIF, SysML text, MSOSA/SysML 1.x model files, SQL, Word, PDF) and, through the connectors on this page, six live systems.
 Every connector is **read-only**, runs **inside your network** with a **read-only service account**, and is built so that your agent can
 do the last mile: the parts only your real server can settle are named settings, not buried code.
 
@@ -11,6 +11,11 @@ do the last mile: the parts only your real server can settle are named settings,
 > | `sysml_api` | SysML v2 REST API (Teamwork Cloud / Magic Collaboration Studio, SysON, Pilot Implementation) | An in-memory fake built from the public API docs and the OMG spec | A real server. Paging style, JSON property names, branch/head lookup, relationship properties |
 > | `oslc_rm` | OSLC RM: DOORS Next, and DOORS 9.x through DOORS Web Access | An in-memory fake built from the OASIS OSLC Query / RM / Config specs and IBM's published discovery steps | A real server. The sign-in (OAuth / form / OIDC), the DNG text property, rootservices details on your version |
 > | `agility` | Digital.ai Agility (VersionOne) REST Data API | An in-memory fake built from the published API docs | A real instance. Relation shape inside `Attributes`, your attribute names, your sign-in |
+> | `jira` | Jira Cloud and Data Center / Server REST: issues and issue links | An in-memory fake built from Atlassian's documented shapes | A real site. Field ids and names, link types and their direction, the Cloud paging end (`isLast`), what your JQL returns |
+> | `polarion` | Siemens Polarion REST v1: work items and their linked work items | An in-memory fake built from Siemens' documented shapes | A real server. REST is off by default; the parameter names `page[size]`, `query`, `sort` and the `links.next` / `meta.totalCount` answers are recalled, not confirmed; which end a role such as `parent` points at |
+> | `jama` | Jama Connect REST: items and relationships | An in-memory fake built from Jama's documented shapes (the 50-item limit included) | A real instance. The `abstractitems` listing, the `$<type id>` field-name suffix, the direction of `fromItem` and `toItem`, the sign-in token |
+> | `sysml1_xmi` | A SysML 1.x / UML model as XMI, or an MSOSA / Cameo project file (`.mdzip`) | **Fixtures written from the vendor's documentation (maturity `fixture-tested`)**, never a real project | A real MSOSA file. Namespaces, how a stereotype application sits next to its class, how documentation and relationships are stored |
+> | `sql` with the EA pack | A Sparx Enterprise Architect DBMS repository, through `connectors/ea/*.sql` | A tiny made-up SQLite database shaped like the recalled tables | A real repository. The table and column names are **recalled, not read**; check them first (see section 11) |
 > | DOORS 9 export | `connectors/doors9/export_requirements.dxl` writes a CSV; `tabular` reads it | The CSV side, in tests | **The DXL has never run in DOORS** |
 >
 > `fake-server-tested` means exactly that: the connector's logic (paging, joining, hierarchy, safety) works against a fake of the documented
@@ -142,7 +147,106 @@ reqin sample agility+https://www.example.com/MyInstance --opt token_env=AGILITY_
 
 **Agent prompt.** "Finish the `agility` connector against our Agility instance. Read `reqin/CONNECTORS.md` sections 1, 2 and 6 and `src/reqin/adapters/agility.py`. A human gives you `AGILITY_TOKEN`. Run `reqin sample` with a `where` that limits it to one project. Compare with `agility_server()` in `tests/live_cases.py`; update the fake to the real SHAPE (fictional content) before changing code. Decide with the human which items count as requirements and encode that in `profiles/agility_api.yaml`. Keep `maturity` as `fake-server-tested`."
 
-## 7. Watch a folder: nightly exports
+## 7. Jira: `jira`
+
+Jira is where some programmes keep their requirements as issues. The connector reads issues over the REST API and turns issue links into links. There is no "read everything": you give a JQL query, because an instance can hold millions of issues.
+
+```bash
+export JIRA_USER=you@example.com JIRA_TOKEN=...          # Cloud: the account e-mail and an API token (Basic)
+reqin sample jira+https://your-site.atlassian.net --opt jql='project = ABC AND issuetype = Requirement ORDER BY key' --opt basic_user_env=JIRA_USER --opt basic_password_env=JIRA_TOKEN
+```
+
+| Option | Meaning |
+|---|---|
+| `jql` | **Required.** Put an `ORDER BY` in it; a note says so when it is missing, because an unordered paged read can skip or repeat an issue. |
+| `flavor`, `api_version` | `cloud` (host ends in `.atlassian.net`) or `dc`; version 3 on Cloud, 2 on Data Center. Cloud reads `search/jql` with a page token and no total; Data Center reads `search` with `startAt` and checks the total and its 10,000 window. |
+| `link_map` | What each link **type** becomes, and which end is the source. Jira does not say which end of "Blocks" is the requirement; **you** decide per type. A type you do not list keeps its own name, outward issue as source, and `discover` names it. |
+| `parent_field`, `fields`, `field_names`, `resolve_field_names` | The parent field (a classic project's "Epic Link" is a custom field), the fields to read, and names for custom fields. |
+| `token_env` (Data Center), `basic_user_env` + `basic_password_env` (Cloud) | The sign-in. |
+
+**What it does.** Reads the pages, drops a repeated issue (counted), flattens Atlassian's rich-text description to plain text (version 3) or keeps the wiki markup as written (version 2), reads the parent and every link, shows one link seen from both of its issues once, and says in the notes what it did not like (no ORDER BY, a total that did not match, link types it had to name itself). A rejected login stops the read, even in the optional field-name lookup.
+
+**Not seen on a live site:** anything. Whether Cloud's response has `isLast`, the default field list and the largest `maxResults` on `search/jql`, the `/field` answer, and which version returns rich text where. The profile is `profiles/jira.yaml`; confirm which field is the human requirement id (the issue key is the default).
+
+**Agent prompt.** "Finish the `jira` connector against our Jira. Read `reqin/CONNECTORS.md` sections 1, 2 and 7 and `src/reqin/adapters/jira.py`. A human gives you the credentials in environment variables. Run `reqin sample` with a JQL limited to one project. Compare with `jira_server()` in `tests/live_cases_more.py`; update the fake to the real SHAPE (fictional content) before changing code. Ask the human what each link type means and put it in `link_map`. Keep `maturity` as `fake-server-tested`."
+
+## 8. Polarion: `polarion`
+
+```bash
+export POLARION_TOKEN=...      # a personal access token (sent as Authorization: Bearer)
+reqin sample polarion+https://host/polarion --opt project=WIDGET --opt token_env=POLARION_TOKEN --opt query='type:requirement'
+```
+
+| Option | Meaning |
+|---|---|
+| `project` | **Required.** The project id. |
+| `query` | Polarion's Lucene query. Without one, every work item of the project is read. |
+| `sort` | Default `id`, **sent on every page**: the vendor lists "no default sorting" for collection requests, so an unsorted paged read can skip or repeat a work item. `none` turns it off, with a note. |
+| `role_map`, `parent_role` | What each link **role** becomes and which end is the source; and which role means "my parent". Polarion's pages do not say which end `parent` points at, so both are your decision, and `parent_role` is off until you set it. |
+| `include_links`, `fields`, `page_size` | Links come with their role through `include=linkedWorkItems`; fields default to all. |
+
+**What it does.** Pages through the work items, follows `links.next` only to the same host (credentials never go anywhere else), refuses a page that holds nothing new or a next link that points back, reads each link from the included link resources (or, when the server leaves them out, from the shape of the link id, and says how many), and reports a total that does not match.
+
+**Not seen on a real server:** anything. REST is **off by default** (an administrator sets `com.siemens.polarion.rest.enabled=true` and restarts), so a 404 on the first request often means "not enabled"; the connector says so. The parameter names `page[size]`, `query`, `sort`, `links.next`, `meta.totalCount` and the exact link id shape are from third-party clients or recall. Links that point at an item from outside the query are not read. Profile: `profiles/polarion.yaml`.
+
+**Agent prompt.** "Finish the `polarion` connector against our Polarion. Read `reqin/CONNECTORS.md` sections 1, 2 and 8 and `src/reqin/adapters/polarion.py`. A human gives you `POLARION_TOKEN` and confirms the REST API is enabled. Run `reqin sample` with a `query` limited to requirements. Compare with `polarion_server()` in `tests/live_cases_more.py`; update the fake to the real SHAPE (fictional content) before changing code. Ask the human which role means parent and which means satisfies, and set `parent_role` and `role_map`. Keep `maturity` as `fake-server-tested`."
+
+## 9. Jama Connect: `jama`
+
+```bash
+export JAMA_TOKEN=...         # an OAuth bearer token; see the token helper below
+reqin sample jama+https://yourorg.jamacloud.com --opt project=<id, name or key> --opt token_env=JAMA_TOKEN
+```
+
+| Option | Meaning |
+|---|---|
+| `project` | **Required.** A number, or an exact name or key (looked up with `GET /projects`; two matches stop the read). |
+| `item_types` | Which item types to keep (names, keys or ids). Default is every item, **folders, sets and text items included**: read once to see what is there (`reqin discover`), then narrow. |
+| `link_direction`, `link_map` | Default `downstream_to_upstream`: the source of a link is the downstream item (a test, a derived requirement), the target the requirement. Jama's help says relationships run from higher to lower level, but which of `fromItem` and `toItem` is which was **not confirmed**: check one link. |
+| `picklist_fields` | Field names whose values are pick list option ids (status, priority): each id is looked up once and replaced by its name. |
+| `relationships`, `page_size`, `rel_page_size` | Read relationships (default yes); the item page size (50 is the vendor's upper limit) and the relationship page size. |
+
+**What it does.** Pages the item listing by `startAt`, follows `meta.pageInfo`, strips the `$<item type id>` suffix from field names, reads each item's parent from its location (a folder above it is not a record), pages relationships by `lastId`, counts the ones marked suspect, and reports a total that does not match.
+
+**The one POST.** Jama's OAuth login is a POST, and the connector kit is GET-only, so the token is made by a small helper outside the read-only code: `connectors/jama/jama_oauth_hook.py`, a file you choose to use (`--opt auth_hook=jama_oauth_hook:headers`). It exchanges your client id and secret for a token, nothing else, and never prints the secret. It is the only POST anywhere in `reqin`'s connectors. **It has never run against a real Jama server.** A token lasts about an hour: read in parts for a big project.
+
+**Not seen on a real instance:** anything. The `abstractitems` path, the field-key suffix, `itemType`, `documentKey`, `location.parent.item`, the relationship type field and the direction of the ends are recalled. Baselines, attachments, comments and versions are not read. Profile: `profiles/jama.yaml`.
+
+**Agent prompt.** "Finish the `jama` connector against our Jama. Read `reqin/CONNECTORS.md` sections 1, 2 and 9, `src/reqin/adapters/jama.py` and `connectors/jama/jama_oauth_hook.py`. A human gives you the API credentials in environment variables. Run `reqin sample`, then `reqin discover` to see the item types, then set `item_types` and `picklist_fields`. Check the direction of one real link with the human and set `link_direction`. Compare with `jama_server()` in `tests/live_cases_more.py`; update the fake to the real SHAPE (fictional content) before changing code. Keep `maturity` as `fake-server-tested`."
+
+## 10. MSOSA, Cameo and MagicDraw model files: `sysml1_xmi`
+
+For a SysML 1.x model the supported routes are, in order of how well they are described: ReqIF (`profiles/msosa_reqif.yaml`), a requirement table exported as CSV or Excel (`profiles/cameo_requirement_table.yaml`), and this reader for the model itself: XMI (`.xmi`, `.xml`, `.mdxml`, `.uml`) or the project file `.mdzip`. There is no network in this one; it reads a file.
+
+```bash
+reqin discover model.mdzip          # which requirement stereotypes it found, and which other stereotypes it left alone
+reqin sample   model.mdzip
+reqin import   model.mdzip --profile profiles/sysml1_xmi.yaml --out reqs.jsonl
+```
+
+| Option | Meaning |
+|---|---|
+| `requirement_stereotypes` | Extra stereotype names to read as requirements (default: Requirement and ExtendedRequirement). A custom one is **not** read until you name it, and `discover` lists the ones it left alone. |
+| `entry` | Which entry of a `.mdzip` to read. Default: the model entry; with none or several it stops and lists the entries. |
+| `max_mb` | Refuse an entry larger than this (default 2048), checked on what the zip declares **and** on what it actually delivers. |
+
+**What it reads.** Each class that carries a requirement stereotype becomes a record with `Id`, `Text`, `Name`, `Documentation`, `Package` (the packages around it), `Stereotype` and every other property of the application. A requirement nested in a requirement has the outer one as parent. Abstraction, Dependency, Realization, Usage and Substitution with a requirement at one end become links with the client (the design or test) as source and the supplier (the requirement) as target; the kind comes from the sibling stereotype (derive, satisfy, verify, refine, trace, copy), or `dependency` when there is none, and `discover` counts those. A file with a DOCTYPE or ENTITY declaration is refused.
+
+**Honest limits.** A real `.mdzip` was never read: the fixtures follow the vendor's documentation (a zip of XMI 2.4 from version 17.0.1, the model entry `com.nomagic.magicdraw.uml_model.model`, the Requirement stereotype's `Id` and `Text`) and the shape of XMI and UML. Tag values stored as separate elements, profiles, diagrams and used projects are not read; the used-project entries are named, not opened. Many models leave `Id` empty and write the statement in the name: the profile says how to change that. Maturity is `fixture-tested`, not `fake-server-tested`: there is no server.
+
+## 11. Sparx Enterprise Architect: a query pack for `sql`
+
+Enterprise Architect has no HTTP API. When its repository is a database server, the safe read is a `SELECT` through a read-only login, and `reqin` ships that as two query files for the vendor-agnostic `sql` adapter, not as EA-specific code.
+
+```bash
+reqin sample 'postgresql+psycopg://reader@host/ea' --adapter sql --opt query_file=connectors/ea/requirements.sql --opt links_query_file=connectors/ea/links.sql --opt id_column=guid --opt parent_column=parent_guid
+```
+
+The same `sql` options work for any other database: `query` (or `query_file`), `id_column`, `parent_column` (the column that holds the parent's id), and `links_query` (or `links_query_file`; columns `source`, `target`, optionally `kind` and `ref`). All of them go through the same guard (one `SELECT` or `WITH`, comments removed first, SQLite opened read-only), and the row limit never wraps your query, so it also works on SQL Server and Oracle.
+
+**The table and column names in the pack are from memory.** Sparx documents that a database repository has the same logical structure as the file one and that the element class maps to `t_object`; it does not list the columns. Run `SELECT * FROM t_object WHERE 1 = 0` (and the same for `t_connector`, `t_package`) first and fix a name in the `.sql` files if it differs. **Nobody has run this against a real Enterprise Architect repository**, and the link direction (start end = source) is a convention to check with `reqin sample`. `connectors/ea/README.md` lists what else is not covered (file repositories, tagged values, package paths).
+
+## 12. Watch a folder: nightly exports
 
 `reqin watch DIR --out OUT` re-ingests exports dropped into a folder and tells you exactly what changed.
 
@@ -155,15 +259,17 @@ Without rules it picks up only `csv xlsx xlsm reqif reqifz sysml`; Word and PDF 
 
 It never writes into the watched folder (and refuses an `--out` inside it), waits until a file has been quiet for `--settle` seconds, re-ingests only when the content hash changes, does not retry a failed file until it changes, ignores lock/temp/hidden files and symlinks, and writes `OUT/<file>/<hash>.jsonl`, a report with `added / removed / changed` since the previous version (by MID and fingerprint), and `latest.json`. One JSON line per event on stdout; `--once` exits 1 if any file failed. A damaged state file stops the run loudly instead of silently forgetting history.
 
-## 8. Writing your own connector
+## 13. Writing your own connector
 
-Use `connector_template/` (a working, tested example with five `TODO(agent)` seams and an agent prompt). Anything that talks to a server uses `reqin.connect.make_http` and tests with `reqin.testing.FakeTransport` and `check_adapter`. Ship it as its own package with an entry point in the group `reqin.adapters`; the app and CLI find it without any change here.
+Use `connector_template/` (a working, tested example with five `TODO(agent)` seams and an agent prompt). Anything that talks to a server uses `reqin.connect.make_http` and tests with `reqin.testing.FakeTransport` and `check_adapter`. To test what the connector does with an awkward answer (a page that comes back short, a missing total, a link with an empty end, a 401 on one path) without writing a second fake, put `reqin.testing.Tweaked` in front of your fake and bend that one reply; `tests/test_connector_edges.py` has about seventy such cases. Ship it as its own package with an entry point in the group `reqin.adapters`; the app and CLI find it without any change here.
 
-## 9. Not built, on purpose
+## 14. Not built, on purpose
 
 - **Write-back** to any system. Each adapter would need to prove a round trip on a real export first; the default stays read-only.
 - **OAuth / form / OIDC sign-in.** Too dependent on your server's setup; `auth_hook` is the seam.
 - **Cameo DataHub** is a feature of the modelling tool (it syncs MSOSA with DOORS, DOORS Next and CSV), not an API to call. If you use it, the DOORS side is read by the connectors above.
 - **Server-side query** for SysML v2 (`POST .../query-results`): a read, but a POST; add it only after your security reviewer agrees an allow-listed read-only POST is acceptable.
 - **Incremental sync.** `revision()` lets you detect that something changed; fetching only the changes is not implemented. `reqin watch` diffs whole exports.
-- **`.mdzip`** reading (use ReqIF export from MSOSA).
+- **Codebeamer.** Its usage terms, as read, bar building a data source for it without permission from the vendor. A connector needs that permission first; there is none here. Use its ReqIF export through `reqif`, or a CSV through `tabular`.
+- **OAuth sign-in inside the connector kit.** Jama's token is the one POST in the connectors, in a separate file you opt into (section 9), not in the read-only code.
+- **Used projects inside an `.mdzip`.** The reader opens one entry; the others are named, not read.

@@ -1,0 +1,12 @@
+# MSOSA / Cameo Systems Modeler "Requirement table" exported with the table's Export button (.csv, .xlsx or .html). Tabular adapter.
+# What the vendor documents: the table's default columns are #, Id, Name, Text; custom requirement properties can be added as columns;
+# export formats are .html, .csv and .xlsx. NOT documented on the pages I could read: the delimiter and encoding of the CSV, and whether
+# nested requirements are marked in the file. Hierarchy and relationships (derive, satisfy, verify...) are NOT in this file unless you added
+# columns for them. Show the Id column BEFORE exporting: the tool matches rows by Id only if that column is shown.
+# Do not point `reqin watch` at a file the modelling tool still writes (Excel/CSV Sync and DataHub write back).
+profile: cameo-requirement-table
+adapter: tabular
+namespace: DEMO-MSOSA
+fields:
+  uid:  {from: ["Id", "ID", "Name"]}
+  text: {from: ["Text"], strip_markup: true}

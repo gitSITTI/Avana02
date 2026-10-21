@@ -5,7 +5,7 @@ description = "Input-agnostic requirement ingestion: adapters + canonical model 
 requires-python = ">=3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
-dependencies = ["pyyaml", "openpyxl", "reqif", "sqlalchemy", "python-docx", "pdfplumber"]
+dependencies = ["pyyaml", "openpyxl", "reqif>=0.0.48", "sqlalchemy", "python-docx", "pdfplumber"]
 
 [project.optional-dependencies]
 oslc = ["rdflib>=7"]                 # the DOORS Next / OSLC connector parses RDF

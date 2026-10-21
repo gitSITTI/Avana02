@@ -1,0 +1,17 @@
+# IBM DOORS Next (DNG, ELM) "export to CSV/XLSX" of a MODULE VIEW (IBM Docs 7.0.2: Export artifacts and modules). Tabular adapter.
+# What IBM documents about that file: its columns follow the view you exported; a module view ALWAYS carries isHeading, parentBinding and
+# Artifact Type (removing parentBinding makes re-import fail); link columns are there only if you put them in the view (and, for links to
+# base artifacts, an administrator must set EnableCoreBaseArtifactLinksWhenExporting); collections, comments, reviews and team ownership are not exported;
+# rich text arrives with special markup for links, images and embedded artifacts, and may contain UTF-8 non-breaking spaces.
+# NOT verified against a real export: the exact header text of the other columns. `reqin discover <file>` first, then edit `from:`.
+# Hierarchy: parentBinding is documented to be there but its value format (a number? a path?) is not on the pages I could read, so this profile
+# keeps it as an ordinary field. Map it to `parent` once you have seen it (the profile's parent rule matches by uid).
+profile: dng-csv
+adapter: tabular
+namespace: DEMO-DNG
+where:
+  isHeading: {regex: "^(?i:false|0|no|)$"}        # headings are rows too: keep only the artifacts that are not headings
+fields:
+  uid:    {from: ["ID", "Identifier", "Id", "Artifact ID"]}
+  text:   {from: ["Primary Text", "Description", "Name"], strip_markup: true}
+  status: {from: ["Status"]}

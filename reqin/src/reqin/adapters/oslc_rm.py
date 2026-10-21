@@ -4,10 +4,16 @@ READ-ONLY. Only GET requests are ever made (see connect.py). Needs the optional 
 
 URI:      oslc+https://host/rm/rootservices        (the root services document of the server; for DNG that is <server>/rm/rootservices)
 Options:  project            title of the project area / service provider to read (listed in the error if omitted and several exist)
-          configuration      configuration (stream/baseline) URI, sent as the Configuration-Context header (OSLC Config Management)
+          configuration      configuration (stream/baseline/global configuration) URI. A DOORS Next query needs one: IBM forum answers say so, and the
+                             specification allows a server with no default to fail. It is sent BOTH as the Configuration-Context header and as the
+                             oslc_config.context query parameter on the query and on member fetches (when both are present the specification says the
+                             parameter wins, so they never disagree). One configuration per run.
+          configuration_mode both (default) | header | param   (one forum report says the Reportable REST API ignored the header and needed the parameter)
+          order_by           oslc.orderBy, e.g. +dcterms:identifier. NOT sent unless given: the order of a query result is undefined without it, so a paged read of a
+                             project that is being edited can skip or repeat rows (the totalCount check below catches some of that).
           catalog | service_provider | query_base
                              skip discovery: give the catalog URL, the service provider URL, or the query capability's queryBase
-          where / prefix     oslc.where / oslc.prefix filter, e.g. where='dcterms:title="Brake*"' (OSLC Query syntax)
+          where / prefix     oslc.where / oslc.prefix filter, e.g. where='dcterms:title="Brake*"' (OSLC Query syntax; DOORS Next accepts only `and` between terms)
           select             oslc.select, default *  (all properties inline)
           page_size          oslc.pageSize hint, default 200 (servers may ignore it: nextPage is always followed)
           resource_type      default http://open-services.net/ns/rm#Requirement
@@ -24,6 +30,12 @@ WHAT IS VERIFIED AND WHAT IS NOT:
                                  Configuration-Context header and oslc_config.context parameter (OSLC Config Management);
                                  DNG: rootservices -> catalog -> services -> oslc:queryCapability -> queryBase, headers
                                  OSLC-Core-Version: 2.0 and Accept: application/rdf+xml
+  documented, and what it means for you
+                                 a DOORS Next query result includes MODULE and HEADING artifacts as members, and module structure is not in OSLC at all ("modules
+                                 inside a collection aren't available to OSLC consumers through GET"). This connector keeps every member; drop modules and headings
+                                 with the profile's `where` (they are then counted as filtered, not lost): see profiles/oslc_rm.yaml. Authentication on DOORS Next
+                                 is form login, Basic, OAuth 1.0a (HMAC-SHA1 on every request) or a Jazz Authorization Server bearer token; only the bearer
+                                 token (token_env) and a session cookie (cookie_env) are built in. DOORS Web Access is OAuth 1.0a only: use an auth_hook.
   NOT seen live                  the exact property that points from rootservices to the catalog on YOUR server (we look for
                                  any property named rmServiceProviders), the DNG primary-text property (jazz_rm:primaryText is
                                  assumed; dcterms:description is the fallback in the profile), the sign-in method your server
@@ -109,11 +121,23 @@ class OslcRmAdapter(Adapter):
     def _root(src: Source) -> str:
         return src.uri.removeprefix("oslc+")
 
+    @staticmethod
+    def _config_mode(src: Source) -> str:
+        mode = str(src.options.get("configuration_mode") or "both")
+        if mode not in ("both", "header", "param"):
+            raise ConnectError(f"option 'configuration_mode' must be both, header or param, got {mode!r}")
+        return mode
+
     def _headers(self, src: Source) -> dict[str, str]:
         h = {"OSLC-Core-Version": "2.0", "Accept": "application/rdf+xml, text/turtle;q=0.8"}
-        if src.options.get("configuration"):
+        if src.options.get("configuration") and self._config_mode(src) in ("both", "header"):
             h["Configuration-Context"] = str(src.options["configuration"])
         return h
+
+    def _config_params(self, src: Source) -> dict[str, str]:
+        if src.options.get("configuration") and self._config_mode(src) in ("both", "param"):
+            return {"oslc_config.context": str(src.options["configuration"])}
+        return {}
 
     def _graph(self, http: ReadOnlyHttp, url: str, src: Source, params: dict | None = None, allow_empty: bool = False):
         rdflib = _rdflib()
@@ -196,9 +220,18 @@ class OslcRmAdapter(Adapter):
         base = self._query_base(http, src, notes)
         want_type = rdflib.URIRef(str(o.get("resource_type", RM_REQUIREMENT)))
 
-        params: dict[str, Any] = {"oslc.pageSize": opt_int(o, "page_size", 200), "oslc.select": o.get("select", "*"), "oslc.paging": "true"}
+        cfg = self._config_params(src)
+        if not o.get("configuration"):
+            notes.append("no configuration given: a DOORS Next server with configuration management on may refuse the query or answer from its own default "
+                         "(IBM forum answers say a query needs one); give configuration=<stream or baseline URI>")
+        params: dict[str, Any] = {"oslc.pageSize": opt_int(o, "page_size", 200), "oslc.select": o.get("select", "*"), "oslc.paging": "true", **cfg}
         if o.get("where"):
             params["oslc.where"] = o["where"]
+        if o.get("order_by"):
+            params["oslc.orderBy"] = o["order_by"]
+        else:
+            notes.append("no order_by: the order of a query result is undefined, so a paged read of a project that changes while it is read can skip or repeat rows")
+        if o.get("where") or o.get("order_by"):
             params["oslc.prefix"] = o.get("prefix") or ",".join(f"{p}=<{NS[p]}>" for p in ("dcterms", "oslc", "oslc_rm", "jazz_rm"))
         link_names = self._link_names(o)
         link_map = {**DEFAULT_LINK_MAP, **{k: tuple(v) for k, v in opt_dict(o, "link_map").items()}}
@@ -214,7 +247,7 @@ class OslcRmAdapter(Adapter):
             subs = {m for m in g.objects(None, RDFS.member) if isinstance(m, rdflib.URIRef)} or set(g.subjects(RDF.type, want_type))
             for s in subs:
                 if o.get("fetch_members") in (1, "1", True, "true") and not any(True for _ in g.predicate_objects(s) if _[0] != RDF.type):
-                    g2 = self._graph(http, str(s), src)
+                    g2 = self._graph(http, str(s), src, cfg or None)
                     self._take(g2, s, prefixes, link_names, link_map, members, member_links, rdflib)
                 else:
                     self._take(g, s, prefixes, link_names, link_map, members, member_links, rdflib)

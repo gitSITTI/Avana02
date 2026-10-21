@@ -41,20 +41,28 @@ SYSML_GOLD = {
 SYSML_OK, SYSML_REJECTED, SYSML_LINKS = 4, 1, 2     # REQ-004 has no documentation; dep3 touches no requirement
 
 
+SYSML_USED = [{"@id": "lib1", "@type": "RequirementDefinition", "declaredShortName": "LIB-001", "declaredName": "LibraryRequirement", "owner": {"@id": "libpkg"}},
+              {"@id": "libd1", "@type": "Documentation", "body": "The library shall exist.", "owner": {"@id": "lib1"}}]
+
+
 def sysml_server(mode: str = "link", style: str = "bracket", head: bool = True, token_required: str | None = None,
-                 elements: list[dict] | None = None, base: str = SYSML_BASE) -> FakeTransport:
+                 elements: list[dict] | None = None, base: str = SYSML_BASE, used: list[dict] | None = None, scheme: str = "Bearer",
+                 link_keeps_query: bool = True) -> FakeTransport:
     """mode: link   -> pages carry a Link rel=next header
             cursor -> no Link header, but page[after]=<last id> is honoured
             stuck  -> no Link header and page[after] is ignored (a server we cannot page: the connector must refuse)
             all    -> page size is ignored and everything comes back at once
-       head=False -> GET /projects/{id} has no branch (SysON-like: the project id is the commit id)"""
+       head=False -> GET /projects/{id} has no branch (SysON-like: the project id is the commit id)
+       used       -> elements that belong to a used project: sent unless the request says excludeUsed=true (OMG Systems Modeling API 1.0)
+       scheme     -> the Authorization scheme the server wants (Bearer, or Token as Teamwork Cloud's REST API does)
+       link_keeps_query=False -> the Link header's next URL repeats only the page parameters, not the caller's other ones (a server that forgets excludeUsed)"""
     els = elements if elements is not None else SYSML_ELEMENTS
     prefix = urllib.parse.urlsplit(base).path
     sk, ak = ("page[size]", "page[after]") if style == "bracket" else ("page_size", "page_after")
     t = FakeTransport()
 
     def guard(req: Req):
-        if token_required and req.headers.get("Authorization") != f"Bearer {token_required}":
+        if token_required and req.headers.get("Authorization") != f"{scheme} {token_required}":
             return json_response({"error": "unauthorised"}, status=403)
         return None
 
@@ -66,7 +74,8 @@ def sysml_server(mode: str = "link", style: str = "bracket", head: bool = True, 
         chunk = items[start:start + size]
         headers = {}
         if mode == "link" and start + size < len(items):
-            headers["Link"] = f'<{url}?{ak}={chunk[-1]["@id"]}&{sk}={size}>; rel="next"'
+            keep = "".join(f"&{a}={b}" for a, b in req.query.items() if a not in (sk, ak)) if link_keeps_query else ""
+            headers["Link"] = f'<{url}?{ak}={chunk[-1]["@id"]}&{sk}={size}{keep}>; rel="next"'
         return json_response(chunk, headers=headers)
 
     def route(path, fn):
@@ -82,8 +91,11 @@ def sysml_server(mode: str = "link", style: str = "bracket", head: bool = True, 
     route("/projects/P1/branches/B1", lambda r: {"@id": "B1", "name": "main", "head": {"@id": "C9"}})
     route("/projects/P1/branches/B2", lambda r: {"@id": "B2", "name": "draft", "head": {"@id": "C7"}})
     for cid in ("C9", "C7", "P1"):
-        route(f"/projects/P1/commits/{cid}/elements",
-              lambda r, cid=cid: paged(els if cid != "C7" else els[:3], f"{base}/projects/P1/commits/{cid}/elements", r))
+        def elements_of(r, cid=cid):
+            mine = els if cid != "C7" else els[:3]
+            items = mine if r.query.get("excludeUsed") == "true" else mine + list(used or [])
+            return paged(items, f"{base}/projects/P1/commits/{cid}/elements", r)
+        route(f"/projects/P1/commits/{cid}/elements", elements_of)
     return t
 
 
@@ -137,7 +149,7 @@ def _req_xml(r) -> str:
 
 
 def oslc_server(honor_page_size: bool = True, loop: bool = False, login_page: bool = False, turtle_catalog: bool = False,
-                reqs=None, drop_total: bool = False, report_total: int | None = None) -> FakeTransport:
+                reqs=None, drop_total: bool = False, report_total: int | None = None, by_reference: bool = False) -> FakeTransport:
     reqs = OSLC_REQS if reqs is None else reqs
     t = FakeTransport()
     sp1, sp2 = f"{OSLC_ROOT}/rm/oslc_rm/PA1/services.xml", f"{OSLC_ROOT}/rm/oslc_rm/PA2/services.xml"
@@ -194,8 +206,12 @@ def oslc_server(honor_page_size: bool = True, loop: bool = False, login_page: bo
             info += f'<oslc:nextPage rdf:resource="{_esc(nxt)}"/>'
         if loop:
             info += f'<oslc:nextPage rdf:resource="{_esc(me)}"/>'
-        return text_response(_rdf(body + info + "</oslc:ResponseInfo>" + "".join(_req_xml(r) for r in chunk)), "application/rdf+xml")
+        inline = "" if by_reference else "".join(_req_xml(r) for r in chunk)     # by_reference: members are only named; each is fetched on its own
+        return text_response(_rdf(body + info + "</oslc:ResponseInfo>" + inline), "application/rdf+xml")
     t.add("/rm/views", oslc_only(views))
+    if by_reference:
+        for r in reqs:
+            t.add(f"/rm/resources/_{r[0]}", oslc_only(lambda _q, r=r: text_response(_rdf(_req_xml(r)), "application/rdf+xml")))
     return t
 
 
@@ -203,6 +219,10 @@ def oslc_server(honor_page_size: bool = True, loop: bool = False, login_page: bo
 # Digital.ai Agility (VersionOne) REST Data API
 # =====================================================================================================================
 AG_BASE = "https://agility.example.test/Instance"
+AG_COMMON = ["Number", "Name", "Description", "Scope.Name", "Status.Name", "AssetState", "Super", "Dependencies", "ChangeDateUTC", "AssetType", "ID"]
+AG_ATTRS = {"Epic": AG_COMMON + ["Category.Name"], "Story": AG_COMMON + ["Parent", "Estimate"], "Defect": AG_COMMON + ["Resolution"]}
+AG_RELATIONS = {"Super", "Dependencies", "Parent"}      # shown as <Relation> in the XML, a Relation object in the JSON
+AG_STATES = {"Future": 0, "Active": 64, "Closed": 128, "Template": 200, "Broken Down": 208, "Deleted": 255}
 
 
 def _attrs(**kw):
@@ -217,7 +237,7 @@ def agility_assets(moment: int = 1) -> dict[str, list[dict]]:
     rel = lambda oid: {"_type": "Relation", "idref": oid}  # noqa: E731
     return {
         "Epic": [_asset("Epic", 100, moment, Number="E-00100", Name="Platform", Description="<p>The platform shall support over-the-air updates.</p>",
-                        **{"Scope.Name": "Fictional Project", "Status.Name": "Active"}, AssetState=64, Super=None, Dependencies=[], ChangeDateUTC="2026-01-01T00:00:00")],
+                        **{"Scope.Name": "Fictional Project", "Status.Name": "Active", "Category.Name": "Epic"}, AssetState=64, Super=None, Dependencies=[], ChangeDateUTC="2026-01-01T00:00:00")],
         "Story": [
             _asset("Story", 201, moment, Number="S-01201", Name="Updater", Description="<p>The updater shall verify the signature before install.</p>",
                    **{"Scope.Name": "Fictional Project", "Status.Name": "Active"}, AssetState=64, Super=rel("Epic:100"), Dependencies=[rel("Story:202")], ChangeDateUTC="2026-01-02T00:00:00"),
@@ -225,6 +245,9 @@ def agility_assets(moment: int = 1) -> dict[str, list[dict]]:
                    **{"Scope.Name": "Fictional Project", "Status.Name": "Future"}, AssetState=0, Super=rel("Epic:100"), Dependencies=[], ChangeDateUTC="2026-01-03T00:00:00"),
             _asset("Story", 203, moment, Number="S-01203", Name="Spike", Description="",
                    **{"Scope.Name": "Fictional Project", "Status.Name": "Active"}, AssetState=64, Super=None, Dependencies=[], ChangeDateUTC="2026-01-04T00:00:00"),
+            # a deleted story: the server hides it unless the request says where=IsDeleted='true'
+            _asset("Story", 204, moment, Number="S-01204", Name="Removed", Description="<p>The updater shall be removed.</p>",
+                   **{"Scope.Name": "Fictional Project", "Status.Name": "Active"}, AssetState=255, Super=None, Dependencies=[], ChangeDateUTC="2026-01-06T00:00:00"),
         ],
         "Defect": [_asset("Defect", 301, moment, Number="B-00301", Name="Flicker", Description="<p>The display shall not flicker.</p>",
                           **{"Scope.Name": "Fictional Project", "Status.Name": "Active"}, AssetState=64, Super=None, Dependencies=[], ChangeDateUTC="2026-01-05T00:00:00")],
@@ -233,26 +256,127 @@ def agility_assets(moment: int = 1) -> dict[str, list[dict]]:
 
 AG_GOLD = {"E-00100": "The platform shall support over-the-air updates.", "S-01201": "The updater shall verify the signature before install.",
            "S-01202": "The controller shall buffer 10 messages.", "B-00301": "The display shall not flicker."}
-AG_OK, AG_REJECTED, AG_FILTERED, AG_LINKS = 4, 0, 1, 1      # S-01203 has an empty Description: filtered by the profile's `where`
+AG_OK, AG_REJECTED, AG_FILTERED, AG_LINKS = 4, 0, 1, 1      # S-01203 has an empty Description: filtered by the profile's `where`; S-01204 is deleted and never sent
+
+
+def _ag_value(a: dict, name: str):
+    v = a["Attributes"].get(name)
+    return None if v is None else v.get("value")
+
+
+def _ag_state_code(a: dict) -> int:
+    return int(_ag_value(a, "AssetState") or 0)
+
+
+def _ag_where(items: list[dict], where: str) -> list[dict] | None:
+    """Equality terms joined by ';', exactly the forms the vendor's examples show. None when a term is not of that form (the fake answers 400)."""
+    show_deleted = False
+    terms: list[tuple[str, str]] = []
+    for t in [x for x in where.split(";") if x.strip()]:
+        m = __import__("re").fullmatch(r"\s*([A-Za-z_][\w.]*)\s*=\s*(?:'([^']*)'|\"([^\"]*)\")\s*", t)
+        if not m:
+            return None
+        name, val = m.group(1), m.group(2) if m.group(2) is not None else m.group(3)
+        if name == "IsDeleted":
+            show_deleted = val.lower() == "true"
+        else:
+            terms.append((name, val))
+    out = [a for a in items if (_ag_state_code(a) == 255) == show_deleted]
+    for name, val in terms:
+        if name == "AssetState":
+            code = AG_STATES.get(val, val)
+            out = [a for a in out if str(_ag_state_code(a)) == str(code)]
+        else:
+            out = [a for a in out if str(_ag_value(a, name)) == val]
+    return out
+
+
+def _ag_xml(body: dict, selected: list[str]) -> str:
+    esc = lambda x: str(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")  # noqa: E731
+    x = f'<Assets total="{body["total"]}" pageSize="{body["pageSize"]}" pageStart="{body["pageStart"]}">'
+    for a in body["Assets"]:
+        x += f'<Asset href="{a["href"]}" id="{a["id"]}">'
+        for n, v in a["Attributes"].items():
+            val = v["value"]
+            if n in AG_RELATIONS:
+                refs = [val] if isinstance(val, dict) else val or []
+                x += f'<Relation name="{n}">' + "".join(f'<Asset href="/Instance/rest-1.v1/Data/{r["idref"].replace(":", "/")}" idref="{r["idref"]}"/>' for r in refs) + "</Relation>"
+            elif val in (None, ""):
+                x += f'<Attribute name="{n}" />'
+            else:
+                x += f'<Attribute name="{n}">{esc(val)}</Attribute>'
+        x += "</Asset>"
+    return x + "</Assets>"
 
 
 def agility_server(assets=None, honor_page: bool = True, token: str | None = None, drop_total: bool = False, wrong_shape: bool = False,
-                   stuck: bool = False) -> FakeTransport:
-    """honor_page=False -> the page parameter is ignored and everything comes back at once; stuck=True -> every request returns the first page."""
+                   stuck: bool = False, xml_only: bool = False, strict: bool = True, rate_limit: int = 0, meta: bool = True,
+                   total_override: int | None = None, meta_junk: bool = False) -> FakeTransport:
+    """A fake of rest-1.v1/Data built from the vendor's documented behaviour.
+    honor_page=False -> the page parameter is ignored and everything comes back at once; stuck=True -> every request returns the first page.
+    xml_only=True    -> XML whatever the Accept header says (a proxy that strips it); otherwise JSON for Accept: application/json, XML for anything else.
+    strict=True      -> `sel`, `sort` and `where` are checked: an attribute the type does not have, or a where term that is not `Attr='value'`, is HTTP 400.
+    rate_limit=N     -> the first N requests are answered 429 with the wait in a JSON body (RetryAfter), as the vendor documents.
+    meta=True        -> GET meta.v1/<Type> answers XML without authentication (the shape of the answer is a GUESS: the vendor shows no sample); meta_junk=True answers something else.
+    total_override=N -> the reported total is N whatever was matched (a server whose total and rows disagree)."""
     data = assets or agility_assets()
     t = FakeTransport()
+    state = {"n": 0}
+
+    def bad(msg: str):
+        return text_response(f"<Exception><Message>{msg}</Message></Exception>", "text/xml", status=400)
+
     for atype, items in data.items():
-        def h(req: Req, items=items):
+        def h(req: Req, atype=atype, items=items):
+            state["n"] += 1
+            if state["n"] <= rate_limit:
+                return json_response({"error": "rate limit exceeded", "limit": "100/min", "RetryAfter": 7}, status=429)
             if token and req.headers.get("Authorization") != f"Bearer {token}":
                 return json_response({"error": "unauthorised"}, status=401)
             if wrong_shape:
                 return text_response("<html>sign in</html>", "text/html")
-            size, start = (int(x) for x in req.query["page"].split(",")) if honor_page and "page" in req.query else (len(items) or 1, 0)
-            start = 0 if stuck else start
-            chunk = items[start:start + size]
-            body = {"_type": "Assets", "pageSize": size, "pageStart": start if honor_page else 0, "Assets": chunk}
-            if not drop_total:
-                body["total"] = len(items)
+            sel = [x for x in (req.query.get("sel") or req.query.get("select") or "").split(",") if x]
+            valid = AG_ATTRS.get(atype, AG_COMMON)
+            if strict:
+                for x in sel:
+                    if x.split(".")[0] not in {v.split(".")[0] for v in valid}:
+                        return bad(f"Unknown token: {atype}.{x}")
+            matches = list(reversed(items))                        # no documented order without sort: the fake gives the opposite of id order
+            if "where" in req.query:
+                matches = _ag_where(matches, req.query["where"])
+                if matches is None:
+                    return bad("Unsupported where clause")
+            else:
+                matches = [a for a in matches if _ag_state_code(a) != 255]
+            for key in [k for k in req.query.get("sort", "").split(",") if k]:
+                name = key.lstrip("-")
+                if strict and name.split(".")[0] not in {v.split(".")[0] for v in valid}:
+                    return bad(f"Unknown sort token: {name}")
+                matches.sort(key=lambda a, name=name: str(_ag_value(a, name) or ""), reverse=key.startswith("-"))
+            if honor_page and "page" in req.query:
+                size, start = (int(x) for x in req.query["page"].split(","))
+            else:
+                size, start = 2147483647, 0
+            start_eff = 0 if stuck else start
+            chunk = matches[start_eff:start_eff + size]
+            cut = []
+            for a in chunk:
+                keep = {n: v for n, v in a["Attributes"].items() if n in sel} if sel else dict(a["Attributes"])
+                for n in sel:                                      # a selected attribute the asset has no value for still comes back, empty
+                    keep.setdefault(n, {"_type": "Attribute", "name": n, "value": None})
+                cut.append({**a, "Attributes": {n: keep[n] for n in sel if n in keep} if sel else keep})
+            body = {"_type": "Assets", "pageSize": size, "pageStart": start_eff if honor_page else 0, "Assets": cut}
+            body["total"] = (len(matches) if total_override is None else total_override) if not drop_total else 0
+            if xml_only or "json" not in req.headers.get("Accept", ""):
+                return text_response(_ag_xml(body, sel), "text/xml")
+            if drop_total:
+                body.pop("total")
             return json_response(body)
         t.add(f"/Instance/rest-1.v1/Data/{atype}", h)
+        if meta:
+            def m(req: Req, atype=atype):
+                if meta_junk:
+                    return text_response("<html><body>not the meta API</body></html>", "text/html")
+                return text_response(f'<AssetType name="{atype}" token="{atype}">' + "".join(f'<AttributeDefinition name="{n}" attributetype="Text"/>' for n in sorted({v.split(".")[0] for v in AG_ATTRS[atype]})) + "</AssetType>", "text/xml")
+            t.add(f"/Instance/meta.v1/{atype}", m)
     return t

@@ -5,6 +5,12 @@
 #     If your team writes the statement in the Name instead, add "dcterms:title" as a third source (headings will then come in too:
 #     filter them with `where`).
 #   * dcterms:identifier is the artifact number inside the project. The MID is built from the resource URI, not from this.
+#   * A DOORS Next query returns MODULE and HEADING artifacts as members too, and a module's structure is not in OSLC at all (IBM says so). Look at
+#     `reqin discover` for the field that says what each artifact is (the vendor's pages name it only in passing: it may be jazz_rm:artifactFormat or
+#     something like it on your server), then drop them here, which counts them as filtered instead of losing them:
+#         where:
+#           jazz_rm:artifactFormat: {regex: "^(?!Module|Collection).*"}        # a GUESSED property name: check it
+#   * `configuration` (a stream or baseline URI) is not optional in practice: IBM forum answers say a DNG query needs one.
 profile: oslc-rm
 adapter: oslc_rm
 namespace: OSLC          # set to your project key; keep it stable across re-imports: it is part of every MID

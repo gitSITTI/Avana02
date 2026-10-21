@@ -96,9 +96,11 @@ def test_cli_reports_a_connector_error_without_a_traceback_or_secret(sysml_http,
 def test_cli_connectors_lists_every_adapter_and_is_honest_about_maturity(capsys):
     assert main(["connectors"]) == 0
     out = capsys.readouterr().out
-    for name in ("tabular", "reqif", "sysml_text", "sysml_api", "oslc_rm", "agility", "sql", "docx", "pdf", "mdzip"):
+    for name in ("tabular", "reqif", "sysml_text", "sysml_api", "oslc_rm", "agility", "sql", "docx", "pdf", "sysml1_xmi"):
         assert name in out
-    assert out.count("fake-server-tested") >= 3 and "stub" in out and "nobody has" in out
+    assert out.count("fake-server-tested") >= 3 and "nobody has" in out
+    rows = {line.split()[0]: line for line in out.splitlines()[1:] if line.strip() and line.split()[0] in ("sysml1_xmi", "agility", "oslc_rm", "sysml_api", "reqif")}
+    assert "fixture-tested" in rows["sysml1_xmi"] and "live-verified" not in "".join(rows.values())
 
 
 def test_an_empty_source_is_warned_about_not_silently_zero(tmp_path):

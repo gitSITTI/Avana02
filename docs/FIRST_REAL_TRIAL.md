@@ -9,8 +9,8 @@ The plan is short on purpose, because what a trial can answer today is short. Re
 | Question | Can it be answered now? | Why |
 |---|---|---|
 | Does the input layer read our exports correctly: the right identifiers, the right text, the right counts? | **Yes.** This is the first trial, and the only one that uses real data. | `reqin` reads files and writes a dataset folder; `reqin check-dataset` checks it against [`reqin/GUI_CONTRACT.md`](../reqin/GUI_CONTRACT.md). |
-| Do the live connectors work against our systems? | **Only for files.** | `sysml_api`, `oslc_rm` and `agility` have met nothing but fakes written from documentation; the DOORS 9 script has never run in DOORS; `mdzip` is a stub (`reqin connectors` says so). Each live connector needs the owner of that system in the room. |
-| Does the comparison find our near-duplicates? | **No.** | The comparison engine is not built. The clusters and scores on every screen come from a made-up sample. |
+| Do the live connectors work against our systems? | **Only for files.** | `sysml_api`, `oslc_rm`, `agility`, `jira`, `polarion` and `jama` have met nothing but fakes written from documentation; the Jama token helper and the DOORS 9 script have never run against the real thing; the `.mdzip` / XMI reader and the Enterprise Architect query pack were built from documentation and recall and have read only made-up files (`reqin connectors` says which is which). Each live connector needs the owner of that system in the room. |
+| Does the comparison find our near-duplicates? | **Not known.** | The mechanical engine (no model) is built and has been run on a made-up corpus and on pairs a language model labelled; it has never run on real requirements, and on the held-out pairs it finds little of what a person would call the same ([`COMPARE_RESULTS.md`](COMPARE_RESULTS.md)). The clusters and scores on the screens still come from a made-up sample. |
 | Are the numbers on Methods and metrics real? | **No.** | They are placeholders, apart from the precision and recall that come from labelled pairs, and those are labelled on the sample. See [`GOLD_SET.md`](GOLD_SET.md). |
 | Can people follow the screens: find a cluster, decide, hand off, label, save? | **Yes, with the sample.** | That is a trial of the screens, not of the data (trial 1 below). |
 | Does shared review work for several people? | **With the demo project only.** | The reference server has never run with real data and has no sign-in system of its own ([`reqin/SERVER.md`](../reqin/SERVER.md)). |
@@ -88,7 +88,7 @@ What this tells you is whether the screens make sense to people like yours. It s
 
 | Needed | State today |
 |---|---|
-| The comparison engine, with its mechanical stages measured on a made-up corpus whose right answers are known | Not built. [`agent_prompts/comparison_engine.md`](agent_prompts/comparison_engine.md) is the brief for it |
+| The comparison engine, with its mechanical stages measured on a made-up corpus whose right answers are known | Built (stages 1 to 4, no model) and measured on a made-up corpus; [`COMPARE_RESULTS.md`](COMPARE_RESULTS.md) says what that shows and what it does not. Not run on real data. The brief it was built from is [`agent_prompts/comparison_engine.md`](agent_prompts/comparison_engine.md) |
 | A way to load a dataset folder into the page, so real requirements reach the screens | Not built: the Open and Import screens read real `reqin` output; the rest of the page uses the sample |
 | The page connected to the reference server, if more than one person works on it | Not done; see [`reqin/SERVER.md`](../reqin/SERVER.md) |
 | A written data sheet, a gateway and the network wall, **if** the AI is ever switched on | Not done; the AI stays off in the first trials |

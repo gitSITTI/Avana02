@@ -34,5 +34,10 @@ def test_every_option_the_guide_tells_you_to_set_is_one_the_code_reads():
     src = "".join(p.read_text(encoding="utf-8") for p in (ROOT / "src" / "reqin").rglob("*.py"))
     names = set(re.findall(r"--opt\s+([a-z_]+)=", GUIDE))
     assert names, "the guide shows no --opt examples"
-    missing = sorted(n for n in names if f'"{n}"' not in src and f"'{n}'" not in src)
+    def reads(n: str) -> bool:
+        if f'"{n}"' in src or f"'{n}'" in src:
+            return True
+        # the sql adapter reads `<name>` or `<name>_file` through one function that builds the second name (f"{key}_file"), so `links_query_file` never appears as a literal
+        return n.endswith("_file") and 'f"{key}_file"' in src and (f'"{n[:-5]}"' in src or f"'{n[:-5]}'" in src)
+    missing = sorted(n for n in names if not reads(n))
     assert not missing, f"CONNECTORS.md uses options the code never reads: {missing}"

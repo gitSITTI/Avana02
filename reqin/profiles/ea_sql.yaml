@@ -1,0 +1,17 @@
+# Sparx Enterprise Architect, read from a DBMS repository with the `sql` adapter and the query pack in connectors/ea/.
+#   reqin sample 'postgresql+psycopg://reader@host/ea' --adapter sql \
+#     --opt query_file=connectors/ea/requirements.sql --opt links_query_file=connectors/ea/links.sql --opt id_column=guid --opt parent_column=parent_guid
+# CONFIRM BEFORE TRUSTING: the table and column names in the pack are from memory (see the top of connectors/ea/requirements.sql); this profile was
+# tested against a tiny made-up SQLite database shaped like them, never against an Enterprise Architect repository.
+#   * Where is the requirement id kept? Here: in the alias. An element with an empty alias gets its GUID as its id (stable, but not something a person
+#     can read: check how many in `reqin sample`). If your project keeps the id in the NAME, change uid to  {from: ["name"]}, and if the name is the
+#     statement rather than an id, do not use it as the id at all.
+#   * The statement is the element's Notes (note). EA stores it as rich text with markup; strip_markup is on.
+#   * Reading only a part of the model: filter on package (or any column) with `where` below; those records are counted as filtered, not lost.
+#   * Use a read-only database login. The guard in the adapter accepts one SELECT only, but a role that cannot write is the real control.
+profile: ea-sql
+adapter: sql
+namespace: EA          # set to your project key and keep it stable across re-imports: it is part of every MID
+fields:
+  uid:   {from: ["alias"]}
+  text:  {from: ["note"], strip_markup: true}

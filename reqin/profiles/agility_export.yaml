@@ -1,6 +1,11 @@
-# Agility EXPORT (xlsx/csv) read by the tabular adapter: the route many teams already use for Agility dashboards.
-# I have NOT seen your export's headers. These are the usual Agility column names; open the file with `reqin discover <file>`
-# and edit `from:` to the exact header text. Every `from` accepts a list: the first non-empty column wins.
+# Agility EXPORT read by the tabular adapter: the route many teams already use for Agility dashboards, and the one route that works for a
+# read-only guest, needs no token, and works on SaaS and on-premises.
+# What the vendor documents (docs.digital.ai, "Exporting grid data"): the grid's "Export (.xls)" writes an HTML table saved with an .xls extension,
+# not a real workbook (Excel warns about the format mismatch); it holds ONLY the columns visible in the view, so add Description (and Number, Status,
+# Parent) to the view first; closed items lose their strike-through. reqin's tabular adapter reads that HTML table directly (adapters/tabular.py).
+# `text` falls back to Name when the Description column is missing or empty, because a default grid has no Description column: an item with an empty
+# Description therefore becomes a requirement whose text is its title (tests/test_exports.py shows it). Add Description to the view to avoid that.
+# NOT verified: the real header text of your export. `reqin discover <file>` first, then edit `from:` (every `from` takes a list: the first non-empty column wins).
 profile: agility-export
 adapter: tabular
 namespace: AGILITY

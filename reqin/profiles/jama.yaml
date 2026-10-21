@@ -1,0 +1,17 @@
+# Jama Connect. Connector: jama.
+# Raw fields: id (numeric), documentKey (WID-REQ-12), globalId, itemType (display name), itemTypeId, project, modifiedDate, createdDate, and every field of the item
+# under its name (the $<item type id> Jama puts after a field's name is removed): name, description, status, ...
+# CONFIRM BEFORE TRUSTING: `reqin sample jama+https://yourorg.jamacloud.com --opt project=<id or name> --opt token_env=JAMA_TOKEN` and read what it shows.
+#   * The item listing includes FOLDERS, SETS and TEXT items. Read only requirements with the connector's item_types (item_types=Requirement) or here:
+#         where:
+#           itemType: ["Requirement"]
+#     Without that, a folder with a name is read as a requirement whose text is its name.
+#   * description is HTML: strip_markup is on. The NAME is the fallback for an item with no description; remove "name" below to have those rejected instead.
+#   * documentKey is the human id (unique inside a project). Reading several projects: one source each, each with its own namespace.
+#   * Pick list fields (status, priority) arrive as option ids. Say which with picklist_fields=status,priority to get their names (one lookup per distinct id).
+profile: jama
+adapter: jama
+namespace: JAMA          # set to your project key and keep it stable across re-imports: it is part of every MID
+fields:
+  uid:  {from: ["documentKey", "id"]}
+  text: {from: ["description", "name"], strip_markup: true}

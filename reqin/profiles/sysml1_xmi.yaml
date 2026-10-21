@@ -1,0 +1,17 @@
+# SysML 1.x / UML model as XMI (.xmi, .xml, .mdxml, .uml) or an MSOSA / Cameo / MagicDraw project file (.mdzip). Connector: sysml1_xmi.
+# Raw fields the connector emits: Id, Text, Name (the class), Documentation (its comments), Package (the packages around it, joined with ::), Stereotype,
+# ElementType, and every other property of the Requirement application as written (Risk, Source, VerifyMethod ... whatever your profile defines).
+# CONFIRM BEFORE TRUSTING: this was built from the vendor's documentation and from the shape of XMI, never from a real file.
+#   `reqin discover model.mdzip` says which requirement stereotypes it found and which other stereotypes it left alone; `reqin sample` shows the fields.
+#   * The vendor's Requirement stereotype has the properties Id and Text; OMG's SysML 1.x spells them id and text. Both are read as Id and Text.
+#   * Many teams leave Id empty and write the statement in the NAME. If yours does, add "Name" as the last source for uid (and, if the statement is the
+#     name, for text).
+#   * A custom requirement stereotype is read only when named: --opt requirement_stereotypes=FunctionalRequirement,InterfaceRequirement
+#   * To read only part of the model, filter on Package (or any property) here with `where`; those records are counted as filtered, not lost.
+#   * Several modules or used projects: one source per file or entry, each with its own namespace, because an Id can repeat.
+profile: sysml1-xmi
+adapter: sysml1_xmi
+namespace: XMI          # set to your project key and keep it stable across re-imports: it is part of every MID
+fields:
+  uid:   {from: ["Id"], why: "the Requirement stereotype's Id property; empty in many models, see the note above"}
+  text:  {from: ["Text", "Documentation"], strip_markup: true, why: "Text is the statement; Documentation (the comment) is the fallback"}

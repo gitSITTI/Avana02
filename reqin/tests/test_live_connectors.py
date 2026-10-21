@@ -9,8 +9,9 @@ from pathlib import Path
 
 import pytest
 
-from live_cases import (AG_BASE, AG_FILTERED, AG_GOLD, AG_LINKS, AG_OK, AG_REJECTED, OSLC_GOLD, OSLC_LINKS, OSLC_OK, OSLC_REJECTED,
-                        OSLC_ROOT, SYSML_BASE, SYSML_GOLD, SYSML_LINKS, SYSML_OK, SYSML_REJECTED, agility_assets, agility_server,
+from live_cases import (AG_BASE, AG_FILTERED, AG_GOLD, AG_LINKS, AG_OK, AG_REJECTED, OSLC_GOLD, OSLC_REQS, OSLC_LINKS, OSLC_OK, OSLC_REJECTED,
+                        OSLC_ROOT, SYSML_BASE, SYSML_ELEMENTS, SYSML_GOLD, SYSML_LINKS, SYSML_OK, SYSML_REJECTED, SYSML_USED, agility_assets,
+                        agility_server,
                         oslc_server, sysml_server)
 from reqin import Profile, Source, ingest
 from reqin.adapter import pick_adapter, sniff_all
@@ -74,6 +75,74 @@ def test_sysml_joins_documentation_hierarchy_and_links():
     assert {(l.source_uid, l.kind, l.target_uid) for l in r.links} == {("REQ-003", "trace", "REQ-001"), ("REQ-001", "trace", "p1")}
     assert [x.reason for x in r.rejected] == ["empty statement text"]
     assert by["REQ-001"].extra.get("prop.isAbstract") is False                                                        # plain properties are kept
+
+
+def _ids(r):
+    return {q.uid for q in r.requirements}
+
+
+@pytest.mark.parametrize("mode,keep", [("link", True), ("link", False), ("cursor", True)])
+def test_sysml_sends_excludeUsed_on_every_page_and_leaves_out_what_a_used_project_brings(mode, keep):
+    both = ingest(sysml_src(page_size=4), profile=SYS_PROFILE, adapter=SysMLApiAdapter(transport=sysml_server(used=SYSML_USED)))
+    assert "LIB-001" in _ids(both)                                                                  # not sent: the server's default includes the used project
+    t = sysml_server(mode=mode, used=SYSML_USED, link_keeps_query=keep)
+    r = ingest(sysml_src(page_size=4, exclude_used="true"), profile=SYS_PROFILE, adapter=SysMLApiAdapter(transport=t))
+    assert "LIB-001" not in _ids(r) and len(r.requirements) == SYSML_OK
+    pages = [q for q in t.requests if q.path.endswith("/elements")]
+    assert len(pages) > 1 and all(q.query.get("excludeUsed") == "true" for q in pages)              # also on the pages a Link header led to, even when the Link forgot it
+
+
+def test_sysml_says_when_it_did_not_choose_between_own_and_used_elements():
+    ad = SysMLApiAdapter(transport=sysml_server())
+    assert any("excludeUsed was not sent" in n for n in ad.discover(sysml_src()).notes)
+    ad2 = SysMLApiAdapter(transport=sysml_server())
+    assert not any("excludeUsed was not sent" in n for n in ad2.discover(sysml_src(exclude_used="false")).notes)
+    with pytest.raises(ConnectError, match="exclude_used"):
+        SysMLApiAdapter(transport=sysml_server()).discover(sysml_src(exclude_used="maybe"))
+
+
+SYSML_V1_MIGRATED = [
+    # a v1 "satisfy" becomes its own type; the satisfied requirement and the satisfying feature are its two ends
+    {"@id": "sat1", "@type": "SatisfyRequirementUsage", "satisfiedRequirement": {"@id": "r1"}, "satisfyingFeature": {"@id": "p1"}},
+    # "derive", "verify" and "refine" become a Dependency plus metadata: the kind is in the metadata, not in the type
+    {"@id": "mdD", "@type": "MetadataDefinition", "declaredName": "Verify"},
+    {"@id": "depV", "@type": "Dependency", "client": [{"@id": "p1"}], "supplier": [{"@id": "r2"}]},
+    {"@id": "mV", "@type": "MetadataUsage", "metadataDefinition": {"@id": "mdD"}, "owner": {"@id": "depV"}},
+    {"@id": "mdX", "@type": "MetadataDefinition", "declaredName": "Quirk"},
+    {"@id": "depQ", "@type": "Dependency", "client": [{"@id": "p1"}], "supplier": [{"@id": "r5"}]},
+    {"@id": "mQ", "@type": "MetadataUsage", "metadataDefinition": {"@id": "mdX"}, "owner": {"@id": "depQ"}},
+    {"@id": "al1", "@type": "Allocation", "source": [{"@id": "r1"}], "target": [{"@id": "p1"}]},
+]
+
+
+def test_sysml_reads_satisfy_as_its_own_type_and_the_kind_of_a_dependency_from_its_metadata():
+    t = sysml_server(elements=SYSML_ELEMENTS + SYSML_V1_MIGRATED)
+    ad = SysMLApiAdapter(transport=t)
+    r = ingest(sysml_src(), profile=SYS_PROFILE, adapter=ad)
+    links = {(l.source_uid, l.kind, l.target_uid) for l in r.links}
+    assert ("p1", "satisfy", "REQ-001") in links                                                   # SatisfyRequirementUsage: feature -> requirement
+    assert ("p1", "verify", "REQ-002") in links                                                    # Dependency + metadata named Verify
+    assert ("p1", "trace", "Heartbeat") in links                                                   # metadata with a name nobody knows: the default kind, and counted
+    assert ("REQ-003", "trace", "REQ-001") in links                                                # a Dependency with no metadata
+    notes = ad.discover(sysml_src()).notes
+    assert any("1 dependencies carry metadata whose name is not one of" in n for n in notes)
+    assert any(n.startswith("relationship kinds read:") and "satisfy 1" in n and "verify 1" in n for n in notes)
+    assert any("relationship-like element types seen but NOT read as links: Allocation x1" in n for n in notes)
+
+
+def test_sysml_link_kinds_and_their_ends_can_be_changed_without_code():
+    keys = {"link_ends": {"Allocation": {"source": ["source"], "target": ["target"]}}}
+    r = ingest(sysml_src(link_types={"Allocation": "allocate"}, keys=keys), profile=SYS_PROFILE,
+               adapter=SysMLApiAdapter(transport=sysml_server(elements=SYSML_ELEMENTS + SYSML_V1_MIGRATED)))
+    assert {(l.source_uid, l.kind, l.target_uid) for l in r.links} == {("REQ-001", "allocate", "p1")}
+
+
+def test_sysml_can_send_the_token_under_the_word_teamwork_cloud_wants(monkeypatch):
+    t = sysml_server(token_required="s3cr3t-token-value", scheme="Token")
+    r = ingest(sysml_src(token_scheme="Token"), profile=SYS_PROFILE, adapter=SysMLApiAdapter(transport=t))
+    assert len(r.requirements) == SYSML_OK and all(q.headers["Authorization"] == "Token s3cr3t-token-value" for q in t.requests)
+    with pytest.raises(ConnectError, match="HTTP 403"):
+        SysMLApiAdapter(transport=sysml_server(token_required="s3cr3t-token-value", scheme="Token")).discover(sysml_src())     # Bearer is refused
 
 
 def test_sysml_resolves_default_branch_head_and_named_branch():
@@ -199,6 +268,58 @@ def test_oslc_project_selection_errors_name_the_choices(_cookie):
         OslcRmAdapter(transport=oslc_server()).discover(Source("oslc+" + OSLC_ROOT + "/rm/rootservices", {"cookie_env": "DNG_COOKIE"}))
 
 
+CFG = "https://dng.example.test/rm/cm/stream/_S1"
+
+
+def test_oslc_configuration_goes_both_as_header_and_as_query_parameter_so_the_two_never_disagree(_cookie):
+    t = oslc_server()
+    ingest(oslc_src(configuration=CFG), profile=OSLC_PROFILE, adapter=OslcRmAdapter(transport=t))
+    q = next(x for x in t.requests if x.path == "/rm/views")
+    assert q.query["oslc_config.context"] == CFG and q.headers["Configuration-Context"] == CFG
+    assert q.query["projectURL"] == "PA1", "the parameter must be added to the query base's own parameters, not replace them"
+
+
+def test_oslc_configuration_reaches_a_member_that_is_fetched_on_its_own(_cookie):
+    t = oslc_server(by_reference=True)
+    r = ingest(oslc_src(configuration=CFG, fetch_members="true"), profile=OSLC_PROFILE, adapter=OslcRmAdapter(transport=t))
+    assert len(r.requirements) == OSLC_OK
+    one = [x for x in t.requests if x.path.startswith("/rm/resources/")]
+    assert len(one) == len(OSLC_REQS) and all(x.query["oslc_config.context"] == CFG and x.headers["Configuration-Context"] == CFG for x in one)
+
+
+@pytest.mark.parametrize("mode,header,param", [("header", True, False), ("param", False, True), ("both", True, True)])
+def test_oslc_configuration_mode_picks_where_the_configuration_is_sent(_cookie, mode, header, param):
+    t = oslc_server()
+    ingest(oslc_src(configuration=CFG, configuration_mode=mode), profile=OSLC_PROFILE, adapter=OslcRmAdapter(transport=t))
+    q = next(x for x in t.requests if x.path == "/rm/views")
+    assert ("Configuration-Context" in q.headers) is header and ("oslc_config.context" in q.query) is param
+
+
+def test_oslc_refuses_an_unknown_configuration_mode(_cookie):
+    with pytest.raises(ConnectError, match="configuration_mode"):
+        OslcRmAdapter(transport=oslc_server()).discover(oslc_src(configuration=CFG, configuration_mode="cookie"))
+
+
+def test_oslc_says_when_no_configuration_was_given_and_does_not_invent_one(_cookie):
+    t = oslc_server()
+    notes = OslcRmAdapter(transport=t).discover(oslc_src()).notes
+    assert any("no configuration given" in n for n in notes)
+    assert not any("Configuration-Context" in x.headers or "oslc_config.context" in x.query for x in t.requests)
+    assert not any("no configuration given" in n for n in OslcRmAdapter(transport=oslc_server()).discover(oslc_src(configuration=CFG)).notes)
+
+
+def test_oslc_sends_order_by_only_when_asked_and_says_so_when_it_does_not(_cookie):
+    t = oslc_server()
+    notes = OslcRmAdapter(transport=t).discover(oslc_src()).notes
+    assert "oslc.orderBy" not in next(x for x in t.requests if x.path == "/rm/views").query
+    assert any("no order_by" in n for n in notes)
+    t2 = oslc_server()
+    notes2 = OslcRmAdapter(transport=t2).discover(oslc_src(order_by="+dcterms:identifier")).notes
+    q = next(x for x in t2.requests if x.path == "/rm/views")
+    assert q.query["oslc.orderBy"] == "+dcterms:identifier" and "dcterms=<" in q.query["oslc.prefix"]
+    assert not any("no order_by" in n for n in notes2)
+
+
 def test_oslc_query_filter_is_passed_with_prefixes(_cookie):
     t = oslc_server()
     ingest(oslc_src(where='dcterms:title="Mass"'), profile=OSLC_PROFILE, adapter=OslcRmAdapter(transport=t))
@@ -316,7 +437,7 @@ def test_agility_without_total_stops_on_a_short_page(_ag_token):
 
 
 def test_agility_wrong_shape_is_reported_as_a_likely_login_page(_ag_token):
-    with pytest.raises(ConnectError, match="did not return JSON|documented"):
+    with pytest.raises(ConnectError, match="did not return Agility's .*login page"):
         AgilityAdapter(transport=agility_server(wrong_shape=True)).discover(ag_src())
 
 
@@ -348,13 +469,103 @@ def test_agility_reads_once_per_run_not_twice(_ag_token):
     assert len(t.requests) == after_discover, "the second look at the same source went back to the server"
 
 
+def _keep(r):
+    return ([(q.uid, q.text, q.parent_mid is not None) for q in r.requirements], [(l.source_uid, l.kind, l.target_uid) for l in r.links])
+
+
+@pytest.mark.parametrize("fmt,xml_only", [("json", False), ("xml", False), ("json", True)])
+def test_agility_reads_the_xml_the_vendor_documents_as_well_as_json(fmt, xml_only, _ag_token):
+    """XML is the portal's own default; a proxy that strips the Accept header turns a JSON request into XML. Both must give the same dataset."""
+    want = _keep(ingest(ag_src(), profile=AG_PROFILE, adapter=AgilityAdapter(transport=agility_server())))
+    t = agility_server(xml_only=xml_only)
+    got = ingest(ag_src(format=fmt, page_size=2), profile=AG_PROFILE, adapter=AgilityAdapter(transport=t))
+    assert _keep(got) == want and len(got.requirements) == AG_OK
+    assert t.requests[0].headers["Accept"] == ("application/json" if fmt == "json" else "text/xml")
+
+
+def test_agility_sends_a_sort_and_a_page_on_every_request_and_says_who_it_is(_ag_token):
+    t = agility_server()
+    ingest(ag_src(page_size=2), profile=AG_PROFILE, adapter=AgilityAdapter(transport=t))
+    data = [r for r in t.requests if "/Data/" in r.path]
+    assert data and all(r.query["sort"] == "Number" and "," in r.query["page"] for r in data)
+    assert all(r.headers["User-Agent"].startswith("reqin-connector/") for r in t.requests)
+    t2 = agility_server()
+    ingest(ag_src(sort="none"), profile=AG_PROFILE, adapter=AgilityAdapter(transport=t2))
+    assert not any("sort" in r.query for r in t2.requests)
+
+
+def test_agility_hides_deleted_assets_by_default_and_the_documented_where_forms_pass_through(_ag_token):
+    default = ingest(ag_src(), profile=AG_PROFILE, adapter=AgilityAdapter(transport=agility_server()))
+    assert "S-01204" not in {q.uid for q in default.requirements}                     # deleted: the server hides it, and nothing needs excluding
+    deleted = ingest(ag_src(where="IsDeleted='true'"), profile=AG_PROFILE, adapter=AgilityAdapter(transport=agility_server()))
+    assert [q.uid for q in deleted.requirements] == ["S-01204"]
+    active = ingest(ag_src(where="Scope.Name='Fictional Project';AssetState='64'"), profile=AG_PROFILE, adapter=AgilityAdapter(transport=agility_server()))
+    assert {q.uid for q in active.requirements} == {"E-00100", "S-01201", "B-00301"}   # S-01202 is Future (0): left out by the server, not by us
+
+
+def test_an_attribute_one_type_does_not_have_stops_that_type_and_select_by_type_or_the_preflight_fixes_it(_ag_token):
+    sel = "Number,Name,Description,Scope.Name,Status.Name,AssetState,Super,Dependencies,Category.Name"       # Category.Name exists on Epic only
+    with pytest.raises(ConnectError, match=r"HTTP 400.*Unknown token: Story\.Category\.Name"):
+        ingest(ag_src(select=sel), profile=AG_PROFILE, adapter=AgilityAdapter(transport=agility_server()))
+    base = "Number,Name,Description,Scope.Name,Status.Name,AssetState,Super,Dependencies"
+    r = ingest(ag_src(select=base, select_by_type={"Epic": base.split(",") + ["Category.Name"]}), profile=AG_PROFILE, adapter=AgilityAdapter(transport=agility_server()))
+    assert len(r.requirements) == AG_OK and next(q for q in r.requirements if q.uid == "E-00100").extra["Category.Name"] == "Epic"
+    ad = AgilityAdapter(transport=agility_server())
+    r2 = ingest(ag_src(select=sel, preflight="meta"), profile=AG_PROFILE, adapter=ad)
+    assert len(r2.requirements) == AG_OK
+    notes = ad.discover(ag_src(select=sel, preflight="meta")).notes
+    assert any("Story: left out of the select" in n and "Category.Name" in n for n in notes) and not any(n.startswith("Epic: left out") for n in notes)
+
+
+def test_a_preflight_answer_that_cannot_be_read_changes_nothing_and_is_said(_ag_token):
+    ad = AgilityAdapter(transport=agility_server(meta_junk=True))
+    notes = ad.discover(ag_src(preflight="meta")).notes
+    assert any("meta.v1 gave no attribute list that could be read" in n for n in notes)
+    assert ad.audit() and all(a.method == "GET" for a in ad.audit())
+
+
+def test_agility_rate_limit_is_reported_with_advice_and_the_status(_ag_token):
+    with pytest.raises(ConnectError, match="rate limited") as e:
+        AgilityAdapter(transport=agility_server(rate_limit=1)).discover(ag_src())
+    assert e.value.status == 429
+
+
+def test_agility_says_when_the_total_and_the_rows_disagree(_ag_token):
+    notes = AgilityAdapter(transport=agility_server(total_override=9)).discover(ag_src(page_size=500)).notes
+    assert not any("WARNING" in n for n in AgilityAdapter(transport=agility_server()).discover(ag_src()).notes)
+    assert "Epic: WARNING the server reported a total of 9 but 1 came back; compare before trusting this read" in notes
+
+
+def test_agility_keeps_asking_while_the_total_is_larger_and_stops_when_a_page_comes_back_empty(_ag_token):
+    t = agility_server(total_override=9)
+    r = ingest(ag_src(page_size=2), profile=AG_PROFILE, adapter=AgilityAdapter(transport=t))
+    assert len(r.requirements) == AG_OK
+    epic_pages = [q.query["page"] for q in t.requests if q.path.endswith("/Epic")]
+    assert epic_pages == ["2,0", "2,1"]                                                # the second page was short and empty: stop, do not loop
+
+
+def test_agility_options_that_make_no_sense_are_refused_before_any_request(_ag_token):
+    t = agility_server()
+    for opts in ({"format": "yaml"}, {"preflight": "magic"}):
+        with pytest.raises(ConnectError, match="must be"):
+            AgilityAdapter(transport=t).discover(ag_src(**opts))
+    assert t.requests == []
+
+
 def test_agility_sniff():
     assert sniff_all(Source("agility+https://h/Inst"))[0][1] == "agility"
     assert sniff_all(Source("https://h/Inst/rest-1.v1/Data/Story"))[0][1] == "agility"
 
 
 # ------------------------------------------------------------------------------------------------------- the registry
-LIVE_ADAPTERS = {"sysml_api": SysMLApiAdapter, "oslc_rm": OslcRmAdapter, "agility": AgilityAdapter}
+def _more():
+    from reqin.adapters.jama import JamaAdapter
+    from reqin.adapters.jira import JiraAdapter
+    from reqin.adapters.polarion import PolarionAdapter
+    return {"jira": JiraAdapter, "polarion": PolarionAdapter, "jama": JamaAdapter}      # their tests: test_connectors_more.py
+
+
+LIVE_ADAPTERS = {"sysml_api": SysMLApiAdapter, "oslc_rm": OslcRmAdapter, "agility": AgilityAdapter, **_more()}
 
 
 def test_every_fake_server_tested_adapter_has_live_tests_and_nothing_claims_to_be_live_verified():

@@ -4,6 +4,7 @@
 
 * FakeTransport stands in for a server. It only has `get`, so a connector tested with it cannot write; every
   request it receives is recorded in `.requests`.
+* Tweaked puts a few bent replies in front of a FakeTransport (a short page, a missing total, a 401 on one path) without a second fake.
 * check_adapter runs the same properties the built-in conformance suite checks, against any adapter and source:
   nothing silently dropped, the result is a valid GUI dataset, text verbatim, identity and provenance, deterministic, nothing lost, source untouched.
 """
@@ -70,6 +71,54 @@ class FakeTransport:
 
     def paths(self) -> list[str]:
         return [r.path for r in self.requests]
+
+
+class Tweaked:
+    """A server that is a FakeTransport with a few replies bent. Use it to test what your connector does with an awkward answer without writing a second fake:
+    a page that comes back short, a missing total, a link with an empty end, a 401 on one path.
+
+        t = Tweaked(my_fake_server())
+        t.rewrite("/search", lambda body, req: {**body, "total": None})        # change the JSON body of a successful reply on a path ending in /search
+        t.replace("/field", lambda req: text_response("no", status=401))        # answer a path ending in /field yourself (the fake never sees it); return None to let the fake answer
+
+    Paths match on how the URL path ENDS. A rewrite is not applied to an error reply. Every request, rewritten or replaced, is recorded in `.requests`."""
+
+    def __init__(self, inner: FakeTransport) -> None:
+        self.inner = inner
+        self._rewrites: list[tuple[str, Callable[[Any, Req], Any]]] = []
+        self._replacements: list[tuple[str, Callable[[Req], Response]]] = []
+
+    @property
+    def requests(self) -> list[Req]:
+        return self.inner.requests
+
+    def paths(self) -> list[str]:
+        return self.inner.paths()
+
+    def rewrite(self, path_end: str, fn: Callable[[Any, Req], Any]) -> "Tweaked":
+        self._rewrites.append((path_end, fn))
+        return self
+
+    def replace(self, path_end: str, fn: Callable[[Req], Response]) -> "Tweaked":
+        self._replacements.append((path_end, fn))
+        return self
+
+    def get(self, url: str, headers: dict[str, str]) -> Response:
+        p = urllib.parse.urlsplit(url)
+        for end, fn in self._replacements:
+            if p.path.endswith(end):
+                req = Req(url, p.path, {k: v[0] for k, v in urllib.parse.parse_qs(p.query, keep_blank_values=True).items()}, dict(headers))
+                out = fn(req)
+                if out is not None:                      # None: not this request, let the fake answer it
+                    self.inner.requests.append(req)
+                    return out
+        resp = self.inner.get(url, headers)
+        req = self.inner.requests[-1]
+        if resp.status == 200:
+            for end, fn in self._rewrites:
+                if p.path.endswith(end):
+                    resp = Response(resp.status, dict(resp.headers), json.dumps(fn(json.loads(resp.body), req)).encode(), resp.url)
+        return resp
 
 
 def _sha(p: Path) -> str:

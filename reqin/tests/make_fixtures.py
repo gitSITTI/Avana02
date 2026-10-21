@@ -73,6 +73,8 @@ def build(out: Path) -> dict[str, Path]:
 
     paths["reqif"] = _reqif(out / "reqs.reqif")
     paths["sysml"] = _sysml(out / "model.sysml")
+    paths["xmi"] = _xmi(out / "model.xmi")
+    paths["mdzip"] = _mdzip(out / "model.mdzip", paths["xmi"])
 
     # SQLite
     p = out / "reqs.db"
@@ -122,6 +124,43 @@ package FixtureModel {{
     requirement latencyUsage : StatusLatency;
 }}
 """, encoding="utf-8")
+    return p
+
+
+def _xmi(p: Path) -> Path:
+    """A fictional SysML 1.x model as XMI 2.4, shaped as the vendor's documentation describes (never checked against a real file): requirement classes in a
+    package, nested where REQS says there is a parent, a sibling Requirement application per class, one Block, one Satisfy and one DeriveReqt."""
+    from xml.sax.saxutils import quoteattr as q
+    ids = {r[0]: f"_c{n}" for n, r in enumerate(REQS, start=1)}
+    def cls(r, kids: str) -> str:
+        return f'<{"nestedClassifier" if r[6] else "packagedElement"} xmi:type="uml:Class" xmi:id="{ids[r[0]]}" name={q(r[0] + " requirement")}>{kids}</{"nestedClassifier" if r[6] else "packagedElement"}>'
+    def tree(r) -> str:
+        return cls(r, "".join(tree(k) for k in REQS if k[6] == r[0]))
+    body = "".join(tree(r) for r in REQS if not r[6])
+    apps = "".join(
+        f'<sysml:Requirement xmi:id="_s{n}" base_Class="{ids[r[0]]}" Id={q(r[0])} Text={q(r[1])} Rationale={q(r[2])} VerifyMethod={q(r[3])}/>'
+        for n, r in enumerate(REQS, start=1))
+    p.write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<xmi:XMI xmi:version="2.4" xmlns:xmi="http://www.omg.org/spec/XMI/20110701" xmlns:uml="http://www.omg.org/spec/UML/20110701" '
+        'xmlns:sysml="http://www.omg.org/spec/SysML/20110701/SysML">'
+        f'<uml:Model xmi:id="_m" name="Fixture Model"><packagedElement xmi:type="uml:Package" xmi:id="_p" name="Subsystem requirements">{body}'
+        '<packagedElement xmi:type="uml:Class" xmi:id="_b1" name="Flight Control block"/>'
+        f'<packagedElement xmi:type="uml:Abstraction" xmi:id="_a1" client="_b1" supplier="{ids[REQS[0][0]]}"/>'
+        f'<packagedElement xmi:type="uml:Abstraction" xmi:id="_a2" client="{ids[REQS[1][0]]}" supplier="{ids[REQS[0][0]]}"/>'
+        '</packagedElement></uml:Model>'
+        f'{apps}<sysml:Block xmi:id="_sb" base_Class="_b1"/><sysml:Satisfy xmi:id="_sa1" base_Abstraction="_a1"/><sysml:DeriveReqt xmi:id="_sa2" base_Abstraction="_a2"/>'
+        '</xmi:XMI>', encoding="utf-8")
+    return p
+
+
+def _mdzip(p: Path, xmi: Path) -> Path:
+    """The layout the vendor documents from 17.0.1: the model in one entry, other resources beside it."""
+    import zipfile
+    with zipfile.ZipFile(p, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("com.nomagic.magicdraw.uml_model.model", xmi.read_bytes())
+        z.writestr("com.nomagic.magicdraw.uml_model.shared_model", "<xmi:XMI xmlns:xmi='http://www.omg.org/spec/XMI/20110701'/>")
+        z.writestr("images/fixture.png", b"\x89PNG fixture")
     return p
 
 

@@ -128,14 +128,15 @@ def test_sql_database_is_opened_read_only(fx):
             con.execute(text("INSERT INTO reqs (req_uid) VALUES ('x')"))
 
 
-def test_mdzip_is_recognised_but_honestly_unimplemented(tmp_path):
+def test_an_mdzip_with_no_model_in_it_is_recognised_and_refused_with_the_list_of_its_entries(tmp_path):
     import zipfile
+    from reqin.connect import ConnectError
     p = tmp_path / "x.mdzip"
     with zipfile.ZipFile(p, "w") as z:
         z.writestr("dummy", "x")
     ad = pick_adapter(Source(str(p)))
-    assert ad.name == "mdzip"
-    with pytest.raises(NotImplementedError, match="ReqIF"):
+    assert ad.name == "sysml1_xmi"
+    with pytest.raises(ConnectError, match=r"cannot tell which entry.*dummy"):
         list(ad.read(Source(str(p))))
 
 

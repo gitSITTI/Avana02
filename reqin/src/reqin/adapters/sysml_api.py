@@ -13,14 +13,22 @@ Options:  project_id | project_name     which project (name is looked up through
           token_env                     name of the environment variable holding a bearer token   (see connect.auth_from_options)
           ca_bundle                     path to your organisation's CA bundle (TLS is always verified)
           req_types                     comma list, default RequirementDefinition,RequirementUsage
-          link_types                    JSON {"RelationshipType": "kind"}, default {"Dependency": "trace"}
+          link_types                    JSON {"RelationshipType": "kind"}, default {"Dependency": "trace", "SatisfyRequirementUsage": "satisfy"}
+          exclude_used                  true | false: sent as excludeUsed on the elements request (OMG Systems Modeling API 1.0). Unset = not sent, so the server's
+                                        default applies and elements of used projects (libraries, other models) may be included: choose on purpose.
           keys                          JSON overrides for the JSON property names below
+          token_scheme                  Bearer (default) or Token: Teamwork Cloud's REST API accepts `Authorization: Token <token>`   (see connect.auth_from_options)
 
 WHAT IS VERIFIED AND WHAT IS NOT (be honest with yourself before trusting a number from this):
   verified in public docs   GET /projects/{projectId}/commits/{commitId}/elements returns a JSON array; /projects, @id, @type,
                             declaredName; SysON uses the project id as the commit id; TWC serves the standard API under /sysmlv2-api
-  from the OMG spec, NOT seen live   defaultBranch on a project and head on a branch; the Link header for paging; page[size] /
-                            page[after]; owner on elements; Documentation.body; the property names of relationships
+  from the OMG spec, NOT seen live   defaultBranch on a project and head on a branch; the Link header for paging (the specification text mentions it,
+                            the OpenAPI file does not declare it); page[size] / page[after] / excludeUsed; owner on elements; Documentation.body;
+                            the property names of relationships; satisfiedRequirement and satisfyingFeature on SatisfyRequirementUsage
+  the v1 -> v2 migration, as the vendor documents it   a v1 satisfy becomes a SatisfyRequirementUsage (its own type); derive, verify and refine each
+                            become a Dependency PLUS metadata, so the KIND is in the metadata and not in the type name. This connector reads the
+                            metadata name when it can (keys: metadata_types, metadata_def) and otherwise keeps the dependency as `trace` and counts it.
+                            The query service (/query-results, GET and POST in the OMG API) is NOT used.
   everything here is tested against an in-memory FAKE of that API (tests/test_live_connectors.py), never a real server.
   First run against your server:  reqin sample sysml+https://... --opt project_name=... --opt token_env=TWC_TOKEN
   and compare one element's JSON with the names in DEFAULT_KEYS; fix them with `keys` (no code change needed).
@@ -29,6 +37,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import urllib.parse
 from collections import Counter
 from dataclasses import dataclass, field
@@ -44,10 +53,17 @@ DEFAULT_KEYS = {
     "rel_source": ["source", "client"], "rel_target": ["target", "supplier"],
     "default_branch": "defaultBranch", "head": "head", "project_name": "name", "branch_name": "name",
     "doc_types": ["Documentation"],
+    # SatisfyRequirementUsage: the satisfying feature is the source of the link, the satisfied requirement its target (derived properties in the metamodel)
+    "link_ends": {"SatisfyRequirementUsage": {"source": ["satisfyingFeature"], "target": ["satisfiedRequirement"]}},
+    # a Dependency's kind when the migration wrote it as "dependency plus metadata": a metadata element owned by the dependency, whose definition names the kind
+    "metadata_types": ["MetadataUsage", "MetadataFeature"],
+    "metadata_def": ["metadataDefinition", "type"],
+    "metadata_kinds": {"derive": "derive", "derivereqt": "derive", "verify": "verify", "refine": "refine", "satisfy": "satisfy", "trace": "trace", "allocate": "allocate", "copy": "copy"},
 }
 DEFAULT_REQ_TYPES = ["RequirementDefinition", "RequirementUsage"]
-DEFAULT_LINK_TYPES = {"Dependency": "trace"}
+DEFAULT_LINK_TYPES = {"Dependency": "trace", "SatisfyRequirementUsage": "satisfy"}
 _STRUCTURAL = {"@id", "@type", "declaredName", "declaredShortName", "owner"}
+_RELATIONSHIP_LIKE = re.compile(r"(Dependency|Satisfy|Verif|Allocation|Derive|Refine|Trace|Connector|Succession|Flow|Binding|Subsetting|Redefinition|Specialization)", re.I)
 
 
 def _ref(v: Any) -> str:
@@ -108,7 +124,7 @@ class SysMLApiAdapter(Adapter):
     def _keys(self, src: Source) -> dict[str, Any]:
         return {**DEFAULT_KEYS, **opt_dict(src.options, "keys")}
 
-    def _pages(self, http: ReadOnlyHttp, url: str, src: Source, k: dict[str, Any], peek: int = 0) -> Iterator[list[dict]]:
+    def _pages(self, http: ReadOnlyHttp, url: str, src: Source, k: dict[str, Any], peek: int = 0, extra: dict[str, Any] | None = None) -> Iterator[list[dict]]:
         """Yield lists of elements, following the server's paging.
 
         paging=auto   follow the Link header (rel="next"); if a FULL page arrives without one, continue with the cursor
@@ -126,7 +142,7 @@ class SysMLApiAdapter(Adapter):
         if mode not in ("auto", "link", "cursor", "none") or style not in ("bracket", "underscore"):
             raise ConnectError("paging must be auto|link|cursor|none and page_style bracket|underscore")
         size_key, after_key = ("page[size]", "page[after]") if style == "bracket" else ("page_size", "page_after")
-        base_params: dict[str, Any] = {} if mode == "none" else {size_key: size}
+        base_params: dict[str, Any] = {**(extra or {}), **({} if mode == "none" else {size_key: size})}
         next_url, params = url, dict(base_params)
         first_ids: set[str] = set()
         max_pages = opt_int(o, "max_pages", 1_000_000)
@@ -149,7 +165,9 @@ class SysMLApiAdapter(Adapter):
                 return                                            # `reqin sample`: look at the first page(s) only
             link = next_link(resp.headers.get("link")) if mode != "cursor" else None
             if link:
-                next_url, params = urllib.parse.urljoin(next_url, link), {}
+                next_url = urllib.parse.urljoin(next_url, link)
+                have = dict(urllib.parse.parse_qsl(urllib.parse.urlsplit(next_url).query))
+                params = {a: b for a, b in (extra or {}).items() if a not in have}      # a Link that drops our own filter must not change what we read
                 continue
             if mode == "none" or len(data) != size:
                 return                                            # a short page (or an unpaged server) is the end
@@ -216,31 +234,72 @@ class SysMLApiAdapter(Adapter):
         cid = self._resolve_commit(http, base, pid, src, k, notes)
         req_types = set(opt_list(src.options, "req_types", DEFAULT_REQ_TYPES))
         link_types = opt_dict(src.options, "link_types", DEFAULT_LINK_TYPES)
+        used = str(src.options.get("exclude_used", "")).lower()
+        if used not in ("", "true", "false"):
+            raise ConnectError("option 'exclude_used' must be true or false")
+        extra = {"excludeUsed": used} if used else None
+        if not used:
+            notes.append("excludeUsed was not sent: the server's default applies, and elements of used projects (libraries, other models) may be included; "
+                         "set exclude_used=true to read this project's own elements only")
 
         reqs: dict[str, dict] = {}
         docs: list[tuple[str, str, str]] = []                    # (doc id, owner id, body) in arrival order
-        rels: list[tuple[str, str, list[str], list[str]]] = []
+        rels: list[tuple[str, str, list[str], list[str], str]] = []   # (id, kind, sources, targets, element type)
+        meta_by_owner: dict[str, list[str]] = {}                  # owner id -> names of the metadata definitions it carries
+        names_by_id: dict[str, str] = {}
         n = 0
         types_seen: Counter[str] = Counter()
         peek = opt_int(src.options, "peek", 0)
-        for page in self._pages(http, f"{base}/projects/{pid}/commits/{cid}/elements", src, k, peek=peek):
+        meta_types = set(k["metadata_types"])
+        for page in self._pages(http, f"{base}/projects/{pid}/commits/{cid}/elements", src, k, peek=peek, extra=extra):
             for e in page:
                 n += 1
                 t, eid = e.get(k["type"]), _ref(e.get(k["id"]))
                 types_seen[str(t)] += 1
+                if e.get(k["name"]):
+                    names_by_id[eid] = str(e[k["name"]])
                 if t in req_types:
                     reqs[eid] = e
                 elif t in k["doc_types"] and e.get(k["doc_body"]):
                     docs.append((eid, _ref(e.get(k["owner"])), str(e[k["doc_body"]])))
                 elif t in link_types:
-                    s = next((_refs(e.get(x)) for x in k["rel_source"] if e.get(x)), [])
-                    d = next((_refs(e.get(x)) for x in k["rel_target"] if e.get(x)), [])
-                    rels.append((eid, str(link_types[t]), s, d))
+                    ends = k["link_ends"].get(str(t), {})
+                    src_keys, dst_keys = ends.get("source", k["rel_source"]), ends.get("target", k["rel_target"])
+                    s = next((_refs(e.get(x)) for x in src_keys if e.get(x)), [])
+                    d = next((_refs(e.get(x)) for x in dst_keys if e.get(x)), [])
+                    rels.append((eid, str(link_types[t]), s, d, str(t)))
+                elif t in meta_types:
+                    ref = next((e.get(x) for x in k["metadata_def"] if e.get(x)), None)
+                    label = (ref.get(k["name"]) if isinstance(ref, dict) else None) or (_ref(ref) if ref else "") or str(e.get(k["name"]) or "")
+                    meta_by_owner.setdefault(_ref(e.get(k["owner"])), []).append(label)
         notes.append(f"read {n} elements; {len(reqs)} requirement elements; {len(docs)} documentation elements"
                      + (f"  [PEEK: first {peek} page(s) only, so counts and text are incomplete]" if peek else ""))
         if n and not reqs:
             top = ", ".join(f"{t}: {c}" for t, c in types_seen.most_common(12))
             notes.append(f"WARNING: no element has a type in {sorted(req_types)}. Types seen: {top}. Use req_types=... (and keys=... if the property names differ)")
+
+        kinds_found: Counter[str] = Counter()
+        unclassified = 0
+        classified: list[tuple[str, str, list[str], list[str]]] = []
+        for rid, kind, ss, ds, etype in rels:
+            if etype == "Dependency":
+                label = next((names_by_id.get(m, m) for m in meta_by_owner.get(rid, [])), "")
+                hit = k["metadata_kinds"].get(re.sub(r"[^a-z]", "", label.lower())) if label else None
+                if hit:
+                    kind = hit
+                elif label:
+                    unclassified += 1
+            kinds_found[kind] += 1
+            classified.append((rid, kind, ss, ds))
+        rels2 = classified
+        if kinds_found:
+            notes.append("relationship kinds read: " + ", ".join(f"{kk} {c}" for kk, c in sorted(kinds_found.items())))
+        if unclassified:
+            notes.append(f"{unclassified} dependencies carry metadata whose name is not one of {sorted(set(k['metadata_kinds'].values()))}; they are kept as the default kind. Check keys metadata_kinds / metadata_def")
+        unread = {t: c for t, c in types_seen.items() if _RELATIONSHIP_LIKE.search(t) and t not in link_types and t not in req_types}
+        if unread:
+            notes.append("relationship-like element types seen but NOT read as links: " + ", ".join(f"{t} x{c}" for t, c in sorted(unread.items(), key=lambda x: -x[1])[:12])
+                         + ". Add them to link_types (and link_ends in keys) if they matter")
 
         by_owner: dict[str, list[str]] = {}
         by_id = {d[0]: d for d in docs}
@@ -259,7 +318,7 @@ class SysMLApiAdapter(Adapter):
                 if pk not in _STRUCTURAL and pk not in f and isinstance(pv, (str, int, float, bool)) and pv != "":
                     f[f"prop.{pk}"] = pv
             rows.append((eid, f, owner if owner in reqs else None))
-        links = [(s, d, kind, rid) for rid, kind, ss, ds in rels for s in ss for d in ds if s in reqs or d in reqs]
+        links = [(s, d, kind, rid) for rid, kind, ss, ds in rels2 for s in ss for d in ds if s in reqs or d in reqs]
         snap = _Snapshot(rows, links, pid, cid, notes)
         self._cache[key] = snap
         return snap

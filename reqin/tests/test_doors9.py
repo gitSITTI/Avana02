@@ -31,8 +31,12 @@ def test_the_columns_the_script_writes_are_the_columns_the_profile_reads():
     cols = set(_header())
     wanted = {c for rule in PROFILE.fields.values() for c in rule.src + rule.join} | set(PROFILE.where)
     assert wanted <= cols, f"profile reads {sorted(wanted - cols)} but the script does not write them"
-    row_fn = _code(DXL).split("void writeRow", 1)[1]
-    assert row_fn.count("putField(") == len(cols), "writeRow must write exactly one field per HEADER column"
+    # writeRow() has one if/else per optional field, so putField() appears more often than there are columns; commas between fields do not
+    body = DXL.split("void writeRow", 1)[1].split("\n}\n", 1)[0]
+    assert _code(body).count("comma(out)") == len(_header()) - 1, "writeRow must separate exactly as many fields as HEADER has columns"
+    # the attributes are read in the order HEADER lists them (the ones that are object attributes, not computed)
+    attrs = [c for c in _header() if f'o."{c}"' in body]
+    assert attrs and [body.index(f'o."{c}"') for c in attrs] == sorted(body.index(f'o."{c}"') for c in attrs), "attributes out of HEADER order"
 
 
 def test_the_script_cannot_change_a_doors_database():
@@ -40,8 +44,8 @@ def test_the_script_cannot_change_a_doors_database():
     for forbidden in ("edit", "share", "save", "delete", "purge", "create", "modify", "unlock", "lock", "set", "import", "system",
                       "exec", "batch", "copy", "paste", "clear", "restore", "baseline", "link"):
         assert not re.search(rf"\b{forbidden}\b\s*[(\w\"]", code), f"DXL contains '{forbidden}'"
-    assert "read(modulePath, false)" in code.replace(" ", " ") and "write(outPath)" in code
-    assert code.count("write(") == 1, "the only write() allowed is the output file"
+    assert re.search(r"\bread\(modulePath,\s*false", code) and "write(outPath)" in code
+    assert code.count("read(") == 1 and code.count("write(") == 1, "the only read() is the module and the only write() is the output file"
 
 
 def _dxl_style_csv(path: Path, rows: list[list[str]]) -> None:
@@ -54,18 +58,26 @@ def _dxl_style_csv(path: Path, rows: list[list[str]]) -> None:
 
 def test_dxl_style_csv_round_trips_through_the_tabular_adapter(tmp_path):
     p = tmp_path / "doors_dxl_export.csv"
+    # Module, Absolute Number, Object Identifier, Object Level, Object Heading, Object Text, Verification Method, Deleted, Links
     rows = [
-        ["1", "SRS-1", "1", "Flight control", "", ""],                                               # heading: no text
-        ["2", "SRS-10", "2", "", 'The unit shall display "READY", then beep, within 2 s.', "Test"],  # quotes and commas
-        ["3", "SRS-11", "2", "", "The unit shall log faults.\nEach record shall have a time.", "Analysis"],   # line break inside a field
-        ["4", "SRS-12", "2", "", "The unit shall operate at 85° C – café mode.", "Inspection"],     # non-ASCII
+        ["/DEMO/SRS", "1", "SRS-1", "1", "Flight control", "", "", "0", ""],                                               # heading: no text
+        ["/DEMO/SRS", "2", "SRS-10", "2", "", 'The unit shall display "READY", then beep, within 2 s.', "Test", "0", "/DEMO/SYS#7;/DEMO/SYS#8"],  # quotes, commas, two links
+        ["/DEMO/SRS", "3", "SRS-11", "2", "", "The unit shall log faults.\nEach record shall have a time.", "Analysis", "0", ""],   # line break inside a field
+        ["/DEMO/SRS", "4", "SRS-12", "2", "", "The unit shall operate at 85° C – café mode.", "Inspection", "0", ""],     # non-ASCII
+        ["/DEMO/SRS", "5", "SRS-13", "2", "", "The unit shall never be written to.", "Test", "1", ""],                      # a deleted object, written because includeDeleted was true
     ]
     _dxl_style_csv(p, rows)
     r = ingest(Source(str(p)), profile=PROFILE)
-    assert r.report["invariant_ok"] and len(r.requirements) == 3
+    assert r.report["invariant_ok"] and len(r.requirements) == 4
     by = {q.uid: q for q in r.requirements}
     assert by["SRS-10"].text == 'The unit shall display "READY", then beep, within 2 s.'
     assert "Each record shall have a time." in by["SRS-11"].text and "85° C – café" in by["SRS-12"].text
     assert by["SRS-10"].fields["verification"] == "Test"
     assert r.report["filtered_out"] == {"row filter (where) did not match": 1}                       # the heading row, counted, not lost
-    assert sum(1 for _ in csv.reader(p.open(encoding="utf-8"))) == 5
+    assert sum(1 for _ in csv.reader(p.open(encoding="utf-8"))) == 6
+    # the module and the deleted flag are not dropped, so a deleted object can be seen for what it is
+    assert by["SRS-13"].extra["Deleted"] == "1" and by["SRS-10"].extra["Deleted"] == "0" and by["SRS-10"].extra["Module"] == "/DEMO/SRS"
+    # links point at "<module>#<number>", which is not a requirement identifier here: kept by that text, reported, never dropped
+    kept = [(l.source_uid, l.target_uid, l.kind) for l in r.links]
+    assert kept == [("SRS-10", "/DEMO/SYS#7", "trace"), ("SRS-10", "/DEMO/SYS#8", "trace")]
+    assert "2 links point outside this import (kept by UID)" in r.report["warnings"]

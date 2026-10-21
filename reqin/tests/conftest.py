@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from make_fixtures import build  # noqa: E402
 
 
-REQUIRED = {"csv", "xlsx", "doors_csv", "reqif", "sysml", "sqlite", "docx", "pdf"}
+REQUIRED = {"csv", "xlsx", "doors_csv", "reqif", "sysml", "xmi", "mdzip", "sqlite", "docx", "pdf"}
 
 
 @pytest.fixture(scope="session")

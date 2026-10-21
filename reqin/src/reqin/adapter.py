@@ -97,7 +97,8 @@ def register(cls: type[Adapter]) -> type[Adapter]:
 
 def load_adapters() -> dict[str, type[Adapter]]:
     """Built-ins plus any third-party package that declares the 'reqin.adapters' entry-point group."""
-    for mod in ("tabular", "reqif_adapter", "sysml_text", "sysml_api", "oslc_rm", "agility", "sql", "docx_adapter", "pdf_adapter", "mdzip"):
+    for mod in ("tabular", "reqif_adapter", "sysml_text", "sysml_api", "oslc_rm", "agility", "sql", "docx_adapter", "pdf_adapter", "sysml1_xmi",
+                "jira", "polarion", "jama"):
         importlib.import_module(f"reqin.adapters.{mod}")
     for ep in importlib.metadata.entry_points(group="reqin.adapters"):
         ep.load()  # importing registers it

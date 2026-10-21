@@ -32,10 +32,10 @@ res = ingest(Source("reqs.xlsx"), profile=Profile.from_yaml(open("profiles/xlsx_
 res.requirements   # list[Requirement]   res.links   res.rejected (with reasons)   res.report (counts, invariant_ok, warnings)
 ```
 
-Layout: `src/reqin/{model,adapter,mapping,normalise,ingest,cli,connect,testing,watch,dataset,contract_datasets}.py`, `src/reqin/compare/` (the comparison engine), `src/reqin/adapters/*` (one file per source), `profiles/*.yaml` (examples), `connectors/doors9/` (a DXL export script), `tests/` (fixtures are generated, synthetic).
+Layout: `src/reqin/{model,adapter,mapping,normalise,ingest,cli,connect,testing,watch,dataset,contract_datasets}.py`, `src/reqin/compare/` (the comparison engine), `src/reqin/adapters/*` (one file per source), `profiles/*.yaml` (examples), `connectors/` (a DOORS 9 DXL export script, the Jama token helper, the Enterprise Architect query pack), `tests/` (fixtures are generated, synthetic).
 
 **The screen's contract.** Read `GUI_CONTRACT.md`: the GUI reads one dataset folder (`dataset.py`), never a file, and must pass the fourteen datasets in `contract_datasets.py`.
 
 **Your own connectors.** Read `CONNECTORS.md`. Start from `../connector_template/` (working example, five `TODO(agent)` seams, an agent prompt). Live connectors use the GET-only client in `connect.py` and are tested with `testing.py`.
 
-**Status.** Fixtures are synthetic. No real MSOSA, DOORS, Teamwork Cloud or Agility system has been read. `sysml_api`, `oslc_rm` and `agility` are **fake-server-tested**: they have met only in-memory fakes written from documentation, and `reqin connectors` says so. The DOORS 9 script has never run in DOORS. `mdzip` is a deliberate stub. See `INPUT_LAYER.md` section 6 and `CONNECTORS.md`.
+**Status.** Fixtures are synthetic. No real MSOSA, DOORS, Teamwork Cloud, Agility, Jira, Polarion, Jama or Enterprise Architect system has been read. `sysml_api`, `oslc_rm`, `agility`, `jira`, `polarion` and `jama` are **fake-server-tested**: they have met only in-memory fakes written from documentation, and `reqin connectors` says so. `sysml1_xmi` (a SysML 1.x model as XMI, or an MSOSA `.mdzip`) is **fixture-tested** on files generated in the tests, never on a real project. The Enterprise Architect query pack for the `sql` adapter was tested on a made-up SQLite database whose table and column names are recalled, not read. The DOORS 9 script and the Jama token helper have never run against the real thing. See `INPUT_LAYER.md` section 6 and `CONNECTORS.md`.
