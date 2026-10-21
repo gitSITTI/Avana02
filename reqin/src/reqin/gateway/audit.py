@@ -51,7 +51,9 @@ def verify_log(path: str | Path, expect_head: str = "") -> dict[str, Any]:
     """Recompute the chain. {ok, entries, head} or {ok: False, at: line number, why}."""
     prev, n = GENESIS, 0
     try:
-        lines = Path(path).read_text(encoding="utf-8").splitlines()
+        lines = Path(path).read_text(encoding="utf-8").split("\n")          # a line ends at a line feed and nowhere else: splitlines() also splits at U+2028, U+0085 and others, which a name may hold
+        if lines and lines[-1] == "":
+            lines.pop()
     except OSError as e:
         return {"ok": False, "at": 0, "why": f"cannot read the file: {e.strerror or e}"}
     for i, line in enumerate(lines, 1):

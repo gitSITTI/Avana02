@@ -37,6 +37,7 @@ muts = [
  ('verify ignores who and when', S, 'if r["by_person"] != e["actor"] or r["at"] != e["at"]:', "if False:"),
  ('verify ignores documents outside the record', S, "        if extra:", "        if False:"),
  ('verify ignores a remembered head', S, "if expect_head and expect_head != prev:", "if False:"),
+ ('a refused body is not read, so the answer can be lost to a reset', H, "        if self._unread():\n            self._drain()\n", "        pass\n"),
  ('verify ignores a missing entry', S, 'if e["seq"] != n:', "if False:"),
  ('a document may be any size', S, "if len(text.encode(\"utf-8\")) > MAX_BODY_BYTES:", "if False:"),
  ('a failed write stays half done', S, "                if self.db.in_transaction:\n                    self.db.execute(\"ROLLBACK\")", "                pass"),

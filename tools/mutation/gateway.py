@@ -38,6 +38,8 @@ MUTS = [
  ('a token the server does not know is accepted', H, '        if st == 401:\n            return self._error(401, "bad_token", "The reference server does not know that token.")\n        try:\n            who =', '        try:\n            who ='),
  # the switch and the sheet
  ('a project with no sheet is open', C, '    if not ai_present:\n        return Verdict(False, 403, "no_sheet"', '    if False:\n        return Verdict(False, 403, "no_sheet"'),
+ ('a name or date that is not text is let through to fail later', C, "if any(k in sh and not isinstance(sh[k], str) for k in STR_FIELDS) or", "if False or"),
+ ('a switch-like entry that is not true or false is let through', C, "or (\"leaves\" in sh and not isinstance(sh[\"leaves\"], bool)):", "or False:"),
  ('a sheet in a shape it cannot read is trusted', C, '    if parsed is None:\n        return Verdict(False, 403, "bad_sheet"', '    if False:\n        return Verdict(False, 403, "bad_sheet"'),
  ('the sheet document may carry other entries', C, 'or set(doc) - {"on", "sheet"} or', 'or'),
  ('the switch need not be true or false', C, 'or not isinstance(doc.get("on"), bool)', ''),
@@ -74,6 +76,8 @@ MUTS = [
  ('the model\'s own errors are hidden', H, 'self._send(ust, udata,', 'self._send(200, udata,'),
  ('the gate\'s answer is not sent', H, '"X-Reqin-Gate": f"open; level={v.level or \'none\'}; requirements={len(ids)}"', '"X-Reqin-Gate": ""'),
  ('a refused request is not recorded', H, '            srv.audit.add(project=project, person=person, requirements=[x for x in ids if ID_RE.fullmatch(x)][:200], code=v.code, level=v.level, ok=False, upstream=None, prompt_bytes=prompt_bytes)\n', ''),
+ ('the record is cut into lines at more than line feeds', A, '.read_text(encoding="utf-8").split("\\n")', '.read_text(encoding="utf-8").splitlines()'),
+ ('a blank last line is a record that does not parse', A, '        if lines and lines[-1] == "":\n            lines.pop()\n', ''),
  ('a request that went to the model is not recorded', H, '        srv.audit.add(project=project, person=person, requirements=ids, code="open", level=v.level, ok=True, upstream=ust, prompt_bytes=len(raw))\n', ''),
  ('it listens beyond this machine without being told to', H, 'if not is_loopback(cfg.host) and not cfg.allow_remote:', 'if False:'),
  ('the server being down is read as no sheet', H, '        except Upstream:\n            return self._error(502, "server_unreachable", "The reference server could not be reached, so nothing was sent to the model.")\n        doc: Any = None', '        except Upstream:\n            st, data = 404, b""\n        doc: Any = None'),

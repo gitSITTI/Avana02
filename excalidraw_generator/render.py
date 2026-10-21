@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Render a .excalidraw file to PNG so you can LOOK at it:  python render.py board.excalidraw out.png [scale]
+(or to a vector picture that stays sharp at any size:  python render.py board.excalidraw out.svg )
 
 Uses Excalidraw's own exporter (@excalidraw/utils, bundled by esbuild into bundle.js) inside headless Chromium,
 so what you see is what Excalidraw will draw. Build the bundle once:  npm ci && sh make_bundle.sh
@@ -34,6 +35,11 @@ def main() -> None:
         pg.set_content('<html><body style="margin:0;background:#fff"><div id="o"></div></body></html>')
         pg.add_script_tag(path=str(bundle))
         svg = pg.evaluate("""async (d) => { const s = await window.exportToSvg({data: {elements: d.elements, appState: {exportBackground: true, viewBackgroundColor: '#ffffff'}, files: {}}, config: {padding: 20, skipInliningFonts: true}}); return s.outerHTML; }""", data)
+        if out.lower().endswith(".svg"):
+            Path(out).write_text('<?xml version="1.0" encoding="UTF-8"?>\n' + svg + "\n", encoding="utf-8")
+            print("svg written", out, "errors", errs)
+            b.close()
+            return
         pg.set_content('<html><body style="margin:0;background:#fff">' + svg + "</body></html>")
         dims = pg.evaluate('(()=>{const s=document.querySelector("svg");return [s.width.baseVal.value,s.height.baseVal.value]})()')
         print("svg size", dims, "errors", errs)

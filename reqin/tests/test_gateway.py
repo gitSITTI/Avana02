@@ -221,7 +221,8 @@ def test_a_sheet_that_is_not_reviewed_or_contradicts_itself_opens_nothing(world,
 
 def test_a_sheet_the_gateway_cannot_read_opens_nothing(world):
     w = world
-    for bad in ({"on": True, "sheet": {**SHEET, "surprise": 1}}, {"on": "yes", "sheet": SHEET}, {"on": True}, {"on": True, "sheet": "x"}, {"on": True, "sheet": SHEET, "extra": 1}):
+    for bad in ({"on": True, "sheet": {**SHEET, "surprise": 1}}, {"on": "yes", "sheet": SHEET}, {"on": True}, {"on": True, "sheet": "x"}, {"on": True, "sheet": SHEET, "extra": 1},
+                {"on": True, "sheet": {**SHEET, "reviewed_by": 5}}, {"on": True, "sheet": {**SHEET, "model": None}}, {"on": True, "sheet": {**SHEET, "leaves": "no"}}, {"on": True, "sheet": {**SHEET, "where": ["ours"]}}):
         cur = _has(w.st, w.who["morgan"], "proj/ai")
         rev = w.st.get(w.who["morgan"], "proj/ai")["rev"] if cur else 0
         w.st.put(w.who["morgan"], "proj/ai", bad, rev)
@@ -543,6 +544,24 @@ def test_an_edited_or_removed_line_of_the_record_is_noticed(world):
     log.write_text(good)
 
 
+def test_a_name_with_a_unicode_line_separator_does_not_break_the_record(tmp_path):
+    """A line of the record ends at a line feed and nowhere else. Python's splitlines() also splits at U+2028, U+0085 and others, which canonical JSON writes as they are,
+    so a person with one in their name made the gateway's own log fail to verify, and the gateway refuse to append to it."""
+    from reqin.gateway.audit import AuditLog
+    log = tmp_path / "audit.jsonl"
+    a = AuditLog(log)
+    for who in ("Ann\u2028Lee", "Bo\u0085X", "Cy\x0bZ\x0c\x1c", "plain"):
+        a.add(project="P", person=who, requirements=["REQ-1"], code="open", level="none", ok=True, upstream=200, prompt_bytes=5)
+    assert "\u2028" in log.read_text(encoding="utf-8") and "\u0085" in log.read_text(encoding="utf-8")
+    res = verify_log(log)
+    assert res["ok"] and res["entries"] == 4, res
+    assert AuditLog(log).seq == 4, "the gateway can append to its own log again after a restart"
+    log.write_text(log.read_text(encoding="utf-8").rstrip("\n"), encoding="utf-8")
+    assert verify_log(log)["ok"], "a last line with no line feed after it is still a line"
+    log.write_text(log.read_text(encoding="utf-8") + "\n\n", encoding="utf-8")
+    assert verify_log(log) == {"ok": False, "at": 5, "why": "the line is not JSON"}, "a blank line is not a record"
+
+
 def test_a_line_edited_and_given_a_fresh_fingerprint_still_breaks_the_chain(world):
     """Someone who edits a line and recomputes its own fingerprint is caught by the line after it, which still names the old one."""
     from reqin.gateway.audit import _canon, _hash
@@ -612,6 +631,11 @@ def test_decide_runs_the_same_ensure_as_the_page():
 def test_sheet_from_doc_refuses_what_it_does_not_know():
     assert sheet_from_doc({"on": True, "sheet": SHEET})[1] is True
     assert sheet_from_doc({"on": 1, "sheet": SHEET}) is None and sheet_from_doc({"on": True, "sheet": {**SHEET, "x": 1}}) is None and sheet_from_doc(None) is None
+    for k in ("model", "where", "log", "approved", "unstated", "reviewed_by", "reviewed_at", "entered_by"):
+        assert sheet_from_doc({"on": True, "sheet": {**SHEET, k: 5}}) is None, k
+        assert sheet_from_doc({"on": True, "sheet": {**SHEET, k: None}}) is None, k
+    assert sheet_from_doc({"on": True, "sheet": {**SHEET, "leaves": 0}}) is None and sheet_from_doc({"on": True, "sheet": {**SHEET, "leaves": "false"}}) is None
+    assert sheet_from_doc({"on": True, "sheet": {**SHEET, "days": "90"}}) is not None, "days is left to the gate, which names it"
 
 
 def test_prompt_text_reads_every_string_including_keys():

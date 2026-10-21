@@ -83,7 +83,7 @@ markup = ''.join(open(f).read() for f in sorted(glob.glob(os.path.join(P, 'm', '
 markup = expand(markup)
 js_order = ['data1', 'data2', 'data3', 'data4', 'logic1', 'misc', 'logic2', 'logic3', 'gold', 'single', 'trace', 'aigate', 'persist', 'connect']
 js = '\n'.join(open(os.path.join(P, n + '.js')).read() for n in js_order)
-# A test build with a bigger project, for the scale test (tools in tests/scale.js): REQIN_SCALE=20 makes 20 times as many requirements and clusters.
+# A test build with a bigger project, for the scale test (scale.js): REQIN_SCALE=20 makes 20 times as many requirements and clusters.
 # It never writes the shipped page: give it another destination.
 SCALE = int(os.environ.get('REQIN_SCALE', '1'))
 if SCALE > 1:
@@ -91,6 +91,29 @@ if SCALE > 1:
     for pat, rep in [(r"const TOTAL_REQS = 1248;", "const TOTAL_REQS = 1248 * %d;" % SCALE), (r"n <= 252; n\+\+", "n <= 252 * %d; n++" % SCALE)]:
         js, n = re.subn(pat, rep, js); assert n == 1, pat
     js, n = re.subn(r"add\('(\w+)', (\d+)\);", lambda m: "add('%s', %d);" % (m.group(1), int(m.group(2)) * SCALE), js); assert n == 7, n
+# REQIN_SHAPE=varied: the same size, a different shape. The sample repeated K times has many identical wordings, one balanced spread over the allocations and clusters of
+# 2 to 14 members, which is kind to the counting of pairs (it counts once per different wording). The varied shape has mostly different wordings of different lengths drawn
+# from a larger vocabulary, three in ten requirements in one allocation, and a few very large clusters. It is made up, like the sample: it tests how fast, not how well.
+SHAPE = os.environ.get('REQIN_SHAPE', 'sample')
+assert SHAPE in ('sample', 'varied'), 'REQIN_SHAPE is sample or varied'
+if SHAPE == 'varied':
+    assert len(sys.argv) > 1, 'a varied build must be written somewhere other than project/Main.dc.html'
+    vary = r"""const SHAPE_SYL = ['ka','lo','mi','ren','tav','ul','bex','or','dun','fa','shi','pel','qua','zor','nim','gal','vo','tek','sar','ine'];
+const SHAPE_VOC = (() => { const r = rng(7), out = []; for (let i = 0; i < 700; i++) { let w = ''; const k = 2 + Math.floor(r() * 2); for (let j = 0; j < k; j++) w += SHAPE_SYL[Math.floor(r() * SHAPE_SYL.length)]; out.push(w); } return out; })();
+function VARY(text, R) {
+  const extra = Math.floor(R() * R() * 14), w = [];
+  for (let i = 0; i < extra; i++) w.push(SHAPE_VOC[Math.floor(SHAPE_VOC.length * R() * R())]);
+  const tag = SHAPE_VOC[Math.floor(SHAPE_VOC.length * R())] + ' ' + SHAPE_VOC[Math.floor(SHAPE_VOC.length * R())];      // two words, no digits: a number here would be read as a value
+  return text.replace(/\.$/, '') + (w.length ? ', ' + w.join(' ') : '') + ' (ref ' + tag + ').';
+}
+function genAll() {"""
+    big = "const OVER = (() => { const o = { 'CL-117': 120, 'CL-201': 200 }; for (let n = 300; n <= 252 * %d; n += 97) o['CL-' + String(n).padStart(3, '0')] = 40 + (n %% 7) * 10; return o; })();" % SCALE
+    for pat, rep in [(r"function genAll\(\) \{", vary),
+                     (r"const OVER = \{ 'CL-117': 13, 'CL-201': 14 \};", big),
+                     (r"const al = wpk\(ALLOCS\), fam = pk\(FAMS\), thing = pk\(fam.things\);", "const al = R() < 0.3 ? ALLOCS[0] : wpk(ALLOCS), fam = pk(FAMS), thing = pk(fam.things);"),
+                     (r"text: fam.mk\(al.sub, val, s0, thing, cnd\), cid: null", "text: VARY(fam.mk(al.sub, val, s0, thing, cnd), R), cid: null"),
+                     (r"'Pre-baseline', text, extra\);", "'Pre-baseline', VARY(text, R), extra);")]:
+        js, n = re.subn(pat, lambda m, rep=rep: rep, js); assert n == 1, pat
 cls = 'class Component extends DCLogic {\n' + '\n'.join(open(os.path.join(P, n + '.js')).read() for n in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9']) + '}\n'
 props = '{"accent":{"editor":"color","default":"#1A4DB5","options":["#1A4DB5","#0B6E6E","#7A3E00","#2F3B46"]},"showHints":{"editor":"boolean","default":true}}'
 out = markup + "\n</x-dc>\n" if not markup.rstrip().endswith('</x-dc>') else markup

@@ -11,7 +11,7 @@ A clickable prototype of the app's screens, built as a single `Main.dc.html` pag
 | `b11.py` to `b20.py` | Browser tests with assertions, listed below. `run_browser_tests.py` runs all of them at the widths each is meant for (30 runs). |
 | `h.py` | The harness: serves `project/` and opens it in headless Chromium with React from `vendor/`. |
 | `a11y_page.js`, `chart_colours.py`, `vendor/` | What `b20.py` measures with: checks written for this page (contrast as drawn, field edges, Tab stops), the colour-blind check for chart palettes, and the pinned libraries (React, Babel, axe-core). |
-| `scale.js` | The scale test: 20 times the sample (24,960 requirements, 5,040 clusters), every page drawn and timed, the gold-set pair counts, the project file and the trace map file. |
+| `scale.js` | The scale test: 20 times the sample (24,960 requirements, 5,040 clusters) in two shapes (the sample repeated, and a varied one), every page drawn and timed, the gold-set pair counts, the project file and the trace map file. |
 | `b0.py` to `b10.py`, `t0.py` | Older flow scripts: they drive every other screen and print what they see. They do not assert; compare their output before and after a change. |
 | `shots.py` | Retakes the pictures in `docs/images/prototype/` and records which page build they came from. |
 | `requirements-test.txt` | The pinned Playwright the browser tests and the CI image use. |
@@ -35,7 +35,8 @@ The browser tests, each at 1440, 900 and 390 px wide unless noted:
 ```bash
 python3 build.py                          # rebuild project/Main.dc.html from parts/
 node verify.js project/Main.dc.html       # static check; prints ISSUES 0
-node scale.js                             # 24,960 requirements; prints SCALE OK (about 10 seconds)
+node scale.js 20 sample                   # 24,960 requirements, the sample repeated; prints SCALE OK (about 10 seconds)
+node scale.js 20 varied                   # the same size, a different shape (mostly different wordings, very large clusters); about 20 seconds
 # browser tests (need Playwright for Python and a Chromium; set CHROMIUM_PATH if it is not auto-found)
 (cd vendor && npm ci)                     # React, Babel and axe-core, pinned by package-lock.json
 pip install -r requirements-test.txt && python -m playwright install --with-deps chromium
@@ -110,7 +111,19 @@ One project-wide switch, one AI data sheet (what the approvers were told about t
 
 ## Scale
 
-`node scale.js` builds a page with 20 times the sample (24,960 requirements, 5,040 clusters) in a temporary folder and times what a person waits for. The first drawing of every page, the drawing after a change, the one-off counting of pairs for the gold set (which was once quadratic and took 204 s at this size), writing and reading back the project file, and the trace map file each have a limit about three times what a laptop needs; the run also checks that counts are still true at that size and that memory stays within bounds. On the machine this was written on it takes about 7 seconds in all. The slowest first drawing (All requirements) took 0.7 s against a 4 s limit, and the pair counting 1.5 s against 19 s. **The 20 times larger project is the sample repeated, so it has many identical wordings; a real corpus has a different shape** and may be slower or faster. `SCALE_SLACK=2` doubles every limit for a slow machine.
+`node scale.js 20 sample` builds a page with 20 times the sample (24,960 requirements, 5,040 clusters) in a temporary folder and times what a person waits for. The first drawing of every page, the drawing after a change, the one-off counting of pairs for the gold set (which was once quadratic and took 204 s at this size), writing and reading back the project file, and the trace map file each have a limit about three times what a laptop needs; the run also checks that counts are still true at that size and that memory stays within bounds. `SCALE_SLACK=2` doubles every limit for a slow machine.
+
+**The sample repeated is kind to the counting of pairs**, because only one in five of its wordings is different and the pair counts are made once per different wording. So there is a second run, `node scale.js 20 varied`: the same number of requirements and clusters, but every wording different (a seeded stream of made-up words added to each, 6 to 34 words long), about three in ten requirements in one allocation, and 51 clusters of 40 to 200 members. The run prints what shape it got and fails if the project is not varied, so it cannot quietly turn back into the repeated sample. Measured on the machine this was written on:
+
+| | sample repeated | varied |
+|---|---|---|
+| Requirements, clusters | 24,960, 5,040 | 24,960, 5,040 |
+| Different wordings | 20 % | 100 % |
+| Counting the pairs for the gold set (the slowest step) | 1.5 s (limit 19 s) | 9.6 s (limit 34 s) |
+| Slowest other step (the first drawing of All requirements) | 0.5 s (limit 4 s) | 0.8 s (limit 4 s) |
+| Memory in use at the end | about 100 MB | 200 to 400 MB (limit 1,500 MB) |
+
+The pair counting grows faster than the project does on the varied shape: at 49,920 requirements (`node scale.js 40 varied`) it took 42 s. That is a one-off count made the first time the Methods or Gold set page is opened, and it is kept afterwards; there is no promise for projects of that size. **Both shapes are made up. They test how fast, not how well: nothing here says whether the comparison would find the right pairs in a real corpus, and a real corpus has its own shape that neither run reproduces.**
 
 ## Accessibility
 

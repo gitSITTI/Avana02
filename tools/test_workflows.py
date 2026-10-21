@@ -75,7 +75,8 @@ def secret_scan_problems(code: list[str]) -> list[str]:
 
 BROWSER_JOBS = {
     "prototype-browser": ["npm ci", "playwright install", "python run_browser_tests.py"],
-    "prototype-scale": ["node scale.js"],
+    "prototype-scale": ["node scale.js 20 sample", "node scale.js 20 varied"],
+    "prototype-other-browsers": ["browser: [firefox, webkit]", "continue-on-error: true", "REQIN_BROWSER: ${{ matrix.browser }}", "run_browser_tests.py b11 b12 b17 b18 b20 --width 1440", "playwright install --with-deps ${{ matrix.browser }}"],
 }
 
 
@@ -185,7 +186,7 @@ def test_every_job_the_makefile_check_full_target_adds_has_a_workflow_job():
 def test_the_make_targets_run_the_same_runner_as_the_workflow():
     makefile = (REPO / "Makefile").read_text(encoding="utf-8")
     assert re.search(r"^proto-test:\n(?:\t.*\n)*?\tcd prototype && \$\(PY\) run_browser_tests\.py$", makefile, re.M)
-    assert re.search(r"^proto-scale:\n\tcd prototype && node scale\.js$", makefile, re.M)
+    assert re.search(r"^proto-scale:\n\tcd prototype && node scale\.js 20 sample && node scale\.js 20 varied$", makefile, re.M)
 
 
 def test_the_runner_lists_every_browser_test_file():
@@ -220,8 +221,13 @@ MUTATIONS = [
     ("does not run `python run_browser_tests.py`", lambda t: t.replace("run: python run_browser_tests.py", "run: python run_browser_test.py", 1)),
     ("does not run `npm ci`", lambda t: t.replace("      - run: npm ci\n        working-directory: prototype/vendor\n", "", 1)),
     ("does not run `playwright install`", lambda t: t.replace("run: python -m playwright install --with-deps chromium", "run: python -m pip --version", 1)),
+    ("has no `prototype-other-browsers` job", lambda t: t.replace("\n  prototype-other-browsers:\n", "\n  prototype-other-brwsrs:\n", 1)),
+    ("does not run `browser: [firefox, webkit]`", lambda t: t.replace("browser: [firefox, webkit]", "browser: [firefox]", 1)),
+    ("does not run `continue-on-error: true`", lambda t: t.replace("    continue-on-error: true\n    timeout-minutes: 60\n    strategy:", "    timeout-minutes: 60\n    strategy:", 1)),
+    ("does not run `REQIN_BROWSER: ${{ matrix.browser }}`", lambda t: t.replace("REQIN_BROWSER: ${{ matrix.browser }}", "REQIN_BROWSER: chromium", 1)),
     ("has no `prototype-scale` job", lambda t: t.replace("\n  prototype-scale:\n", "\n  prototype-scal:\n", 1)),
-    ("does not run `node scale.js`", lambda t: t.replace("run: node scale.js", "run: node verify.js project/Main.dc.html", 1)),
+    ("does not run `node scale.js 20 sample`", lambda t: t.replace("run: node scale.js 20 sample", "run: node verify.js project/Main.dc.html", 1)),
+    ("does not run `node scale.js 20 varied`", lambda t: t.replace("run: node scale.js 20 varied", "run: node verify.js project/Main.dc.html", 1)),
 ]
 
 
@@ -245,7 +251,8 @@ def test_a_trigger_named_only_in_a_comment_is_not_a_problem():
 GITLAB_JOBS = {
     "prototype:vendor": ["npm ci"],
     "prototype:browser": ["python run_browser_tests.py"],
-    "prototype:scale": ["node scale.js"],
+    "prototype:scale": ["node scale.js 20 sample", "node scale.js 20 varied"],
+    "prototype:other-browsers": ["python run_browser_tests.py b11 b12 b17 b18 b20 --width 1440"],
 }
 
 
@@ -305,7 +312,10 @@ def test_the_gitlab_pipeline_has_no_problems():
 GITLAB_MUTATIONS = [
     ("no `prototype:browser` job", lambda t: t.replace("\nprototype:browser:\n", "\nprototype:brwsr:\n", 1)),
     ("`prototype:browser` job does not run `python run_browser_tests.py`", lambda t: t.replace("    - python run_browser_tests.py\n", "    - python verify.py\n", 1)),
-    ("`prototype:scale` job does not run `node scale.js`", lambda t: t.replace("    - node scale.js\n", "    - node verify.js project/Main.dc.html\n", 1)),
+    ("`prototype:scale` job does not run `node scale.js 20 sample`", lambda t: t.replace("    - node scale.js 20 sample\n", "    - node verify.js project/Main.dc.html\n", 1)),
+    ("`prototype:scale` job does not run `node scale.js 20 varied`", lambda t: t.replace("    - node scale.js 20 varied\n", "    - node verify.js project/Main.dc.html\n", 1)),
+    ("no `prototype:other-browsers` job", lambda t: t.replace("\nprototype:other-browsers:\n", "\nprototype:other-brwsrs:\n", 1)),
+    ("`prototype:other-browsers` job does not run `python run_browser_tests.py b11 b12 b17 b18 b20 --width 1440`", lambda t: t.replace("    - python run_browser_tests.py b11 b12 b17 b18 b20 --width 1440\n", "    - python run_browser_tests.py b11\n", 1)),
     ("`prototype:vendor` job does not run `npm ci`", lambda t: t.replace("    - npm ci\n", "    - npm install\n", 1)),
     ("names 'run_browser_test.py'", lambda t: t.replace("run_browser_tests.py", "run_browser_test.py", 1)),
     ("goes to a folder that does not exist", lambda t: t.replace("    - cd prototype/vendor\n", "    - cd prototype/vendr\n", 1)),

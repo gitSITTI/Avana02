@@ -471,6 +471,15 @@ def test_a_bad_request_gets_a_plain_answer_and_changes_nothing(live, kw, status,
     assert st.db.execute("SELECT COUNT(*) FROM revs").fetchone()[0] == 0
 
 
+def test_a_too_large_request_is_answered_every_time_not_sometimes_reset(live):
+    """The server refuses on the Content-Length without reading the body. If it then closed at once, the unread data would turn the close into a reset and the caller would
+    sometimes see 'connection reset' instead of 413 (about one run in five before the server read and discarded a bounded part of the body)."""
+    call, t, _ = live
+    for _ in range(25):
+        s, b, _r = call("PUT", "/v1/projects/demo/docs/dec/CL-001", t["sam"], raw="x" * (1024 * 1024 + 1))
+        assert (s, b["error"]["code"]) == (413, "too_large")
+
+
 def test_odd_urls_and_methods_are_refused_without_a_stack_trace(live):
     call, t, _ = live
     for url in ("/", "/v1", "/v1/projects/demo", "/v1/projects/demo/docs/", "/v1/projects/demo/docs/../../etc/passwd", "/v1/projects/demo/docs/dec/%2e%2e/x", "/v1/projects/DEMO/docs"):

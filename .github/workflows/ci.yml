@@ -183,8 +183,41 @@ jobs:
       - run: python run_browser_tests.py
         working-directory: prototype
 
+  # 3c-2. The same page in Firefox and WebKit, five of the test files at one width: opening a project, the first screens and the wording comparison, the trace map
+  #       downloads, keeping the work (storage, saving and loading a file) and the accessibility scan. The tests were written and run against Chromium only, so
+  #       this job is allowed to fail: a red result here is a thing to look at (a real difference between browsers, or a test that assumed Chromium), not a broken
+  #       build. It has not run on GitHub yet, and the tests have never been run in these two browsers.
+  prototype-other-browsers:
+    name: prototype in ${{ matrix.browser }} (allowed to fail)
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - run: npm ci
+        working-directory: prototype/vendor
+      - run: pip install -r prototype/requirements-test.txt
+      - run: python -m playwright install --with-deps ${{ matrix.browser }}
+      - run: python run_browser_tests.py b11 b12 b17 b18 b20 --width 1440
+        working-directory: prototype
+        env:
+          REQIN_BROWSER: ${{ matrix.browser }}
+
   # 3d. The scale test: a page with 20 times the sample (24,960 requirements, 5,040 clusters) is built in a temporary folder and every page, the gold-set pair
-  #     counts and the project files are timed against limits about three times what a laptop needs. SCALE_SLACK doubles them for a shared runner.
+  #     counts and the project files are timed against limits about three times what a laptop needs, twice: as the sample repeated and with a varied shape (see
+  #     prototype/scale.js). SCALE_SLACK doubles the limits for a shared runner.
   prototype-scale:
     name: prototype scale test (25,000 requirements)
     runs-on: ubuntu-24.04
@@ -199,7 +232,11 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "22"
-      - run: node scale.js
+      - run: node scale.js 20 sample
+        working-directory: prototype
+        env:
+          SCALE_SLACK: "2"
+      - run: node scale.js 20 varied
         working-directory: prototype
         env:
           SCALE_SLACK: "2"

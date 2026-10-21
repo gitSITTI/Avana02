@@ -17,6 +17,7 @@ The twelve boards (storyboard, wireframes, system flows, UI kit, scale, lenses, 
 | `build_wf.py` | Composer for board 02 (it also has `build(path)`). |
 | `boards_05_09.py` | Boards 05 to 12 as **data**: title, seed, and the list of screens with their frame sizes. |
 | `build_all.py` | Builds every board, validates each, and with `--check` compares to files you already have. |
+| `board_spec.py`, `board_spec.schema.json`, `examples/board_spec_example.json` | A board written as plain JSON (`reqin-board/1`) and compiled to a `.excalidraw` file: for agents that cannot run code. Section 12. |
 | `validate.py` | Structural checks (duplicate ids, dangling references, frame order, overflow). |
 | `render.py`, `entry.js`, `make_bundle.sh`, `package.json` | Render a board to PNG with Excalidraw's own exporter in headless Chromium. |
 | `examples/hello_board.py`, `examples/add_a_screen.py` | The smallest board, and a worked example of adding a screen. |
@@ -194,6 +195,23 @@ Open the prototype page, list its regions top to bottom, and map each to a widge
 
 **Audit.** "Read-only. Render every board at scale 0.4 and list inconsistencies: wording that disagrees with `wf2.BANNER`, marks used for the wrong meaning, a screen with no callouts, a Notes column whose count differs from its callouts. Do not edit anything."
 
-## 12. Licences
+## 12. For an agent that cannot run code, or writes JSON more reliably than Python
+
+The boards above are written as Python. A board can also be written as **plain JSON** and compiled by `board_spec.py`, which lays the items out with the same widgets, the same palette and the same design rules, so the agent never writes Excalidraw JSON, coordinates for every item, or a colour. The format is `reqin-board/1`: fifteen kinds of item (heading, text, caps, card, button, chip, bar, placeholder, mark, table, checklist, key/value, box, arrow, callout), numbered notes beside each frame, and nothing else.
+
+| Command (from `excalidraw_generator/`) | What it does |
+|---|---|
+| `python3 board_spec.py describe` | The vocabulary as Markdown, made from the same table the checker uses. Paste it into a prompt. |
+| `python3 board_spec.py example > spec.json` | A small working spec to start from (also `examples/board_spec_example.json`). |
+| `python3 board_spec.py schema` | The JSON Schema (also committed as `board_spec.schema.json`); any validator or a model's structured-output mode can use it. |
+| `python3 board_spec.py check spec.json` | Every structural problem at once, each with its path (`frames[0].items[2].rows[1][0]: ...`), then the layout warnings. Feed the lines back to the agent that wrote the spec. Add `--json` for a machine-readable answer. |
+| `python3 board_spec.py build spec.json out.excalidraw --strict --png out.png --scale 3` | Check, lay out, write the board, run `validate.py` on it, and draw a picture. `--strict` makes warnings (an item outside its frame, two items on top of each other, a label that will not fit, a callout with no note) fail the build. |
+| `... --svg out.svg` | A vector picture that stays sharp at any size, for slides and print. For raster, `--png` with `--scale` 2 to 4 is what "high definition" means here: the picture is drawn, not enlarged. |
+
+How an agent with no tools works: paste [`docs/agent_prompts/excalidraw_board_without_code.md`](../docs/agent_prompts/excalidraw_board_without_code.md) into the chat (it holds the whole vocabulary and an example), describe the board, take the JSON it writes, run `check`, paste any `ERROR` and `WARN` lines back, and repeat until `check --strict` says `ok`. The compiler is the part that sees the picture's geometry, so the agent does not need to.
+
+What it does not do: it cannot draw anything outside its fifteen items (use the Python widgets for that), it lays items out in a column with `x`, `y` and `"same"` rather than from a design tool's free canvas, and **it has never been opened in the live Excalidraw app**: the output passes `validate.py` and renders with Excalidraw's own exporter. The tests are `tools/test_board_spec.py`; `tools/mutation/board_spec.py` breaks the compiler 83 ways and each is noticed.
+
+## 13. Licences
 
 `@excalidraw/utils` 0.1.5 and `esbuild` 0.28.2 are MIT (read from their `package.json`). Excalidraw's own app and file format are open source. Check the licence terms of anything else you pull in.

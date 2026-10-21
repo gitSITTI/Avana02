@@ -26,6 +26,12 @@ def test_a_group_takes_its_most_restrictive_member(levels, policy, want):
     assert group_level(levels, policy) == want
 
 
+@pytest.mark.parametrize("by,at,want", CASES["reviewed_cases"], ids=[f"{i}" for i in range(len(CASES["reviewed_cases"]))])
+def test_reviewing_needs_both_a_name_and_a_date_that_are_not_blank(by, at, want):
+    d = CASES["sheets"]["ours-none"]
+    assert Sheet(model=d["model"], where=d["where"], leaves=d["leaves"], log=d["log"], days=d["days"], approved=d["approved"], unstated=d["unstated"], reviewed_by=by, reviewed_at=at).reviewed is want
+
+
 @pytest.mark.parametrize("name,d,want", CASES["sheet_cases"], ids=[c[0] for c in CASES["sheet_cases"]])
 def test_a_sheet_says_what_is_wrong_with_it(name, d, want):
     assert sheet(d).problems() == want

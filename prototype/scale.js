@@ -8,18 +8,23 @@
      - the project file, loading it back with its checks, and the trace map file
    It also checks that the counts are still true at that size, and that memory stays within bounds.
 
-   usage:  node scale.js [K]          K defaults to 20, which is 24,960 requirements and 5,040 clusters
-   env:    SCALE_SLACK=2              multiplies every limit (a slow machine); PYTHON=python3
-   Exit status 1 when any limit is passed. The limits are about three times what a laptop needs, so they fail on a real slowdown and not on noise. */
+   usage:  node scale.js [K] [shape]  K defaults to 20, which is 24,960 requirements and 5,040 clusters
+           shape is "sample" (the default: the sample repeated K times) or "varied" (the same size with a different shape: mostly different wordings of different lengths,
+           three in ten requirements in one allocation, and a few clusters of 40 to 200 members; see build.py). Both are made up. They tell how fast, not how well.
+   env:    SCALE_SLACK=2              multiplies every limit (a slow machine); PYTHON=python3; REQIN_SHAPE=varied (the same as the second argument)
+   Exit status 1 when any limit is passed. The limits are about three times what a laptop needs (for each shape), so they fail on a real slowdown and not on noise.
+   The limits grow in proportion to K, and the pair counting grows faster than that on the varied shape (about 9 s at K = 20 and 42 s at K = 40 here), so K above 20 is for looking, not a promise. */
 const { spawnSync } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 
 const K = parseInt(process.argv[2] || process.env.REQIN_SCALE || '20', 10);
+const SHAPE = process.argv[3] || process.env.REQIN_SHAPE || 'sample';
+if (SHAPE !== 'sample' && SHAPE !== 'varied') { console.error('the shape is "sample" or "varied", not "' + SHAPE + '"'); process.exit(2); }
 const SLACK = parseFloat(process.env.SCALE_SLACK || '1');
 const LIMIT = {                                   // milliseconds, at K = 20; they grow in proportion to K / 20
   first: 4000,                                    // the first drawing of a page
   repeat: 1500,                                   // drawing it again after a change
-  pairs: 15000,                                   // counting every group of pairs for the gold set, once
+  pairs: SHAPE === 'varied' ? 30000 : 15000,      // counting every group of pairs for the gold set, once; the varied shape needs about 6 times what the repeated sample does (9 s against 1.5 s here)
   file: 8000,                                     // writing, or reading back and checking, the project file; writing the trace map
   heapMB: 1500                                    // memory in use at the end
 };
@@ -27,7 +32,7 @@ const grow = Math.max(1, K / 20) * SLACK;
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'reqin-scale-'));
 const page = path.join(dir, 'Main.dc.html');
-const built = spawnSync(process.env.PYTHON || 'python3', [path.join(__dirname, 'build.py'), page], { cwd: __dirname, env: Object.assign({}, process.env, { REQIN_SCALE: String(K) }), encoding: 'utf8' });
+const built = spawnSync(process.env.PYTHON || 'python3', [path.join(__dirname, 'build.py'), page], { cwd: __dirname, env: Object.assign({}, process.env, { REQIN_SCALE: String(K), REQIN_SHAPE: SHAPE }), encoding: 'utf8' });
 if (built.status !== 0) { console.error('the scaled build failed:\n' + built.stderr); process.exit(2); }
 
 process.chdir(__dirname);
@@ -39,8 +44,27 @@ const check = (ok, msg) => { if (!ok) fails.push(msg); };
 const limit = (name, ms, max) => { const lim = Math.round(max * grow); rows.push([name, ms, lim]); check(ms <= lim, name + ' took ' + ms + ' ms, the limit is ' + lim + ' ms'); };
 const time = (f) => { const t = Date.now(); const out = f(); return [Date.now() - t, out]; };
 
-console.log('scale ' + K + ': ' + REQS.length + ' requirements, ' + CLUSTERS.length + ' clusters, limits x' + grow.toFixed(2));
+console.log('scale ' + K + ', shape ' + SHAPE + ': ' + REQS.length + ' requirements, ' + CLUSTERS.length + ' clusters, limits x' + grow.toFixed(2));
 check(REQS.length >= 1248 * K && CLUSTERS.length >= 252 * K - 8 * K, 'the scaled project is not as large as asked (' + REQS.length + ' requirements)');
+
+// ---- what shape it is: printed, and for "varied" checked, so that the test cannot quietly become the repeated sample again ----
+const SHAPEINFO = (() => {
+  const texts = new Set(REQS.map((r) => r.text)), byAl = {};
+  REQS.forEach((r) => { byAl[r.alloc] = (byAl[r.alloc] || 0) + 1; });
+  const lens = REQS.map((r) => r.text.split(/\s+/).length).sort((a, b) => a - b);
+  const sizes = CLUSTERS.map((c) => c.members.length).sort((a, b) => b - a);
+  return { distinct: texts.size / REQS.length, topAlloc: Math.max.apply(null, Object.values(byAl)) / REQS.length, wMin: lens[0], wMed: lens[lens.length >> 1], wMax: lens[lens.length - 1], bigCl: sizes[0], over39: sizes.filter((x) => x >= 40).length };
+})();
+console.log('shape: ' + (SHAPEINFO.distinct * 100).toFixed(0) + '% of wordings are different, the largest allocation holds ' + (SHAPEINFO.topAlloc * 100).toFixed(0) + '% of the requirements, ' +
+  SHAPEINFO.wMin + ' to ' + SHAPEINFO.wMax + ' words a requirement (median ' + SHAPEINFO.wMed + '), the largest cluster has ' + SHAPEINFO.bigCl + ' members, ' + SHAPEINFO.over39 + ' clusters have 40 or more');
+if (SHAPE === 'varied') {
+  check(SHAPEINFO.distinct >= 0.75, 'the varied project is not varied: only ' + (SHAPEINFO.distinct * 100).toFixed(0) + '% of its wordings are different');
+  check(SHAPEINFO.topAlloc >= 0.25, 'the varied project has no large allocation (the largest holds ' + (SHAPEINFO.topAlloc * 100).toFixed(0) + '%)');
+  check(SHAPEINFO.bigCl >= 100 && SHAPEINFO.over39 >= 2, 'the varied project has no very large cluster');
+  check(SHAPEINFO.wMax - SHAPEINFO.wMin >= 10, 'the wordings of the varied project are all about the same length');
+} else {
+  check(SHAPEINFO.bigCl <= 20, 'the sample has a cluster of ' + SHAPEINFO.bigCl + ' members');
+}
 
 // ---- every page, first drawing then a repeat ----
 const VIEWS = ['open', 'import', 'home', 'review', 'explorer', 'overview', 'vee', 'results', 'methods', 'gold', 'audit', 'policy', 'ai', 'export'];
@@ -55,6 +79,17 @@ VIEWS.forEach((v) => {
   if (pairs) { limit(v + ': first drawing, with the pair counts', first, LIMIT.pairs + LIMIT.first); } else limit(v + ': first drawing', first, LIMIT.first);
   limit(v + ': drawing again', again, LIMIT.repeat);
 });
+
+// ---- the largest cluster in the review page (a person opening the biggest cluster there is) ----
+{
+  const big = CLUSTERS.reduce((a, c) => (c.members.length > a.members.length ? c : a), CLUSTERS[0]);
+  const c2 = new C.Component();
+  c2.setState({ view: 'review', person: 'morgan', selected: big.id, qTab: 'all' });
+  const [first] = time(() => c2.renderVals());
+  const [again] = time(() => c2.renderVals());
+  limit('review, the largest cluster (' + big.members.length + ' members): first drawing', first, LIMIT.first);
+  limit('review, the largest cluster: drawing again', again, LIMIT.repeat);
+}
 
 // ---- the pair counts, the way they are checked in verify.js, at this size ----
 {

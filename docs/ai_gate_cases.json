@@ -1,5 +1,5 @@
 {
-  "about": "Shared by reqin/tests/test_aigate.py and prototype/verify.js: the same table, run by both, so the two copies of the AI gate rules cannot drift apart. Markings and names here are made up.",
+  "about": "Shared by reqin/tests/test_aigate.py and prototype/verify.js: the same table, run by both, so the two copies of the AI gate rules cannot drift apart. Markings and names here are made up. A port in another language runs it too (docs/GATEWAY_SPEC.md, section 9, says how each rule is read). Sections: marking_cases is a list of [a marking exactly as the source recorded it (text, null, or anything else), what it reads as: none, cui, exp, classified, unknown or unstated]; group_cases is a list of [the levels of the members of a group, the sheet's unstated answer (none or withhold), what the group reads as]; sheet_cases is a list of [a name, a sheet (only the entries the gate reads), the problem codes it has, in the fixed order]; reviewed_cases is a list of [reviewed_by, reviewed_at, whether the sheet counts as reviewed]; gate_cases is a list of whole decisions: on is the project switch, reviewed says whether the named sheet (in sheets) carries a reviewer's name and a date, marks are the markings of the group's members as recorded, and open and code are the answer.",
   "marking_cases": [
     ["", "unstated"], ["   ", "unstated"], [null, "unstated"], [5, "unknown"], [["CUI"], "unknown"],
     ["No marking", "none"], ["  no   MARKING ", "none"], ["none", "none"], ["Unmarked", "none"], ["Public", "none"], ["//No marking", "none"], ["/ public", "none"], ["  //  Unmarked", "none"],
@@ -15,7 +15,14 @@
     [["none", "none"], "withhold", "none"], [["none", "cui"], "withhold", "cui"], [["cui", "exp", "none"], "withhold", "exp"],
     [["none", "unstated"], "withhold", "unstated"], [["none", "unstated"], "none", "none"], [["cui", "unstated"], "none", "cui"],
     [["none", "unknown"], "none", "unknown"], [["unknown", "unstated"], "none", "unknown"], [["classified", "unknown"], "withhold", "classified"], [["exp", "classified"], "none", "classified"],
-    [["unstated"], "withhold", "unstated"], [["unstated"], "none", "none"]
+    [["unstated"], "withhold", "unstated"], [["unstated"], "none", "none"],
+    [["exp", "unstated"], "withhold", "unstated"], [["exp", "unstated"], "none", "exp"], [["cui", "unstated", "none"], "withhold", "unstated"], [["none", "unstated", "unknown", "exp"], "withhold", "unknown"],
+    [["unstated", "classified"], "withhold", "classified"], [["none", "none", "cui", "cui"], "none", "cui"]
+  ],
+  "reviewed_cases": [
+    ["A. Reviewer", "2026-01-02", true], ["A. Reviewer", "", false], ["", "2026-01-02", false], ["", "", false], [" ", "2026-01-02", false], ["A. Reviewer", "   ", false],
+    ["\u00a0", "2026-01-02", false], ["A. Reviewer", "\u3000", false], ["\u0085", "x", false], ["x", "\u001c", false], ["\u2028", "x", false],
+    ["\u200b", "2026-01-02", true], ["A. Reviewer", "\ufeff", true], ["\u00a0A\u00a0", "\u00a02026\u00a0", true]
   ],
   "sheet_cases": [
     ["the reference sheet", {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 90, "approved": "none", "unstated": "withhold"}, []],
@@ -33,7 +40,23 @@
     ["days that are true", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": true, "approved": "none", "unstated": "withhold"}, ["days"]],
     ["a value that is not on the list", {"model": "x", "where": "moon", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["values"]],
     ["several things wrong at once", {"model": "", "where": "vendor", "leaves": false, "log": "service", "days": 0, "approved": "exp", "unstated": "withhold"}, ["model", "vendor_leaves", "log_marked", "exp_where", "days"]],
-    ["a fractional number of days", {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 1.5, "approved": "none", "unstated": "withhold"}, ["days"]]
+    ["a fractional number of days", {"model": "Local model v1", "where": "ours", "leaves": false, "log": "local", "days": 1.5, "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["one day is the least", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": 1, "approved": "none", "unstated": "withhold"}, []],
+    ["3650 days is the most", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": 3650, "approved": "none", "unstated": "withhold"}, []],
+    ["minus one day", {"model": "x", "where": "ours", "leaves": false, "log": "local", "days": -1, "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["days that are null", {"model": "x", "where": "ours", "leaves": false, "log": "service", "days": null, "approved": "none", "unstated": "withhold"}, ["days"]],
+    ["days are not read when nothing is kept, whatever they are", {"model": "x", "where": "ours", "leaves": false, "log": "none", "days": "many", "approved": "none", "unstated": "withhold"}, []],
+    ["a way of keeping that is not on the list", {"model": "x", "where": "ours", "leaves": false, "log": "everywhere", "days": 90, "approved": "none", "unstated": "withhold"}, ["values"]],
+    ["an approval that is not on the list", {"model": "x", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "secret", "unstated": "withhold"}, ["values"]],
+    ["an answer for unmarked requirements that is not on the list", {"model": "x", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "maybe"}, ["values"]],
+    ["a place in capitals is not on the list", {"model": "x", "where": "Ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["values"]],
+    ["a model that is only a no-break space", {"model": "\u00a0", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["model"]],
+    ["a model that is only a next-line character", {"model": "\u0085", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["model"]],
+    ["a model that is only an information separator", {"model": "\u001f", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, ["model"]],
+    ["a model that is only a zero-width space, which is not a space", {"model": "\u200b", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, []],
+    ["a model that is only a byte order mark, which is not a space", {"model": "\ufeff", "where": "ours", "leaves": false, "log": "none", "days": 0, "approved": "none", "unstated": "withhold"}, []],
+    ["leaves and CUI on a vendor, and nothing else wrong", {"model": "x", "where": "vendor", "leaves": true, "log": "none", "days": 0, "approved": "cui", "unstated": "withhold"}, ["leaves_marked"]],
+    ["export controlled at a vendor that keeps copies", {"model": "x", "where": "vendor", "leaves": true, "log": "service", "days": 30, "approved": "exp", "unstated": "withhold"}, ["leaves_marked", "log_marked", "exp_where"]]
   ],
   "gate_cases": [
     {"name": "everything in order, no marking", "on": true, "reviewed": true, "sheet": "ours-none", "marks": ["No marking", "No marking"], "open": true, "code": "open"},

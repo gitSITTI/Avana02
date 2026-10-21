@@ -26,6 +26,7 @@ WINDOW = 6                      # words in one fingerprint
 MIN_WORDS = 4                   # a requirement shorter than this cannot be recognised in a prompt, and is declared by its caller only
 ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,199}")
 SHEET_FIELDS = tuple(Sheet.__dataclass_fields__)
+STR_FIELDS = ("model", "where", "log", "approved", "unstated", "reviewed_by", "reviewed_at", "entered_by")
 
 # What a person is told for each way the gate can say no. Codes are the gate's own (reqin.aigate.Decision.code) plus the gateway's.
 WORDS = {
@@ -137,6 +138,9 @@ def sheet_from_doc(doc: Any) -> tuple[Sheet, bool] | None:
         return None
     sh = doc["sheet"]
     if set(sh) - set(SHEET_FIELDS):
+        return None
+    # a name or a date that is a number, or a "leaves" that is not true or false, is not a sheet anyone reviewed: say so instead of failing later. `days` is left to the gate's own check.
+    if any(k in sh and not isinstance(sh[k], str) for k in STR_FIELDS) or ("leaves" in sh and not isinstance(sh["leaves"], bool)):
         return None
     try:
         return Sheet(**sh), doc["on"]

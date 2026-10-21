@@ -1,0 +1,155 @@
+{
+ "format": "reqin-board/1",
+ "title": "99 · Example board",
+ "seed": 9901,
+ "frames": [
+  {
+   "name": "99.1 · A review screen",
+   "width": 1000,
+   "chrome": "app",
+   "active": "Review queue",
+   "lens": 0,
+   "items": [
+    {
+     "type": "heading",
+     "text": "Review cluster CL-017",
+     "size": 24,
+     "callout": 1
+    },
+    {
+     "type": "card",
+     "w": 440,
+     "items": [
+      {
+       "type": "caps",
+       "text": "THE TWO WORDINGS"
+      },
+      {
+       "type": "text",
+       "text": "The pump shall start within five seconds of the command. The controller shall start the pump within 5 s of receiving the start command.",
+       "w": 400
+      },
+      {
+       "type": "mark",
+       "kind": "mech",
+       "label": "found by the mechanical comparison"
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "widths": [
+      120,
+      160,
+      160
+     ],
+     "head": [
+      "Source",
+      "Wording",
+      "Number"
+     ],
+     "rows": [
+      [
+       "SysML",
+       "within five seconds",
+       {
+        "text": "5 s",
+        "tone": "green"
+       }
+      ],
+      [
+       "DOORS",
+       "within 5 s",
+       {
+        "text": "5 s",
+        "tone": "green"
+       }
+      ]
+     ],
+     "callout": 2
+    },
+    {
+     "type": "checklist",
+     "w": 440,
+     "items": [
+      {
+       "state": "Pass",
+       "text": "Numbers and units agree"
+      },
+      {
+       "state": "Needs you",
+       "text": "Choose the surviving wording"
+      }
+     ]
+    },
+    {
+     "type": "button",
+     "label": "Accept the merge",
+     "primary": true,
+     "x": 0
+    },
+    {
+     "type": "button",
+     "label": "Keep both",
+     "y": "same",
+     "x": 190
+    }
+   ],
+   "notes": [
+    "The first thing a reviewer sees is what the cluster is, so the heading names it.",
+    "The table shows the evidence before the choice, so the reviewer does not decide from the summary alone."
+   ]
+  },
+  {
+   "name": "99.2 · How a decision flows",
+   "width": 1000,
+   "chrome": "none",
+   "items": [
+    {
+     "type": "box",
+     "id": "read",
+     "label": "Read and normalise",
+     "w": 170,
+     "h": 60,
+     "tone": "blue"
+    },
+    {
+     "type": "box",
+     "id": "compare",
+     "label": "Mechanical comparison",
+     "w": 170,
+     "h": 60,
+     "tone": "green",
+     "x": 280,
+     "y": "same"
+    },
+    {
+     "type": "box",
+     "id": "decide",
+     "label": "A person decides",
+     "w": 170,
+     "h": 60,
+     "tone": "amber",
+     "x": 560,
+     "y": "same",
+     "callout": 1
+    },
+    {
+     "type": "arrow",
+     "from": "read",
+     "to": "compare",
+     "label": "records"
+    },
+    {
+     "type": "arrow",
+     "from": "compare",
+     "to": "decide",
+     "label": "draft"
+    }
+   ],
+   "notes": [
+    "The person decides last: everything before this step is a draft."
+   ]
+  }
+ ]
+}

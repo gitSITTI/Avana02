@@ -1,0 +1,1120 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/gitSITTI/Avana02/excalidraw_generator/board_spec.schema.json",
+ "title": "reqin-board/1",
+ "type": "object",
+ "additionalProperties": false,
+ "properties": {
+  "format": {
+   "enum": [
+    "reqin-board/1"
+   ],
+   "description": "always reqin-board/1"
+  },
+  "title": {
+   "type": "string",
+   "pattern": "\\S",
+   "maxLength": 100,
+   "description": "the board's title"
+  },
+  "seed": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 2147483647,
+   "description": "a number that fixes the hand-drawn look of every element, so a rebuild is byte-identical; default made from the title"
+  },
+  "frames": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 20,
+   "items": {
+    "$ref": "#/$defs/frame"
+   },
+   "description": "the screens or diagrams, top to bottom"
+  }
+ },
+ "required": [
+  "format",
+  "title",
+  "frames"
+ ],
+ "description": "A board for Excalidraw, described as data. Compile it with excalidraw_generator/board_spec.py.",
+ "$defs": {
+  "item": {
+   "oneOf": [
+    {
+     "$ref": "#/$defs/heading"
+    },
+    {
+     "$ref": "#/$defs/text"
+    },
+    {
+     "$ref": "#/$defs/caps"
+    },
+    {
+     "$ref": "#/$defs/card"
+    },
+    {
+     "$ref": "#/$defs/button"
+    },
+    {
+     "$ref": "#/$defs/chip"
+    },
+    {
+     "$ref": "#/$defs/bar"
+    },
+    {
+     "$ref": "#/$defs/placeholder"
+    },
+    {
+     "$ref": "#/$defs/mark"
+    },
+    {
+     "$ref": "#/$defs/table"
+    },
+    {
+     "$ref": "#/$defs/checklist"
+    },
+    {
+     "$ref": "#/$defs/kv"
+    },
+    {
+     "$ref": "#/$defs/box"
+    },
+    {
+     "$ref": "#/$defs/arrow"
+    },
+    {
+     "$ref": "#/$defs/callout"
+    }
+   ]
+  },
+  "frame": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "name": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 100,
+     "description": "the frame's name: 'N.M · Title', so the boards read as an index in Excalidraw's frame list"
+    },
+    "width": {
+     "type": "integer",
+     "minimum": 500,
+     "maximum": 2400,
+     "description": "default 1000"
+    },
+    "height": {
+     "type": "integer",
+     "minimum": 200,
+     "maximum": 3000,
+     "description": "default: worked out from the items"
+    },
+    "chrome": {
+     "enum": [
+      "app",
+      "none"
+     ],
+     "description": "app = the sidebar, title block and DRAFT banner; none (default) = a bare frame, for diagrams"
+    },
+    "active": {
+     "enum": [
+      "Overview",
+      "Review queue",
+      "Methods and metrics",
+      "Audit log",
+      "Export to documents"
+     ],
+     "description": "with chrome app: which sidebar entry is highlighted"
+    },
+    "lens": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 3,
+     "description": "with chrome app: 0 systems, 1 process, 2 UI/UX, 3 new user"
+    },
+    "items": {
+     "type": "array",
+     "maxItems": 300,
+     "items": {
+      "$ref": "#/$defs/item"
+     },
+     "description": "what is drawn, top to bottom"
+    },
+    "notes": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 20,
+     "items": {
+      "type": "string",
+      "pattern": "\\S",
+      "maxLength": 400
+     },
+     "description": "the reasoning beside the frame, numbered 1, 2, ...; one idea each; say why, not what"
+    }
+   },
+   "required": [
+    "name",
+    "items"
+   ],
+   "description": "One screen or diagram."
+  },
+  "heading": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "heading"
+    },
+    "text": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 120,
+     "description": "the words"
+    },
+    "size": {
+     "type": "integer",
+     "minimum": 12,
+     "maximum": 48,
+     "description": "font size, default 22"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "text"
+   ],
+   "description": "A heading."
+  },
+  "text": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "text"
+    },
+    "text": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 600,
+     "description": "the words"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 40,
+     "maximum": 2000,
+     "description": "width in px, default: what is left of the row"
+    },
+    "size": {
+     "type": "integer",
+     "minimum": 8,
+     "maximum": 24,
+     "description": "font size, default 11"
+    },
+    "tone": {
+     "enum": [
+      "body",
+      "soft",
+      "danger"
+     ],
+     "description": "body (default), soft (grey) or danger (red)"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "text"
+   ],
+   "description": "A paragraph, wrapped to a width. Use this for every sentence."
+  },
+  "caps": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "caps"
+    },
+    "text": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 80,
+     "description": "the words"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "text"
+   ],
+   "description": "A small monospace caption in soft grey: the label of a section. Write it in capitals."
+  },
+  "card": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "card"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 40,
+     "maximum": 2000,
+     "description": "width, default: what is left of the row"
+    },
+    "h": {
+     "type": "integer",
+     "minimum": 20,
+     "maximum": 3000,
+     "description": "height, default: fits the items"
+    },
+    "tone": {
+     "enum": [
+      "white",
+      "grey",
+      "green",
+      "amber",
+      "red",
+      "blue",
+      "violet"
+     ],
+     "description": "fill, default white"
+    },
+    "dash": {
+     "type": "boolean",
+     "description": "dashed outline"
+    },
+    "items": {
+     "type": "array",
+     "maxItems": 300,
+     "items": {
+      "$ref": "#/$defs/item"
+     },
+     "description": "the items inside; x and y are relative to the card's inside"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type"
+   ],
+   "description": "A white panel that holds items of its own. It grows to fit them unless you give `h`. Dashed means optional or not built yet."
+  },
+  "button": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "button"
+    },
+    "label": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 60,
+     "description": "the words"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 40,
+     "maximum": 600,
+     "description": "width, default fits the label"
+    },
+    "h": {
+     "type": "integer",
+     "minimum": 20,
+     "maximum": 80,
+     "description": "height, default 32"
+    },
+    "primary": {
+     "type": "boolean",
+     "description": "the one main action"
+    },
+    "disabled": {
+     "type": "boolean",
+     "description": "dashed, greyed"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "label"
+   ],
+   "description": "A button. One primary button per screen."
+  },
+  "chip": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "chip"
+    },
+    "label": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 40,
+     "description": "the words"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 30,
+     "maximum": 400,
+     "description": "width, default fits the label"
+    },
+    "tone": {
+     "enum": [
+      "white",
+      "grey",
+      "green",
+      "amber",
+      "red",
+      "blue",
+      "violet"
+     ],
+     "description": "fill, default grey"
+    },
+    "dash": {
+     "type": "boolean",
+     "description": "dashed outline"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "label"
+   ],
+   "description": "A small pill that says a state or a label. Always a word, never colour alone."
+  },
+  "bar": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "bar"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 20,
+     "maximum": 2000,
+     "description": "width"
+    },
+    "frac": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1,
+     "description": "how full, 0 to 1"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "w",
+    "frac"
+   ],
+   "description": "A progress bar."
+  },
+  "placeholder": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "placeholder"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 20,
+     "maximum": 2000,
+     "description": "width"
+    },
+    "lines": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 8,
+     "description": "how many bars, default 3"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "w"
+   ],
+   "description": "Grey bars standing in for text that does not matter to this picture."
+  },
+  "mark": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "mark"
+    },
+    "kind": {
+     "enum": [
+      "mech",
+      "ai",
+      "human"
+     ],
+     "description": "mech, ai or human"
+    },
+    "label": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 60,
+     "description": "words beside the mark"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "kind"
+   ],
+   "description": "A provenance mark: square = mechanical, diamond = AI, circle = person. These meanings never change."
+  },
+  "table": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "table"
+    },
+    "widths": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 8,
+     "items": {
+      "type": "integer",
+      "minimum": 30,
+      "maximum": 1200
+     },
+     "description": "column widths in px"
+    },
+    "head": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 8,
+     "items": {
+      "type": "string",
+      "pattern": "\\S",
+      "maxLength": 40
+     },
+     "description": "column headings"
+    },
+    "rows": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 60,
+     "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+       "oneOf": [
+        {
+         "type": "string",
+         "maxLength": 300
+        },
+        {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "text"
+         ],
+         "properties": {
+          "text": {
+           "type": "string"
+          },
+          "tone": {
+           "enum": [
+            "white",
+            "grey",
+            "green",
+            "amber",
+            "red",
+            "blue",
+            "violet"
+           ]
+          }
+         }
+        }
+       ]
+      }
+     },
+     "description": "a list of rows; a cell is a string, or {\"text\": ..., \"tone\": ...} to colour it"
+    },
+    "size": {
+     "type": "integer",
+     "minimum": 8,
+     "maximum": 14,
+     "description": "font size, default 10"
+    },
+    "bold_first": {
+     "type": "boolean",
+     "description": "the first column in dark text"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "widths",
+    "head",
+    "rows"
+   ],
+   "description": "A table with wrapped cells. Every row has as many cells as `head`, and `widths` has one width per column."
+  },
+  "checklist": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "checklist"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 150,
+     "maximum": 2000,
+     "description": "width"
+    },
+    "items": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 30,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "state",
+       "text"
+      ],
+      "properties": {
+       "state": {
+        "enum": [
+         "Pass",
+         "Needs you",
+         "Blocked",
+         "Done",
+         "Open"
+        ]
+       },
+       "text": {
+        "type": "string",
+        "pattern": "\\S"
+       }
+      }
+     },
+     "description": "lines: {\"state\": Pass | Needs you | Blocked | Done | Open, \"text\": ...}"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "w",
+    "items"
+   ],
+   "description": "A checklist; each line has a state chip."
+  },
+  "kv": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "kv"
+    },
+    "key": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 40,
+     "description": "the key"
+    },
+    "value": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 100,
+     "description": "the value"
+    },
+    "key_w": {
+     "type": "integer",
+     "minimum": 40,
+     "maximum": 400,
+     "description": "width of the key column, default 110"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "key",
+    "value"
+   ],
+   "description": "A key and its value on one line."
+  },
+  "box": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "box"
+    },
+    "label": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 120,
+     "description": "the words inside"
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 30,
+     "maximum": 800,
+     "description": "width"
+    },
+    "h": {
+     "type": "integer",
+     "minimum": 20,
+     "maximum": 600,
+     "description": "height"
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,39}$",
+     "description": "a name for arrows to use: a letter, then letters, digits, _ or -"
+    },
+    "shape": {
+     "enum": [
+      "rect",
+      "ellipse",
+      "diamond"
+     ],
+     "description": "rect (default), ellipse or diamond"
+    },
+    "tone": {
+     "enum": [
+      "white",
+      "grey",
+      "green",
+      "amber",
+      "red",
+      "blue",
+      "violet"
+     ],
+     "description": "fill, default white"
+    },
+    "dash": {
+     "type": "boolean",
+     "description": "dashed outline"
+    },
+    "size": {
+     "type": "integer",
+     "minimum": 8,
+     "maximum": 24,
+     "description": "font size, default 12"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    },
+    "callout": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "draw a red number on this item's top-left corner"
+    }
+   },
+   "required": [
+    "type",
+    "label",
+    "w",
+    "h"
+   ],
+   "description": "A box for a diagram (a step, a state, a part). Give it an `id` so arrows can join it."
+  },
+  "arrow": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "arrow"
+    },
+    "from": {
+     "type": "string",
+     "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,39}$",
+     "description": "the id of the box it starts at"
+    },
+    "to": {
+     "type": "string",
+     "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,39}$",
+     "description": "the id of the box it ends at"
+    },
+    "from_side": {
+     "enum": [
+      "l",
+      "r",
+      "t",
+      "b"
+     ],
+     "description": "l, r, t or b; default r"
+    },
+    "to_side": {
+     "enum": [
+      "l",
+      "r",
+      "t",
+      "b"
+     ],
+     "description": "l, r, t or b; default l"
+    },
+    "label": {
+     "type": "string",
+     "pattern": "\\S",
+     "maxLength": 40,
+     "description": "a word on the line"
+    },
+    "dash": {
+     "type": "boolean",
+     "description": "dashed line"
+    }
+   },
+   "required": [
+    "type",
+    "from",
+    "to"
+   ],
+   "description": "An arrow between two boxes, glued to both so it follows them when they are moved in Excalidraw. Takes no space of its own."
+  },
+  "callout": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "const": "callout"
+    },
+    "n": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20,
+     "description": "the number; the note with the same number explains it"
+    },
+    "x": {
+     "type": "integer",
+     "minimum": -200,
+     "maximum": 4000,
+     "description": "left edge, default 0"
+    },
+    "y": {
+     "oneOf": [
+      {
+       "type": "integer",
+       "minimum": -200,
+       "maximum": 6000
+      },
+      {
+       "const": "same"
+      }
+     ],
+     "description": "top edge: a number, \"same\" (level with the previous item), or leave it out (below everything so far)"
+    }
+   },
+   "required": [
+    "type",
+    "n"
+   ],
+   "description": "A red number placed by hand. (Easier: give another item `callout`.)"
+  }
+ }
+}

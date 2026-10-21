@@ -1215,6 +1215,7 @@ if (require.main === module) {
     // the same cases the Python library is tested against
     T.marking_cases.forEach(([t, want]) => ag(C.aiMarkLevel(t) === want, 'the marking ' + JSON.stringify(t) + ' reads as ' + want + ', not ' + C.aiMarkLevel(t)));
     T.group_cases.forEach(([ls, pol, want]) => ag(C.aiGroupLevel(ls, pol) === want, 'a group of ' + JSON.stringify(ls) + ' with “' + pol + '” reads as ' + want + ', not ' + C.aiGroupLevel(ls, pol)));
+    T.reviewed_cases.forEach(([by, at, want], i) => ag(C.aiReviewed({ reviewed_by: by, reviewed_at: at }) === want, 'reviewed case ' + i + ' (' + JSON.stringify([by, at]) + ') is ' + want));
     T.sheet_cases.forEach(([name, d, want]) => ag(eq(C.aiSheetProblems(d), want), 'the sheet “' + name + '” has the problems ' + JSON.stringify(want) + ', not ' + JSON.stringify(C.aiSheetProblems(d))));
     T.gate_cases.forEach((g) => { const r = C.aiGate(Object.assign({}, T.sheets[g.sheet], g.reviewed ? REV : UNREV), g.on, g.marks); ag(r.open === g.open && r.code === g.code, 'gate case “' + g.name + '” says ' + r.code + ' and wanted ' + g.code); });
     ag(eq([...new Set(T.gate_cases.map((g) => g.code))].sort(), ['classified', 'marking', 'off', 'open', 'sheet', 'unknown', 'unreviewed', 'unstated']), 'the table covers every answer the gate can give');

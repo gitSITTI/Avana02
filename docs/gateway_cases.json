@@ -1,0 +1,3470 @@
+{
+ "format": "reqin-gateway-cases/1",
+ "about": "Test vectors for the AI gateway's decision core. See docs/GATEWAY_SPEC.md for what each section means. A port is correct when it gives these answers. Written by tools/make_gateway_cases.py from the reference implementation (reqin/src/reqin/gateway); all text is made up.",
+ "markings_format": "reqin-markings/1",
+ "words": [
+  {
+   "text": "The pump SHALL start within 5 s.",
+   "words": [
+    "the",
+    "pump",
+    "shall",
+    "start",
+    "within",
+    "5",
+    "s"
+   ]
+  },
+  {
+   "text": "",
+   "words": []
+  },
+  {
+   "text": "   ---  ,, ",
+   "words": []
+  },
+  {
+   "text": "ＳＨＡＬＬ　ｓｔａｒｔ",
+   "words": [
+    "shall",
+    "start"
+   ]
+  },
+  {
+   "text": "pump_shall_start",
+   "words": [
+    "pump",
+    "shall",
+    "start"
+   ]
+  },
+  {
+   "text": "ﬁre ﬂow",
+   "words": [
+    "fire",
+    "flow"
+   ]
+  },
+  {
+   "text": "İstanbul",
+   "words": [
+    "i",
+    "stanbul"
+   ]
+  },
+  {
+   "text": "ΟΔΥΣΣΕΥΣ",
+   "words": [
+    "οδυσσευς"
+   ]
+  },
+  {
+   "text": "STRASSE Straße",
+   "words": [
+    "strasse",
+    "straße"
+   ]
+  },
+  {
+   "text": "٣٤ cm",
+   "words": [
+    "٣٤",
+    "cm"
+   ]
+  },
+  {
+   "text": "起動から5秒以内",
+   "words": [
+    "起動から5秒以内"
+   ]
+  },
+  {
+   "text": "école",
+   "words": [
+    "école"
+   ]
+  },
+  {
+   "text": "x² ½ s",
+   "words": [
+    "x2",
+    "1",
+    "2",
+    "s"
+   ]
+  },
+  {
+   "text": "CUI//SP-EXPT",
+   "words": [
+    "cui",
+    "sp",
+    "expt"
+   ]
+  },
+  {
+   "text": "pump 🚀 start",
+   "words": [
+    "pump",
+    "start"
+   ]
+  },
+  {
+   "text": "हिन्दी भाषा",
+   "words": [
+    "ह",
+    "न",
+    "द",
+    "भ",
+    "ष"
+   ]
+  },
+  {
+   "text": "àb",
+   "words": [
+    "àb"
+   ]
+  },
+  {
+   "text": "don't use 3.5 mm",
+   "words": [
+    "don",
+    "t",
+    "use",
+    "3",
+    "5",
+    "mm"
+   ]
+  },
+  {
+   "text": "tab\tand\nnewline\r\nand nbsp",
+   "words": [
+    "tab",
+    "and",
+    "newline",
+    "and",
+    "nbsp"
+   ]
+  },
+  {
+   "text": "ǅ and ẞ",
+   "words": [
+    "dž",
+    "and",
+    "ß"
+   ]
+  },
+  {
+   "text": "𝐏𝐮𝐦𝐩 𠀀",
+   "words": [
+    "pump",
+    "𠀀"
+   ]
+  },
+  {
+   "text": "Ⅻ and ⑫",
+   "words": [
+    "xii",
+    "and",
+    "12"
+   ]
+  },
+  {
+   "text": "a​b a­b",
+   "words": [
+    "a",
+    "b",
+    "a",
+    "b"
+   ]
+  }
+ ],
+ "fingerprints": [
+  {
+   "text": "short one two",
+   "fp": []
+  },
+  {
+   "text": "the pump shall start within five seconds",
+   "fp": [
+    "66c09a5a4d602bcd",
+    "a444f3e13a925c28"
+   ]
+  },
+  {
+   "text": "The pump shall start within five seconds",
+   "fp": [
+    "66c09a5a4d602bcd",
+    "a444f3e13a925c28"
+   ]
+  },
+  {
+   "text": "the pump shall start within five seconds of the command",
+   "fp": [
+    "66c09a5a4d602bcd",
+    "a444f3e13a925c28",
+    "bcc7242bdd68dcaa",
+    "e9a3caa3d3597b38",
+    "fd6ba0a4f2ebf320"
+   ]
+  },
+  {
+   "text": "the pump shall start within five seconds of the command and keep running",
+   "fp": [
+    "509f510227623800",
+    "66c09a5a4d602bcd",
+    "8d568224c1a63e8f",
+    "a444f3e13a925c28",
+    "b9cc8e0a4182ee9c",
+    "bcc7242bdd68dcaa",
+    "e9a3caa3d3597b38",
+    "fd6ba0a4f2ebf320"
+   ]
+  },
+  {
+   "text": "the pump, the pump; the pump! the pump? the pump... the pump",
+   "fp": [
+    "6577ea274ce5e387",
+    "66eeb6adf089541b"
+   ]
+  },
+  {
+   "text": "go go go go go go go go go go go go",
+   "fp": [
+    "07539f55da8ee5be"
+   ]
+  },
+  {
+   "text": "ＴＨＥ PUMP_shall start:within five, seconds",
+   "fp": [
+    "66c09a5a4d602bcd",
+    "a444f3e13a925c28"
+   ]
+  },
+  {
+   "text": "one two three four",
+   "fp": [
+    "113f69ccf08f80a6"
+   ]
+  },
+  {
+   "text": "one two three four five six",
+   "fp": [
+    "bab7fd6e5bd624f4"
+   ]
+  },
+  {
+   "text": "one two three four five six seven",
+   "fp": [
+    "5500569ceebe8e6b",
+    "bab7fd6e5bd624f4"
+   ]
+  },
+  {
+   "text": "",
+   "fp": []
+  }
+ ],
+ "requirements": [
+  {
+   "id": "REQ-1",
+   "marking": "No marking",
+   "text": "The pump shall start within five seconds of receiving the start command."
+  },
+  {
+   "id": "REQ-2",
+   "marking": "CUI",
+   "text": "The controller shall log every fault with the time it occurred and the unit that raised it."
+  },
+  {
+   "id": "REQ-3",
+   "marking": "ITAR",
+   "text": "The valve shall close within two seconds of receiving the shutdown command."
+  },
+  {
+   "id": "REQ-4",
+   "marking": "No marking",
+   "text": "The valve shall close within two seconds of receiving the start command."
+  },
+  {
+   "id": "REQ-5",
+   "marking": "No marking",
+   "text": "Report fault codes."
+  },
+  {
+   "id": "REQ-6",
+   "marking": "No marking",
+   "text": "Log every fault now please."
+  },
+  {
+   "id": "REQ-7",
+   "marking": "No marking",
+   "text": "Log every fault now."
+  }
+ ],
+ "markings_file": {
+  "format": "reqin-markings/1",
+  "window": 6,
+  "requirements": {
+   "REQ-1": {
+    "marking": "No marking",
+    "fp": [
+     "09d44ae1c2a20e89",
+     "66c09a5a4d602bcd",
+     "a32f65f401fd73d9",
+     "a444f3e13a925c28",
+     "bcc7242bdd68dcaa",
+     "c408cf762931865b",
+     "f2912d2c36389338"
+    ]
+   },
+   "REQ-2": {
+    "marking": "CUI",
+    "fp": [
+     "047eea5af1d701d8",
+     "29f7b0970c8dabfc",
+     "5199854e886ae2f9",
+     "5363667bd51495df",
+     "58fe90de517cabf7",
+     "b159ea995bf00e20",
+     "b512af2975a60736",
+     "cf9bcd8b7340183a",
+     "e933e88634bc175b",
+     "e9bbfeab991f725c",
+     "eaae6c0c191e9f7f",
+     "f9871ab8211d449d"
+    ]
+   },
+   "REQ-3": {
+    "marking": "ITAR",
+    "fp": [
+     "40b9bf84f476810c",
+     "61e6258df2fa1f16",
+     "77e3038e2eb27769",
+     "acba099abdb8ba99",
+     "b4a58efcaeb41538",
+     "cc8a4210b9e0e06e",
+     "f1a99fee03dd3d7b"
+    ]
+   },
+   "REQ-4": {
+    "marking": "No marking",
+    "fp": [
+     "40b9bf84f476810c",
+     "6d0f74b92e44686c",
+     "77e3038e2eb27769",
+     "a32f65f401fd73d9",
+     "acba099abdb8ba99",
+     "b4a58efcaeb41538",
+     "cc8a4210b9e0e06e"
+    ]
+   },
+   "REQ-5": {
+    "marking": "No marking",
+    "fp": []
+   },
+   "REQ-6": {
+    "marking": "No marking",
+    "fp": [
+     "c1bfdfd6dc3021e5"
+    ]
+   },
+   "REQ-7": {
+    "marking": "No marking",
+    "fp": [
+     "7afb1c1171c943ea"
+    ]
+   }
+  }
+ },
+ "undeclared": [
+  {
+   "name": "nothing from any requirement",
+   "prompt": "Compare the two documents and say which is longer.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "a requirement pasted in whole and not declared",
+   "prompt": "Please check this: The pump shall start within five seconds of receiving the start command. Thanks.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 7
+   }
+  },
+  {
+   "name": "the same, and declared",
+   "prompt": "Please check this: The pump shall start within five seconds of receiving the start command. Thanks.",
+   "declared": [
+    "REQ-1"
+   ],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "pasted with other capitals, punctuation and glue",
+   "prompt": "THE_PUMP shall, start; within FIVE seconds of receiving the start command!!",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 7
+   }
+  },
+  {
+   "name": "pasted in full-width letters",
+   "prompt": "ＴＨＥ ＰＵＭＰ ＳＨＡＬＬ ＳＴＡＲＴ ＷＩＴＨＩＮ ＦＩＶＥ ＳＥＣＯＮＤＳ ＯＦ ＲＥＣＥＩＶＩＮＧ",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 4
+   }
+  },
+  {
+   "name": "only one six-word run of a longer requirement",
+   "prompt": "He said the pump shall start within five and then stopped.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "two runs",
+   "prompt": "He said the pump shall start within five seconds and then stopped.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 2
+   }
+  },
+  {
+   "name": "two runs, but the limit is raised to three",
+   "prompt": "He said the pump shall start within five seconds and then stopped.",
+   "declared": [],
+   "min_windows": 3,
+   "expect": {}
+  },
+  {
+   "name": "one run is enough when the limit is one",
+   "prompt": "He said the pump shall start within five and then stopped.",
+   "declared": [],
+   "min_windows": 1,
+   "expect": {
+    "REQ-1": 1
+   }
+  },
+  {
+   "name": "a paraphrase",
+   "prompt": "Within five seconds of the start command, the pump must begin running.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "wording shared by a declared requirement is not a leak",
+   "prompt": "The valve shall close within two seconds of receiving the start command.",
+   "declared": [
+    "REQ-3"
+   ],
+   "min_windows": 2,
+   "expect": {
+    "REQ-4": 2
+   }
+  },
+  {
+   "name": "the same wording, declared requirement is the other one",
+   "prompt": "The valve shall close within two seconds of receiving the start command.",
+   "declared": [
+    "REQ-4"
+   ],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "nothing declared: both requirements that share it are found",
+   "prompt": "The valve shall close within two seconds of receiving the start command.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-3": 5,
+    "REQ-4": 7
+   }
+  },
+  {
+   "name": "a requirement of fewer than four words cannot be recognised",
+   "prompt": "Report fault codes. Report fault codes.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "a four-word requirement is recognised whole",
+   "prompt": "please: log every fault now - thanks",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-7": 1
+   }
+  },
+  {
+   "name": "a five-word requirement is recognised whole",
+   "prompt": "ok. Log every fault now please. Done",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-6": 1,
+    "REQ-7": 1
+   }
+  },
+  {
+   "name": "a five-word requirement is not recognised in part",
+   "prompt": "ok. Log every fault. Done",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "two undeclared requirements, listed in order of id",
+   "prompt": "The controller shall log every fault with the time it occurred and the unit that raised it. The pump shall start within five seconds of receiving the start command.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 7,
+    "REQ-2": 12
+   }
+  },
+  {
+   "name": "a declared requirement alongside an undeclared one",
+   "prompt": "The controller shall log every fault with the time it occurred and the unit that raised it. The pump shall start within five seconds of receiving the start command.",
+   "declared": [
+    "REQ-2"
+   ],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 7
+   }
+  },
+  {
+   "name": "a prompt of fewer words than any run",
+   "prompt": "pump",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "an empty prompt",
+   "prompt": "",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {}
+  },
+  {
+   "name": "text split by line breaks and tabs",
+   "prompt": "The pump\nshall\tstart within\n\nfive seconds of\r\nreceiving the start command",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 7
+   }
+  },
+  {
+   "name": "the wording with a soft hyphen inside a word",
+   "prompt": "The pump shall start within five seconds of receiving the start comm­and.",
+   "declared": [],
+   "min_windows": 2,
+   "expect": {
+    "REQ-1": 6
+   }
+  }
+ ],
+ "route_mismatch": [
+  {
+   "name": "the same",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": []
+  },
+  {
+   "name": "another model",
+   "sheet": {
+    "model": "Local model v2",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "model"
+   ]
+  },
+  {
+   "name": "another place",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "tenant",
+    "leaves": false,
+    "log": "local",
+    "days": 90,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "where"
+   ]
+  },
+  {
+   "name": "text leaves on one side only",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": true,
+    "log": "local",
+    "days": 90,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "leaves"
+   ]
+  },
+  {
+   "name": "another way of keeping prompts",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "none",
+    "days": 90,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "log"
+   ]
+  },
+  {
+   "name": "another number of days",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 30,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "days"
+   ]
+  },
+  {
+   "name": "days do not matter when neither keeps anything",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "none",
+    "days": 5,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "none",
+    "days": 0
+   },
+   "expect": []
+  },
+  {
+   "name": "days matter when only the route keeps something",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "none",
+    "days": 90,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "log"
+   ]
+  },
+  {
+   "name": "several at once, in the order model, where, leaves, log, days",
+   "sheet": {
+    "model": "x",
+    "where": "vendor",
+    "leaves": true,
+    "log": "service",
+    "days": 1,
+    "approved": "none",
+    "unstated": "withhold"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": [
+    "model",
+    "where",
+    "leaves",
+    "log",
+    "days"
+   ]
+  },
+  {
+   "name": "days of 90.0 and 90 are the same number",
+   "sheet": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90.0,
+    "approved": "none",
+    "unstated": "withhold",
+    "reviewed_by": "A. Reviewer",
+    "reviewed_at": "2026-01-02",
+    "entered_by": "morgan"
+   },
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "expect": []
+  }
+ ],
+ "sheet_from_doc": [
+  {
+   "name": "a good document",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": {
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    },
+    "on": true
+   }
+  },
+  {
+   "name": "the switch off",
+   "doc": {
+    "on": false,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": {
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    },
+    "on": false
+   }
+  },
+  {
+   "name": "a sheet with only some entries (the rest take their defaults)",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "m",
+     "reviewed_by": "a",
+     "reviewed_at": "b"
+    }
+   },
+   "expect": {
+    "sheet": {
+     "model": "m",
+     "where": "ours",
+     "leaves": false,
+     "log": "none",
+     "days": 0,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "a",
+     "reviewed_at": "b",
+     "entered_by": ""
+    },
+    "on": true
+   }
+  },
+  {
+   "name": "an empty sheet",
+   "doc": {
+    "on": true,
+    "sheet": {}
+   },
+   "expect": {
+    "sheet": {
+     "model": "",
+     "where": "ours",
+     "leaves": false,
+     "log": "none",
+     "days": 0,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "",
+     "reviewed_at": "",
+     "entered_by": ""
+    },
+    "on": true
+   }
+  },
+  {
+   "name": "not an object",
+   "doc": null,
+   "expect": null
+  },
+  {
+   "name": "a list",
+   "doc": [
+    1
+   ],
+   "expect": null
+  },
+  {
+   "name": "an entry that is not known, at the top",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    },
+    "extra": 1
+   },
+   "expect": null
+  },
+  {
+   "name": "an entry that is not known, in the sheet",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan",
+     "surprise": 1
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "the switch is 1",
+   "doc": {
+    "on": 1,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "the switch is the text true",
+   "doc": {
+    "on": "true",
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "no switch",
+   "doc": {
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "no sheet",
+   "doc": {
+    "on": true
+   },
+   "expect": null
+  },
+  {
+   "name": "the sheet is text",
+   "doc": {
+    "on": true,
+    "sheet": "x"
+   },
+   "expect": null
+  },
+  {
+   "name": "a reviewer's name that is a number",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": 5,
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "a model that is null",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": null,
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "leaves is 0",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": 0,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "leaves is the text false",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": "false",
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "days that are text are left to the gate",
+   "doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": "90",
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "expect": {
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": "90",
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    },
+    "on": true
+   }
+  }
+ ],
+ "prompt_text": [
+  {
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "hello"
+     }
+    ]
+   },
+   "expect": "messages\nrole\nuser\ncontent\nhello"
+  },
+  {
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       "a",
+       {
+        "text": "b"
+       }
+      ]
+     }
+    ],
+    "k-ey": {
+     "n": [
+      "c"
+     ]
+    }
+   },
+   "expect": "messages\nrole\nuser\ncontent\na\ntext\nb\nk-ey\nn\nc"
+  },
+  {
+   "body": {
+    "model": "x",
+    "temperature": 0.2,
+    "stream": false,
+    "n": 1,
+    "stop": null,
+    "messages": []
+   },
+   "expect": "model\nx\ntemperature\nstream\nn\nstop\nmessages"
+  },
+  {
+   "body": {
+    "tools": [
+     {
+      "function": {
+       "name": "f",
+       "description": "wording in a tool description"
+      }
+     }
+    ]
+   },
+   "expect": "tools\nfunction\nname\nf\ndescription\nwording in a tool description"
+  },
+  {
+   "body": {
+    "a": "one",
+    "b": "two",
+    "c": "three"
+   },
+   "expect": "a\none\nb\ntwo\nc\nthree"
+  },
+  {
+   "body": {
+    "é": "ü",
+    "日本": [
+     "語"
+    ]
+   },
+   "expect": "é\nü\n日本\n語"
+  },
+  {
+   "name": "nested 42 deep is refused",
+   "body": {
+    "k": {
+     "k": {
+      "k": {
+       "k": {
+        "k": {
+         "k": {
+          "k": {
+           "k": {
+            "k": {
+             "k": {
+              "k": {
+               "k": {
+                "k": {
+                 "k": {
+                  "k": {
+                   "k": {
+                    "k": {
+                     "k": {
+                      "k": {
+                       "k": {
+                        "k": {
+                         "k": {
+                          "k": {
+                           "k": {
+                            "k": {
+                             "k": {
+                              "k": {
+                               "k": {
+                                "k": {
+                                 "k": {
+                                  "k": {
+                                   "k": {
+                                    "k": {
+                                     "k": {
+                                      "k": {
+                                       "k": {
+                                        "k": {
+                                         "k": {
+                                          "k": {
+                                           "k": {
+                                            "k": "bottom"
+                                           }
+                                          }
+                                         }
+                                        }
+                                       }
+                                      }
+                                     }
+                                    }
+                                   }
+                                  }
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            }
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "expect": null
+  },
+  {
+   "name": "nested 40 deep is fine",
+   "body": [
+    [
+     [
+      [
+       [
+        [
+         [
+          [
+           [
+            [
+             [
+              [
+               [
+                [
+                 [
+                  [
+                   [
+                    [
+                     [
+                      [
+                       [
+                        [
+                         [
+                          [
+                           [
+                            [
+                             [
+                              [
+                               [
+                                [
+                                 [
+                                  [
+                                   [
+                                    [
+                                     [
+                                      [
+                                       [
+                                        [
+                                         [
+                                          "bottom"
+                                         ]
+                                        ]
+                                       ]
+                                      ]
+                                     ]
+                                    ]
+                                   ]
+                                  ]
+                                 ]
+                                ]
+                               ]
+                              ]
+                             ]
+                            ]
+                           ]
+                          ]
+                         ]
+                        ]
+                       ]
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "expect": "bottom"
+  }
+ ],
+ "requirement_headers": [
+  {
+   "header": "REQ-1,REQ-2",
+   "ids": [
+    "REQ-1",
+    "REQ-2"
+   ],
+   "bad": []
+  },
+  {
+   "header": " REQ-1 , REQ-2 ,, ",
+   "ids": [
+    "REQ-1",
+    "REQ-2"
+   ],
+   "bad": []
+  },
+  {
+   "header": "REQ-1,REQ-1,REQ-2",
+   "ids": [
+    "REQ-1",
+    "REQ-2"
+   ],
+   "bad": []
+  },
+  {
+   "header": "",
+   "ids": [],
+   "bad": []
+  },
+  {
+   "header": "REQ 1",
+   "ids": [
+    "REQ 1"
+   ],
+   "bad": [
+    "REQ 1"
+   ]
+  },
+  {
+   "header": "REQ-1,bad id,REQ-2",
+   "ids": [
+    "REQ-1",
+    "bad id",
+    "REQ-2"
+   ],
+   "bad": [
+    "bad id"
+   ]
+  },
+  {
+   "header": "-REQ",
+   "ids": [
+    "-REQ"
+   ],
+   "bad": [
+    "-REQ"
+   ]
+  },
+  {
+   "header": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+   "ids": [
+    "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+   ],
+   "bad": []
+  },
+  {
+   "header": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+   "ids": [
+    "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+   ],
+   "bad": [
+    "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+   ]
+  },
+  {
+   "header": "a.b_c:d-e",
+   "ids": [
+    "a.b_c:d-e"
+   ],
+   "bad": []
+  },
+  {
+   "header": "REQ-é",
+   "ids": [
+    "REQ-é"
+   ],
+   "bad": [
+    "REQ-é"
+   ]
+  },
+  {
+   "header": "req-1,REQ-1",
+   "ids": [
+    "req-1",
+    "REQ-1"
+   ],
+   "bad": []
+  }
+ ],
+ "markings_file_errors": [
+  {
+   "name": "a good file",
+   "file": {
+    "format": "reqin-markings/1",
+    "window": 6,
+    "requirements": {
+     "REQ-1": {
+      "marking": "No marking",
+      "fp": [
+       "09d44ae1c2a20e89",
+       "66c09a5a4d602bcd",
+       "a32f65f401fd73d9",
+       "a444f3e13a925c28",
+       "bcc7242bdd68dcaa",
+       "c408cf762931865b",
+       "f2912d2c36389338"
+      ]
+     },
+     "REQ-2": {
+      "marking": "CUI",
+      "fp": [
+       "047eea5af1d701d8",
+       "29f7b0970c8dabfc",
+       "5199854e886ae2f9",
+       "5363667bd51495df",
+       "58fe90de517cabf7",
+       "b159ea995bf00e20",
+       "b512af2975a60736",
+       "cf9bcd8b7340183a",
+       "e933e88634bc175b",
+       "e9bbfeab991f725c",
+       "eaae6c0c191e9f7f",
+       "f9871ab8211d449d"
+      ]
+     },
+     "REQ-3": {
+      "marking": "ITAR",
+      "fp": [
+       "40b9bf84f476810c",
+       "61e6258df2fa1f16",
+       "77e3038e2eb27769",
+       "acba099abdb8ba99",
+       "b4a58efcaeb41538",
+       "cc8a4210b9e0e06e",
+       "f1a99fee03dd3d7b"
+      ]
+     },
+     "REQ-4": {
+      "marking": "No marking",
+      "fp": [
+       "40b9bf84f476810c",
+       "6d0f74b92e44686c",
+       "77e3038e2eb27769",
+       "a32f65f401fd73d9",
+       "acba099abdb8ba99",
+       "b4a58efcaeb41538",
+       "cc8a4210b9e0e06e"
+      ]
+     },
+     "REQ-5": {
+      "marking": "No marking",
+      "fp": []
+     },
+     "REQ-6": {
+      "marking": "No marking",
+      "fp": [
+       "c1bfdfd6dc3021e5"
+      ]
+     },
+     "REQ-7": {
+      "marking": "No marking",
+      "fp": [
+       "7afb1c1171c943ea"
+      ]
+     }
+    }
+   },
+   "ok": true
+  },
+  {
+   "name": "another format",
+   "file": {
+    "format": "reqin-markings/2",
+    "window": 6,
+    "requirements": {
+     "REQ-1": {
+      "marking": "No marking",
+      "fp": [
+       "09d44ae1c2a20e89",
+       "66c09a5a4d602bcd",
+       "a32f65f401fd73d9",
+       "a444f3e13a925c28",
+       "bcc7242bdd68dcaa",
+       "c408cf762931865b",
+       "f2912d2c36389338"
+      ]
+     },
+     "REQ-2": {
+      "marking": "CUI",
+      "fp": [
+       "047eea5af1d701d8",
+       "29f7b0970c8dabfc",
+       "5199854e886ae2f9",
+       "5363667bd51495df",
+       "58fe90de517cabf7",
+       "b159ea995bf00e20",
+       "b512af2975a60736",
+       "cf9bcd8b7340183a",
+       "e933e88634bc175b",
+       "e9bbfeab991f725c",
+       "eaae6c0c191e9f7f",
+       "f9871ab8211d449d"
+      ]
+     },
+     "REQ-3": {
+      "marking": "ITAR",
+      "fp": [
+       "40b9bf84f476810c",
+       "61e6258df2fa1f16",
+       "77e3038e2eb27769",
+       "acba099abdb8ba99",
+       "b4a58efcaeb41538",
+       "cc8a4210b9e0e06e",
+       "f1a99fee03dd3d7b"
+      ]
+     },
+     "REQ-4": {
+      "marking": "No marking",
+      "fp": [
+       "40b9bf84f476810c",
+       "6d0f74b92e44686c",
+       "77e3038e2eb27769",
+       "a32f65f401fd73d9",
+       "acba099abdb8ba99",
+       "b4a58efcaeb41538",
+       "cc8a4210b9e0e06e"
+      ]
+     },
+     "REQ-5": {
+      "marking": "No marking",
+      "fp": []
+     },
+     "REQ-6": {
+      "marking": "No marking",
+      "fp": [
+       "c1bfdfd6dc3021e5"
+      ]
+     },
+     "REQ-7": {
+      "marking": "No marking",
+      "fp": [
+       "7afb1c1171c943ea"
+      ]
+     }
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "no requirements",
+   "file": {
+    "format": "reqin-markings/1"
+   },
+   "ok": false
+  },
+  {
+   "name": "requirements that are a list",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": []
+   },
+   "ok": false
+  },
+  {
+   "name": "an id with a space",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R 1": {
+      "marking": null,
+      "fp": []
+     }
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "an entry that is not an object",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R1": "x"
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "an entry with another key",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R1": {
+      "marking": null,
+      "fp": [],
+      "text": "no"
+     }
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "a marking that is a number",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R1": {
+      "marking": 5,
+      "fp": []
+     }
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "a fingerprint of the wrong length",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R1": {
+      "marking": null,
+      "fp": [
+       "abc"
+      ]
+     }
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "a fingerprint in capitals",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R1": {
+      "marking": null,
+      "fp": [
+       "ABCDEF0123456789"
+      ]
+     }
+    }
+   },
+   "ok": false
+  },
+  {
+   "name": "an entry with no marking and no fingerprints",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     "R1": {}
+    }
+   },
+   "ok": true
+  },
+  {
+   "name": "an id that starts with a dot",
+   "file": {
+    "format": "reqin-markings/1",
+    "requirements": {
+     ".R1": {
+      "marking": null,
+      "fp": []
+     }
+    }
+   },
+   "ok": false
+  }
+ ],
+ "decide_markings": {
+  "format": "reqin-markings/1",
+  "window": 6,
+  "requirements": {
+   "A": {
+    "marking": "No marking",
+    "fp": [
+     "09d44ae1c2a20e89",
+     "66c09a5a4d602bcd",
+     "a32f65f401fd73d9",
+     "a444f3e13a925c28",
+     "bcc7242bdd68dcaa",
+     "c408cf762931865b",
+     "f2912d2c36389338"
+    ]
+   },
+   "B": {
+    "marking": "No marking",
+    "fp": [
+     "047eea5af1d701d8",
+     "29f7b0970c8dabfc",
+     "5199854e886ae2f9",
+     "5363667bd51495df",
+     "58fe90de517cabf7",
+     "b159ea995bf00e20",
+     "b512af2975a60736",
+     "cf9bcd8b7340183a",
+     "e933e88634bc175b",
+     "e9bbfeab991f725c",
+     "eaae6c0c191e9f7f",
+     "f9871ab8211d449d"
+    ]
+   },
+   "C": {
+    "marking": "CUI",
+    "fp": [
+     "40b9bf84f476810c",
+     "61e6258df2fa1f16",
+     "77e3038e2eb27769",
+     "acba099abdb8ba99",
+     "b4a58efcaeb41538",
+     "cc8a4210b9e0e06e",
+     "f1a99fee03dd3d7b"
+    ]
+   },
+   "N": {
+    "marking": null,
+    "fp": [
+     "1d43d6e673098e94",
+     "29f48fb3e2d4e051",
+     "468ca8305f5f5c93",
+     "4ccbe91bfb63d831",
+     "82ef4541b3451de8",
+     "8f63555509b993cb",
+     "927e8d03a5001aee",
+     "ba8422f1b755d81f"
+    ]
+   },
+   "S": {
+    "marking": "SECRET",
+    "fp": [
+     "5c7aef81d77fb9b9",
+     "65a246fd10ceb99c",
+     "889c40852e2e1872",
+     "a4924311a72a0948",
+     "e3369f824a3a32b7",
+     "e3dac633a4687add"
+    ]
+   },
+   "U": {
+    "marking": "Company confidential",
+    "fp": [
+     "1cd18b801f4e351d",
+     "24558b68ee79309a",
+     "28dfbfe4de0f6899",
+     "304cd795278b64b2",
+     "4d067f481f944f4b",
+     "4d6fe5d271a6732c",
+     "5ac3e93c140f1b3b",
+     "868f8c9835e76530",
+     "eb9b3e86dbe28c53"
+    ]
+   },
+   "X": {
+    "marking": "ITAR",
+    "fp": [
+     "07e27a3d9435d40d",
+     "330a3548b7319cab",
+     "6f2ebbede0babc05",
+     "98bccce2346c4a59",
+     "c8bd38700d99f478",
+     "d7d900f6228ea7ca",
+     "e473193d8ee0c00e"
+    ]
+   }
+  }
+ },
+ "decide": [
+  {
+   "name": "everything in order, no marking",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "none",
+    "detail": []
+   }
+  },
+  {
+   "name": "everything in order, CUI approved",
+   "role": "reviewer",
+   "ids": [
+    "C"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "cui",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "cui",
+    "detail": []
+   }
+  },
+  {
+   "name": "export controlled approved on our own server",
+   "role": "reviewer",
+   "ids": [
+    "A",
+    "C",
+    "X"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "exp",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "exp",
+    "detail": []
+   }
+  },
+  {
+   "name": "an observer",
+   "role": "observer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "observer",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "an observer is refused before anything else",
+   "role": "observer",
+   "ids": [],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": false,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "observer",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "an owner is not refused",
+   "role": "owner",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "none",
+    "detail": []
+   }
+  },
+  {
+   "name": "no ids",
+   "role": "reviewer",
+   "ids": [],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 400,
+    "code": "no_requirements",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "too many ids",
+   "role": "reviewer",
+   "ids": [
+    "A",
+    "B",
+    "C"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 2,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 400,
+    "code": "too_many",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "exactly as many ids as allowed",
+   "role": "reviewer",
+   "ids": [
+    "A",
+    "B"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 2,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "none",
+    "detail": []
+   }
+  },
+  {
+   "name": "an id the gateway does not know",
+   "role": "reviewer",
+   "ids": [
+    "A",
+    "Z"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 400,
+    "code": "unknown_requirement",
+    "level": "",
+    "detail": [
+     "Z"
+    ]
+   }
+  },
+  {
+   "name": "seven unknown ids, only the first twenty are listed",
+   "role": "reviewer",
+   "ids": [
+    "Q0",
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4",
+    "Q5",
+    "Q6",
+    "Q7",
+    "Q8",
+    "Q9",
+    "Q10",
+    "Q11",
+    "Q12",
+    "Q13",
+    "Q14",
+    "Q15",
+    "Q16",
+    "Q17",
+    "Q18",
+    "Q19",
+    "Q20",
+    "Q21",
+    "Q22",
+    "Q23",
+    "Q24"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 400,
+    "code": "unknown_requirement",
+    "level": "",
+    "detail": [
+     "Q0",
+     "Q1",
+     "Q2",
+     "Q3",
+     "Q4",
+     "Q5",
+     "Q6",
+     "Q7",
+     "Q8",
+     "Q9",
+     "Q10",
+     "Q11",
+     "Q12",
+     "Q13",
+     "Q14",
+     "Q15",
+     "Q16",
+     "Q17",
+     "Q18",
+     "Q19"
+    ]
+   }
+  },
+  {
+   "name": "unknown id wins over the switch being off",
+   "role": "reviewer",
+   "ids": [
+    "Z"
+   ],
+   "ai_doc": {
+    "on": false,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 400,
+    "code": "unknown_requirement",
+    "level": "",
+    "detail": [
+     "Z"
+    ]
+   }
+  },
+  {
+   "name": "no AI document",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": null,
+   "ai_present": false,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "no_sheet",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "no AI document wins over a bad sheet",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "x": 1
+   },
+   "ai_present": false,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "no_sheet",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "an AI document the gateway cannot read",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": "yes",
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "bad_sheet",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "the switch is off",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": false,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "off",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "the sheet has no reviewer",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "unreviewed",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "the sheet has a reviewer and no date",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": " ",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "unreviewed",
+    "level": "",
+    "detail": []
+   }
+  },
+  {
+   "name": "the sheet contradicts itself (vendor that says nothing leaves, and a model with no name)",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "",
+     "where": "vendor",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "sheet",
+    "level": "",
+    "detail": [
+     "model",
+     "vendor_leaves"
+    ]
+   }
+  },
+  {
+   "name": "a classified requirement",
+   "role": "reviewer",
+   "ids": [
+    "A",
+    "S"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "exp",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "classified",
+    "level": "classified",
+    "detail": []
+   }
+  },
+  {
+   "name": "a marking the table does not know",
+   "role": "reviewer",
+   "ids": [
+    "U"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "exp",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "unknown",
+    "level": "unknown",
+    "detail": []
+   }
+  },
+  {
+   "name": "no marking recorded, and the sheet says to withhold",
+   "role": "reviewer",
+   "ids": [
+    "N"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "unstated",
+    "level": "unstated",
+    "detail": []
+   }
+  },
+  {
+   "name": "no marking recorded, and the sheet says treat it as none",
+   "role": "reviewer",
+   "ids": [
+    "N"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "none",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "none",
+    "detail": []
+   }
+  },
+  {
+   "name": "a CUI requirement and the sheet approves none",
+   "role": "reviewer",
+   "ids": [
+    "C"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "marking",
+    "level": "cui",
+    "detail": []
+   }
+  },
+  {
+   "name": "an export controlled requirement and the sheet approves CUI",
+   "role": "reviewer",
+   "ids": [
+    "X"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "cui",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "marking",
+    "level": "exp",
+    "detail": []
+   }
+  },
+  {
+   "name": "the route is another model",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Other",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "sheet_mismatch",
+    "level": "none",
+    "detail": [
+     "model"
+    ]
+   }
+  },
+  {
+   "name": "the route is somewhere else and keeps prompts for longer",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "tenant",
+    "leaves": false,
+    "log": "local",
+    "days": 365
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "sheet_mismatch",
+    "level": "none",
+    "detail": [
+     "where",
+     "days"
+    ]
+   }
+  },
+  {
+   "name": "the marking rules win over the route",
+   "role": "reviewer",
+   "ids": [
+    "C"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Other",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Compare the wording of these requirements and say which is clearer.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "marking",
+    "level": "cui",
+    "detail": []
+   }
+  },
+  {
+   "name": "an undeclared requirement in the prompt",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Also consider: The controller shall log every fault with the time it occurred and the unit that raised it. Thanks.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "undeclared_text",
+    "level": "none",
+    "detail": [
+     "B"
+    ]
+   }
+  },
+  {
+   "name": "an undeclared requirement in the prompt, declared",
+   "role": "reviewer",
+   "ids": [
+    "A",
+    "B"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "Also consider: The controller shall log every fault with the time it occurred and the unit that raised it. Thanks.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": true,
+    "status": 200,
+    "code": "open",
+    "level": "none",
+    "detail": []
+   }
+  },
+  {
+   "name": "the route wins over an undeclared requirement",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Other",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "The controller shall log every fault with the time it occurred and the unit that raised it.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "sheet_mismatch",
+    "level": "none",
+    "detail": [
+     "model"
+    ]
+   }
+  },
+  {
+   "name": "an undeclared requirement and the leak limit raised past what it has",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "The controller shall log every fault with the time it occurred and the unit that raised it.",
+   "max_requirements": 200,
+   "min_windows": 50,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "undeclared_text",
+    "level": "none",
+    "detail": [
+     "B"
+    ]
+   }
+  },
+  {
+   "name": "two undeclared requirements are listed in order of id",
+   "role": "reviewer",
+   "ids": [
+    "A"
+   ],
+   "ai_doc": {
+    "on": true,
+    "sheet": {
+     "model": "Local model v1",
+     "where": "ours",
+     "leaves": false,
+     "log": "local",
+     "days": 90,
+     "approved": "none",
+     "unstated": "withhold",
+     "reviewed_by": "A. Reviewer",
+     "reviewed_at": "2026-01-02",
+     "entered_by": "morgan"
+    }
+   },
+   "ai_present": true,
+   "route": {
+    "model": "Local model v1",
+    "where": "ours",
+    "leaves": false,
+    "log": "local",
+    "days": 90
+   },
+   "prompt": "The valve shall close within two seconds of receiving the shutdown command. The controller shall log every fault with the time it occurred and the unit that raised it.",
+   "max_requirements": 200,
+   "min_windows": 2,
+   "expect": {
+    "ok": false,
+    "status": 403,
+    "code": "undeclared_text",
+    "level": "none",
+    "detail": [
+     "B",
+     "C"
+    ]
+   }
+  }
+ ],
+ "audit_chain": [
+  {
+   "row": {
+    "seq": 1,
+    "at": "2026-03-04T05:06:07Z",
+    "project": "PROJ-A",
+    "person": "sam",
+    "requirements": [
+     "REQ-1",
+     "REQ-2"
+    ],
+    "code": "open",
+    "level": "none",
+    "ok": true,
+    "upstream": 200,
+    "prompt_bytes": 1234,
+    "prev": "0000000000000000000000000000000000000000000000000000000000000000"
+   },
+   "preimage": "0000000000000000000000000000000000000000000000000000000000000000|{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+   "hash": "ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7",
+   "line": "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}"
+  },
+  {
+   "row": {
+    "seq": 2,
+    "at": "2026-03-04T05:06:09Z",
+    "project": "PROJ-A",
+    "person": "priya \"the lead\"",
+    "requirements": [],
+    "code": "no_requirements",
+    "level": "",
+    "ok": false,
+    "upstream": null,
+    "prompt_bytes": 0,
+    "prev": "ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7"
+   },
+   "preimage": "ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7|{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"level\":\"\",\"ok\":false,\"person\":\"priya \\\"the lead\\\"\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}",
+   "hash": "8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918",
+   "line": "{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"hash\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"level\":\"\",\"ok\":false,\"person\":\"priya \\\"the lead\\\"\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}"
+  },
+  {
+   "row": {
+    "seq": 3,
+    "at": "2026-03-04T05:07:00Z",
+    "project": "PROJ-Ä",
+    "person": "ünïcode\n名前",
+    "requirements": [
+     "R-é",
+     "R-日本"
+    ],
+    "code": "marking",
+    "level": "cui",
+    "ok": false,
+    "upstream": null,
+    "prompt_bytes": 99999,
+    "prev": "8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918"
+   },
+   "preimage": "8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918|{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}",
+   "hash": "0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143",
+   "line": "{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"hash\":\"0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}"
+  }
+ ],
+ "audit_genesis": "0000000000000000000000000000000000000000000000000000000000000000",
+ "audit_fields": [
+  "seq",
+  "at",
+  "project",
+  "person",
+  "requirements",
+  "code",
+  "level",
+  "ok",
+  "upstream",
+  "prompt_bytes",
+  "prev"
+ ],
+ "verify_log": [
+  {
+   "name": "a good record",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"hash\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"level\":\"\",\"ok\":false,\"person\":\"priya \\\"the lead\\\"\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}",
+    "{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"hash\":\"0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}"
+   ],
+   "expect": {
+    "ok": true,
+    "entries": 3,
+    "head": "0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143"
+   }
+  },
+  {
+   "name": "an empty record",
+   "lines": [],
+   "expect": {
+    "ok": true,
+    "entries": 0,
+    "head": "0000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "name": "a line edited",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"hash\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"level\":\"\",\"ok\":false,\"person\":\"someone else\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}",
+    "{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"hash\":\"0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 2
+   }
+  },
+  {
+   "name": "a line removed from the middle",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"hash\":\"0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 2
+   }
+  },
+  {
+   "name": "two lines swapped",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"hash\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"level\":\"\",\"ok\":false,\"person\":\"priya \\\"the lead\\\"\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}",
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"hash\":\"0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 1
+   }
+  },
+  {
+   "name": "the last line removed is a shorter good record",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"hash\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"level\":\"\",\"ok\":false,\"person\":\"priya \\\"the lead\\\"\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}"
+   ],
+   "expect": {
+    "ok": true,
+    "entries": 2,
+    "head": "8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918"
+   }
+  },
+  {
+   "name": "a line edited and its own hash recomputed (the next line no longer follows)",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "{\"at\":\"2026-03-04T05:06:09Z\",\"code\":\"no_requirements\",\"hash\":\"030c54f2dc116a53d942cab6beb74198454063bb65f9257cf002630ecfb6619b\",\"level\":\"\",\"ok\":false,\"person\":\"someone else\",\"prev\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"project\":\"PROJ-A\",\"prompt_bytes\":0,\"requirements\":[],\"seq\":2,\"upstream\":null}",
+    "{\"at\":\"2026-03-04T05:07:00Z\",\"code\":\"marking\",\"hash\":\"0bd8e75d4c4ab9575c7c39091ee0117f22801cc79960d589af0854afefc17143\",\"level\":\"cui\",\"ok\":false,\"person\":\"ünïcode\\n名前\",\"prev\":\"8b3c0096767fd050f39f53e35330df1e5f349c0531ed0cb742c53fb003f11918\",\"project\":\"PROJ-Ä\",\"prompt_bytes\":99999,\"requirements\":[\"R-é\",\"R-日本\"],\"seq\":3,\"upstream\":null}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 3
+   }
+  },
+  {
+   "name": "a line with an entry that does not belong",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"more\":1,\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 1
+   }
+  },
+  {
+   "name": "a line with an entry missing",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 1
+   }
+  },
+  {
+   "name": "a line that is not JSON",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":1,\"upstream\":200}",
+    "not json"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 2
+   }
+  },
+  {
+   "name": "a line that is JSON but not an object",
+   "lines": [
+    "[1]"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 1
+   }
+  },
+  {
+   "name": "the first line is numbered 2",
+   "lines": [
+    "{\"at\":\"2026-03-04T05:06:07Z\",\"code\":\"open\",\"hash\":\"ffa7324e1eae15a442d1247ad532233e8f79b8e2319ff161cc4ab3a70454c8c7\",\"level\":\"none\",\"ok\":true,\"person\":\"sam\",\"prev\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"project\":\"PROJ-A\",\"prompt_bytes\":1234,\"requirements\":[\"REQ-1\",\"REQ-2\"],\"seq\":2,\"upstream\":200}"
+   ],
+   "expect": {
+    "ok": false,
+    "at": 1
+   }
+  }
+ ]
+}

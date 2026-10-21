@@ -27,6 +27,7 @@ PLAN = [                       # (file, what it checks, widths)
     ('b19.py', 'AI use: the switch, the data sheet, held groups', [DESK, MID, PHONE]),
     ('b20.py', 'accessibility: axe, contrast, keyboard, reflow, chart colours', [DESK, MID, PHONE]),
     ('b21.py', 'the shared project: four people in four browsers on one reference server', [DESK, MID, PHONE]),
+    ('b22.py', 'no network: the page opens and works with every outside request refused', [DESK]),
 ]
 
 

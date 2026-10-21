@@ -137,7 +137,24 @@ prototype:browser:
     - cd prototype
     - python run_browser_tests.py
 
-# 3d. The scale test: 20 times the sample (24,960 requirements) built in a temporary folder and timed. The full node image has the Python the build needs.
+# 3c-2. The same page in Firefox and WebKit (the Playwright image has all three), five of the test files at one width. The tests were written and run against
+#       Chromium only, so the job is allowed to fail: a red result is something to look at, not a broken build. It has not run on GitLab, and the tests have
+#       never been run in these two browsers.
+prototype:other-browsers:
+  stage: browser
+  image: "$PLAYWRIGHT_IMAGE"
+  needs: ["prototype:vendor"]
+  timeout: 1h
+  allow_failure: true
+  parallel:
+    matrix:
+      - REQIN_BROWSER: [firefox, webkit]
+  script:
+    - pip install -r prototype/requirements-test.txt
+    - cd prototype
+    - python run_browser_tests.py b11 b12 b17 b18 b20 --width 1440
+
+# 3d. The scale test: 20 times the sample (24,960 requirements) built in a temporary folder and timed, as the sample repeated and with a varied shape. The full node image has the Python the build needs.
 #     SCALE_SLACK doubles every limit for a shared runner; the limits themselves are about three times what a laptop needs.
 prototype:scale:
   stage: browser
@@ -146,7 +163,8 @@ prototype:scale:
     SCALE_SLACK: "2"
   script:
     - cd prototype
-    - node scale.js
+    - node scale.js 20 sample
+    - node scale.js 20 varied
 
 # 4. Container image (Podman). Manual by default because it needs a runner that allows building images.
 #    Make it automatic by deleting the `when: manual` / `allow_failure` lines.

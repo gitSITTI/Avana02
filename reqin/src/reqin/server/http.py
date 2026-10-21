@@ -24,6 +24,7 @@ from __future__ import annotations
 import json
 import re
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from ipaddress import ip_address
 from pathlib import Path
@@ -33,6 +34,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 from .store import ServerError, Store
 
 MAX_REQUEST_BYTES = 1024 * 1024
+DRAIN_BYTES = 2 * 1024 * 1024         # how much of a refused body is read and thrown away so that the answer arrives (see _drain)
 MAX_STATIC_BYTES = 20 * 1024 * 1024
 VERSION = "0.1"
 # what the app directory may hand out; anything else is a 404, whatever is in the directory
@@ -107,6 +109,22 @@ class Handler(BaseHTTPRequestHandler):
         if self.command != "HEAD":
             self.wfile.write(data)
         self._log(status)
+        if self._unread():
+            self._drain()
+
+    def _drain(self) -> None:
+        """Read and throw away a bounded part of a body this request refused to read, after the answer is sent. Closing a connection that still has unread data
+        ends with a reset, and a reset can destroy the answer before the caller has read it: the caller would see 'connection reset' instead of 'too large'."""
+        deadline = time.monotonic() + 2.0
+        try:
+            left = min(int(self.headers.get("Content-Length") or 0), DRAIN_BYTES)
+            while left > 0 and time.monotonic() < deadline:
+                got = self.rfile.read1(min(left, 65536))
+                if not got:
+                    break
+                left -= len(got)
+        except (OSError, ValueError):
+            pass
 
     def _error(self, e: ServerError) -> None:
         h = {"WWW-Authenticate": 'Bearer realm="reqin"'} if e.status == 401 else {}

@@ -60,9 +60,10 @@ proto-test:
 	cd prototype/vendor && npm ci
 	cd prototype && $(PY) run_browser_tests.py
 
-# Builds a page with 20 times the sample (24,960 requirements) in a temporary folder and times what a person waits for. SCALE_SLACK=2 doubles every limit on a slow machine.
+# Builds a page with 20 times the sample (24,960 requirements) in a temporary folder and times what a person waits for: once as the sample repeated, once with a varied shape
+# (mostly different wordings, one large allocation, a few very large clusters). SCALE_SLACK=2 doubles every limit on a slow machine.
 proto-scale:
-	cd prototype && node scale.js
+	cd prototype && node scale.js 20 sample && node scale.js 20 varied
 
 image:
 	$(CTR) build -t $(IMG) -f Containerfile .
