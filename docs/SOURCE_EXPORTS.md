@@ -156,7 +156,7 @@ Suspect flags: not found on any route.
 
 ## 5. MSOSA, Cameo, MagicDraw, Teamwork Cloud, SysML v2
 
-**Names.** In the 2026x documentation the products are named Magic Software Architect (the modelling tool formerly called MagicDraw), Magic Cyber Systems Engineer (Cameo Systems Modeler), Magic Systems of Systems Architect (MSOSA) and Magic Collaboration Studio (Teamwork Cloud and its services). The docs space carries all three modelling names in one version menu. I found no 2026x copy of the Requirements Modeler pages; the ReqIF pages read are 2021x R1/R2 and 2024x R3.
+**Names.** In the 2026x documentation the products are named Magic Software Architect (the modelling tool formerly called MagicDraw), Magic Cyber Systems Engineer (Cameo Systems Modeler), Magic Systems of Systems Architect (MSOSA) and Magic Collaboration Studio (Teamwork Cloud and its services). Dassault Systèmes sells the family as CATIA Magic (the former No Magic products; its product pages sit under `3ds.com/products-services/catia/products/catia-magic/`). The docs space carries all three modelling names in one version menu. I found no 2026x copy of the Requirements Modeler pages; the ReqIF pages read are 2021x R1/R2 and 2024x R3.
 
 ### 5.1 SysML 1.x routes
 
@@ -252,7 +252,7 @@ Anonymised and fictional-ised **before** it leaves your machine, and never with 
 
 ## 10. Not answered
 
-- **"DESE"** appears in the request that started this work and is not a tool name I recognise. It is not covered here. If it names a tool, say which and the same research can be done.
+- **"DESE"** appeared in the request that started this work. It is read here as Dassault Systèmes, the company behind the "Magic" line (MSOSA, Magic Cyber Systems Engineer, Magic Software Architect, Magic Collaboration Studio, sold as CATIA Magic), which section 5 covers. If it was meant to name a different tool, say which and the same research can be done.
 - Everything in the vendors' blocked pages (section 1).
 - Whether any of these routes is allowed by your licence.
 
