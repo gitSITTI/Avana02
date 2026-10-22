@@ -149,9 +149,9 @@ def kind_tags_html(kinds: list) -> str:
     return '<p class="tags">%s</p>' % "".join('<span class="tag%s">%s</span>' % (" none" if k == "none" else "", H.escape(CAT.KIND_WORDS[k])) for k in kinds)
 
 
-def frames_sheet_html(screen_name: str, image_url: str, img_w: int, img_h: int, frames: list, notes: list | None = None) -> str:
+def frames_sheet_html(screen_name: str, image_url: str, img_w: int, img_h: int, frames: list, notes: list | None = None, whose: str = "our colours") -> str:
     """One of our screens cut into its frames. frames: [{'id','label','box':{x,y,w,h},'kinds':[...],'pieces':[names]}]. A small map of the whole screen with each frame numbered comes first,
-    then every frame at a readable size with the tag that says where its content would come from. The picture says that its content is made up."""
+    then every frame at a readable size with the tag that says where its content would come from. The picture says that its content is made up, and whose colours it is drawn in (`whose`: \"our colours\" or \"your theme\")."""
     mscale = min(1.0, 440.0 / img_w)
     boxes = "".join('<i style="left:%.2f%%;top:%.2f%%;width:%.2f%%;height:%.2f%%"></i><b style="left:%.2f%%;top:%.2f%%">%d</b>'
                     % (f["box"]["x"] / img_w * 100, f["box"]["y"] / img_h * 100, f["box"]["w"] / img_w * 100, f["box"]["h"] / img_h * 100,
@@ -165,12 +165,12 @@ def frames_sheet_html(screen_name: str, image_url: str, img_w: int, img_h: int, 
                     % (i, H.escape(f["label"]), crop_html(image_url, img_w, b, frame_scale(b["w"] + 16, b["h"] + 16), alt=f["label"]), kind_tags_html(f["kinds"]), pieces))
     ns = "".join('<p class="sample">%s</p>' % H.escape(n) for n in (notes or []))
     return ('<!doctype html><meta charset="utf-8"><title>%s</title><style>%s</style><h1>%s: its frames</h1>'
-            '<p class="lead">Our screen drawn in our colours. Every name, number and date in these pictures is made up. The tag under a frame says where its content would come from in your app.</p>%s'
-            '%s<div class="grid">%s</div>' % (H.escape(screen_name), _FR, H.escape(screen_name), ns, mp, "".join(figs)))
+            '<p class="lead">Our screen drawn in %s. Every name, number and date in these pictures is made up. The tag under a frame says where its content would come from in your app.</p>%s'
+            '%s<div class="grid">%s</div>' % (H.escape(screen_name), _FR, H.escape(screen_name), H.escape(whose), ns, mp, "".join(figs)))
 
 
-def screens_sheet_html(cells: list, notes: list | None = None) -> str:
-    """Our screens, the top of each, to choose from. cells: [{'name','image','width','n_frames','n_pieces'}]."""
+def screens_sheet_html(cells: list, notes: list | None = None, whose: str = "our colours") -> str:
+    """Our screens, the top of each, to choose from. cells: [{'name','image','width','n_frames','n_pieces'}]. whose: \"our colours\" or \"your theme\"."""
     out = []
     for c in cells:
         scale = 300.0 / c["width"]
@@ -179,8 +179,8 @@ def screens_sheet_html(cells: list, notes: list | None = None) -> str:
                       c["n_frames"], "" if c["n_frames"] == 1 else "s", c["n_pieces"], "" if c["n_pieces"] == 1 else "s"))
     ns = "".join('<p class="sample">%s</p>' % H.escape(n) for n in (notes or []))
     return ('<!doctype html><meta charset="utf-8"><title>Our screens</title><style>%s</style><h1>Our screens</h1>'
-            '<p class="lead">The top of each screen, in our colours. Every name, number and date in these pictures is made up. Choosing a screen shows its frames next.</p>%s<div class="sheet">%s</div>'
-            % (_FR, ns, "".join(out)))
+            '<p class="lead">The top of each screen, in %s. Every name, number and date in these pictures is made up. Choosing a screen shows its frames next.</p>%s<div class="sheet">%s</div>'
+            % (_FR, H.escape(whose), ns, "".join(out)))
 
 
 _SW = ("body{margin:0;padding:16px;background:#e9ecef;font:13px/1.4 system-ui,Segoe UI,sans-serif;color:#1b2733}.cols{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}"

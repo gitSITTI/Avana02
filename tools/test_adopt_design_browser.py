@@ -203,7 +203,8 @@ def test_the_whole_conversation_runs_from_the_top_folder_with_the_printed_comman
     pr = run(script, "preview", s)
     assert pr.returncode == 0, pr.stderr[-600:]
     pics = {p.name for p in (Path(s) / "preview").iterdir()}
-    assert {"theme.png", "parts.png", "page-before.png", "page-after.png", "PREVIEW.md"} <= pics
+    assert {"theme.png", "parts.png", "page-before.png", "page-after.png", "screen_review.png", "PREVIEW.md"} <= pics, "the frames kept of the chosen screen are drawn in the preview"
+    assert "drawn in your theme (your colours, fonts and corners as decided)" in Path(s, "preview", "PREVIEW.md").read_text(encoding="utf-8")
     for png in ("theme.png", "parts.png", "page-before.png", "page-after.png"):
         assert Path(s, "preview", png).stat().st_size > 3000
     assert "has not said yes" in run(script, "build", s).stderr + run(script, "build", s).stdout
@@ -214,6 +215,8 @@ def test_the_whole_conversation_runs_from_the_top_folder_with_the_printed_comman
     out = Path(s) / "out"
     assert (out / "CHANGES.md").is_file() and (out / "adopted.tokens.json").is_file() and (out / "parts" / "side-bar" / "part.css").is_file()
     assert read_json(out / "decisions.json")["approved_words"] == "yes, write it"
+    rep = (out / "REPORT.md").read_text(encoding="utf-8")
+    assert "you saw our frames drawn in your theme" in rep and "they were not drawn on your data" in rep and "can only be checked on your running app" in rep
 
 
 # ------------------------------------------------------------------------------------------------ verify
@@ -279,7 +282,8 @@ def test_the_question_about_screens_shows_every_screen_and_the_question_about_fr
     assert adopt.main(["next", live_session]) == 0
     out = capsys.readouterr().out
     sheet = Path(live_session) / "pictures" / "screens.png"
-    assert str(sheet) in out and "made-up content" in out and "not drawn in your theme" in out
+    assert str(sheet) in out and "made-up content" in out and "drawn in your theme" in out and "not drawn in your theme" not in out
+    assert (Path(live_session) / "pictures" / "frames" / "frames_theme.json").is_file()
     img = pil().open(sheet)
     assert img.width == 1300 and img.height > 1000, "fourteen screens in a sheet"
     assert adopt.main(["answer", live_session, "screens", "screen-open"]) == 0
@@ -297,6 +301,79 @@ def test_the_frame_picture_holds_the_colours_of_our_design_and_one_tag_per_frame
     assert res and Path(res["file"]).is_file()
     assert count_colour(res["file"], "#fde8e6") > 300, "the tag that says nothing produces a frame's content is drawn in a warning colour (it is the one frame of seven that has no source)"
     assert count_colour(res["file"], OURS["--accent"], tol=6) > 100, "the frames are our screen in our colours: the main button is in our main colour"
+
+
+def frames_picture(session, m, themed, notes):
+    with RD.Renderer() as r:
+        return adopt.draw_frames_picture(r, m, {"kind": "frames", "screen": "screen-open"}, Path(session) / "pictures" / "f.png", notes, themed, session)
+
+
+def test_with_their_theme_the_frame_picture_has_their_main_colour_and_none_of_ours_and_says_so(live_session, monkeypatch):
+    talk(live_session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-open")])
+    _, m = adopt.model_of(live_session)
+    theirs = m.theme_values()["accent"]
+    assert theirs.lower() != OURS["--accent"].lower()
+    notes = []
+    themed = adopt.themed_frames(live_session, m, [m.bs["screen-open"]["screen"]], notes)         # before the Renderer: both drive a browser and cannot be nested
+    assert themed and notes == []
+    seen = []
+    real_sheet = RD.frames_sheet_html
+    monkeypatch.setattr(RD, "frames_sheet_html", lambda *a, **k: seen.append(k.get("whose")) or real_sheet(*a, **k))
+    res = frames_picture(live_session, m, themed, notes)
+    assert seen == ["your theme"], "the sheet is told the screen is drawn in the person's theme"
+    assert count_colour(res["file"], theirs, tol=6) > 1000, "the main buttons and links are in the person's main colour"
+    assert count_colour(res["file"], OURS["--accent"], tol=6) == 0, "none of our main colour is left on a screen drawn in theirs"
+    assert any("drawn in your theme" in n for n in notes) and not any("they are not drawn in your theme" in n for n in notes)
+    assert (Path(live_session) / "pictures" / "frames" / "frames_theme.json").is_file()
+    ours_notes = []
+    ours_res = frames_picture(live_session, m, None, ours_notes)                                  # no themed pictures given: ours, and the note says they are not in the person's theme
+    assert count_colour(ours_res["file"], theirs, tol=6) == 0 and count_colour(ours_res["file"], OURS["--accent"], tol=6) > 1000
+    assert any("not drawn in your theme" in n for n in ours_notes)
+
+
+def test_choosing_our_theme_shows_our_pictures_without_drawing_anything_and_says_the_colours_are_theirs_too(live_session):
+    talk(live_session, [("stance", "ours"), ("parts", "none"), ("screens", "screen-open")])
+    _, m = adopt.model_of(live_session)
+    notes = []
+    assert adopt.theme_is_ours(m) and adopt.themed_frames(live_session, m, ["open"], notes) is None and notes == []
+    assert not (Path(live_session) / "pictures" / "frames").exists()
+    res = frames_picture(live_session, m, None, notes)
+    assert count_colour(res["file"], OURS["--accent"], tol=6) > 1000
+    assert any("which are the colours you chose" in n for n in notes)
+
+
+def test_a_screen_is_drawn_once_per_theme_and_only_the_missing_ones_are_drawn_later(live_session, monkeypatch):
+    talk(live_session, [("stance", "keep"), ("guesses", "none"), ("parts", "none")])
+    _, m = adopt.model_of(live_session)
+    calls = []
+    real = adopt.FT.draw_themed
+    monkeypatch.setattr(adopt.FT, "draw_themed", lambda theirs, out, screens=None, ours=None, spec=None: calls.append(list(screens)) or real(theirs, out, screens, ours, spec))
+    assert adopt.themed_frames(live_session, m, ["open"], []) and calls == [["open"]]
+    assert adopt.themed_frames(live_session, m, ["open"], []) and calls == [["open"]], "the same screen in the same theme is not drawn again"
+    got = adopt.themed_frames(live_session, m, ["open", "home"], [])
+    assert calls == [["open"], ["home"]], "only the screen that was missing is drawn"
+    assert sorted(got[0]["screens"]) == ["home", "open"]
+    # a change of theme draws again, and removes the pictures of the old theme
+    talk_more = adopt.main(["set", live_session, "accent", "#B45309"])
+    assert talk_more == 0
+    _, m2 = adopt.model_of(live_session)
+    again = adopt.themed_frames(live_session, m2, ["open"], [])
+    assert calls[-1] == ["open"] and list(again[0]["screens"]) == ["open"] and not (Path(live_session) / "pictures" / "frames" / "home.png").exists()
+
+
+def test_when_the_theme_cannot_be_drawn_our_pictures_are_shown_and_the_note_says_why(live_session, monkeypatch):
+    talk(live_session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-open")])
+    _, m = adopt.model_of(live_session)
+    monkeypatch.setattr(adopt.FT, "draw_themed", lambda *a, **k: {"ok": False, "problems": ["the prototype no longer matches frames_spec.json; nothing was written: frame 3 moved"], "files": [], "index": None})
+    notes = []
+    themed = adopt.themed_frames(live_session, m, ["open"], notes)
+    assert themed is None and any("could not be drawn in your theme" in n and "frame 3 moved" in n and "shown in our colours" in n for n in notes), notes
+    res = frames_picture(live_session, m, themed, notes)
+    assert count_colour(res["file"], OURS["--accent"], tol=6) > 1000, "the picture is still made, in our colours"
+    assert any("they are not drawn in your theme" in n for n in notes)
+    monkeypatch.setattr(adopt.FT, "draw_themed", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("no browser here")))
+    notes = []
+    assert adopt.themed_frames(live_session, m, ["open"], notes) is None and any("no browser here" in n for n in notes)
 
 
 def test_when_the_frame_pictures_are_missing_the_question_says_so_and_still_works(live_session, capsys, monkeypatch, tmp_path):

@@ -31,6 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import C, KIT, REPO, TOKENS_CSS, css_vars, digest, read_json, write_json  # noqa: E402
 import catalog as CAT  # noqa: E402
+import frames_theme as FT  # noqa: E402
 import make_frames as MF  # noqa: E402
 import roles as R  # noqa: E402
 
@@ -306,7 +307,7 @@ def q_aspect(m, pid, aspect):
 def q_screens(m):
     opts = [_opt(s["id"], s["name"], "%d frame%s, %d piece%s listed in the data map" % (len(m.frames_of(s["id"])), "" if len(m.frames_of(s["id"])) == 1 else "s", len(s["rows"]), "" if len(s["rows"]) == 1 else "s"))
             for s in m.screens] + [_opt("none", "None of them")]
-    return {"id": "screens", "kind": "multi", "say": "Which of our screens would you like a build brief for? The picture shows the top of each, in our colours and with made-up sample content. Each brief lists what is on the screen, "
+    return {"id": "screens", "kind": "multi", "say": "Which of our screens would you like a build brief for? The picture shows the top of each, with made-up sample content (the note says whose colours it is drawn in). Each brief lists what is on the screen, "
             "where its content comes from and where it leads. Pick any, or none.", "options": opts, "picture": {"kind": "screens"}}
 
 
@@ -319,7 +320,7 @@ def q_frames(m, sid):
     s = m.bs[sid]
     opts = [_opt(f["id"], "%d. %s" % (f["n"], f["label"]), frame_detail(m, sid, f)) for f in m.frames_of(sid)] + [_opt("all", "All of them"), _opt("none", "None of them")]
     return {"id": "frames:" + sid, "kind": "multi",
-            "say": "The \"%s\" screen is cut into the frames in the picture, drawn in our colours with made-up sample content. Which do you want in your app? Anything you leave out is dropped from the brief. "
+            "say": "The \"%s\" screen is cut into the frames in the picture, drawn with made-up sample content (the note says whose colours it is drawn in). Which do you want in your app? Anything you leave out is dropped from the brief. "
                    "Under each frame the picture says where its content would come from in your app." % s["name"],
             "options": opts, "picture": {"kind": "frames", "screen": sid}}
 
@@ -427,6 +428,7 @@ def draw_for(session: str, m: Model, q: dict):
     fn = out_dir / (re.sub(r"[^A-Za-z0-9]+", "_", q["id"]).strip("_") + ".png")
     notes = []
     base = m.theme_tokens()
+    themed = themed_frames(session, m, frame_screens(m, pic), notes) if pic["kind"] in ("screens", "frames") and MF.INDEX.is_file() else None      # before the Renderer: see draw_frames_picture
     with RD.Renderer() as r:
         if pic["kind"] == "theme":
             cols = [{"title": "Yours", "sub": "read from your page", "values": {k: v["value"] for k, v in m.mine.items()}, "conf": {k: v["confidence"] for k, v in m.mine.items()}},
@@ -443,7 +445,7 @@ def draw_for(session: str, m: Model, q: dict):
                 cells.append((o["label"], R.tokens_for(vals, m.ours_vars), ""))
             res = r.draw(RD.strip_html(cells, RD.AREA_SAMPLE, r.base), fn, _fonts(*[c[1] for c in cells]), width=1300)
         elif pic["kind"] in ("screens", "frames"):
-            res = draw_frames_picture(r, m, pic, fn, notes)
+            res = draw_frames_picture(r, m, pic, fn, notes, themed, session)
             if res is None:
                 return [], notes
         elif pic["kind"] == "parts":
@@ -470,9 +472,65 @@ def draw_for(session: str, m: Model, q: dict):
     return [res["file"]], notes
 
 
-def draw_frames_picture(r, m: Model, pic: dict, fn, notes: list):
-    """The picture of our screens (a sheet to choose from) or of one screen cut into its frames. These are drawn from the pictures docs/images/frames/ holds (made by scripts/make_frames.py
-    from the running prototype), not from the person's page. Returns the draw result, or None (with a note) when those pictures are missing or of another version of the prototype."""
+def frame_screens(m: Model, pic: dict) -> list:
+    """The frames_spec.json ids of the screens a picture of kind 'screens' or 'frames' draws."""
+    return [s["screen"] for s in m.screens] if pic["kind"] == "screens" else [m.bs[pic["screen"]]["screen"]]
+
+
+def notes_for_every_screen(index: dict, sids: list) -> list:
+    """The notes of the re-theme (frames_theme.json) that hold for every screen in a picture: a note about one screen of fourteen would be wrong for the other thirteen."""
+    per = [index["screens"][fid]["report"]["notes"] for fid in sids]
+    return [n for n in per[0] if all(n in other for other in per)] if per else []
+
+
+def theme_is_ours(m: Model) -> bool:
+    """Whether the theme the answers give is exactly ours, so that the pictures of our screens in docs/images/frames/ are already drawn in it."""
+    ours = {r: m.ours_value(r) for r in R.ROLE_IDS}
+    try:
+        theirs = FT.complete_theme(m.theme_values(), ours)
+    except ValueError:
+        return False
+    return all(FT.same_value(r, ours[r], theirs[r]) for r in R.ROLE_IDS)
+
+
+def themed_frames(session: str, m: Model, sids: list, notes: list):
+    """Our screens (frames_spec.json ids) drawn in the person's theme: (index, folder), or None when that is not possible or not needed (then our own pictures are shown, and `notes`
+    says why when it is not simply that the theme is ours). Pictures already drawn for this theme and this version of the prototype are reused, so a screen is drawn once per theme."""
+    if theme_is_ours(m):
+        return None
+    ours = {r: m.ours_value(r) for r in R.ROLE_IDS}
+    try:
+        theirs = FT.complete_theme(m.theme_values(), ours)
+    except ValueError as e:
+        notes.append("your theme could not be drawn on our screens (%s), so they are shown in our colours" % e)
+        return None
+    folder = sess_path(session) / "pictures" / "frames"
+    have = {}
+    if (folder / FT.INDEX_NAME).is_file():
+        try:
+            have = read_json(folder / FT.INDEX_NAME)
+        except ValueError:
+            have = {}
+    same = have.get("format") == FT.FORMAT and have.get("theme") == digest(theirs) and have.get("prototype_page") == MF.page_hash()
+    missing = [x for x in sids if not (same and x in have.get("screens", {}) and (folder / have["screens"][x]["image"]).is_file())]
+    if missing:
+        try:
+            res = FT.draw_themed(theirs, folder, missing, ours)
+        except Exception as e:                                           # noqa: BLE001  (no browser, a page that would not load): the pictures in our colours still work
+            notes.append("our screens could not be drawn in your theme (%s), so they are shown in our colours" % (str(e).splitlines() or [repr(e)])[0][:160])
+            return None
+        if not res["ok"]:
+            notes.append("our screens could not be drawn in your theme (%s), so they are shown in our colours" % res["problems"][0][:200])
+            return None
+        have = res["index"]
+    return have, folder
+
+
+def draw_frames_picture(r, m: Model, pic: dict, fn, notes: list, themed=None, session: str | None = None):
+    """The picture of our screens (a sheet to choose from) or of one screen cut into its frames. Drawn from the running prototype by scripts/make_frames.py (docs/images/frames/, in our colours)
+    or, when `themed` is given (what themed_frames returned, which the caller gets BEFORE opening the Renderer: both drive a browser and cannot be nested), from the same screens re-themed by
+    scripts/frames_theme.py (SESSION/pictures/frames/). `session` only decides the words of the note when the theme is ours. Never from the person's page.
+    Returns the draw result, or None (with a note) when those pictures are missing or of another version of the prototype."""
     import render as RD
     problems = MF.index_problems()
     if not MF.INDEX.is_file():
@@ -481,20 +539,35 @@ def draw_frames_picture(r, m: Model, pic: dict, fn, notes: list):
     idx = read_json(MF.INDEX)
     if problems:
         notes.append("the pictures of our screens may be out of date: " + problems[0])
+    sids = frame_screens(m, pic)
+
+    def entry(fid):
+        return (themed[0]["screens"][fid], themed[1]) if themed else (idx["screens"][fid], MF.OUT)
+    whose = "your theme" if themed else "our colours"
     if pic["kind"] == "screens":
         cells = []
         for s in m.screens:
-            e = idx["screens"][s["screen"]]
-            cells.append({"name": s["name"], "image": r.stage_file(MF.OUT / e["image"]), "width": e["width"], "n_frames": len(e["frames"]), "n_pieces": len(s["rows"])})
-        res = r.draw(RD.screens_sheet_html(cells), fn, [], width=1300)
+            e, base = entry(s["screen"])
+            cells.append({"name": s["name"], "image": r.stage_file(base / e["image"]), "width": e["width"], "n_frames": len(e["frames"]), "n_pieces": len(s["rows"])})
+        res = r.draw(RD.screens_sheet_html(cells, whose=whose), fn, [], width=1300)
     else:
         sid = pic["screen"]
-        e = idx["screens"][m.bs[sid]["screen"]]
+        e, base = entry(m.bs[sid]["screen"])
         rows = {x["id"]: x for x in m.rows_of(sid)}
         boxes = {f["id"]: f["box"] for f in e["frames"]}
-        frames = [{"id": f["id"], "label": f["label"], "box": boxes[f["id"]], "kinds": m.frame_kinds(sid, f), "pieces": [rows[x]["part"] for x in f["rows"]]} for f in m.frames_of(sid)]
-        res = r.draw(RD.frames_sheet_html(m.bs[sid]["name"], r.stage_file(MF.OUT / e["image"]), e["width"], e["height"], frames), fn, [], width=1300)
-    notes.append("these pictures are our screens with made-up content: they show what is on a screen, not what your data would look like there, and they are not drawn in your theme")
+        frames = [{"id": f["id"], "label": f["label"], "box": boxes[f["id"]], "kinds": m.frame_kinds(sid, f), "pieces": [rows[x]["part"] for x in f["rows"]]}
+                  for f in (m.frames_kept(sid) if pic.get("kept_only") else m.frames_of(sid))]
+        name = m.bs[sid]["name"] + (", the frames you kept" if pic.get("kept_only") else "")
+        res = r.draw(RD.frames_sheet_html(name, r.stage_file(base / e["image"]), e["width"], e["height"], frames, whose=whose), fn, [], width=1300)
+    if themed:
+        seen = notes_for_every_screen(themed[0], sids)
+        notes.append("these pictures are our screens drawn in your theme (the colours, fonts and corners you chose) with made-up content: they show what is on a screen, not what your data would look like there. "
+                     "Colours that mean something (the greens, ambers and reds of statuses) and text sizes your theme has no role for are left as we draw them")
+        notes += seen[:3]
+    elif session and theme_is_ours(m):
+        notes.append("these pictures are our screens in our colours with made-up content, which are the colours you chose: they show what is on a screen, not what your data would look like there")
+    else:
+        notes.append("these pictures are our screens with made-up content: they show what is on a screen, not what your data would look like there, and they are not drawn in your theme")
     return res
 
 
@@ -647,6 +720,8 @@ def cmd_preview(session: str) -> int:
     values, tokens = m.theme_values(), m.theme_tokens()
     sel = m.selected_parts()
     files, notes, stand = [], [], []
+    kept = [x for x in m.selected_screens() if "frames:" + x in m.A and m.frames_kept(x)]
+    themed = themed_frames(session, m, [m.bs[x]["screen"] for x in kept], notes) if kept and MF.INDEX.is_file() else None          # before the Renderer: see draw_frames_picture
     with RD.Renderer() as r:
         cols = [{"title": "Yours", "sub": "read from your page", "values": {k: v["value"] for k, v in m.mine.items()}, "conf": {k: v["confidence"] for k, v in m.mine.items()}},
                 {"title": "Ours", "sub": "design/tokens.css", "values": {k: v["value"] for k, v in m.ours.items()}},
@@ -666,16 +741,26 @@ def cmd_preview(session: str) -> int:
             files += [page["before"], page["after"]]
         except Exception as e:                                         # the page moved, needs a sign-in, or is gone
             notes.append("your page could not be opened again to draw it with the changes (%s); the other pictures are made" % str(e).splitlines()[0][:120])
+        for x in kept:                                                  # the frames of each chosen screen that were kept, in the colours they will be shown in
+            try:
+                res = draw_frames_picture(r, m, {"kind": "frames", "screen": x, "kept_only": True}, out / ("screen_%s.png" % m.bs[x]["screen"]), notes, themed, session)
+            except Exception as e:                                      # noqa: BLE001
+                notes.append("the frames you kept of the %s screen could not be drawn (%s); the other pictures are made" % (m.bs[x]["name"], str(e).splitlines()[0][:120] if str(e) else repr(e)))
+                continue
+            if res:
+                files.append(res["file"])
+                stand += res["stand_in"]
     if stand:
         notes.append("this machine has no %s, so those pictures show a stand-in where that font is used" % ", ".join(sorted(set(stand))))
     notes += page.get("not_drawn", [])
+    notes = list(dict.fromkeys(notes))
     for what, ratio, need, ok in R.contrast_findings(values):
         if not ok:
             notes.append("contrast: %s is %.2f:1 and %g:1 is the usual minimum; the result would be hard to read there" % (what, ratio, need))
     lines = ["# What the pictures show", "", "Look at these before saying yes.", ""] + ["- %s" % f for f in files] + [""]
     if page:
         lines += ["## Your page, before and after", "", page["caveat"], "", "Drawn on your page: " + ("; ".join(page["drawn"]) or "nothing needed to change"), ""]
-    lines += ["## Not shown", ""] + (["- " + n for n in notes] or ["- nothing else to report"]) + ["- screens: you saw our frames in our colours with made-up content when you chose them; they are not drawn in your theme or on your data, and the briefs written at build are text, not code", ""]
+    lines += ["## Not shown", ""] + (["- " + n for n in notes] or ["- nothing else to report"]) + ["- screens: %s, and the briefs written at build are text, not code" % FT.screens_sentence(FT.colours_shown(sess_path(session), values, {r: m.ours_value(r) for r in R.ROLE_IDS})), ""]
     (out / "PREVIEW.md").write_text("\n".join(lines), encoding="utf-8")
     s["preview"] = {"hash": m.fingerprint(), "files": files, "notes": notes, "drawn": page.get("drawn", [])}
     s.pop("approved", None)

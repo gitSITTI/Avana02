@@ -50,7 +50,7 @@ It records the answer and prints the next question. Keep going until it says eve
 | `parts` | which of our parts to bring (menu, top bar, draft bar, buttons, text box, card, chips, folding row, wording row) |
 | `change:PART` | for each part chosen: what to change (colours, corners, type, shadow, height, icons), or nothing |
 | `aspect:PART:WHAT` | for each thing to change: the options side by side, as pictures |
-| `screens`, `frames:SCREEN`, `rows:SCREEN` | which of our screens to get a build brief for (a sheet showing the top of each); which frames of each to keep (a picture of the screen cut into numbered frames, each tagged with where its content would come from in their app); and which of the pieces the sample does not draw to keep |
+| `screens`, `frames:SCREEN`, `rows:SCREEN` | which of our screens to get a build brief for (a sheet showing the top of each, in their theme when they keep their own: the first time this draws all fourteen, about a minute and a half, then it is kept for that theme); which frames of each to keep (a picture of the screen cut into numbered frames, each tagged with where its content would come from in their app); and which of the pieces the sample does not draw to keep |
 
 Two commands do not follow that order:
 - `python3 design/adopt_design/scripts/adopt.py set SESSION ROLE VALUE` corrects a value read from the page ("the main colour is `#1A4DB5`").
@@ -61,7 +61,7 @@ If you lose your place, run `python3 design/adopt_design/scripts/adopt.py status
 **4. Show the whole result before anything is written.**
 `python3 design/adopt_design/scripts/adopt.py preview SESSION`
 It draws: your values and ours and the result side by side; each part chosen, in the result's colours; and **the person's own page, before and after**, with our menu and top bar drawn
-over theirs (their own menu items in our menu) and their buttons, text boxes, cards and chips restyled. Show the person every picture it lists and read them the notes it prints
+over theirs (their own menu items in our menu) and their buttons, text boxes, cards and chips restyled. For each screen whose frames they kept, a picture of the kept frames in the colours they will be shown in (their theme, or ours when they chose ours). Show the person every picture it lists and read them the notes it prints
 (what could not be drawn). Then ask: *is this what you want me to write into your app?*
 
 **5. Record their yes, in their words.**
@@ -119,6 +119,7 @@ class is on the page. A role read as a guess can differ without being wrong; a p
 | `scripts/roles.py`, `roles.json` | the shared vocabulary: 21 roles (what colour is the main button, how round are the corners, ...) that a page and our design both answer, and which of our tokens each drives |
 | `scripts/render.py` | draws the pictures |
 | `scripts/make_frames.py`, `frames_spec.json` | draws our screens from the running prototype and cuts each into frames (the pictures are in `docs/images/frames/`); run it again after the prototype page changes |
+| `scripts/frames_theme.py` | draws those screens again in the person's theme (`adopt.py` does it when they keep their own; `python3 design/adopt_design/scripts/frames_theme.py SESSION` or `--theme FILE.json OUT_DIR` by hand): reads every element, writes the person's value over every one that has exactly our value for a role, and reports what it left alone. Tested by `tools/test_frames_theme.py`, including that drawing in our own theme changes no pixel of the committed pictures |
 | `scripts/build_out.py` | writes the files; reads a changed page for `verify` |
 | `catalog.json`, `specimens/` | our parts: what each is, which stylesheet rules it uses, and a made-up drawing of it |
 | `examples/sample_app/`, `examples/sample_index/` | a made-up page to try it on, and what reading it gives |
@@ -130,9 +131,12 @@ class is on the page. A role read as a guess can differ without being wrong; a p
   a small local model can run it is the design goal and is **untested**.
 - The values read from a page are what the browser computed. Which element is "the main button" when there are several is a rule (the most used coloured filled button); the
   `guesses` question exists for that.
-- The frames of our screens are pictured in our colours with made-up content. They are not drawn in the person's theme, and not on the person's data. Whether a screen built from a brief shows the person's real values rather than the sample's is not checked by anything in this folder; it can only be checked on their running app.
+- The frames of our screens are drawn with made-up content, never on the person's data. When the person keeps their own theme they are redrawn in it by `scripts/frames_theme.py`: a role of the theme is applied to
+  every element of our screens that has exactly our value for that role, so a colour that is only close to ours, a colour that means something (the greens, ambers and reds of statuses), a size that is not on the type ladder,
+  hover, focus and pressed states, pseudo-elements, gradients and images stay as we draw them, and the notes under the picture say what was left. A dark theme is drawn but pale greys that no role names stay pale; the note says how many. Whether a screen built
+  from a brief shows the person's real values rather than the sample's is not checked by anything in this folder; it can only be checked on their running app.
 - A picture is a drawing of a decision. Our parts are drawn from specimens made for this kit with the stylesheet rules our design really uses; the page preview restyles the person's
   elements by the selectors the index found. Neither is the code that will be written.
 - Not read: a second theme (dark mode), anything behind a click or sign-in that `--setup` did not do, gradients and images, styles inside cross-origin stylesheets or shadow roots,
   and the layout at narrow widths.
-- Screens are build briefs from `design/navigation.json` and `docs/SCREEN_DATA_MAP.md`. The frames of each screen are pictured in our colours (`docs/images/frames/`, drawn by `scripts/make_frames.py` from the running prototype), not yet in the person's theme and not on the person's data. Nothing was built from the briefs here.
+- Screens are build briefs from `design/navigation.json` and `docs/SCREEN_DATA_MAP.md`. The frames of each screen are pictured from the running prototype (`docs/images/frames/`, in our colours, drawn by `scripts/make_frames.py`; in the person's theme when they keep their own, drawn into the session by `scripts/frames_theme.py`), never on the person's data. Nothing was built from the briefs here.

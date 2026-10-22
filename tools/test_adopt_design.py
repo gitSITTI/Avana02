@@ -27,6 +27,7 @@ sys.path.insert(0, str(KIT / "scripts"))
 import adopt  # noqa: E402
 import build_out  # noqa: E402
 import catalog as CAT  # noqa: E402
+import frames_theme as FT  # noqa: E402
 import make_frames as MF  # noqa: E402
 import render as RD  # noqa: E402
 import roles as R  # noqa: E402
@@ -766,6 +767,54 @@ def test_the_brief_lists_the_frames_and_says_that_the_sample_is_not_the_persons_
     assert "never a sample value" in brief and "made up" in brief and "Canary one" in brief and "Left out on purpose" in brief
     rep = (Path(session) / "out" / "REPORT.md").read_text(encoding="utf-8")
     assert "were not drawn in your theme or on your data" in rep and "can only be checked on your running app" in rep
+
+
+def themed_folder(tmp_path, theirs, **override):
+    """A session folder holding the index of pictures drawn for `theirs` (and the one thing a test wants to be different)."""
+    d = tmp_path / "sess" / "pictures" / "frames"
+    d.mkdir(parents=True)
+    idx = {"format": FT.FORMAT, "prototype_page": MF.page_hash(), "theme": FT.digest(FT.complete_theme(theirs, FT.default_ours())), "screens": {"open": {"image": "open.png"}}, **override}
+    (d / FT.INDEX_NAME).write_text(json.dumps(idx), encoding="utf-8")
+    return tmp_path / "sess"
+
+
+def test_the_report_says_which_colours_the_person_saw_and_never_more_than_was_drawn(tmp_path):
+    mine = {"accent": "#0F766E"}
+    ours = FT.default_ours()
+    assert FT.colours_shown(tmp_path / "none", mine, ours) == "ours", "their theme differs and nothing was drawn in it"
+    assert FT.colours_shown(tmp_path / "none", ours, ours) == "ours-chosen", "their theme is ours"
+    assert FT.colours_shown(themed_folder(tmp_path / "a", mine), mine, ours) == "yours"
+    assert FT.colours_shown(themed_folder(tmp_path / "b", mine), {"accent": "#B45309"}, ours) == "ours", "pictures drawn for another theme are not the colours they chose"
+    assert FT.colours_shown(themed_folder(tmp_path / "c", mine, prototype_page="not this version"), mine, ours) == "ours", "pictures of another version of the prototype are not these screens"
+    assert FT.colours_shown(themed_folder(tmp_path / "d", mine, format="reqin-frames-theme/0"), mine, ours) == "ours"
+    assert FT.colours_shown(themed_folder(tmp_path / "e", mine, screens={}), mine, ours) == "ours", "an index with no pictures is not a picture"
+    bad = tmp_path / "f" / "pictures" / "frames"
+    bad.mkdir(parents=True)
+    (bad / FT.INDEX_NAME).write_text("{not json", encoding="utf-8")
+    assert FT.colours_shown(tmp_path / "f", mine, ours) == "ours"
+    assert FT.colours_shown(tmp_path / "none", {"accent": "not a colour"}, ours) == "ours", "a value that cannot be drawn is not drawn"
+    said = {k: FT.screens_sentence(k) for k in ("yours", "ours-chosen", "ours")}
+    assert "your theme" in said["yours"] and "not drawn in your theme" in said["ours"] and "which are the colours you chose" in said["ours-chosen"]
+    assert all(s.endswith("on your data") and "not drawn" in s for s in said.values()), "every version says the sample is not their data"
+
+
+def test_a_note_about_the_re_theme_is_shown_only_when_it_is_true_of_every_screen_in_the_picture():
+    def screen(*notes):
+        return {"report": {"notes": list(notes)}}
+    idx = {"screens": {"a": screen("hover is different but unused", "no Inter here"), "b": screen("no Inter here"), "c": screen("no Inter here", "hover is different but unused")}}
+    assert adopt.notes_for_every_screen(idx, ["a"]) == ["hover is different but unused", "no Inter here"]
+    assert adopt.notes_for_every_screen(idx, ["a", "b", "c"]) == ["no Inter here"], "the hover note is true of two screens, not of all three"
+    assert adopt.notes_for_every_screen(idx, ["b", "c"]) == ["no Inter here"]
+    assert adopt.notes_for_every_screen(idx, []) == []
+
+
+def test_the_frames_sheets_say_whose_colours_they_are_drawn_in_and_default_to_ours():
+    one = RD.frames_sheet_html("Open", "http://x/o.png", 1440, 3000, [{"id": "a", "label": "A", "box": {"x": 0, "y": 0, "w": 100, "h": 100}, "kinds": ["words"], "pieces": []}])
+    assert "drawn in our colours" in one
+    assert "drawn in your theme" in RD.frames_sheet_html("Open", "http://x/o.png", 1440, 3000, [], whose="your theme")
+    cell = {"name": "Open", "image": "http://x/o.png", "width": 1440, "n_frames": 1, "n_pieces": 1}
+    assert "in our colours" in RD.screens_sheet_html([cell]) and "in your theme" in RD.screens_sheet_html([cell], whose="your theme")
+    assert "in <b>" not in RD.screens_sheet_html([cell], whose="<b>x</b>"), "the words are escaped"
 
 
 def test_the_frames_html_names_every_frame_numbers_it_tags_its_source_and_escapes_what_it_is_given():

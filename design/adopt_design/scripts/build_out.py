@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import KIT, REPO, TOKENS_CSS, css_vars, first_family, px, read_json, write_json  # noqa: E402
 import catalog as CAT  # noqa: E402
+import frames_theme as FT  # noqa: E402
 import roles as R  # noqa: E402
 import render as RD  # noqa: E402
 
@@ -322,7 +323,8 @@ def build(m, out: Path, said: str, page: str) -> list:
               "; ".join("%s %.2f:1 %s" % (w, r, "ok" if ok else "BELOW %g" % need) for w, r, need, ok in R.contrast_findings(vals)) or "no pair could be worked out"),
           "- Pictures are drawings of the decision from specimens and your own page restyled; they are not the code, and they were drawn by one browser (Chromium) on one machine.",
           "- Fonts that were not installed where the pictures were drawn appeared in a stand-in; the files use the font you chose.",
-          "- Screens are briefs. Their frames were pictured in our colours with made-up content; they were not drawn in your theme or on your data, and nothing was built from them here. Whether a built screen shows your real values (and not the sample's) was not checked and can only be checked on your running app.",
+          "- Screens are briefs; %s, and nothing was built from them here. Whether a built screen shows your real values (and not the sample's) was not checked and can only be checked on your running app." % (
+              FT.screens_sentence(FT.colours_shown(out.parent, vals, {r: m.ours_value(r) for r in R.ROLE_IDS}))),
           "- A second theme (dark mode), anything behind a click or a sign-in that was not set up, and the layout at narrow widths were not read or drawn.",
           "- The person's words approving this: \"%s\"" % said.replace('"', "'"), ""]
     (out / "REPORT.md").write_text("\n".join(R_), encoding="utf-8")
