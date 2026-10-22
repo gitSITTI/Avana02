@@ -27,6 +27,7 @@ sys.path.insert(0, str(KIT / "scripts"))
 import adopt  # noqa: E402
 import build_out  # noqa: E402
 import catalog as CAT  # noqa: E402
+import make_frames as MF  # noqa: E402
 import render as RD  # noqa: E402
 import roles as R  # noqa: E402
 from common import TOKENS_CSS, css_vars, read_json  # noqa: E402
@@ -625,3 +626,61 @@ def test_the_research_page_says_what_was_not_read_and_does_not_claim_a_tool_work
     t = (KIT / "RESEARCH.md").read_text(encoding="utf-8")
     assert "Looked for, and not read" in t and "What this research does not establish" in t and "was not installed or run" in t
     assert "**The kit does not depend on it.**" in t
+
+
+# ---------------------------------------------------------------------------------------------------- frames: the pieces of our screens that have pictures
+def test_every_screen_has_frames_and_every_frame_names_pieces_the_data_map_lists():
+    assert MF.spec_problems() == []
+    spec = MF.load_spec()
+    assert set(spec["screens"]) == {s["id"] for s in read_json(REPO / "design" / "navigation.json")["screens"]}
+
+
+@pytest.mark.parametrize("breakage,expected", [
+    (lambda sp: sp["screens"].pop("audit"), "screen audit has no frames"),
+    (lambda sp: sp["screens"].update(nowhere=[{"id": "a", "label": "x", "path": [0], "starts": "x", "rows": []}]), "not a screen"),
+    (lambda sp: sp["screens"]["open"].append(dict(sp["screens"]["open"][0])), "used twice"),
+    (lambda sp: sp["screens"]["open"][0].update(rows=["r99"]), "not one of the"),
+    (lambda sp: sp["screens"]["open"][0].update(rows=["row1"]), "not one of the"),
+    (lambda sp: sp["screens"]["open"][0].update(starts=" "), "starts is empty"),
+    (lambda sp: sp["screens"]["open"][0].update(path=[]), "path must be a list"),
+    (lambda sp: sp["screens"]["open"][0].update(path=[-1]), "path must be a list"),
+])
+def test_a_broken_frame_list_is_refused_and_says_what_is_wrong(breakage, expected):
+    spec = copy.deepcopy(MF.load_spec())
+    breakage(spec)
+    errs = MF.spec_problems(spec)
+    assert errs and any(expected in e for e in errs), errs
+
+
+def test_a_piece_of_the_data_map_may_be_drawn_across_several_frames_and_a_frame_may_hold_none():
+    spec = MF.load_spec()
+    held: dict = {}
+    for sid, frames in spec["screens"].items():
+        for f in frames:
+            for r in f["rows"]:
+                held.setdefault((sid, r), []).append(f["id"])
+    assert any(len(v) > 1 for v in held.values()), "the methods screen draws one piece across four frames; the spec lost that"
+    assert any(not f["rows"] for frames in spec["screens"].values() for f in frames)
+
+
+def test_the_frame_index_matches_the_spec_the_pictures_exist_and_every_box_is_inside_its_picture():
+    assert MF.index_problems() == []
+    idx = read_json(MF.INDEX)
+    for sid, s in idx["screens"].items():
+        png = (MF.OUT / s["image"]).read_bytes()
+        assert png[:8] == b"\x89PNG\r\n\x1a\n", sid
+        w, h = int.from_bytes(png[16:20], "big"), int.from_bytes(png[20:24], "big")
+        assert (w, h) == (s["width"], s["height"]), f"{sid}: the picture is {w}x{h}, frames.json says {s['width']}x{s['height']}"
+        for f in s["frames"]:
+            assert f["box"] is not None, f"{sid}/{f['id']} found nothing when the pictures were drawn"
+
+
+def test_the_frame_index_is_refused_when_the_page_it_was_drawn_from_has_changed(tmp_path, monkeypatch):
+    page = tmp_path / "Main.dc.html"
+    page.write_text("<html>another page</html>", encoding="utf-8")
+    monkeypatch.setattr(MF, "PAGE", page)
+    assert any("another version" in e for e in MF.index_problems())
+
+
+def test_the_frame_index_holds_no_machine_path():
+    assert not re.search(r"/home/|/tmp/|file:///|/Users/", MF.INDEX.read_text(encoding="utf-8"))

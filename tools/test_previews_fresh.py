@@ -42,3 +42,12 @@ def test_the_prototype_screenshots_show_the_current_page():
     for name in manifest["screens"]:
         assert (SHOTS / name).is_file(), f"listed screenshot {name} is missing"
     assert sorted(p.name for p in SHOTS.glob("*.png")) == sorted(manifest["screens"]), "screenshots on disk differ from the manifest"
+
+
+def test_the_frame_pictures_of_our_screens_show_the_current_page():
+    """The adoption kit's pictures of each screen's frames (design/adopt_design) are drawn from the running prototype; they must be of the page as it is now."""
+    frames = REPO / "docs" / "images" / "frames"
+    index = json.loads((frames / "frames.json").read_text(encoding="utf-8"))
+    assert index["prototype_page"] == _sha(PAGE), "the prototype page changed after the frame pictures were drawn; run: python3 design/adopt_design/scripts/make_frames.py (then look at the pictures)"
+    listed = sorted(s["image"] for s in index["screens"].values())
+    assert sorted(p.name for p in frames.glob("*.png")) == listed, "frame pictures on disk differ from frames.json"
