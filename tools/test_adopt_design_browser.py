@@ -51,8 +51,7 @@ SAMPLE_PAGE = KIT / "examples" / "sample_app" / "index.html"
 SAMPLE_INDEX = KIT / "examples" / "sample_index"
 OURS = css_vars(TOKENS_CSS.read_text(encoding="utf-8"))
 FULL = [("stance", "keep"), ("guesses", "size-small"), ("fix:size-small", "ours"), ("parts", "side-bar,top-bar,buttons,card"), ("change:side-bar", "palette,icons"), ("aspect:side-bar:palette", "ours"),
-        ("aspect:side-bar:icons", "remove"), ("change:top-bar", "none"), ("change:buttons", "corners"), ("aspect:buttons:corners", "ours"), ("change:card", "none"), ("screens", "screen-review"),
-        ("rows:screen-review", "r1,r2,r3")]
+        ("aspect:side-bar:icons", "remove"), ("change:top-bar", "none"), ("change:buttons", "corners"), ("aspect:buttons:corners", "ours"), ("change:card", "none"), ("screens", "screen-review"), ("frames:screen-review", "queue,resolve"), ("rows:screen-review", "r13")]
 
 
 def pil():
@@ -272,3 +271,38 @@ def test_verify_refuses_before_build(live_session):
     with pytest.raises(SystemExit) as e:
         adopt.main(["verify", live_session, "--page", str(SAMPLE_PAGE)])
     assert "run build first" in str(e.value)
+
+
+# ------------------------------------------------------------------------------------------------ the pictures of our screens and their frames
+def test_the_question_about_screens_shows_every_screen_and_the_question_about_frames_shows_that_screen_cut_into_frames(live_session, capsys):
+    talk(live_session, [("stance", "keep"), ("guesses", "none"), ("parts", "none")])
+    assert adopt.main(["next", live_session]) == 0
+    out = capsys.readouterr().out
+    sheet = Path(live_session) / "pictures" / "screens.png"
+    assert str(sheet) in out and "made-up content" in out and "not drawn in your theme" in out
+    img = pil().open(sheet)
+    assert img.width == 1300 and img.height > 1000, "fourteen screens in a sheet"
+    assert adopt.main(["answer", live_session, "screens", "screen-open"]) == 0
+    out = capsys.readouterr().out
+    one = Path(live_session) / "pictures" / "frames_screen_open.png"
+    assert str(one) in out and one.is_file() and pil().open(one).height > 1500
+    assert "nothing produces it yet" in out and "content: from your requirements data" in out
+
+
+def test_the_frame_picture_holds_the_colours_of_our_design_and_one_tag_per_frame_in_red_for_nothing_produces_it(live_session):
+    talk(live_session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-open")])
+    s, m = adopt.model_of(live_session)
+    with RD.Renderer() as r:
+        res = adopt.draw_frames_picture(r, m, {"kind": "frames", "screen": "screen-open"}, Path(live_session) / "pictures" / "f.png", [])
+    assert res and Path(res["file"]).is_file()
+    assert count_colour(res["file"], "#fde8e6") > 300, "the tag that says nothing produces a frame's content is drawn in a warning colour (it is the one frame of seven that has no source)"
+    assert count_colour(res["file"], OURS["--accent"], tol=6) > 100, "the frames are our screen in our colours: the main button is in our main colour"
+
+
+def test_when_the_frame_pictures_are_missing_the_question_says_so_and_still_works(live_session, capsys, monkeypatch, tmp_path):
+    import make_frames as MF
+    monkeypatch.setattr(MF, "INDEX", tmp_path / "nowhere" / "frames.json")
+    talk(live_session, [("stance", "keep"), ("guesses", "none"), ("parts", "none")])
+    assert adopt.main(["next", live_session]) == 0
+    out = capsys.readouterr().out
+    assert "pictures of our screens are missing" in out and "screens.png" not in out and "screen-open" in out

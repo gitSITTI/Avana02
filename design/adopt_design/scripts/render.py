@@ -1,10 +1,12 @@
 """Draw pictures of design decisions, so a person can look before anything is written into their app.
 
-Four kinds of picture:
+Six kinds of picture:
   theme sheet   your values and ours side by side, role by role (colours, type, corners, shadow, control height)
   part picture  one of our parts (menu, top bar, buttons, ...) drawn with the colours, fonts and corners that are chosen
   option strip  the same part drawn once per option, side by side, for a question
   page preview  your own page opened in a browser, with the chosen colours, corners and fonts applied to your own elements and our menu / top bar drawn over yours
+  screens sheet our fourteen screens, the top of each, in our colours (frames_sheet / screens_sheet_html)
+  frames sheet  one of our screens, cut into the frames a person can keep or drop, each with a tag for where its content would come from in their app
 
 What is real and what is not: part pictures are drawn from the specimens in specimens/ with the stylesheet rules the prototype and the design kit really use. A specimen is a
 drawing made for this kit, not the prototype's own markup. The page preview restyles your page by the selectors the index found, so it shows the decision, not the code that will be
@@ -17,6 +19,7 @@ from __future__ import annotations
 import html as H
 import http.server
 import re
+import shutil
 import socketserver
 import tempfile
 import threading
@@ -112,6 +115,72 @@ def strip_html(cells: list, part_ids: list, base: str, icons_off=(), notes=None,
     """cells: [(label, tokens, note)] -> one page that draws the same parts once per cell."""
     body = "".join(cell_html(lb, tk, part_ids, icons_off, nt) for lb, tk, nt in cells)
     return page_html(body, parts_css(part_ids, tokens=None), base, notes, title)
+
+
+# ------------------------------------------------------------------------------------------------ pictures of our screens and their frames
+_FR = ("body{margin:0;padding:16px;background:#e9ecef;font:13px/1.4 system-ui,Segoe UI,sans-serif;color:#1b2733}h1{font:600 16px system-ui;margin:0 0 4px}"
+       ".lead{margin:0 0 14px;color:#3b4652;max-width:70em}.sample{background:#fff4d6;border:1px solid #e8d08a;color:#5a4200;padding:6px 10px;margin:0 0 14px;display:inline-block}"
+       ".map{position:relative;display:inline-block;border:1px solid #9aa5b1;background:#fff;vertical-align:top;margin:0 16px 12px 0}.map img{display:block;width:100%}"
+       ".map i{position:absolute;box-sizing:border-box;border:2px solid #b3261e;background:rgba(179,38,30,.07)}"
+       ".map b{position:absolute;left:0;top:0;background:#b3261e;color:#fff;font:600 11px system-ui;padding:1px 4px}"
+       ".grid{columns:2;column-gap:20px}.fig{break-inside:avoid;margin:0 0 18px;background:#fff;border:1px solid #c5ccd3;padding:10px}"
+       ".fig .cap{margin:0 0 6px;font:13px/1.4 system-ui}.fig .cap b{font-weight:600}.crop{position:relative;overflow:hidden;border:1px solid #d6dbe0;background:#fff}"
+       ".crop img{position:absolute;max-width:none}.tags{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px}.tag{font:12px system-ui;border:1px solid #9aa5b1;padding:1px 6px;background:#f4f6f8;color:#26323d}"
+       ".tag.none{border-color:#b3261e;background:#fde8e6;color:#7a1510}.pieces{margin:6px 0 0;color:#56626d;font-size:12px}"
+       ".sheet{display:flex;flex-wrap:wrap;gap:14px}.cell2{width:300px;background:#fff;border:1px solid #c5ccd3;padding:8px}.cell2 .crop{height:190px}.cell2 .cap{margin:6px 0 0;font:13px/1.35 system-ui}"
+       ".cell2 .cap small{display:block;color:#56626d;font-size:12px}")
+
+
+def frame_scale(w: float, h: float, max_w: float = 590, max_h: float = 860) -> float:
+    """How much to shrink a frame so it fits in a picture: never enlarged, and never smaller than a fifth so a very tall frame is still a frame."""
+    return max(0.2, min(1.0, max_w / max(w, 1), max_h / max(h, 1)))
+
+
+def crop_html(image_url: str, img_w: int, box: dict, scale: float, pad: int = 8, alt: str = "") -> str:
+    """A window onto part of a picture. The box is in the picture's own pixels; the window is scaled and has a few pixels of margin so edges of text are not cut."""
+    x0, y0 = max(0, box["x"] - pad), max(0, box["y"] - pad)
+    x1, y1 = min(img_w, box["x"] + box["w"] + pad), box["y"] + box["h"] + pad
+    w, h = (x1 - x0) * scale, (y1 - y0) * scale
+    return ('<div class="crop" style="width:%.1fpx;height:%.1fpx"><img src="%s" alt="%s" style="width:%.1fpx;left:%.1fpx;top:%.1fpx"></div>'
+            % (w, h, H.escape(image_url, quote=True), H.escape(alt, quote=True), img_w * scale, -x0 * scale, -y0 * scale))
+
+
+def kind_tags_html(kinds: list) -> str:
+    return '<p class="tags">%s</p>' % "".join('<span class="tag%s">%s</span>' % (" none" if k == "none" else "", H.escape(CAT.KIND_WORDS[k])) for k in kinds)
+
+
+def frames_sheet_html(screen_name: str, image_url: str, img_w: int, img_h: int, frames: list, notes: list | None = None) -> str:
+    """One of our screens cut into its frames. frames: [{'id','label','box':{x,y,w,h},'kinds':[...],'pieces':[names]}]. A small map of the whole screen with each frame numbered comes first,
+    then every frame at a readable size with the tag that says where its content would come from. The picture says that its content is made up."""
+    mscale = min(1.0, 440.0 / img_w)
+    boxes = "".join('<i style="left:%.2f%%;top:%.2f%%;width:%.2f%%;height:%.2f%%"></i><b style="left:%.2f%%;top:%.2f%%">%d</b>'
+                    % (f["box"]["x"] / img_w * 100, f["box"]["y"] / img_h * 100, f["box"]["w"] / img_w * 100, f["box"]["h"] / img_h * 100,
+                       f["box"]["x"] / img_w * 100, f["box"]["y"] / img_h * 100, i) for i, f in enumerate(frames, 1))
+    mp = '<div class="map" style="width:%.0fpx"><img src="%s" alt="the whole %s screen">%s</div>' % (img_w * mscale, H.escape(image_url, quote=True), H.escape(screen_name.lower()), boxes)
+    figs = []
+    for i, f in enumerate(frames, 1):
+        b = f["box"]
+        pieces = ('<p class="pieces">Holds: %s</p>' % H.escape("; ".join(f["pieces"][:4]) + (" and %d more" % (len(f["pieces"]) - 4) if len(f["pieces"]) > 4 else ""))) if f["pieces"] else ""
+        figs.append('<figure class="fig"><p class="cap"><b>%d &middot; %s</b></p>%s%s%s</figure>'
+                    % (i, H.escape(f["label"]), crop_html(image_url, img_w, b, frame_scale(b["w"] + 16, b["h"] + 16), alt=f["label"]), kind_tags_html(f["kinds"]), pieces))
+    ns = "".join('<p class="sample">%s</p>' % H.escape(n) for n in (notes or []))
+    return ('<!doctype html><meta charset="utf-8"><title>%s</title><style>%s</style><h1>%s: its frames</h1>'
+            '<p class="lead">Our screen drawn in our colours. Every name, number and date in these pictures is made up. The tag under a frame says where its content would come from in your app.</p>%s'
+            '%s<div class="grid">%s</div>' % (H.escape(screen_name), _FR, H.escape(screen_name), ns, mp, "".join(figs)))
+
+
+def screens_sheet_html(cells: list, notes: list | None = None) -> str:
+    """Our screens, the top of each, to choose from. cells: [{'name','image','width','n_frames','n_pieces'}]."""
+    out = []
+    for c in cells:
+        scale = 300.0 / c["width"]
+        out.append('<figure class="cell2" style="margin:0">%s<p class="cap"><b>%s</b><small>%d frame%s, %d piece%s in the data map</small></p></figure>'
+                   % (crop_html(c["image"], c["width"], {"x": 0, "y": 0, "w": c["width"], "h": 190 / scale}, scale, pad=0, alt=c["name"]), H.escape(c["name"]),
+                      c["n_frames"], "" if c["n_frames"] == 1 else "s", c["n_pieces"], "" if c["n_pieces"] == 1 else "s"))
+    ns = "".join('<p class="sample">%s</p>' % H.escape(n) for n in (notes or []))
+    return ('<!doctype html><meta charset="utf-8"><title>Our screens</title><style>%s</style><h1>Our screens</h1>'
+            '<p class="lead">The top of each screen, in our colours. Every name, number and date in these pictures is made up. Choosing a screen shows its frames next.</p>%s<div class="sheet">%s</div>'
+            % (_FR, ns, "".join(out)))
 
 
 _SW = ("body{margin:0;padding:16px;background:#e9ecef;font:13px/1.4 system-ui,Segoe UI,sans-serif;color:#1b2733}.cols{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}"
@@ -363,6 +432,12 @@ class Renderer:
             self._srv.shutdown()
             self._srv.server_close()
             self._tmp.cleanup()
+
+    def stage_file(self, src, name: str | None = None) -> str:
+        """Copy a file next to the pages this renderer draws, and return the address it can be loaded from."""
+        name = name or Path(src).name
+        shutil.copyfile(src, Path(self._tmp.name) / name)
+        return "%s/%s" % (self.base, name)
 
     def stand_ins(self, families: list, page) -> list:
         fams = sorted({first_family(f) for f in families if f and first_family(f).lower() not in GENERIC})

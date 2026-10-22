@@ -39,7 +39,7 @@ SKILL = (KIT / "SKILL.md").read_text(encoding="utf-8")
 # a whole conversation, in the order the questions come
 FULL = [("stance", "keep"), ("guesses", "size-small"), ("fix:size-small", "ours"), ("parts", "side-bar,buttons,card"), ("change:side-bar", "palette,icons"),
         ("aspect:side-bar:palette", "ours"), ("aspect:side-bar:icons", "remove"), ("change:buttons", "corners"), ("aspect:buttons:corners", "ours"), ("change:card", "none"),
-        ("screens", "screen-review"), ("rows:screen-review", "r1,r2,r3")]
+        ("screens", "screen-review"), ("frames:screen-review", "queue,resolve"), ("rows:screen-review", "r13")]
 
 
 # ------------------------------------------------------------------------------------------------ helpers
@@ -197,7 +197,7 @@ def test_the_questions_are_a_pure_function_of_the_answers_and_come_in_the_order_
         assert q1 == q2 and m.A == before and q1["id"] == qid
         say(session, qid, dict(FULL)[qid])
     assert adopt.next_question(model(session)) is None
-    for token in ("stance", "area:", "guesses", "parts", "change:", "aspect:", "screens", "rows:"):
+    for token in ("stance", "area:", "guesses", "parts", "change:", "aspect:", "screens", "frames:", "rows:"):
         assert token in SKILL, f"SKILL.md does not list the question {token}"
 
 
@@ -405,11 +405,15 @@ def test_the_files_that_are_built_say_what_was_decided_and_carry_the_values_the_
         assert r["label"] in changes
     assert "ours, because you said the guess was wrong" in changes and "screens/review.md" in changes
     brief = (out / "screens" / "review.md").read_text(encoding="utf-8")
-    assert "you kept 3 of" in brief and "Left out on purpose" in brief and "A queue row: its size" in brief
+    assert "you kept 10 of 15 pieces" in brief and "Left out on purpose" in brief and "A queue row: its size" in brief
+    assert "The frames you kept (2 of 9)" in brief and "| 1 | The queue (left column) |" in brief and "| 9 | The Resolve panel (right column) |" in brief
+    assert "Frames you dropped:" in brief and "The group: every wording, the reference and what differs" in brief
+    assert "## The sample is not your data" in brief and "TEST-001" in brief and "Nothing in this folder has done that check" in brief
     report = (out / "REPORT.md").read_text(encoding="utf-8")
     assert "yes, build it" in report and "Contrast of the result" in report and "What was not checked" in report
     dec = read_json(out / "decisions.json")
-    assert dec["fingerprint"] == m.fingerprint() and dec["approved_words"] == "yes, build it" and dec["screens"][0]["kept"] == ["r1", "r2", "r3"]
+    assert dec["fingerprint"] == m.fingerprint() and dec["approved_words"] == "yes, build it" and dec["screens"][0]["kept"] == ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r13", "r14", "r15"]
+    assert dec["screens"][0]["frames_kept"] == ["queue", "resolve"] and "wordings" in dec["screens"][0]["frames_dropped"]
 
 
 def test_every_token_a_built_part_uses_is_defined_in_the_adopted_tokens_or_in_the_part(session):
@@ -684,3 +688,114 @@ def test_the_frame_index_is_refused_when_the_page_it_was_drawn_from_has_changed(
 
 def test_the_frame_index_holds_no_machine_path():
     assert not re.search(r"/home/|/tmp/|file:///|/Users/", MF.INDEX.read_text(encoding="utf-8"))
+
+
+# ---------------------------------------------------------------------------------------------------- frames in the questions, the briefs and the pictures' html
+@pytest.mark.parametrize("source,kinds", [
+    ("`DS.uid`, `DS.uid_synthetic`", ["data"]),
+    ("the length of `CL.members[]`", ["compare"]),
+    ("`CL.members[].uid` and `DS.text`", ["data", "compare"]),
+    ("WORK", ["work"]),
+    ("STATIC. A trust word must never claim more", ["words"]),
+    ("**NONE.** Lanes are an idea from the design research", ["none"]),
+    ("Partly NONE. `CL.why[]` and WORK decisions", ["compare", "work", "none"]),
+    ("worked out from the above", ["worked"]),
+])
+def test_where_a_piece_comes_from_is_read_off_the_codes_of_the_data_map(source, kinds):
+    assert CAT.source_kinds(source) == kinds
+
+
+def test_every_piece_of_every_screen_has_a_kind_the_pictures_can_name():
+    for s in CAT.screens(read_json(REPO / "design" / "navigation.json"), (REPO / "docs" / "SCREEN_DATA_MAP.md").read_text(encoding="utf-8")):
+        for r in s["rows"]:
+            assert r["kinds"] and all(k in CAT.KIND_WORDS for k in r["kinds"]), (s["screen"], r["part"])
+
+
+def test_a_screen_asks_about_its_frames_first_then_only_about_the_pieces_no_frame_draws(session):
+    converse(session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-review,screen-policy")])
+    m = model(session)
+    assert [f["id"] for f in m.frames_of("screen-review")][:2] == ["queue", "cluster-header"] and m.frames_of("screen-review")[0]["n"] == 1
+    assert [r["id"] for r in m.rows_unpictured("screen-review")] == ["r13"], "the group of six wordings that differ in numbers is only on another cluster; the sample does not draw it in this state"
+    assert m.rows_unpictured("screen-policy") == []
+    q = adopt.next_question(m)
+    assert q["id"] == "frames:screen-review" and q["picture"] == {"kind": "frames", "screen": "screen-review"}
+    ids = [o["id"] for o in q["options"]]
+    assert ids[:2] == ["queue", "cluster-header"] and ids[-2:] == ["all", "none"] and all(o["label"].split(". ")[0].isdigit() for o in q["options"][:-2])
+    say(session, "frames:screen-review", "queue,resolve")
+    q = adopt.next_question(model(session))
+    assert q["id"] == "rows:screen-review" and [o["id"] for o in q["options"]] == ["r13", "all"]
+    say(session, "rows:screen-review", "all")
+    assert adopt.next_question(model(session))["id"] == "frames:screen-policy"
+    say(session, "frames:screen-policy", "all")
+    assert adopt.next_question(model(session)) is None
+
+
+def test_the_pieces_kept_are_those_of_the_frames_kept_plus_the_undrawn_pieces_chosen(session):
+    converse(session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-review"), ("frames:screen-review", "queue,resolve")])
+    m = model(session)
+    assert [r["id"] for r in m.rows_kept("screen-review")] == ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r13", "r14", "r15"], "until the undrawn pieces are asked about they are kept"
+    say(session, "rows:screen-review", "all")
+    adopt.main(["back", session, "--to", "frames:screen-review"])
+    say(session, "frames:screen-review", "none")
+    m = model(session)
+    assert m.frames_kept("screen-review") == [] and [r["id"] for r in m.rows_kept("screen-review")] == ["r13"]
+
+
+def test_a_frame_says_where_its_content_would_come_from_and_a_frame_with_no_listed_piece_says_so(session):
+    converse(session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-open")])
+    m = model(session)
+    by = {f["id"]: f for f in m.frames_of("screen-open")}
+    assert m.frame_kinds("screen-open", by["banner"]) == ["unlisted"] and m.frame_kinds("screen-open", by["signed-in"]) == ["none"]
+    assert m.frame_kinds("screen-open", by["recent"]) == ["data"]
+    q = adopt.next_question(m)
+    detail = {o["id"]: o["detail"] for o in q["options"]}
+    assert "nothing produces it yet" in detail["signed-in"] and "empty state" in detail["signed-in"] and "not in the data map" in detail["banner"]
+    assert "empty state" not in detail["recent"]
+
+
+def test_the_brief_lists_the_frames_and_says_that_the_sample_is_not_the_persons_data(session):
+    converse(session, [("stance", "keep"), ("guesses", "none"), ("parts", "none"), ("screens", "screen-open"), ("frames:screen-open", "signed-in,recent")])
+    m = model(session)
+    assert m.rows_unpictured("screen-open") == [] and adopt.next_question(m) is None, "every piece of the open screen is held by some frame, so there is nothing more to ask"
+    assert [r["id"] for r in m.rows_kept("screen-open")] == ["r3", "r4"]
+    fake_preview_and_approve(session)
+    adopt.cmd_build(session)
+    brief = (Path(session) / "out" / "screens" / "open.md").read_text(encoding="utf-8")
+    assert "The frames you kept (2 of 7)" in brief and "| 3 | Who is signed in, and the sample people | nothing produces it yet |" in brief
+    assert "Frames you dropped:" in brief and "**no source yet**" in brief and '"Signed in as" and the six sample people' in brief
+    assert "never a sample value" in brief and "made up" in brief and "Canary one" in brief and "Left out on purpose" in brief
+    rep = (Path(session) / "out" / "REPORT.md").read_text(encoding="utf-8")
+    assert "were not drawn in your theme or on your data" in rep and "can only be checked on your running app" in rep
+
+
+def test_the_frames_html_names_every_frame_numbers_it_tags_its_source_and_escapes_what_it_is_given():
+    frames = [{"id": "a", "label": "The <b>title</b>", "box": {"x": 0, "y": 10, "w": 400, "h": 100}, "kinds": ["words"], "pieces": []},
+              {"id": "b", "label": "A list", "box": {"x": 100, "y": 200, "w": 300, "h": 2000}, "kinds": ["data", "none"], "pieces": ["p1", "p2", "p3", "p4", "p5", "p6"]}]
+    html = RD.frames_sheet_html("Open <it>", "http://x/open.png", 1440, 3000, frames, ["a note"])
+    assert "The &lt;b&gt;title&lt;/b&gt;" in html and "<b>title</b>" not in html and "Open &lt;it&gt;" in html
+    assert "1 &middot; " in html and "2 &middot; " in html and "made up" in html and "a note" in html
+    assert CAT.KIND_WORDS["none"] in html and 'class="tag none"' in html and "and 2 more" in html
+    assert html.count('class="crop"') == 2
+
+
+def test_a_frame_picture_is_never_enlarged_never_shrunk_past_a_fifth_and_keeps_a_margin_inside_the_picture():
+    assert RD.frame_scale(300, 100) == 1.0 and RD.frame_scale(1180, 100) == pytest.approx(590 / 1180)
+    assert RD.frame_scale(100, 90000) == 0.2
+    html = RD.crop_html("u.png", 1440, {"x": 3, "y": 3, "w": 100, "h": 50}, 1.0)
+    assert "left:-0.0px" in html or "left:0.0px" in html, "the margin must not reach outside the picture"
+    wide = RD.crop_html("u.png", 1440, {"x": 1400, "y": 3, "w": 40, "h": 50}, 1.0)
+    assert "width:48.0px" in wide, "the window stops at the picture's right edge"
+
+
+def test_the_screens_sheet_shows_every_screen_with_its_frame_count():
+    cells = [{"name": "One", "image": "u1.png", "width": 1440, "n_frames": 1, "n_pieces": 2}, {"name": "Two", "image": "u2.png", "width": 1440, "n_frames": 5, "n_pieces": 1}]
+    html = RD.screens_sheet_html(cells)
+    assert "1 frame, 2 pieces" in html and "5 frames, 1 piece in" in html and "made up" in html
+
+
+def test_a_frame_whose_path_lands_on_other_text_or_on_nothing_is_reported_by_name():
+    frames = [{"id": "a", "path": [0], "starts": "Open a requirements project"}, {"id": "b", "path": [1], "starts": "Recent"}, {"id": "c", "path": [2], "starts": "Who"}]
+    found = [{"text": "Open  a requirements\nproject Bring in"}, {"text": "Something else entirely"}, None]
+    errs = MF.drift("open", frames, found)
+    assert len(errs) == 2 and "open/b" in errs[0] and "Something else entirely" in errs[0] and "open/c" in errs[1] and "lands on nothing" in errs[1]
+    assert MF.drift("open", frames[:1], found[:1]) == [], "white space does not matter, only the words"

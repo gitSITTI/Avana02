@@ -205,6 +205,26 @@ def data_map_rows(text: str) -> dict:
     return out
 
 
+# Where a piece's content comes from, as docs/SCREEN_DATA_MAP.md section 2 names it, in the words a person would use.
+KIND_WORDS = {"data": "from your requirements data", "compare": "from the comparison run", "work": "typed by people in the app", "words": "fixed words",
+              "none": "nothing produces it yet", "worked": "worked out, not read directly", "unlisted": "not in the data map (words and layout)"}
+_DATA_CODES = re.compile(r"\b(DS|LK|RJ|RPT|MAN|VEE)\b(?=[.\[`])")
+_COMPARE_CODES = re.compile(r"\b(CL|PR|SL|CMP)\b(?=[.\[`])")
+
+
+def source_kinds(source: str) -> list:
+    """The kinds (keys of KIND_WORDS) a data-map row's source text names, in a fixed order. A source that names none of the codes is worked out from other values."""
+    kinds = []
+    if _DATA_CODES.search(source):
+        kinds.append("data")
+    if _COMPARE_CODES.search(source):
+        kinds.append("compare")
+    for word, kind in (("WORK", "work"), ("STATIC", "words"), ("NONE", "none")):
+        if re.search(r"\b%s\b" % word, source):
+            kinds.append(kind)
+    return kinds or ["worked"]
+
+
 def screens(nav: dict, data_map_text: str) -> list:
     """One entry per screen in the navigation map, with the rows of the data map that say what it shows."""
     rows = data_map_rows(data_map_text)
@@ -212,7 +232,7 @@ def screens(nav: dict, data_map_text: str) -> list:
     for s in nav["screens"]:
         sections = s.get("data_map", [])
         out.append({"id": "screen-" + s["id"], "screen": s["id"], "kind": "screen", "name": s["title"], "entry": s["kind"] == "entry", "sections": sections,
-                    "rows": [{"section": sec, "part": a, "source": b} for sec in sections for a, b in rows.get(sec, [])], "part_file": s.get("part", "")})
+                    "rows": [{"section": sec, "part": a, "source": b, "kinds": source_kinds(b)} for sec in sections for a, b in rows.get(sec, [])], "part_file": s.get("part", "")})
     return out
 
 

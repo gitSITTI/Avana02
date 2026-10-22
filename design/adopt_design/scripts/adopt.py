@@ -31,6 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import C, KIT, REPO, TOKENS_CSS, css_vars, digest, read_json, write_json  # noqa: E402
 import catalog as CAT  # noqa: E402
+import make_frames as MF  # noqa: E402
 import roles as R  # noqa: E402
 
 FORMAT = "reqin-adopt/1"
@@ -92,6 +93,7 @@ class Model:
         self._nav = read_json(REPO / "design" / "navigation.json")
         self.screens = CAT.screens(self._nav, (REPO / "docs" / "SCREEN_DATA_MAP.md").read_text(encoding="utf-8"))
         self.bs = {s["id"]: s for s in self.screens}
+        self.frame_spec = MF.load_spec()["screens"]
 
     # -- values
     def ours_value(self, role):
@@ -190,12 +192,34 @@ class Model:
         sel = self.A.get("screens") or []
         return [s["id"] for s in self.screens if s["id"] in sel]
 
+    def frames_of(self, sid):
+        """The frames of a screen (design/adopt_design/frames_spec.json), numbered in the order the picture shows them."""
+        return [{"n": i, **f} for i, f in enumerate(self.frame_spec.get(self.bs[sid]["screen"], []), 1)]
+
+    def frames_kept(self, sid):
+        frames = self.frames_of(sid)
+        if "frames:" + sid not in self.A:
+            return frames
+        keep = set(self.A["frames:" + sid])
+        return [f for f in frames if f["id"] in keep]
+
+    def rows_unpictured(self, sid):
+        """Pieces of the screen's data map that no frame holds: the sample does not draw them in this state (they need a click, another person or a file)."""
+        held = {r for f in self.frames_of(sid) for r in f["rows"]}
+        return [r for r in self.rows_of(sid) if r["id"] not in held]
+
     def rows_kept(self, sid):
-        rows = self.rows_of(sid)
-        if "rows:" + sid not in self.A:
-            return rows
-        keep = set(self.A["rows:" + sid])
-        return [r for r in rows if r["id"] in keep]
+        """Pieces the person keeps: those held by a frame they kept, and those the sample does not draw that they chose (all of them until they are asked)."""
+        held = {r for f in self.frames_kept(sid) for r in f["rows"]}
+        unpictured = self.rows_unpictured(sid)
+        keep_un = set(self.A["rows:" + sid]) if "rows:" + sid in self.A else {r["id"] for r in unpictured}
+        return [r for r in self.rows_of(sid) if r["id"] in held or r["id"] in keep_un]
+
+    def frame_kinds(self, sid, frame):
+        """Where a frame's content would come from in the person's app, as keys of catalog.KIND_WORDS: the kinds of the pieces it holds, or "unlisted" when it holds none."""
+        rows = {r["id"]: r for r in self.rows_of(sid)}
+        found = {k for rid in frame["rows"] for k in rows[rid]["kinds"]}
+        return [k for k in CAT.KIND_WORDS if k in found] or ["unlisted"]
 
     # -- identity of the decisions
     def fingerprint(self):
@@ -280,15 +304,31 @@ def q_aspect(m, pid, aspect):
 
 
 def q_screens(m):
-    opts = [_opt(s["id"], s["name"], "%d piece%s listed in the data map" % (len(s["rows"]), "" if len(s["rows"]) == 1 else "s")) for s in m.screens] + [_opt("none", "None of them")]
-    return {"id": "screens", "kind": "multi", "say": "Which of our screens would you like a build brief for? Each brief lists what is on the screen, where its content comes from and where it leads. Pick any, or none.",
-            "options": opts, "picture": None}
+    opts = [_opt(s["id"], s["name"], "%d frame%s, %d piece%s listed in the data map" % (len(m.frames_of(s["id"])), "" if len(m.frames_of(s["id"])) == 1 else "s", len(s["rows"]), "" if len(s["rows"]) == 1 else "s"))
+            for s in m.screens] + [_opt("none", "None of them")]
+    return {"id": "screens", "kind": "multi", "say": "Which of our screens would you like a build brief for? The picture shows the top of each, in our colours and with made-up sample content. Each brief lists what is on the screen, "
+            "where its content comes from and where it leads. Pick any, or none.", "options": opts, "picture": {"kind": "screens"}}
+
+
+def frame_detail(m, sid, f):
+    kinds = m.frame_kinds(sid, f)
+    return "content: " + ", ".join(CAT.KIND_WORDS[k] for k in kinds) + ("; no source yet, so a built screen shows an empty state, not a value" if "none" in kinds else "")
+
+
+def q_frames(m, sid):
+    s = m.bs[sid]
+    opts = [_opt(f["id"], "%d. %s" % (f["n"], f["label"]), frame_detail(m, sid, f)) for f in m.frames_of(sid)] + [_opt("all", "All of them"), _opt("none", "None of them")]
+    return {"id": "frames:" + sid, "kind": "multi",
+            "say": "The \"%s\" screen is cut into the frames in the picture, drawn in our colours with made-up sample content. Which do you want in your app? Anything you leave out is dropped from the brief. "
+                   "Under each frame the picture says where its content would come from in your app." % s["name"],
+            "options": opts, "picture": {"kind": "frames", "screen": sid}}
 
 
 def q_rows(m, sid):
     s = m.bs[sid]
-    return {"id": "rows:" + sid, "kind": "multi", "say": "The %s screen is made of these pieces. Which do you want? Anything you leave out is dropped from the brief." % s["name"].lower(),
-            "options": [_opt(r["id"], r["part"], r["source"] if len(r["source"]) <= 100 else r["source"][:97].rstrip() + "...") for r in m.rows_of(sid)] + [_opt("all", "All of them")], "picture": None}
+    return {"id": "rows:" + sid, "kind": "multi",
+            "say": "The sample does not draw these pieces of the \"%s\" screen in the picture: they need a click, another person or a file. Which do you want? Anything you leave out is dropped from the brief." % s["name"],
+            "options": [_opt(r["id"], r["part"], r["source"] if len(r["source"]) <= 100 else r["source"][:97].rstrip() + "...") for r in m.rows_unpictured(sid)] + [_opt("all", "All of them")], "picture": None}
 
 
 def next_question(m: Model):
@@ -317,7 +357,9 @@ def next_question(m: Model):
     if m.screens and "screens" not in A:
         return q_screens(m)
     for sid in m.selected_screens():
-        if m.rows_of(sid) and "rows:" + sid not in A:
+        if m.frames_of(sid) and "frames:" + sid not in A:
+            return q_frames(m, sid)
+        if m.rows_unpictured(sid) and "rows:" + sid not in A:
             return q_rows(m, sid)
     return None
 
@@ -400,6 +442,10 @@ def draw_for(session: str, m: Model, q: dict):
                 vals.update({rr: m.value(rr, o["id"]) for rr in R.roles_of_area(area)})
                 cells.append((o["label"], R.tokens_for(vals, m.ours_vars), ""))
             res = r.draw(RD.strip_html(cells, RD.AREA_SAMPLE, r.base), fn, _fonts(*[c[1] for c in cells]), width=1300)
+        elif pic["kind"] in ("screens", "frames"):
+            res = draw_frames_picture(r, m, pic, fn, notes)
+            if res is None:
+                return [], notes
         elif pic["kind"] == "parts":
             body = "".join(RD.cell_html(p["name"], base, [p["id"]]) for p in m.parts)
             res = r.draw(RD.page_html(body, RD.parts_css([p["id"] for p in m.parts]), r.base), fn, _fonts(base), width=1300)
@@ -422,6 +468,34 @@ def draw_for(session: str, m: Model, q: dict):
     if res["stand_in"]:
         notes.append("this machine has no %s, so the picture shows a stand-in where that font is used; the real result will use the font" % ", ".join(res["stand_in"]))
     return [res["file"]], notes
+
+
+def draw_frames_picture(r, m: Model, pic: dict, fn, notes: list):
+    """The picture of our screens (a sheet to choose from) or of one screen cut into its frames. These are drawn from the pictures docs/images/frames/ holds (made by scripts/make_frames.py
+    from the running prototype), not from the person's page. Returns the draw result, or None (with a note) when those pictures are missing or of another version of the prototype."""
+    import render as RD
+    problems = MF.index_problems()
+    if not MF.INDEX.is_file():
+        notes.append("the pictures of our screens are missing (%s). Describe the screens from the text." % problems[0])
+        return None
+    idx = read_json(MF.INDEX)
+    if problems:
+        notes.append("the pictures of our screens may be out of date: " + problems[0])
+    if pic["kind"] == "screens":
+        cells = []
+        for s in m.screens:
+            e = idx["screens"][s["screen"]]
+            cells.append({"name": s["name"], "image": r.stage_file(MF.OUT / e["image"]), "width": e["width"], "n_frames": len(e["frames"]), "n_pieces": len(s["rows"])})
+        res = r.draw(RD.screens_sheet_html(cells), fn, [], width=1300)
+    else:
+        sid = pic["screen"]
+        e = idx["screens"][m.bs[sid]["screen"]]
+        rows = {x["id"]: x for x in m.rows_of(sid)}
+        boxes = {f["id"]: f["box"] for f in e["frames"]}
+        frames = [{"id": f["id"], "label": f["label"], "box": boxes[f["id"]], "kinds": m.frame_kinds(sid, f), "pieces": [rows[x]["part"] for x in f["rows"]]} for f in m.frames_of(sid)]
+        res = r.draw(RD.frames_sheet_html(m.bs[sid]["name"], r.stage_file(MF.OUT / e["image"]), e["width"], e["height"], frames), fn, [], width=1300)
+    notes.append("these pictures are our screens with made-up content: they show what is on a screen, not what your data would look like there, and they are not drawn in your theme")
+    return res
 
 
 def describe(q: dict, session: str, files: list, notes: list, step: int) -> str:
@@ -534,8 +608,8 @@ def describe_decisions(m: Model) -> list:
         sc = m.selected_screens()
         L.append("Screen briefs: %s." % (", ".join(m.bs[x]["name"] for x in sc) or "none"))
         for x in sc:
-            if "rows:" + x in m.A:
-                L.append("  %s: keeps %d of %d pieces" % (m.bs[x]["name"], len(m.rows_kept(x)), len(m.rows_of(x))))
+            if "frames:" + x in m.A or "rows:" + x in m.A:
+                L.append("  %s: keeps %d of %d frames and %d of %d pieces" % (m.bs[x]["name"], len(m.frames_kept(x)), len(m.frames_of(x)), len(m.rows_kept(x)), len(m.rows_of(x))))
     return L
 
 
@@ -601,7 +675,7 @@ def cmd_preview(session: str) -> int:
     lines = ["# What the pictures show", "", "Look at these before saying yes.", ""] + ["- %s" % f for f in files] + [""]
     if page:
         lines += ["## Your page, before and after", "", page["caveat"], "", "Drawn on your page: " + ("; ".join(page["drawn"]) or "nothing needed to change"), ""]
-    lines += ["## Not shown", ""] + (["- " + n for n in notes] or ["- nothing else to report"]) + ["- screens have no pictures: they are written as briefs (build), not drawn", ""]
+    lines += ["## Not shown", ""] + (["- " + n for n in notes] or ["- nothing else to report"]) + ["- screens: you saw our frames in our colours with made-up content when you chose them; they are not drawn in your theme or on your data, and the briefs written at build are text, not code", ""]
     (out / "PREVIEW.md").write_text("\n".join(lines), encoding="utf-8")
     s["preview"] = {"hash": m.fingerprint(), "files": files, "notes": notes, "drawn": page.get("drawn", [])}
     s.pop("approved", None)

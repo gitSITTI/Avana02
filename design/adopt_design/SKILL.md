@@ -50,7 +50,7 @@ It records the answer and prints the next question. Keep going until it says eve
 | `parts` | which of our parts to bring (menu, top bar, draft bar, buttons, text box, card, chips, folding row, wording row) |
 | `change:PART` | for each part chosen: what to change (colours, corners, type, shadow, height, icons), or nothing |
 | `aspect:PART:WHAT` | for each thing to change: the options side by side, as pictures |
-| `screens`, `rows:SCREEN` | which of our screens to get a build brief for, and which pieces of each to keep |
+| `screens`, `frames:SCREEN`, `rows:SCREEN` | which of our screens to get a build brief for (a sheet showing the top of each); which frames of each to keep (a picture of the screen cut into numbered frames, each tagged with where its content would come from in their app); and which of the pieces the sample does not draw to keep |
 
 Two commands do not follow that order:
 - `python3 design/adopt_design/scripts/adopt.py set SESSION ROLE VALUE` corrects a value read from the page ("the main colour is `#1A4DB5`").
@@ -77,7 +77,7 @@ It refuses unless the pictures were drawn and approved for exactly these answers
 | `CHANGES.md` | start here: what was decided, role by role what the person's value is and what the result is, where each value came from, and the steps to put it in |
 | `adopted-tokens.css`, `adopted.tokens.json` | the colours, type, corners, shadow and sizes, as CSS custom properties and in the Design Tokens format (version 2025.10) |
 | `parts/PART/part.css`, `specimen.html`, `NOTES.md` | each part: the rules, a drawing of it, and where its real markup, menu paths, data and test marks are |
-| `screens/SCREEN.md` | a build brief per screen: the pieces kept and dropped, where each piece's data comes from, where the screen sits in the menu |
+| `screens/SCREEN.md` | a build brief per screen: the frames and pieces kept and dropped, where each piece's data comes from, a section saying the sample is not their data, where the screen sits in the menu |
 | `REPORT.md` | what was not checked. Give it to the person |
 | `decisions.json` | the answers, the resolved values and the person's approving words |
 
@@ -105,6 +105,7 @@ class is on the page. A role read as a guess can differ without being wrong; a p
 - Show the picture before the person answers. If there is none, say there is none.
 - Never invent a colour, a size or a font. A value comes from the page (`mine`), from `design/tokens.css` (`ours`), or from the person (`set`).
 - Never approve for the person, and never run `build` around its refusal by editing `session.json`.
+- The pictures of our screens and frames are our prototype with made-up names, numbers and dates. Say so when you show one, and read out the tag under each frame. A frame tagged "nothing produces it yet" has no source in their app: it must show an empty state, never a sample value.
 - Say what was not checked: give the person `REPORT.md`, and say that the pictures are drawings of the decision made by one browser (Chromium) on one machine, not the code.
 - This repository's rules apply to anything you write into it: everything in it is made up; no real requirements, exports or names.
 
@@ -117,6 +118,7 @@ class is on the page. A role read as a guess can differ without being wrong; a p
 | `scripts/catalog.py` | what can be taken: `list`, `css PART` (the rules a part really uses) |
 | `scripts/roles.py`, `roles.json` | the shared vocabulary: 21 roles (what colour is the main button, how round are the corners, ...) that a page and our design both answer, and which of our tokens each drives |
 | `scripts/render.py` | draws the pictures |
+| `scripts/make_frames.py`, `frames_spec.json` | draws our screens from the running prototype and cuts each into frames (the pictures are in `docs/images/frames/`); run it again after the prototype page changes |
 | `scripts/build_out.py` | writes the files; reads a changed page for `verify` |
 | `catalog.json`, `specimens/` | our parts: what each is, which stylesheet rules it uses, and a made-up drawing of it |
 | `examples/sample_app/`, `examples/sample_index/` | a made-up page to try it on, and what reading it gives |
@@ -128,8 +130,9 @@ class is on the page. A role read as a guess can differ without being wrong; a p
   a small local model can run it is the design goal and is **untested**.
 - The values read from a page are what the browser computed. Which element is "the main button" when there are several is a rule (the most used coloured filled button); the
   `guesses` question exists for that.
+- The frames of our screens are pictured in our colours with made-up content. They are not drawn in the person's theme, and not on the person's data. Whether a screen built from a brief shows the person's real values rather than the sample's is not checked by anything in this folder; it can only be checked on their running app.
 - A picture is a drawing of a decision. Our parts are drawn from specimens made for this kit with the stylesheet rules our design really uses; the page preview restyles the person's
   elements by the selectors the index found. Neither is the code that will be written.
 - Not read: a second theme (dark mode), anything behind a click or sign-in that `--setup` did not do, gradients and images, styles inside cross-origin stylesheets or shadow roots,
   and the layout at narrow widths.
-- Screens are build briefs from `design/navigation.json` and `docs/SCREEN_DATA_MAP.md`. They have no pictures and nothing was built from them here.
+- Screens are build briefs from `design/navigation.json` and `docs/SCREEN_DATA_MAP.md`. The frames of each screen are pictured in our colours (`docs/images/frames/`, drawn by `scripts/make_frames.py` from the running prototype), not yet in the person's theme and not on the person's data. Nothing was built from the briefs here.

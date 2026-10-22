@@ -219,6 +219,8 @@ def screen_file(m, sid: str, out: Path) -> str:
     nav = m._nav
     kept, rows = m.rows_kept(sid), m.rows_of(sid)
     dropped = [r for r in rows if r not in kept]
+    fkept, fall = m.frames_kept(sid), m.frames_of(sid)
+    fdropped = [f for f in fall if f not in fkept]
     L = ["# %s" % s["name"], "", "A build brief for one screen of our design. It lists what the screen holds and where each piece comes from; it is not a picture and it is not code.", ""]
     sel = m.selected_parts()
     L += ["## Where it sits", ""]
@@ -227,9 +229,21 @@ def screen_file(m, sid: str, out: Path) -> str:
         L.append("- It is where the product starts.")
     if s.get("part_file"):
         L.append("- Our prototype's markup for it: `prototype/parts/m/%s`." % s["part_file"])
-    L += ["", "## What is on it (you kept %d of %d)" % (len(kept), len(rows)), "", "| Piece | Where it comes from |", "|---|---|"] + ["| %s | %s |" % (r["part"], r["source"]) for r in kept]
+    if fall:
+        L += ["", "## The frames you kept (%d of %d)" % (len(fkept), len(fall)), "", "Our prototype's screen, cut into the sections you were shown. Build these, in this order, from the data in the next table. The pictures of them in our repository",
+              "(`docs/images/frames/%s.png`) show **made-up sample content**; copy the layout, never the values." % s["screen"], "",
+              "| # | Frame | Its content would be |", "|---|---|---|"] + ["| %d | %s | %s |" % (f["n"], f["label"], ", ".join(CAT.KIND_WORDS[k] for k in m.frame_kinds(sid, f))) for f in fkept]
+        if fdropped:
+            L += ["", "Frames you dropped: " + "; ".join("%d. %s" % (f["n"], f["label"]) for f in fdropped) + "."]
+    L += ["", "## What is on it (you kept %d of %d pieces)" % (len(kept), len(rows)), "", "| Piece | Where it comes from |", "|---|---|"] + ["| %s | %s |" % (r["part"], r["source"]) for r in kept]
     if dropped:
         L += ["", "## Left out on purpose (you dropped these)", ""] + ["- %s" % r["part"] for r in dropped]
+    nothing = [r for r in kept if "none" in r["kinds"]]
+    L += ["", "## The sample is not your data", "",
+          "A screen copied from the pictures looks right and shows nothing real: every number, name and date in them is made up. So for each piece above, build it from the source in the right-hand column, not from the picture.", ""]
+    if nothing:
+        L += ["These kept pieces have **no source yet** (the data map says nothing produces them). Until one exists, the screen must show an honest empty state (\"nothing yet\"), never a sample value:", ""] + ["- %s" % r["part"] for r in nothing] + [""]
+    L += ["Before you call the screen done, open it on data whose values you chose and know (for example a requirement with the ID `TEST-001` and the statement \"Canary one\") and check that each value you can name appears where the picture showed a sample one, that an empty or missing source shows an empty state, and that a source that cannot be reached says so on the screen instead of showing the last or a made-up value. Nothing in this folder has done that check; it can only be done on your running app."]
     L += ["", "## Build it with", ""]
     L += ["- The codes in the table (DS, CL, PR, WORK, STATIC, NONE) are explained in `docs/SCREEN_DATA_MAP.md`, section 2.", "- `adopted-tokens.css` for colours, type, corners and sizes.", "- The parts you took: %s." % (", ".join(m.bp[p]["name"].lower() for p in sel) or "none: build it from your own components")]
     L += ["- `docs/agent_prompts/build_the_gui.md` in our repository, which says how to build a screen from a picture and these maps without losing the menu, the order of the pieces or the marks the checks read.",
@@ -308,7 +322,7 @@ def build(m, out: Path, said: str, page: str) -> list:
               "; ".join("%s %.2f:1 %s" % (w, r, "ok" if ok else "BELOW %g" % need) for w, r, need, ok in R.contrast_findings(vals)) or "no pair could be worked out"),
           "- Pictures are drawings of the decision from specimens and your own page restyled; they are not the code, and they were drawn by one browser (Chromium) on one machine.",
           "- Fonts that were not installed where the pictures were drawn appeared in a stand-in; the files use the font you chose.",
-          "- Screens are briefs, with no pictures. Nothing was built from them here.",
+          "- Screens are briefs. Their frames were pictured in our colours with made-up content; they were not drawn in your theme or on your data, and nothing was built from them here. Whether a built screen shows your real values (and not the sample's) was not checked and can only be checked on your running app.",
           "- A second theme (dark mode), anything behind a click or a sign-in that was not set up, and the layout at narrow widths were not read or drawn.",
           "- The person's words approving this: \"%s\"" % said.replace('"', "'"), ""]
     (out / "REPORT.md").write_text("\n".join(R_), encoding="utf-8")
@@ -316,7 +330,8 @@ def build(m, out: Path, said: str, page: str) -> list:
     write_json(out / "decisions.json", {"format": "reqin-adopt-decisions/1", "page": m.ix.get("source"), "approved_words": said, "fingerprint": m.fingerprint(), "answers": m.A, "overrides": m.ov,
                                          "roles": {r["id"]: {"yours": t, "result": v, "origin": o} for r, t, v, o in rows},
                                          "parts": [{"id": p, "tokens_for_this_part_only": m.part_token_diff(p), "icons": "removed" if m.icons_off(p) else "kept"} for p in sel],
-                                         "screens": [{"id": s, "kept": [r["id"] for r in m.rows_kept(s)], "dropped": [r["id"] for r in m.rows_of(s) if r not in m.rows_kept(s)]} for s in m.selected_screens()]})
+                                         "screens": [{"id": s, "kept": [r["id"] for r in m.rows_kept(s)], "dropped": [r["id"] for r in m.rows_of(s) if r not in m.rows_kept(s)],
+                                                      "frames_kept": [f["id"] for f in m.frames_kept(s)], "frames_dropped": [f["id"] for f in m.frames_of(s) if f not in m.frames_kept(s)]} for s in m.selected_screens()]})
     written.append("decisions.json")
     return sorted(written)
 
