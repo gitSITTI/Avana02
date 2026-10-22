@@ -1,0 +1,319 @@
+{
+  "format": "reqin-catalog/1",
+  "about": "What can be taken from this product's design, as parts. A part is a piece of the interface someone can say yes or no to: its picture is drawn from a specimen (specimens/) with the stylesheet rules the prototype and the design kit really use for it, so the picture follows the colours, fonts and corners the person has chosen. Screens are added from design/navigation.json and docs/SCREEN_DATA_MAP.md when the catalog is loaded.",
+  "stage": "The pictures are drawn on a page of the result's background colour. A specimen is a drawing of the part for this kit: it is not the prototype's markup, which is generated from templates and carries inline styles.",
+  "parts": [
+    {
+      "id": "side-bar",
+      "kind": "shell",
+      "name": "Side menu",
+      "what": "The menu down the left of every workspace screen: three groups that fold, a count on the review item, the current item marked, a foot with help and close.",
+      "specimen": "specimens/side-bar.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.(ws-nav|ws-navlist|ws-foot|nav-btn|nav-count|nav-group|nav-ghead|nav-kids)\\b"
+          ]
+        }
+      ],
+      "stage_css": ".ws-nav{position:static;height:auto;min-height:0;width:256px;border:1px solid var(--line)}",
+      "roots": [
+        ".ws-nav"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type",
+        "density"
+      ],
+      "icons": {
+        "label": "the icon in front of each menu item",
+        "css": ".ws-nav .nav-btn svg{display:none}"
+      },
+      "navigation": "shell.side_bar",
+      "data_map": [
+        "4.4"
+      ],
+      "hooks": [
+        "nav",
+        "nav-group",
+        "nav-item",
+        "nav-count"
+      ],
+      "source": [
+        "prototype/parts/m/30_shell_open.html"
+      ],
+      "needs": [],
+      "font_base": true
+    },
+    {
+      "id": "top-bar",
+      "kind": "shell",
+      "name": "Top bar",
+      "what": "The bar across the top of every workspace screen: where you are (project, screen), scope and baseline chips, the search box, shortcuts to the glossary and the audit log.",
+      "specimen": "specimens/top-bar.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.(topbar|tb-crumb|tb-search|tb-icon|av)\\b"
+          ]
+        }
+      ],
+      "stage_css": ".topbar{position:static;border:1px solid var(--line)}",
+      "roots": [
+        ".topbar"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type",
+        "density"
+      ],
+      "navigation": "shell.top_bar",
+      "data_map": [
+        "4.4"
+      ],
+      "hooks": [
+        "breadcrumb"
+      ],
+      "source": [
+        "prototype/parts/m/30_shell_open.html"
+      ],
+      "needs": [],
+      "font_base": true
+    },
+    {
+      "id": "draft-bar",
+      "kind": "shell",
+      "name": "Draft bar",
+      "what": "The strip under the top bar that says suggestions are drafts until the people the policy requires have signed.",
+      "specimen": "specimens/draft-bar.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.draftbar\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".draftbar"
+      ],
+      "areas": [
+        "type"
+      ],
+      "data_map": [
+        "4.4"
+      ],
+      "source": [
+        "prototype/parts/m/30_shell_open.html"
+      ],
+      "needs": []
+    },
+    {
+      "id": "buttons",
+      "kind": "component",
+      "name": "Buttons",
+      "what": "The main button, the plain button, the quiet text buttons and a disabled one.",
+      "specimen": "specimens/buttons.html",
+      "css": [
+        {
+          "file": "design/tokens.css",
+          "selectors": [
+            "^\\.rq-(button|primary)\\b"
+          ]
+        },
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.ghost-btn\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".rq-button",
+        ".rq-primary",
+        ".ghost-btn"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type",
+        "density"
+      ],
+      "needs": [],
+      "font_base": true
+    },
+    {
+      "id": "form-input",
+      "kind": "component",
+      "name": "Text box",
+      "what": "A labelled text box and a search box.",
+      "specimen": "specimens/form-input.html",
+      "css": [
+        {
+          "file": "design/tokens.css",
+          "selectors": [
+            "^\\.(rq-input|rq-caption)\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".rq-input"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type",
+        "density"
+      ],
+      "needs": [],
+      "font_base": true
+    },
+    {
+      "id": "card",
+      "kind": "component",
+      "name": "Card",
+      "what": "A raised panel with a small caption, a heading, the wording of a requirement in the reading font, and an identifier in the code font.",
+      "specimen": "specimens/card.html",
+      "css": [
+        {
+          "file": "design/tokens.css",
+          "selectors": [
+            "^\\.(rq-card|rq-caption|rq-statement|rq-id)\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".rq-card"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type"
+      ],
+      "needs": []
+    },
+    {
+      "id": "source-chip",
+      "kind": "component",
+      "name": "Source chip",
+      "what": "A pill with a round letter disc, a file name and a count: how a source is shown on Home.",
+      "specimen": "specimens/source-chip.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.(chip-src|chip-disc)\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".chip-src"
+      ],
+      "areas": [
+        "palette",
+        "type",
+        "depth"
+      ],
+      "source": [
+        "prototype/parts/m/35_home.html"
+      ],
+      "needs": []
+    },
+    {
+      "id": "change-chip",
+      "kind": "component",
+      "name": "Change chip",
+      "what": "A small label with a coloured edge that says what changed in a wording: added, reworded, removed.",
+      "specimen": "specimens/change-chip.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.chg-chip\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".chg-chip"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type"
+      ],
+      "source": [
+        "prototype/parts/m/50_review.html"
+      ],
+      "needs": [],
+      "font_base": true
+    },
+    {
+      "id": "accordion-head",
+      "kind": "component",
+      "name": "Folding row",
+      "what": "A row with an arrow that opens and closes what is under it.",
+      "specimen": "specimens/accordion-head.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.acc-head\\b"
+          ]
+        },
+        {
+          "file": "design/tokens.css",
+          "selectors": [
+            "^\\.rq-card\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".acc-head"
+      ],
+      "areas": [
+        "palette"
+      ],
+      "source": [
+        "prototype/parts/m/35_home.html"
+      ],
+      "needs": []
+    },
+    {
+      "id": "compare-row",
+      "kind": "component",
+      "name": "Wording row",
+      "what": "One wording in a group: a round letter disc, the wording in the reading font, its identifier, and the quiet actions.",
+      "specimen": "specimens/compare-row.html",
+      "css": [
+        {
+          "file": "prototype/parts/m/00_head.html",
+          "selectors": [
+            "^\\.(cmp-row|mdisc|ghost-btn)\\b"
+          ]
+        },
+        {
+          "file": "design/tokens.css",
+          "selectors": [
+            "^\\.(rq-card|rq-statement|rq-id)\\b"
+          ]
+        }
+      ],
+      "roots": [
+        ".cmp-row"
+      ],
+      "areas": [
+        "palette",
+        "corners",
+        "type"
+      ],
+      "source": [
+        "prototype/parts/m/50_review.html"
+      ],
+      "needs": []
+    }
+  ]
+}

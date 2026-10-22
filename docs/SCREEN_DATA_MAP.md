@@ -93,6 +93,8 @@ This screen is the front of the importer, not of a dataset.
 | The DRAFT bar, the glossary | STATIC. The DRAFT bar is part of the frame, not of the content |
 | People, presence, the lens switcher, "demo" controls | prototype only; see 4.1 |
 
+This section says where the words and counts come from. Where each menu item leads, the order and groups of the menu, and what a control carries to the next screen are in `design/navigation.json` (read it as `docs/NAVIGATION_MAP.md`).
+
 ### 4.5 Home  ·  status: needs comparison output, needs saved work
 
 | Part | Source |

@@ -1,0 +1,199 @@
+{
+  "format": "reqin-audit-skills/1",
+  "about": "The whole list of things the audit can do. Nothing else is a skill. Each one is a command (`audit.py run SESSION ID`, or the direct command named in `command`), writes findings into the session folder, and says what it cannot find. A hat may only run the skills listed for it in hats.json.",
+  "skills": [
+    {
+      "id": "trace",
+      "kind": "check",
+      "command": "run SESSION trace",
+      "default_hat": "data-analyst",
+      "needs": [],
+      "does": "Takes every number, ID and sentence on the screen and looks for it in what the page loaded (the data the app fetched) and in the page's own code. A value found only in the code is typed in.",
+      "finds": [
+        "a count, an ID, a time or a sentence written into the page's code or markup",
+        "values on the screen that no response explains (worked out, or from a source the audit could not see)",
+        "a request that writes, which the audit refused",
+        "a number that is a count or a sum of the data, and which one",
+        "a WebSocket, a web worker or a form post that the page tried, which the audit refused or sent nowhere"
+      ],
+      "cannot_find": [
+        "a typed-in value that happens to equal the real one",
+        "a wrong field shown in the right place",
+        "values built from pieces at run time that never appear whole in the code",
+        "plain words: names, titles and labels are not traced. Only these are looked at: numbers of 10 or more, decimals and percentages (a single digit only where the element is marked as a count: a data-testid, id or class with count, total, sum, metric, score, number, percent or share in it), IDs in capitals with a number (PMP-0012, SYS_REQ_7; not pmp-0012 and not R-4), dates, times, and sentences of 24 or more characters with shall, must or should",
+        "a page whose HTML the server writes from data: its values look typed in, and the audit cannot tell the two apart",
+        "a sentence changed only in its first four or last six words (a long sentence is matched with a few words allowed in front and behind)",
+        "text in pictures, canvases and closed shadow roots, and in frames that are hidden"
+      ]
+    },
+    {
+      "id": "canary",
+      "kind": "check",
+      "command": "run SESSION canary",
+      "default_hat": "data-analyst",
+      "needs": [],
+      "does": "Loads the page again with every text and number in the data responses replaced by an invented value (each text carries the name of the field it came from), and compares the screen with the first load.",
+      "finds": [
+        "values that stay on the screen although their source changed: kept in a cache, in browser storage, or typed in",
+        "a table column that shows another field's values (when the column's heading is the field's name)",
+        "how much of the screen follows the data at all"
+      ],
+      "cannot_find": [
+        "data that does not come through a request the audit could change (a socket, an event stream, a worker, a server-rendered page, browser storage written by an earlier visit)",
+        "a wrong field when the heading is not the field's name",
+        "a typed-in count equal to the number of records (the outage check empties the data)",
+        "values that are not text or numbers in JSON",
+        "a page that turns what it gets into its own words (a status into a label): the invented value never shows, and the check says so as a smaller finding, not a proof"
+      ]
+    },
+    {
+      "id": "outage",
+      "kind": "check",
+      "command": "run SESSION outage",
+      "default_hat": "data-analyst",
+      "needs": [],
+      "does": "Loads the page with the data empty, with the source failing, and with the connection down; once with a clean browser and once with the browser holding what the first visit left behind.",
+      "finds": [
+        "old or sample values shown after the source gave nothing or failed",
+        "values that appear only when the source fails (a sample or fallback)",
+        "a copy kept in the browser and shown with nothing to say it is a copy",
+        "a blank screen with no message",
+        "no way to tell the source failed"
+      ],
+      "cannot_find": [
+        "a slow source (the audit does not wait out real timeouts)",
+        "partial failures where only some requests fail",
+        "what happens after hours or days of staleness",
+        "whether the words a page shows when the source fails are good words: only that the screen says something it did not say with the data",
+        "what a write the page would make only when the source fails would do: it is refused and listed"
+      ]
+    },
+    {
+      "id": "marks",
+      "kind": "check",
+      "command": "run SESSION marks",
+      "default_hat": "ui-ux",
+      "needs": [],
+      "does": "Looks for the marks that say where each part of the screen got its data and when (data-source, data-source-state, a visible data-source-label; live, cached, sample, empty, error), checks they carry words and not colour alone, and that they change when the source is emptied, fails or is down.",
+      "finds": [
+        "a screen that gives no sign whether its data is live, cached or sample",
+        "a mark that says live while the source is failing"
+      ],
+      "cannot_find": [
+        "whether the words are clear to a person",
+        "marks drawn only as colour or an icon with no text (they are reported as not readable by this check)",
+        "whether the words are true: they are compared with the state the mark names, using a short list of English words for each state",
+        "parts of the screen that show data and carry no data-source mark (the check says only whether any mark exists)"
+      ]
+    },
+    {
+      "id": "states",
+      "kind": "check",
+      "command": "run SESSION states",
+      "default_hat": "ui-ux",
+      "needs": [],
+      "does": "Draws the screen as the source gives data, nothing, an error and no connection, side by side in one picture, and counts how much of the screen changed between them.",
+      "finds": [
+        "an error screen that looks the same as the normal one",
+        "an empty screen that looks the same as a full one"
+      ],
+      "cannot_find": [
+        "whether a state is well designed: a person has to look at the picture"
+      ]
+    },
+    {
+      "id": "known",
+      "kind": "check",
+      "command": "run SESSION known --data FILE",
+      "default_hat": "systems-requirements",
+      "needs": [
+        "data"
+      ],
+      "does": "Picks a handful of records from the person's own data (the first, the last, a middle one, the longest, one with unusual characters), writes a sheet the person can tick, and checks whether each shows on the screen with its other fields beside it.",
+      "finds": [
+        "a record whose ID is on the screen with a different text, owner or status than the data has",
+        "a record that is in the data and nowhere on the screen"
+      ],
+      "cannot_find": [
+        "records that are on another page or behind a search, unless the person's setup steps reach them",
+        "anything about records the sample did not pick",
+        "a file that is not UTF-8 is read as Windows-1252, and the check says so; other encodings are not handled"
+      ]
+    },
+    {
+      "id": "scan",
+      "kind": "check",
+      "command": "run SESSION scan --source DIR",
+      "default_hat": "configuration-management",
+      "needs": [
+        "source"
+      ],
+      "does": "Reads the person's code and markup files (.js .jsx .ts .tsx .vue .svelte .html) for requirement-shaped sentences, IDs, records and counts written into them, and for browser storage used as a second source of data; and lists the files and folders it did not read.",
+      "finds": [
+        "sample data written into the source",
+        "a second source of data in browser storage"
+      ],
+      "cannot_find": [
+        "code that builds the same things at run time from pieces",
+        "anything in files the person did not give",
+        "sample data in JSON, CSV, YAML, SQL or Python files that the page loads or the server sends (it lists such files; it does not read them)",
+        "anything in node_modules, dist, build or vendor folders (it lists them)",
+        "records whose key is not uid, counts not marked data-testid count-... or row-total, and IDs other than 2 to 6 capitals, a hyphen and 2 to 6 digits"
+      ]
+    },
+    {
+      "id": "diff",
+      "kind": "check",
+      "command": "run SESSION diff --before FILE --after FILE --key FIELD",
+      "default_hat": "configuration-management",
+      "needs": [
+        "before",
+        "after"
+      ],
+      "does": "Compares two copies of the same data (before and after a change a person or an agent made) record by record and field by field, and lists everything that was added, removed or changed, and anything outside what was meant to change. It never writes to any system.",
+      "finds": [
+        "a change nobody asked for",
+        "a record that disappeared",
+        "a field that changed in many records at once"
+      ],
+      "cannot_find": [
+        "whether the change is right: a person has to read the diff before anything is pushed",
+        "changes the copies do not hold"
+      ]
+    },
+    {
+      "id": "minutes",
+      "kind": "record",
+      "command": "minutes SESSION",
+      "default_hat": "scribe",
+      "needs": [],
+      "does": "Adds a dated entry to the session's minutes: what was run, what was found, what the person said and decided. Entries are only added, never changed, and each carries a fingerprint of the one before it.",
+      "finds": [],
+      "cannot_find": [
+        "whether what was written down is what happened: it records what it is told"
+      ]
+    },
+    {
+      "id": "brief",
+      "kind": "merge",
+      "command": "brief SESSION",
+      "default_hat": "chief-of-staff",
+      "needs": [],
+      "does": "Reads every hat's findings, puts them in order (what blocks first), lists what has not been run and why, and writes down the questions the person has to answer next.",
+      "finds": [],
+      "cannot_find": [
+        "anything a hat did not look at"
+      ]
+    },
+    {
+      "id": "skip",
+      "kind": "admin",
+      "command": "skip SESSION ID --because TEXT",
+      "default_hat": "chief-of-staff",
+      "needs": [],
+      "does": "Records that a skill will not be run, and why, so the report lists it as not checked instead of leaving it out.",
+      "finds": [],
+      "cannot_find": []
+    }
+  ]
+}

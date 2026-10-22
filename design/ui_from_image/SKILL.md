@@ -26,6 +26,7 @@ ordinary code, so two agents given the same picture get the same answer.
 | The picture(s) | the person | ask for it: you cannot do this from a description |
 | The target's design language | a running page: `scripts/target_tokens.py PAGE`; or a token file such as `design/tokens.css` | with neither, you are inventing a design: stop and say so |
 | What data each part of a screen shows | `docs/SCREEN_DATA_MAP.md`, and `python3 tools/gui_checks/datapaths.py --json paths.json` for the list of real field paths | with no map, every number you place is invented: say so in the spec as STATIC and do not call the screen finished |
+| Which screens exist, what each menu holds, and where each control leads | `docs/NAVIGATION_MAP.md` (made from `design/navigation.json`); for a running page, `python3 tools/gui_checks/site_map.py PAGE --out site_map.json` | a picture shows a menu's words and never where they lead: without the map, every `goes_to` you write is a guess, and you must mark it `unknown:` |
 | A browser the scripts can drive | `pip install -r requirements.txt && playwright install chromium` | `target_tokens.py` will not run: ask the person to run it and send you `target_tokens.json` |
 | The marks a screen carries and the checks it must pass | `docs/GUI_TEST_HOOKS.md`; `tools/gui_checks/hardcode_scan.py` and `tools/gui_checks/probe.py`; `design/reference_viewer/` is a screen that passes them | without them, step 6's gate is your own word: say so |
 
@@ -45,6 +46,13 @@ Open `target_tokens.json`. It lists the page's declared `--variables`, every col
 `detect` splits along empty bands and long straight borders. It finds blocks, not buttons: two buttons 8 px apart stay one block until you ask it to look closer.
 *Gate:* you have **looked at each crop** and it is the component you named. A crop that is the wrong thing means the box was wrong; fix the box, do not build from it.
 
+**2b. Read the structure the picture cannot show.** A picture of a screen with a menu shows the words in it. It does not show which items fold, in what order the groups run, which
+screen each item opens, what a button here carries to another screen, or that a screen's name (menu label, breadcrumb, window title) is often not the heading inside it.
+Open `docs/NAVIGATION_MAP.md` and find the screen: its place in the menu, its section of the data map, the moves into and out of it, and the notes. For a running page,
+`python3 tools/gui_checks/site_map.py PAGE --out site_map.json --against design/navigation.json` reads its menus and follows each item, and says where the page differs from the map.
+A page you have only seen as a picture has no such reading: write what you were told, mark what you were not told `unknown:` (step 4), and say so in your report.
+*Gate:* for every menu item, tab and link in the picture you can say which screen it opens, or you have written down that you cannot.
+
 **3. Take the picture's colours, then map them onto the target's.**
 `python3 scripts/palette_from_image.py shot.png --json palette.json --swatches swatches.png`
 `python3 scripts/conform.py --source palette.json --target target_tokens.json --out conform.json`
@@ -55,7 +63,8 @@ A *none* is an answer. Never swap in the nearest colour to make the table look c
 **4. Write the component spec, then check it.**
 One entry per component, in `reqin-components/1` (`component.schema.json`, example in `examples/home_components.json`): its kind, its states, its style **as token names
 only**, and for each slot where its content comes from: `STATIC` (text that is part of the design), `NONE` (decoration), or a field path that exists in real output.
-`python3 scripts/check_component_specs.py spec.json --tokens target_tokens.json --paths paths.json`
+A menu item, tab or link also names where it leads, in `goes_to`: a screen id from the map, `sheet:ID`, `overlay:ID`, `external: WHAT`, `none: WHY`, or `unknown: WHAT IS NEEDED`.
+`python3 scripts/check_component_specs.py spec.json --tokens target_tokens.json --paths paths.json --navigation design/navigation.json`
 *Gate:* no errors. The report lists every STATIC slot: look at each. A slot that holds a number, a name or a status and says STATIC is a hard-coded screen.
 
 **5. Build one component at a time, from tokens.**
@@ -93,6 +102,8 @@ and 320 px wide. Then compare the built screenshot with the picture for structur
   Always look at `overview.png`.
 - `palette_from_image.py` reads flat colours. A gradient, a photograph or a thin 1 px line can be missing or mis-named; `role_hint` is a heuristic, written out in the script.
 - `target_tokens.py` reads what one browser drew at one width with no sign-in and no clicks. A state it cannot reach (an open menu, a signed-in view) is not measured.
+- `site_map.py` reads the menus a page shows when it is opened, and follows the items it can click. A menu that appears only after a click, a hover or a sign-in is not read; the sets of steps
+  in `--setup` get it to a state, they do not discover one. It describes the page it was given, not what the page should be.
 - `conform.py` is colour distance between colours of the same job. It cannot see where a colour sits in the picture.
 - `check_component_specs.py` checks that names and paths exist and that no literals slipped in. It cannot tell that a STATIC slot should have been bound: you must.
 - Nothing here checks accessibility beyond contrast arithmetic. Read `docs/ACCESSIBILITY.md` and test with the real thing.

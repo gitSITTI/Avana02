@@ -6,6 +6,7 @@
     {
       "name": "primary-button",
       "kind": "button",
+      "goes_to": "review",
       "frame": {"image": "03_home.png", "box": [280, 405, 205, 44]},
       "states": ["default", "hover", "focus-visible", "disabled"],
       "style": {"color": "--text-on-dark", "background": "--accent", "border": "none", "radius": "--radius-ctl", "font": "--sans", "font-size": "--size-body", "font-weight": "600", "padding": "--space-10 --space-16"},
@@ -15,6 +16,7 @@
     {
       "name": "secondary-button",
       "kind": "button",
+      "goes_to": "overview",
       "frame": {"image": "03_home.png", "box": [493, 405, 150, 44]},
       "states": ["default", "hover", "focus-visible", "disabled"],
       "style": {"color": "--text-strong", "background": "--paper", "border-color": "--border-control", "radius": "--radius-ctl", "font": "--sans", "font-size": "--size-body", "padding": "--space-10 --space-16"},

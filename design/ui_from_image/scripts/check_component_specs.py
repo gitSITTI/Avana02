@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Check a component spec file (format reqin-components/1) before anything is built from it.
 
-    python3 check_component_specs.py SPEC.json --tokens design/tokens.css [--paths paths.json] [--json report.json]
+    python3 check_component_specs.py SPEC.json --tokens design/tokens.css [--paths paths.json] [--navigation design/navigation.json] [--json report.json]
 
 --tokens   a CSS file that declares the design's custom properties, or a target_tokens.py result: the names a component may use
 --paths    {"DS": ["DS.mid", ...], "CL": [...]} every field path that really occurs in what the app reads (python3 tools/gui_checks/datapaths.py --json paths.json).
            Without it a binding is checked for its form only, and the report says so.
+--navigation design/navigation.json: the map of the product's screens and menus. A component that leads somewhere (a menu item, a tab, a link) must say where, in `goes_to`:
+           a screen id from the map, `sheet:ID`, `overlay:ID`, `external: WHAT`, `none: WHY` (it leads nowhere, and why), or `unknown: WHAT IS NEEDED` (not confirmed yet: reported,
+           never passed over). With the map, the ids are looked up and a menu item, tab or link with no `goes_to` is an error. Without it only the form is checked and the report
+           says that where it leads was not checked. A picture shows the words in a menu and not where they lead: this is how that gap is closed.
 
 What it enforces, because each of these is how a rebuilt screen went wrong:
   - a component's colours, radii, fonts, spacing and shadows are TOKEN NAMES (--accent), never a literal (#1A4DB5, 8px). A literal is how a rebuilt page ends up a
@@ -32,6 +36,8 @@ LITERAL = re.compile(r"(#[0-9a-fA-F]{3,8}\b|\b(rgb|rgba|hsl|hsla|oklch|oklab)\(|
 TOKEN = re.compile(r"^--[a-z0-9][a-z0-9-]*$")
 NAME = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
 PATH = re.compile(r"^(DS|LK|RJ|RPT|MAN|CL|PR|SL|CMP|VEE|WORK)(\.[A-Za-z_]\w*|\[\])+$")
+GOES_TO = re.compile(r"^(?:(?P<screen>[a-z][a-z0-9]*(?:-[a-z0-9]+)*)|(?P<kind>sheet|overlay):(?P<id>[a-z][a-z0-9]*(?:-[a-z0-9]+)*)|(?P<free>none|external|unknown):\s*(?P<why>\S.*))$")
+LEADS = ("nav-item", "tab", "link")                  # kinds that exist to lead somewhere
 PREFIXES_WITHOUT_PRODUCER = ("WORK",)      # saved work state: a path form is checked, existence is not (it is written by the page, not by reqin)
 
 
@@ -51,8 +57,18 @@ def as_list(v):
     return v if isinstance(v, list) else [v]
 
 
-def check(spec: dict, tokens: set, paths: dict | None = None) -> dict:
+def nav_ids(navigation: dict | None) -> dict | None:
+    if navigation is None:
+        return None
+    return {"screen": {x.get("id") for x in navigation.get("screens", []) if isinstance(x, dict)},
+            "sheet": {x.get("id") for x in navigation.get("sheets", []) if isinstance(x, dict)},
+            "overlay": {x.get("id") for x in navigation.get("overlays", []) if isinstance(x, dict)}}
+
+
+def check(spec: dict, tokens: set, paths: dict | None = None, navigation: dict | None = None) -> dict:
     errors, warnings, statics, new_used = [], [], [], set()
+    ids = nav_ids(navigation)
+    unknown_goes = []
     if spec.get("format") != "reqin-components/1":
         errors.append("format must be 'reqin-components/1'")
     comps = spec.get("components")
@@ -128,6 +144,24 @@ def check(spec: dict, tokens: set, paths: dict | None = None) -> dict:
                         errors.append("%s: %s.%s is the literal %r where a token name is wanted: use a token, or add one under new_tokens with a reason" % (w, label, key, part))
                     else:
                         errors.append("%s: %s.%s has %r, which is neither a token name (--x) nor one of %s" % (w, label, key, part, ", ".join(sorted(KEEP))))
+        gt = c.get("goes_to")
+        if gt is not None:
+            m = GOES_TO.match(gt) if isinstance(gt, str) else None
+            if not m:
+                errors.append("%s: goes_to %r is not a screen id, sheet:ID, overlay:ID, external: WHAT, none: WHY or unknown: WHAT IS NEEDED" % (w, gt))
+            elif ids is not None and m.group("screen") and m.group("screen") not in ids["screen"]:
+                errors.append("%s: goes_to %r is not a screen in the navigation map (screens: %s)" % (w, gt, ", ".join(sorted(ids["screen"]))))
+            elif ids is not None and m.group("kind") and m.group("id") not in ids[m.group("kind")]:
+                errors.append("%s: goes_to %r is not %s %s in the navigation map (%ss: %s)" % (w, gt, "an" if m.group("kind") == "overlay" else "a", m.group("kind"), m.group("kind"), ", ".join(sorted(ids[m.group("kind")])) or "none"))
+            elif m and m.group("free") == "unknown":
+                unknown_goes.append("%s (%s)" % (n, m.group("why").strip()))
+        elif c.get("kind") in LEADS:
+            if ids is not None:
+                errors.append("%s: a %s must say where it leads (goes_to): a screen id from the navigation map, sheet:ID, overlay:ID, external: WHAT, none: WHY, or unknown: WHAT IS NEEDED" % (w, c.get("kind")))
+            else:
+                unknown_goes.append("%s (no goes_to)" % n)
+        elif c.get("kind") == "button" and ids is not None:
+            warnings.append("%s: a button with no goes_to: say where it leads, or none: what it does instead" % w)
         data = c.get("data")
         if not isinstance(data, dict):
             errors.append("%s: data is missing. Say where each slot's content comes from: STATIC, NONE or a field path (use {} for a component with no slots)" % w)
@@ -148,10 +182,14 @@ def check(spec: dict, tokens: set, paths: dict | None = None) -> dict:
             warnings.append("new token %s is declared but no component uses it" % name)
     if paths is None:
         warnings.append("field paths were checked for their form only (no --paths file): that they exist was not checked")
+    if navigation is None and any(isinstance(c, dict) and c.get("kind") in LEADS for c in comps):
+        warnings.append("where a menu item, tab or link leads was checked for its form only (no --navigation file): that the screen exists was not checked")
+    if unknown_goes:
+        warnings.append("where these lead is not confirmed: " + ", ".join(unknown_goes))
     if statics:
         warnings.append("STATIC slots, to look at by eye (a slot that holds a number, a name or a status must not be static): " + ", ".join(statics))
     return {"format": "reqin-components-report/1", "components": len(comps), "errors": errors, "warnings": warnings, "new_tokens": sorted(new_tokens), "static_slots": statics,
-            "paths_checked": paths is not None, "ok": not errors}
+            "paths_checked": paths is not None, "navigation_checked": navigation is not None, "ok": not errors}
 
 
 def main(argv=None) -> int:
@@ -159,6 +197,7 @@ def main(argv=None) -> int:
     ap.add_argument("spec")
     ap.add_argument("--tokens", required=True)
     ap.add_argument("--paths", metavar="FILE")
+    ap.add_argument("--navigation", metavar="FILE", help="design/navigation.json: look up where each menu item, tab or link leads")
     ap.add_argument("--json", metavar="FILE", help="also write the report here")
     a = ap.parse_args(argv)
     with open(a.spec, encoding="utf-8") as f:
@@ -167,7 +206,11 @@ def main(argv=None) -> int:
     if a.paths:
         with open(a.paths, encoding="utf-8") as f:
             paths = json.load(f)
-    rep = check(spec, token_names(a.tokens), paths)
+    nav = None
+    if a.navigation:
+        with open(a.navigation, encoding="utf-8") as f:
+            nav = json.load(f)
+    rep = check(spec, token_names(a.tokens), paths, nav)
     for e in rep["errors"]:
         print("ERROR  ", e)
     for w in rep["warnings"]:

@@ -1,0 +1,35 @@
+{
+  "format": "reqin-roles/1",
+  "about": "The shared vocabulary for comparing two designs. Every design, yours or ours, answers the same short list of questions (what colour is the main button, how round are the corners, ...). Each answer is a role. A role also says which of this product's design tokens (design/tokens.css) it drives, so a choice made on a role reaches every screen part that uses those tokens.",
+  "areas": [
+    {"id": "palette", "label": "Colours", "options": ["mine", "ours"], "ask": "Which colours should the result use?"},
+    {"id": "type", "label": "Type", "options": ["mine", "ours"], "ask": "Which fonts and text sizes should the result use?"},
+    {"id": "corners", "label": "Corner radius", "options": ["mine", "ours", "square"], "ask": "How round should buttons, inputs, cards and chips be?"},
+    {"id": "depth", "label": "Shadows", "options": ["mine", "ours", "none"], "ask": "Which shadows should cards have?"},
+    {"id": "density", "label": "Control size", "options": ["mine", "ours"], "ask": "How tall should buttons, inputs and menu items be?"}
+  ],
+  "roles": [
+    {"id": "accent", "area": "palette", "kind": "colour", "label": "Main action colour", "plain": "the colour of the main button", "ours": ["--accent"]},
+    {"id": "accent-text", "area": "palette", "kind": "colour", "label": "Text on the main action colour", "plain": "the colour of the words on the main button", "ours": ["--text-on-dark"]},
+    {"id": "page", "area": "palette", "kind": "colour", "label": "Page background", "plain": "the colour behind everything", "ours": ["--canvas"]},
+    {"id": "surface", "area": "palette", "kind": "colour", "label": "Card and panel background", "plain": "the colour inside cards, panels and the side menu", "ours": ["--paper"]},
+    {"id": "ink", "area": "palette", "kind": "colour", "label": "Main text", "plain": "the colour of ordinary text", "ours": ["--ink", "--text-body", "--text-strong"]},
+    {"id": "ink-muted", "area": "palette", "kind": "colour", "label": "Quiet text", "plain": "the colour of captions and hints", "ours": ["--text-muted", "--text-secondary", "--slate", "--text-faint"]},
+    {"id": "border", "area": "palette", "kind": "colour", "label": "Card and divider lines", "plain": "the thin lines round cards and between rows", "ours": ["--border-card", "--line", "--hair", "--border-divider"]},
+    {"id": "border-control", "area": "palette", "kind": "colour", "label": "Input outline", "plain": "the outline of text boxes and buttons", "ours": ["--border-control"]},
+    {"id": "hover", "area": "palette", "kind": "colour", "label": "Hover background", "plain": "the colour a row or menu item takes under the pointer", "ours": ["--surface-hover"]},
+    {"id": "selected", "area": "palette", "kind": "colour", "label": "Selected background", "plain": "the colour of the menu item or row that is current", "ours": ["--surface-selected", "--surface-selected-2"]},
+    {"id": "font-body", "area": "type", "kind": "font", "label": "Text font", "plain": "the font of ordinary text", "ours": ["--sans"]},
+    {"id": "font-statement", "area": "type", "kind": "font", "label": "Requirement-text font", "plain": "the font the wording of a requirement is shown in", "ours": ["--serif"]},
+    {"id": "font-mono", "area": "type", "kind": "font", "label": "Code font", "plain": "the font of identifiers and code", "ours": ["--mono"]},
+    {"id": "size-body", "area": "type", "kind": "length", "label": "Text size", "plain": "the size of ordinary text", "ours": ["--size-body"]},
+    {"id": "size-small", "area": "type", "kind": "length", "label": "Small text size", "plain": "the size of captions and chips", "ours": ["--size-small"]},
+    {"id": "size-title", "area": "type", "kind": "length", "label": "Page title size", "plain": "the size of the title at the top of a page", "ours": ["--size-title-1"]},
+    {"id": "radius-control", "area": "corners", "kind": "length", "label": "Button and input corners", "plain": "how round buttons and inputs are", "ours": ["--radius-ctl"]},
+    {"id": "radius-panel", "area": "corners", "kind": "length", "label": "Card corners", "plain": "how round cards and panels are", "ours": ["--radius-panel", "--radius-sheet"]},
+    {"id": "radius-chip", "area": "corners", "kind": "length", "label": "Chip corners", "plain": "how round small labels (chips, badges) are", "ours": ["--radius-chip", "--radius-small"]},
+    {"id": "shadow-card", "area": "depth", "kind": "shadow", "label": "Card shadow", "plain": "the shadow under a raised card", "ours": ["--shadow-lift"]},
+    {"id": "control-height", "area": "density", "kind": "length", "label": "Control height", "plain": "how tall a button or input is", "ours": ["--target-control"],
+     "derive": {"--target-primary": 4, "--target-compact": -4, "--target-smallest": -8}}
+  ]
+}

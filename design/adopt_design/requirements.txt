@@ -1,0 +1,4 @@
+# What the scripts in scripts/ need. Everything except reading a page, drawing pictures and `verify` runs on the Python standard library alone.
+# init (reading a page), the pictures that next / preview draw, and verify need Playwright and a browser:
+playwright>=1.48
+# after installing playwright, once:  playwright install chromium

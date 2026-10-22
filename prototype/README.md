@@ -15,7 +15,7 @@ A clickable prototype of the app's screens, built as a single `Main.dc.html` pag
 | `a11y_page.js`, `chart_colours.py`, `vendor/` | What `b20.py` measures with: checks written for this page (contrast as drawn, field edges, Tab stops), the colour-blind check for chart palettes, and the pinned libraries (React, Babel, axe-core). |
 | `scale.js` | The scale test: 20 times the sample (24,960 requirements, 5,040 clusters) in two shapes (the sample repeated, and a varied one), every page drawn and timed, the gold-set pair counts, the project file and the trace map file. |
 | `b0.py` to `b10.py`, `t0.py` | Older flow scripts: they drive every other screen and print what they see. They do not assert; compare their output before and after a change. |
-| `shots.py` | Retakes the pictures in `docs/images/prototype/` and records which page build they came from. |
+| `shots.py` | Retakes the pictures in `docs/images/prototype/` and records which page build they came from. `design/adopt_design/scripts/make_frames.py` does the same for the frame pictures in `docs/images/frames/` (it uses `h.py`). |
 | `requirements-test.txt` | The pinned Playwright the browser tests and the CI image use. |
 | `project/support.js` | The runtime that the design-canvas format needs. It is not authored here (it bundles React under the MIT license). |
 

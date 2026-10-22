@@ -1,0 +1,1253 @@
+{
+  "format": "reqin-frames/1",
+  "prototype_page": "119991aa4bd4f268f3fef5d78107c607cf67695c2c0a30efe8bd2942cf726f43",
+  "viewport_width": 1440,
+  "box_units": "pixels of the picture; the picture is 1440 px wide, the width the prototype was drawn at",
+  "screens": {
+    "open": {
+      "image": "open.png",
+      "width": 1440,
+      "height": 1737,
+      "frames": [
+        {
+          "id": "banner",
+          "label": "The strip that says this is sample data",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 40,
+            "w": 1132,
+            "h": 32
+          }
+        },
+        {
+          "id": "title",
+          "label": "The title and one-line promise",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 104,
+            "w": 780,
+            "h": 181
+          }
+        },
+        {
+          "id": "signed-in",
+          "label": "Who is signed in, and the sample people",
+          "rows": [
+            "r4"
+          ],
+          "box": {
+            "x": 154,
+            "y": 317,
+            "w": 1132,
+            "h": 136
+          }
+        },
+        {
+          "id": "team-server",
+          "label": "Work with your team on a shared server",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 484,
+            "w": 1132,
+            "h": 270
+          }
+        },
+        {
+          "id": "drop-file",
+          "label": "Drop a file, paste an address or connect",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 154,
+            "y": 786,
+            "w": 1132,
+            "h": 222
+          }
+        },
+        {
+          "id": "sources",
+          "label": "The six source cards",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 154,
+            "y": 1040,
+            "w": 720,
+            "h": 633
+          }
+        },
+        {
+          "id": "recent",
+          "label": "Recent projects",
+          "rows": [
+            "r3"
+          ],
+          "box": {
+            "x": 906,
+            "y": 1040,
+            "w": 380,
+            "h": 532
+          }
+        }
+      ]
+    },
+    "import": {
+      "image": "import.png",
+      "width": 1440,
+      "height": 2007,
+      "frames": [
+        {
+          "id": "steps",
+          "label": "The steps bar",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 40,
+            "w": 1132,
+            "h": 44
+          }
+        },
+        {
+          "id": "title",
+          "label": "Check how your fields map: the title",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 112,
+            "w": 800,
+            "h": 180
+          }
+        },
+        {
+          "id": "mapping",
+          "label": "The proposed mapping, field by field",
+          "rows": [
+            "r8"
+          ],
+          "box": {
+            "x": 154,
+            "y": 320,
+            "w": 677,
+            "h": 584
+          }
+        },
+        {
+          "id": "dry-run",
+          "label": "The dry-run report",
+          "rows": [
+            "r10",
+            "r12"
+          ],
+          "box": {
+            "x": 855,
+            "y": 320,
+            "w": 431,
+            "h": 408
+          }
+        },
+        {
+          "id": "first-three",
+          "label": "The first three records as the review screens will show them",
+          "rows": [
+            "r11"
+          ],
+          "box": {
+            "x": 154,
+            "y": 932,
+            "w": 1132,
+            "h": 289
+          }
+        },
+        {
+          "id": "scope",
+          "label": "How much to review first",
+          "rows": [
+            "r13"
+          ],
+          "box": {
+            "x": 154,
+            "y": 1249,
+            "w": 1132,
+            "h": 204
+          }
+        },
+        {
+          "id": "prepared",
+          "label": "Comparisons prepared",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 1482,
+            "w": 1132,
+            "h": 342
+          }
+        },
+        {
+          "id": "buttons",
+          "label": "Confirm, save profile, back",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 1851,
+            "w": 1132,
+            "h": 44
+          }
+        },
+        {
+          "id": "note",
+          "label": "The prototype note",
+          "rows": [],
+          "box": {
+            "x": 154,
+            "y": 1923,
+            "w": 1132,
+            "h": 20
+          }
+        }
+      ]
+    },
+    "home": {
+      "image": "home.png",
+      "width": 1440,
+      "height": 1796,
+      "frames": [
+        {
+          "id": "security",
+          "label": "The security band",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 116
+          }
+        },
+        {
+          "id": "waiting",
+          "label": "The title and the one button",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 306,
+            "w": 772,
+            "h": 163
+          }
+        },
+        {
+          "id": "bring-in",
+          "label": "Bring in requirements: three ways in",
+          "rows": [
+            "r3"
+          ],
+          "box": {
+            "x": 280,
+            "y": 494,
+            "w": 772,
+            "h": 130
+          }
+        },
+        {
+          "id": "v-card",
+          "label": "Where the work sits in the V",
+          "rows": [
+            "r4"
+          ],
+          "box": {
+            "x": 280,
+            "y": 648,
+            "w": 772,
+            "h": 150
+          }
+        },
+        {
+          "id": "team-server",
+          "label": "Work with your team on a shared server",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 822,
+            "w": 772,
+            "h": 270
+          }
+        },
+        {
+          "id": "your-work",
+          "label": "Your work is kept",
+          "rows": [
+            "r8"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1115,
+            "w": 772,
+            "h": 208
+          }
+        },
+        {
+          "id": "recent-imports",
+          "label": "Recent imports and open clusters by allocation",
+          "rows": [
+            "r5",
+            "r6"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1346,
+            "w": 772,
+            "h": 401
+          }
+        },
+        {
+          "id": "activity",
+          "label": "Latest activity",
+          "rows": [
+            "r7"
+          ],
+          "box": {
+            "x": 1076,
+            "y": 306,
+            "w": 340,
+            "h": 306
+          }
+        }
+      ]
+    },
+    "review": {
+      "image": "review.png",
+      "width": 1440,
+      "height": 3837,
+      "frames": [
+        {
+          "id": "queue",
+          "label": "The queue (left column)",
+          "rows": [
+            "r1",
+            "r2",
+            "r3",
+            "r4",
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 240,
+            "h": 1648
+          }
+        },
+        {
+          "id": "cluster-header",
+          "label": "The cluster's title, its relationship and why it was suggested",
+          "rows": [
+            "r11"
+          ],
+          "box": {
+            "x": 540,
+            "y": 166,
+            "w": 504,
+            "h": 398
+          }
+        },
+        {
+          "id": "wordings",
+          "label": "The group: every wording, the reference and what differs",
+          "rows": [
+            "r8",
+            "r9",
+            "r10",
+            "r12"
+          ],
+          "box": {
+            "x": 540,
+            "y": 580,
+            "w": 504,
+            "h": 948
+          }
+        },
+        {
+          "id": "methods-scores",
+          "label": "What each method scored",
+          "rows": [
+            "r11"
+          ],
+          "box": {
+            "x": 540,
+            "y": 1543,
+            "w": 504,
+            "h": 778
+          }
+        },
+        {
+          "id": "ai-proposal",
+          "label": "The AI's drafted wording",
+          "rows": [
+            "r15"
+          ],
+          "box": {
+            "x": 540,
+            "y": 2338,
+            "w": 504,
+            "h": 300
+          }
+        },
+        {
+          "id": "your-lens",
+          "label": "Your lens: what to look at",
+          "rows": [],
+          "box": {
+            "x": 540,
+            "y": 2654,
+            "w": 504,
+            "h": 472
+          }
+        },
+        {
+          "id": "signoff-policy",
+          "label": "Sign-off policy for this cluster",
+          "rows": [],
+          "box": {
+            "x": 540,
+            "y": 3142,
+            "w": 504,
+            "h": 186
+          }
+        },
+        {
+          "id": "revision-chain",
+          "label": "Revision chain",
+          "rows": [],
+          "box": {
+            "x": 540,
+            "y": 3344,
+            "w": 504,
+            "h": 445
+          }
+        },
+        {
+          "id": "resolve",
+          "label": "The Resolve panel (right column)",
+          "rows": [
+            "r14",
+            "r15"
+          ],
+          "box": {
+            "x": 1064,
+            "y": 166,
+            "w": 352,
+            "h": 2077
+          }
+        }
+      ]
+    },
+    "explorer": {
+      "image": "explorer.png",
+      "width": 1440,
+      "height": 2225,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 84
+          }
+        },
+        {
+          "id": "status-filters",
+          "label": "Filter by whose and what state",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 270,
+            "w": 1136,
+            "h": 44
+          }
+        },
+        {
+          "id": "level-filters",
+          "label": "Filter by level of the V",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 334,
+            "w": 1136,
+            "h": 44
+          }
+        },
+        {
+          "id": "legend",
+          "label": "What each square means",
+          "rows": [
+            "r3",
+            "r4",
+            "r5"
+          ],
+          "box": {
+            "x": 280,
+            "y": 398,
+            "w": 1136,
+            "h": 47
+          }
+        },
+        {
+          "id": "map",
+          "label": "The map: one square per requirement",
+          "rows": [
+            "r1",
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 465,
+            "w": 1136,
+            "h": 724
+          }
+        },
+        {
+          "id": "list",
+          "label": "The table and the windowed list",
+          "rows": [
+            "r6"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1210,
+            "w": 1136,
+            "h": 968
+          }
+        }
+      ]
+    },
+    "overview": {
+      "image": "overview.png",
+      "width": 1440,
+      "height": 1312,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title and the sample-run line",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 84
+          }
+        },
+        {
+          "id": "three-things",
+          "label": "New here? Three things to do on each cluster",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 274,
+            "w": 1136,
+            "h": 168
+          }
+        },
+        {
+          "id": "waiting",
+          "label": "Clusters waiting, and the three lanes",
+          "rows": [
+            "r2",
+            "r3"
+          ],
+          "box": {
+            "x": 280,
+            "y": 466,
+            "w": 1136,
+            "h": 252
+          }
+        },
+        {
+          "id": "six-member",
+          "label": "Try a six-member group",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 742,
+            "w": 1136,
+            "h": 74
+          }
+        },
+        {
+          "id": "grade-line",
+          "label": "The grade line",
+          "rows": [
+            "r5"
+          ],
+          "box": {
+            "x": 280,
+            "y": 840,
+            "w": 1136,
+            "h": 70
+          }
+        },
+        {
+          "id": "narrowed",
+          "label": "How the list narrowed",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 934,
+            "w": 1136,
+            "h": 330
+          }
+        }
+      ]
+    },
+    "vee": {
+      "image": "vee.png",
+      "width": 1440,
+      "height": 3369,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title and the picture of the V",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 196
+          }
+        },
+        {
+          "id": "sample-note",
+          "label": "The sample-values note",
+          "rows": [
+            "r7"
+          ],
+          "box": {
+            "x": 280,
+            "y": 386,
+            "w": 1136,
+            "h": 68
+          }
+        },
+        {
+          "id": "totals",
+          "label": "The three numbers: left leg, between, right leg",
+          "rows": [
+            "r5",
+            "r10"
+          ],
+          "box": {
+            "x": 280,
+            "y": 478,
+            "w": 1136,
+            "h": 271
+          }
+        },
+        {
+          "id": "levels",
+          "label": "Level by level",
+          "rows": [
+            "r1",
+            "r2",
+            "r3",
+            "r4",
+            "r8"
+          ],
+          "box": {
+            "x": 280,
+            "y": 773,
+            "w": 1136,
+            "h": 2030
+          }
+        },
+        {
+          "id": "different-levels",
+          "label": "Requirements that sit at different levels",
+          "rows": [
+            "r9"
+          ],
+          "box": {
+            "x": 280,
+            "y": 2827,
+            "w": 1136,
+            "h": 106
+          }
+        },
+        {
+          "id": "table",
+          "label": "The same numbers as a table",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 2957,
+            "w": 1136,
+            "h": 286
+          }
+        },
+        {
+          "id": "explainer",
+          "label": "What the V is, and what this app does to it",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 3267,
+            "w": 1136,
+            "h": 54
+          }
+        }
+      ]
+    },
+    "results": {
+      "image": "results.png",
+      "width": 1440,
+      "height": 5152,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 105
+          }
+        },
+        {
+          "id": "rule-note",
+          "label": "The note that the rule is a proposal",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 295,
+            "w": 1136,
+            "h": 89
+          }
+        },
+        {
+          "id": "grade",
+          "label": "The provisional grade",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 408,
+            "w": 1136,
+            "h": 676
+          }
+        },
+        {
+          "id": "original-vs-consolidated",
+          "label": "The original set against the consolidated one",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1108,
+            "w": 1136,
+            "h": 414
+          }
+        },
+        {
+          "id": "where-ended-up",
+          "label": "Where each original requirement ended up",
+          "rows": [
+            "r3"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1545,
+            "w": 1136,
+            "h": 812
+          }
+        },
+        {
+          "id": "raise",
+          "label": "What would raise the grade",
+          "rows": [
+            "r4"
+          ],
+          "box": {
+            "x": 280,
+            "y": 2382,
+            "w": 1136,
+            "h": 698
+          }
+        },
+        {
+          "id": "by-level",
+          "label": "What this does to each level of the V",
+          "rows": [
+            "r5"
+          ],
+          "box": {
+            "x": 280,
+            "y": 3104,
+            "w": 1136,
+            "h": 368
+          }
+        },
+        {
+          "id": "by-part",
+          "label": "Each part of the system, graded on its own",
+          "rows": [
+            "r6"
+          ],
+          "box": {
+            "x": 280,
+            "y": 3496,
+            "w": 1136,
+            "h": 732
+          }
+        },
+        {
+          "id": "biggest",
+          "label": "The biggest reductions so far",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 4252,
+            "w": 1136,
+            "h": 852
+          }
+        }
+      ]
+    },
+    "methods": {
+      "image": "methods.png",
+      "width": 1440,
+      "height": 3932,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 84
+          }
+        },
+        {
+          "id": "first-table-note",
+          "label": "The note that only the first table is measured",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 274,
+            "w": 1136,
+            "h": 89
+          }
+        },
+        {
+          "id": "ai-use-note",
+          "label": "The AI-use note",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 387,
+            "w": 1136,
+            "h": 68
+          }
+        },
+        {
+          "id": "measured",
+          "label": "Measured from labelled pairs",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 479,
+            "w": 1136,
+            "h": 143
+          }
+        },
+        {
+          "id": "ways",
+          "label": "Four ways of working, side by side",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 646,
+            "w": 1136,
+            "h": 542
+          }
+        },
+        {
+          "id": "each-method",
+          "label": "Each mechanical method, then with the AI",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1212,
+            "w": 1136,
+            "h": 472
+          }
+        },
+        {
+          "id": "categories",
+          "label": "Which categories score best",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1708,
+            "w": 1136,
+            "h": 1462
+          }
+        },
+        {
+          "id": "mech-vs-ai",
+          "label": "Mechanical against AI",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 3194,
+            "w": 1136,
+            "h": 352
+          }
+        },
+        {
+          "id": "session",
+          "label": "This session, guards and progress",
+          "rows": [
+            "r3"
+          ],
+          "box": {
+            "x": 280,
+            "y": 3569,
+            "w": 1136,
+            "h": 315
+          }
+        }
+      ]
+    },
+    "gold": {
+      "image": "gold.png",
+      "width": 1440,
+      "height": 1731,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 84
+          }
+        },
+        {
+          "id": "pair",
+          "label": "The pair on screen and the six labels",
+          "rows": [
+            "r1",
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 274,
+            "w": 683,
+            "h": 1409
+          }
+        },
+        {
+          "id": "progress",
+          "label": "Progress, agreement between people and the latest labels",
+          "rows": [
+            "r2",
+            "r3"
+          ],
+          "box": {
+            "x": 987,
+            "y": 274,
+            "w": 429,
+            "h": 1210
+          }
+        }
+      ]
+    },
+    "audit": {
+      "image": "audit.png",
+      "width": 1440,
+      "height": 1732,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title and what the ledger lists",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 105
+          }
+        },
+        {
+          "id": "choose-log",
+          "label": "Choose a log: decision ledger or event chain",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 291,
+            "w": 1136,
+            "h": 44
+          }
+        },
+        {
+          "id": "search",
+          "label": "Search and paging",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 355,
+            "w": 1136,
+            "h": 44
+          }
+        },
+        {
+          "id": "ledger",
+          "label": "The ledger",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 419,
+            "w": 1136,
+            "h": 1265
+          }
+        }
+      ]
+    },
+    "policy": {
+      "image": "policy.png",
+      "width": 1440,
+      "height": 1626,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 105
+          }
+        },
+        {
+          "id": "who-signs",
+          "label": "Who must sign, by case",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 295,
+            "w": 1136,
+            "h": 448
+          }
+        },
+        {
+          "id": "try-a-case",
+          "label": "Try a case",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 766,
+            "w": 1136,
+            "h": 574
+          }
+        },
+        {
+          "id": "note-rule",
+          "label": "The rule that a note is required",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 1364,
+            "w": 1136,
+            "h": 170
+          }
+        },
+        {
+          "id": "assumptions",
+          "label": "The assumptions line",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 1558,
+            "w": 1136,
+            "h": 20
+          }
+        }
+      ]
+    },
+    "ai": {
+      "image": "ai.png",
+      "width": 1440,
+      "height": 2214,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 105
+          }
+        },
+        {
+          "id": "switch",
+          "label": "The switch: AI is on",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 295,
+            "w": 1136,
+            "h": 97
+          }
+        },
+        {
+          "id": "gate",
+          "label": "What the gate does with the groups",
+          "rows": [
+            "r2",
+            "r3"
+          ],
+          "box": {
+            "x": 280,
+            "y": 416,
+            "w": 1136,
+            "h": 342
+          }
+        },
+        {
+          "id": "data-sheet",
+          "label": "The AI data sheet",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 782,
+            "w": 1136,
+            "h": 422
+          }
+        },
+        {
+          "id": "held-back",
+          "label": "Groups held back",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1228,
+            "w": 1136,
+            "h": 724
+          }
+        },
+        {
+          "id": "changes",
+          "label": "Changes to AI use",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1976,
+            "w": 1136,
+            "h": 190
+          }
+        }
+      ]
+    },
+    "export": {
+      "image": "export.png",
+      "width": 1440,
+      "height": 2672,
+      "frames": [
+        {
+          "id": "title",
+          "label": "The title",
+          "rows": [],
+          "box": {
+            "x": 280,
+            "y": 166,
+            "w": 1136,
+            "h": 84
+          }
+        },
+        {
+          "id": "check-before",
+          "label": "Check before you prepare: decisions ready and waiting",
+          "rows": [
+            "r1"
+          ],
+          "box": {
+            "x": 280,
+            "y": 270,
+            "w": 659,
+            "h": 1322
+          }
+        },
+        {
+          "id": "package",
+          "label": "The package: baseline and formats",
+          "rows": [
+            "r3",
+            "r4"
+          ],
+          "box": {
+            "x": 963,
+            "y": 270,
+            "w": 453,
+            "h": 497
+          }
+        },
+        {
+          "id": "trace-map",
+          "label": "The trace map: what moves outside the requirement list",
+          "rows": [
+            "r2"
+          ],
+          "box": {
+            "x": 280,
+            "y": 1612,
+            "w": 1136,
+            "h": 1012
+          }
+        }
+      ]
+    }
+  }
+}

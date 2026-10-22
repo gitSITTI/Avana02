@@ -83,6 +83,34 @@ An element that must be hidden is hidden (`hidden`, `display: none`), not merely
 
 Standard fields are `status`, `verification`, `owner`, `allocation`, `baseline`, `rationale`. Anything else is an other field.
 
+## Navigation marks
+
+Only for an app with more than one screen. An app with one screen, like `design/reference_viewer/`, carries none of these and is not blamed for it: the probe prints one
+'not applicable' line. An app that has a menu carries all of them, because a menu that is only partly marked cannot be checked.
+
+| Mark | On | What it holds |
+|---|---|---|
+| `nav` | the side-bar menu | a `<nav>` (or an element with `role="navigation"`) with an accessible name (`aria-label`); the only element with this mark |
+| `nav-group` | one per group of items | `data-group`: the group's id from `design/navigation.json` (`top`, `progress`, `output`). Every `nav-item` is inside one |
+| `nav-item` | one per menu item | `data-screen`: the id of the screen it opens; text: the label as written. A `<button>` or an `<a href>`, so the keyboard reaches it. Carries `aria-current="page"` exactly when its screen is the one showing |
+| `nav-count` | in a `nav-item` that has a count | text: digits only. Left out, not shown as 0, when nothing produces the number |
+| `screen` | the content of the screen showing | `data-screen`: the id of that screen. Exactly one is visible at a time. Its text is what the person reads, so it differs from screen to screen |
+| `breadcrumb` | the line above the content (optional) | contains the title of the screen showing, as `design/navigation.json` gives it (the title in the menu and the breadcrumb is not always the heading on the page) |
+
+```html
+<nav data-testid="nav" aria-label="Main">
+  <div data-testid="nav-group" data-group="top">
+    <button data-testid="nav-item" data-screen="home" aria-current="page">Home</button>
+    <button data-testid="nav-item" data-screen="review">Review queue <span data-testid="nav-count">4</span></button>
+  </div>
+</nav>
+<div data-testid="breadcrumb">Alpha project / Home</div>
+<section data-testid="screen" data-screen="home"> ... </section>
+```
+
+Where the menu lives and what it holds is `design/navigation.json` (readable form: `docs/NAVIGATION_MAP.md`). The marks say where the page exposes it. Pass the map to the probe
+with `--navigation design/navigation.json` and it also compares the menu with the map. Without it the probe still checks that the menu works.
+
 ## What the probe checks, and what to fix when it fails
 
 Every dataset F1 to F14 is opened and the screen is compared with its files. The probe reads the files itself, so a screen cannot pass by agreeing with a
@@ -115,6 +143,21 @@ summary.
 | `links.panel`, `links.listed`, `links.outside_marked` | the trace panel shows with no links, or is missing with links, or an outside end is not marked |
 | `links.kinds_as_written` | a link kind such as `x-custom` or `Is Derived From` is renamed, merged or dropped (F14) |
 | `rejected.list` | a rejected record or its reason is missing |
+| `nav.present` | the app has no `nav` mark (not a failure: a one-screen app has no menu) or more than one |
+| `nav.landmark` | the menu is not a `<nav>` or `role="navigation"`, has no accessible name, or has another name than the map's |
+| `nav.items_listed` | a menu item has no `data-screen`, two items name one screen, fewer than two items, or (with the map) the items or their order differ from the map |
+| `nav.groups`, `nav.default_open_visible` | (with the map) an item is in another group than the map says, or an item in a group that starts open is hidden |
+| `nav.items_are_controls` | a menu item is not a `<button>` or an `<a href>` |
+| `nav.starts_on_current_screen` | at the start not exactly one screen shows, not exactly one item is `aria-current`, or they are not the same screen |
+| `nav.each_item_opens_its_screen` | after clicking an item the screen showing is not the item's. This is the menu leading somewhere else than its label says |
+| `nav.each_item_marks_itself_current` | after a click the item marked as current is not the one clicked (nothing, or the first item, or two items) |
+| `nav.each_screen_has_its_own_content` | a screen shows exactly what the screen before it showed: the menu changes the highlight and not the page |
+| `nav.breadcrumb_follows`, `nav.page_title_follows` | the breadcrumb or (with the map) the document title does not name the screen showing |
+| `nav.keeps_the_dataset` | going from screen to screen leaves the app in another state than `ready`, or logs an error: the data did not survive the move |
+| `nav.round_trip` | the first screen, visited again after all the others, shows other content than the first time |
+| `nav.keyboard` | focusing an item and pressing Enter does not open its screen |
+| `nav.count_not_invented` | a count that is not a whole number, is 0, or (with the map) is on an item that has none. The probe cannot tell whether a count that looks right was computed from the data |
+| `nav.narrow_shows_every_item@390` | (with the map, when it says the narrow layout shows every item) an item is hidden or cut off at 390 px |
 | `layout.no_sideways_scroll@1440`, `@900`, `@390`, `@320` | the page scrolls sideways at that width (F10 has a 300-character word) |
 | `perf.ready_within_30s` | the large dataset takes more than 30 seconds to appear |
 | `tokens.declared` | the page does not carry the design's variables: `tokens.css` is not linked, or not found |
@@ -125,7 +168,7 @@ summary.
 
 ## What the probe does not do
 
-It shows that the screen is bound to the dataset and that the behaviours in the table hold for these fourteen shapes in one browser (Chromium). It does not
+The menu checks do not look at the foot items (Glossary and help, Close project), the top-bar shortcuts, the search box, the panels that open over a screen, or the steps of the import; `tools/gui_checks/site_map.py` reads those from a running page. They say that every item leads to the screen its label names, not that the screen's content is right: that is the dataset checks. It shows that the screen is bound to the dataset and that the behaviours in the table hold for these fourteen shapes in one browser (Chromium). It does not
 tell whether the screen is good to look at or to use, whether it is accessible beyond what the marks expose, whether it works with real requirements, or
 what happens in another browser. It reads the files itself, so a bug in `probe.py` is possible: the tests in `tools/test_gui_checks_browser.py` break the
 reference viewer in many separate ways (the `test_break_` tests) and show that the probe fails each one, which is evidence the checks can fail, not proof that nothing is missed.

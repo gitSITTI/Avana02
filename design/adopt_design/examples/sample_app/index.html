@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team task board</title>
+<!-- A made-up page for trying the design-adoption skill on. It belongs to no real product: the names, tasks and numbers are invented. Its look is deliberately not this
+     repository's look (green accent, pill buttons, small corners, a serif heading font that is not installed) so that every comparison has something to say. -->
+<style>
+:root {
+  --bg: #F7F5F0; --card: #FFFFFF; --text: #1F2933; --muted: #52606D; --line: #E4E7EB;
+  --brand: #0F766E; --brand-soft: #D9F2EE; --hover: #EDF2F7;
+  --radius: 6px; --radius-pill: 20px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: sans-serif; font-size: 15px; line-height: 1.45; }
+.shell { display: flex; min-height: 100vh; }
+nav.side { width: 220px; background: var(--card); border-right: 1px solid var(--line); padding: 16px 10px; }
+nav.side h2 { font-size: 12px; font-weight: 600; color: var(--muted); margin: 0 8px 8px; letter-spacing: .04em; }
+nav.side a { display: flex; align-items: center; gap: 8px; padding: 8px 10px; height: 38px; color: var(--text); text-decoration: none; border-radius: var(--radius); }
+nav.side a:hover { background: var(--hover); }
+nav.side a[aria-current="page"] { background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+nav.side svg { width: 16px; height: 16px; flex: none; }
+.main { flex: 1; min-width: 0; }
+header.top { display: flex; align-items: center; gap: 12px; padding: 12px 24px; background: var(--card); border-bottom: 1px solid var(--line); }
+header.top h1 { font-family: "Fictional Serif", serif; font-size: 26px; margin: 0; flex: 1; }
+input.search { height: 38px; padding: 0 12px; border: 1px solid #9AA5B1; border-radius: var(--radius); background: #FFFFFF; font: inherit; width: 220px; }
+button { font: inherit; height: 38px; padding: 0 16px; cursor: pointer; }
+button.btn-primary { background: var(--brand); color: #FFFFFF; border: 0; border-radius: var(--radius-pill); font-weight: 600; }
+button.btn-quiet { background: transparent; color: var(--text); border: 1px solid #9AA5B1; border-radius: var(--radius-pill); }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 24px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(31,41,51,.12); padding: 16px; min-height: 120px; }
+.card h3 { margin: 0 0 8px; font-size: 16px; }
+.card p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.badge { display: inline-block; padding: 2px 8px; font-size: 12px; border-radius: 4px; background: #FDECEC; color: #8A1C1C; }
+.badge.done { background: #E3F5E8; color: #14532D; }
+table { margin: 0 24px 24px; border-collapse: collapse; width: calc(100% - 48px); background: var(--card); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+code { font-family: monospace; font-size: 13px; background: #EEF2F6; padding: 1px 4px; border-radius: 3px; }
+footer { padding: 16px 24px; color: var(--muted); font-size: 13px; }
+@media (max-width: 800px) { .shell { flex-direction: column; } nav.side { width: auto; } .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="side" aria-label="Sections">
+    <h2>Workspace</h2>
+    <a href="#board" aria-current="page"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="6" height="14" fill="currentColor"/><rect x="9" y="1" width="6" height="8" fill="currentColor"/></svg>Board</a>
+    <a href="#backlog"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="2" width="14" height="3" fill="currentColor"/><rect x="1" y="7" width="14" height="3" fill="currentColor"/></svg>Backlog</a>
+    <a href="#reports"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="9" width="3" height="6" fill="currentColor"/><rect x="6" y="5" width="3" height="10" fill="currentColor"/></svg>Reports</a>
+  </nav>
+  <div class="main">
+    <header class="top" role="banner">
+      <h1>Team task board</h1>
+      <input class="search" type="search" placeholder="Search tasks" aria-label="Search tasks">
+      <button class="btn-quiet" type="button">Filter</button>
+      <button class="btn-primary" type="button">New task</button>
+    </header>
+    <main id="board">
+      <div class="cards">
+        <div class="card"><h3>Write the release notes</h3><p>Due Friday. Owner: Ana.</p><span class="badge">Blocked</span></div>
+        <div class="card"><h3>Review the signup form</h3><p>Due Monday. Owner: Ben.</p><span class="badge done">Done</span></div>
+        <div class="card"><h3>Fix the date picker</h3><p>Due next week. Owner: Cleo.</p><span class="badge done">Done</span></div>
+      </div>
+      <table>
+        <thead><tr><th>Task</th><th>Owner</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Write the release notes</td><td>Ana</td><td>Blocked</td></tr>
+          <tr><td>Review the signup form</td><td>Ben</td><td>Done</td></tr>
+          <tr><td>Run <code>make check</code></td><td>Cleo</td><td>Done</td></tr>
+        </tbody>
+      </table>
+    </main>
+    <footer>Made-up sample page for trying a design import.</footer>
+  </div>
+</div>
+</body>
+</html>

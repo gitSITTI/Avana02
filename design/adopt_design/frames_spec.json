@@ -1,0 +1,126 @@
+{
+  "format": "reqin-frames-spec/1",
+  "about": "Hand-written. For each of our screens, the frames a person can say yes or no to: a frame is a box of the screen as the running prototype draws it, found by `path` (see scripts/make_frames.py: from the content area, go down while there is exactly one visible child, then take the i-th visible child for each number in the path). `starts` is what the frame's text must begin with, so a changed prototype fails loudly instead of cutting the wrong box. `rows` are the numbered pieces of the screen's section of docs/SCREEN_DATA_MAP.md that the frame holds (r1, r2 ... in the order the catalog lists them). A piece no frame holds is one the sample does not draw in this state (it needs a click, a different person or a different file), and is still asked about. The side menu, the top bar and the draft bar are parts, not frames. scripts/make_frames.py reads this file, draws the pictures and writes docs/images/frames/frames.json; a piece of the data map may be drawn across more than one frame; run it again after the prototype page changes.",
+  "screens": {
+    "open": [
+      {"id": "banner", "label": "The strip that says this is sample data", "path": [0], "starts": "Requirements Consolidator Prototype", "rows": []},
+      {"id": "title", "label": "The title and one-line promise", "path": [1], "starts": "Open a requirements project", "rows": []},
+      {"id": "signed-in", "label": "Who is signed in, and the sample people", "path": [2], "starts": "Signed in as", "rows": ["r4"]},
+      {"id": "team-server", "label": "Work with your team on a shared server", "path": [3], "starts": "Work with your team on a shared server", "rows": []},
+      {"id": "drop-file", "label": "Drop a file, paste an address or connect", "path": [4], "starts": "Drop a file", "rows": ["r2"]},
+      {"id": "sources", "label": "The six source cards", "path": [5, 0], "starts": "Or choose a source", "rows": ["r1"]},
+      {"id": "recent", "label": "Recent projects", "path": [5, 1], "starts": "Recent projects", "rows": ["r3"]}
+    ],
+    "import": [
+      {"id": "steps", "label": "The steps bar", "path": [0], "starts": "1 · SOURCE", "rows": []},
+      {"id": "title", "label": "Check how your fields map: the title", "path": [1], "starts": "Check how your fields map", "rows": []},
+      {"id": "mapping", "label": "The proposed mapping, field by field", "path": [2, 0], "starts": "Mapping profile", "rows": ["r8"]},
+      {"id": "dry-run", "label": "The dry-run report", "path": [2, 1], "starts": "Dry-run report", "rows": ["r10", "r12"]},
+      {"id": "first-three", "label": "The first three records as the review screens will show them", "path": [3], "starts": "First three records", "rows": ["r11"]},
+      {"id": "scope", "label": "How much to review first", "path": [4], "starts": "How much to review first", "rows": ["r13"]},
+      {"id": "prepared", "label": "Comparisons prepared", "path": [5], "starts": "Comparisons prepared", "rows": []},
+      {"id": "buttons", "label": "Confirm, save profile, back", "path": [6], "starts": "Confirm mapping and import", "rows": []},
+      {"id": "note", "label": "The prototype note", "path": [7], "starts": "Prototype note", "rows": []}
+    ],
+    "home": [
+      {"id": "security", "label": "The security band", "path": [0], "starts": "High security", "rows": ["r2"]},
+      {"id": "waiting", "label": "The title and the one button", "path": [1, 0, 0], "starts": "182 clusters are waiting", "rows": ["r1"]},
+      {"id": "bring-in", "label": "Bring in requirements: three ways in", "path": [1, 0, 1], "starts": "Bring in requirements", "rows": ["r3"]},
+      {"id": "v-card", "label": "Where the work sits in the V", "path": [1, 0, 2], "starts": "Where the work sits in the V", "rows": ["r4"]},
+      {"id": "team-server", "label": "Work with your team on a shared server", "path": [1, 0, 3], "starts": "Work with your team", "rows": []},
+      {"id": "your-work", "label": "Your work is kept", "path": [1, 0, 4], "starts": "Your work", "rows": ["r8"]},
+      {"id": "recent-imports", "label": "Recent imports and open clusters by allocation", "path": [1, 0, 5], "starts": "Recent imports", "rows": ["r5", "r6"]},
+      {"id": "activity", "label": "Latest activity", "path": [1, 1], "starts": "Latest activity", "rows": ["r7"]}
+    ],
+    "review": [
+      {"id": "queue", "label": "The queue (left column)", "path": [0], "starts": "Review queue", "rows": ["r1", "r2", "r3", "r4", "r5", "r6", "r7"]},
+      {"id": "cluster-header", "label": "The cluster's title, its relationship and why it was suggested", "path": [1, 0], "starts": "CL-001", "rows": ["r11"]},
+      {"id": "wordings", "label": "The group: every wording, the reference and what differs", "path": [1, 1], "starts": "The group", "rows": ["r8", "r9", "r10", "r12"]},
+      {"id": "methods-scores", "label": "What each method scored", "path": [1, 2], "starts": "Mechanical methods", "rows": ["r11"]},
+      {"id": "ai-proposal", "label": "The AI's drafted wording", "path": [1, 3], "starts": "AI proposal", "rows": ["r15"]},
+      {"id": "your-lens", "label": "Your lens: what to look at", "path": [1, 4], "starts": "Your lens", "rows": []},
+      {"id": "signoff-policy", "label": "Sign-off policy for this cluster", "path": [1, 5], "starts": "Sign-off policy for this cluster", "rows": []},
+      {"id": "revision-chain", "label": "Revision chain", "path": [1, 6], "starts": "Revision chain", "rows": []},
+      {"id": "resolve", "label": "The Resolve panel (right column)", "path": [2], "starts": "Resolve CL-001", "rows": ["r14", "r15"]}
+    ],
+    "explorer": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "All requirements", "rows": []},
+      {"id": "status-filters", "label": "Filter by whose and what state", "path": [1], "starts": "All 1248", "rows": []},
+      {"id": "level-filters", "label": "Filter by level of the V", "path": [2], "starts": "All levels", "rows": []},
+      {"id": "legend", "label": "What each square means", "path": [3], "starts": "Alone", "rows": ["r3", "r4", "r5"]},
+      {"id": "map", "label": "The map: one square per requirement", "path": [4], "starts": "Map, grouped by allocation", "rows": ["r1", "r2"]},
+      {"id": "list", "label": "The table and the windowed list", "path": [5], "starts": "By allocation", "rows": ["r6"]}
+    ],
+    "overview": [
+      {"id": "title", "label": "The title and the sample-run line", "path": [0], "starts": "Overview", "rows": []},
+      {"id": "three-things", "label": "New here? Three things to do on each cluster", "path": [1], "starts": "New here?", "rows": []},
+      {"id": "waiting", "label": "Clusters waiting, and the three lanes", "path": [2], "starts": "182 clusters waiting", "rows": ["r2", "r3"]},
+      {"id": "six-member", "label": "Try a six-member group", "path": [3], "starts": "Try a six-member group", "rows": []},
+      {"id": "grade-line", "label": "The grade line", "path": [4], "starts": "Grade so far", "rows": ["r5"]},
+      {"id": "narrowed", "label": "How the list narrowed", "path": [5], "starts": "How the list narrowed", "rows": ["r1"]}
+    ],
+    "vee": [
+      {"id": "title", "label": "The title and the picture of the V", "path": [0], "starts": "The engineering V", "rows": []},
+      {"id": "sample-note", "label": "The sample-values note", "path": [1], "starts": "Sample values", "rows": ["r7"]},
+      {"id": "totals", "label": "The three numbers: left leg, between, right leg", "path": [2], "starts": "Left leg", "rows": ["r5", "r10"]},
+      {"id": "levels", "label": "Level by level", "path": [3], "starts": "Level by level", "rows": ["r1", "r2", "r3", "r4", "r8"]},
+      {"id": "different-levels", "label": "Requirements that sit at different levels", "path": [4], "starts": "Requirements that sit at different levels", "rows": ["r9"]},
+      {"id": "table", "label": "The same numbers as a table", "path": [5], "starts": "The same numbers as a table", "rows": []},
+      {"id": "explainer", "label": "What the V is, and what this app does to it", "path": [6], "starts": "What the V is", "rows": []}
+    ],
+    "results": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "Results and grade", "rows": []},
+      {"id": "rule-note", "label": "The note that the rule is a proposal", "path": [1], "starts": "The rule behind the grade", "rows": []},
+      {"id": "grade", "label": "The provisional grade", "path": [2], "starts": "Provisional grade", "rows": ["r1"]},
+      {"id": "original-vs-consolidated", "label": "The original set against the consolidated one", "path": [3], "starts": "The original set against", "rows": ["r2"]},
+      {"id": "where-ended-up", "label": "Where each original requirement ended up", "path": [4], "starts": "Where each original requirement", "rows": ["r3"]},
+      {"id": "raise", "label": "What would raise the grade", "path": [5], "starts": "What would raise the grade", "rows": ["r4"]},
+      {"id": "by-level", "label": "What this does to each level of the V", "path": [6], "starts": "What this does to each level", "rows": ["r5"]},
+      {"id": "by-part", "label": "Each part of the system, graded on its own", "path": [7], "starts": "Each part of the system", "rows": ["r6"]},
+      {"id": "biggest", "label": "The biggest reductions so far", "path": [8], "starts": "The biggest reductions", "rows": []}
+    ],
+    "methods": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "Methods and metrics", "rows": []},
+      {"id": "first-table-note", "label": "The note that only the first table is measured", "path": [1], "starts": "Only the first table is measured", "rows": []},
+      {"id": "ai-use-note", "label": "The AI-use note", "path": [2], "starts": "AI use on this project", "rows": []},
+      {"id": "measured", "label": "Measured from labelled pairs", "path": [3], "starts": "Measured from labelled pairs", "rows": ["r1"]},
+      {"id": "ways", "label": "Four ways of working, side by side", "path": [4], "starts": "Four ways of working", "rows": ["r2"]},
+      {"id": "each-method", "label": "Each mechanical method, then with the AI", "path": [5], "starts": "Each mechanical method", "rows": ["r2"]},
+      {"id": "categories", "label": "Which categories score best", "path": [6], "starts": "Which categories score best", "rows": ["r2"]},
+      {"id": "mech-vs-ai", "label": "Mechanical against AI", "path": [7], "starts": "Mechanical against AI", "rows": ["r2"]},
+      {"id": "session", "label": "This session, guards and progress", "path": [8], "starts": "This session", "rows": ["r3"]}
+    ],
+    "gold": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "Label pairs", "rows": []},
+      {"id": "pair", "label": "The pair on screen and the six labels", "path": [1, 0], "starts": "Pair 1 of 160", "rows": ["r1", "r2"]},
+      {"id": "progress", "label": "Progress, agreement between people and the latest labels", "path": [1, 1], "starts": "Progress", "rows": ["r2", "r3"]}
+    ],
+    "audit": [
+      {"id": "title", "label": "The title and what the ledger lists", "path": [0], "starts": "Decisions and audit", "rows": []},
+      {"id": "choose-log", "label": "Choose a log: decision ledger or event chain", "path": [1], "starts": "Decision ledger", "rows": []},
+      {"id": "search", "label": "Search and paging", "path": [2], "starts": "Search decisions", "rows": []},
+      {"id": "ledger", "label": "The ledger", "path": [3], "starts": "CL-044", "rows": ["r1"]}
+    ],
+    "policy": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "Sign-off policy", "rows": []},
+      {"id": "who-signs", "label": "Who must sign, by case", "path": [1], "starts": "Who must sign", "rows": ["r1"]},
+      {"id": "try-a-case", "label": "Try a case", "path": [2], "starts": "Try a case", "rows": []},
+      {"id": "note-rule", "label": "The rule that a note is required", "path": [3], "starts": "A note is always required", "rows": []},
+      {"id": "assumptions", "label": "The assumptions line", "path": [4], "starts": "These are assumptions", "rows": []}
+    ],
+    "ai": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "AI use", "rows": []},
+      {"id": "switch", "label": "The switch: AI is on", "path": [1], "starts": "AI is on", "rows": ["r1"]},
+      {"id": "gate", "label": "What the gate does with the groups", "path": [2], "starts": "What the gate does", "rows": ["r2", "r3"]},
+      {"id": "data-sheet", "label": "The AI data sheet", "path": [3], "starts": "AI data sheet", "rows": ["r1"]},
+      {"id": "held-back", "label": "Groups held back", "path": [4], "starts": "Groups held back", "rows": ["r2"]},
+      {"id": "changes", "label": "Changes to AI use", "path": [5], "starts": "Changes to AI use", "rows": ["r1"]}
+    ],
+    "export": [
+      {"id": "title", "label": "The title", "path": [0], "starts": "Export to documents", "rows": []},
+      {"id": "check-before", "label": "Check before you prepare: decisions ready and waiting", "path": [1, 0], "starts": "CHECK BEFORE YOU PREPARE", "rows": ["r1"]},
+      {"id": "package", "label": "The package: baseline and formats", "path": [1, 1], "starts": "PACKAGE", "rows": ["r3", "r4"]},
+      {"id": "trace-map", "label": "The trace map: what moves outside the requirement list", "path": [2], "starts": "TRACE MAP", "rows": ["r2"]}
+    ]
+  }
+}
