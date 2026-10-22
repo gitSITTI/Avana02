@@ -37,9 +37,9 @@ def exists(tok: str) -> bool:
     return tok in TO_CREATE or any((REPO / (base + tok)).exists() for base in SEARCH_IN) or "<" in tok
 
 
-def test_there_are_the_seven_prompts_and_the_porting_guide_lists_every_one():
+def test_there_are_the_eight_prompts_and_the_porting_guide_lists_every_one():
     names = {p.name for p in PROMPTS}
-    assert names == {"excalidraw_board_without_code.md", "excalidraw_board_with_code.md", "new_connector.md", "port_gateway_core.md", "comparison_engine.md", "build_the_gui.md", "adopt_a_design.md"}
+    assert names == {"excalidraw_board_without_code.md", "excalidraw_board_with_code.md", "new_connector.md", "port_gateway_core.md", "comparison_engine.md", "build_the_gui.md", "adopt_a_design.md", "audit_data_binding.md"}
     porting = (REPO / "docs" / "PORTING.md").read_text(encoding="utf-8")
     for n in names:
         assert f"agent_prompts/{n}" in porting, f"docs/PORTING.md does not list {n}"

@@ -1,0 +1,10 @@
+[
+  {"uid": "LMP-0001", "text": "The lamp controller shall report its supply voltage to the panel every 30 seconds.", "owner": "Ana", "status": "approved", "level": "system"},
+  {"uid": "LMP-0002", "text": "The lamp controller shall switch the lamp off when the cover has been open for more than 20 seconds.", "owner": "Ben", "status": "approved", "level": "system"},
+  {"uid": "LMP-0003", "text": "The panel shall show a warning within 2 seconds of a supply voltage below 11 volts.", "owner": "Chi", "status": "draft", "level": "system"},
+  {"uid": "LMP-0004", "text": "The lamp controller shall keep the last brightness setting after a power cut of up to 60 minutes.", "owner": "Ana", "status": "draft", "level": "system"},
+  {"uid": "LMP-0005", "text": "The cover sensor shall detect an open cover at any angle above 15 degrees.", "owner": "Ben", "status": "approved", "level": "component"},
+  {"uid": "LMP-0006", "text": "The panel shall let an operator dim the lamp in steps of 5 percent from 10 to 100 percent.", "owner": "Chi", "status": "open", "level": "component"},
+  {"uid": "LMP-0007", "text": "The lamp controller shall refuse a brightness setting outside the range 10 to 100 percent.", "owner": "Dee", "status": "open", "level": "component"},
+  {"uid": "LMP-0008", "text": "The supply monitor shall measure voltage with an error of no more than 0.3 volts.", "owner": "Dee", "status": "draft", "level": "component"}
+]

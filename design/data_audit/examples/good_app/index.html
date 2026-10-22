@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lamp controller requirements</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-state="loading">
+<header>
+  <h1>Lamp controller requirements</h1>
+  <p><span data-testid="count-total" id="count"></span> requirements
+    <span id="mark" data-source="requirements" data-source-state="loading"><span data-source-label id="label">Loading</span></span></p>
+</header>
+<main>
+  <table id="rows">
+    <thead><tr><th>ID</th><th>Requirement</th><th>Owner</th><th>Status</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p id="message" role="status"></p>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
