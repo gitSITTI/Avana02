@@ -44,6 +44,7 @@ Each file in [`agent_prompts/`](agent_prompts/) is a complete task for an agent 
 | The gateway's decision core in another language | [`port_gateway_core.md`](agent_prompts/port_gateway_core.md) | that language's toolchain, or a person to run the vectors |
 | The comparison engine (first mechanical stages; already built here, so this is the specification and a start for another provider) | [`comparison_engine.md`](agent_prompts/comparison_engine.md) | Python, a shell |
 | A screen that shows a dataset in the product's look, with the checks, and how several agents share the work | [`build_the_gui.md`](agent_prompts/build_the_gui.md) | a shell for the checks; without one, a person runs them |
+| Parts of this design (menu, top bar, buttons, cards, screens) brought into **someone else's** app, one choice at a time, with pictures before anything is written | [`adopt_a_design.md`](agent_prompts/adopt_a_design.md) | a shell and a browser (Playwright) for the pictures; without them the person runs the commands and opens the pictures |
 
 ## 4. How to port a part, step by step
 

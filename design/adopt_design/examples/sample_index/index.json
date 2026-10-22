@@ -1,0 +1,1544 @@
+{
+  "format": "reqin-page-index/1",
+  "source": "index.html",
+  "taken": {
+    "width": 1440,
+    "height": 900,
+    "setup": []
+  },
+  "page": {
+    "title": "Team task board",
+    "lang": "en",
+    "root_font_size": "16px",
+    "elements_read": 56
+  },
+  "body": {
+    "color": "rgb(31, 41, 51)",
+    "backgroundColor": "rgb(247, 245, 240)",
+    "htmlBackground": "rgba(0, 0, 0, 0)",
+    "fontFamily": "sans-serif",
+    "fontSize": "15px",
+    "lineHeight": "21.75px"
+  },
+  "declared_vars": [
+    {
+      "name": "--bg",
+      "value": "#F7F5F0",
+      "resolved": "#F7F5F0",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--card",
+      "value": "#FFFFFF",
+      "resolved": "#FFFFFF",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--text",
+      "value": "#1F2933",
+      "resolved": "#1F2933",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--muted",
+      "value": "#52606D",
+      "resolved": "#52606D",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--line",
+      "value": "#E4E7EB",
+      "resolved": "#E4E7EB",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--brand",
+      "value": "#0F766E",
+      "resolved": "#0F766E",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--brand-soft",
+      "value": "#D9F2EE",
+      "resolved": "#D9F2EE",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--hover",
+      "value": "#EDF2F7",
+      "resolved": "#EDF2F7",
+      "kind": "colour",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--radius",
+      "value": "6px",
+      "resolved": "6px",
+      "kind": "length",
+      "selector": ":root",
+      "context": ""
+    },
+    {
+      "name": "--radius-pill",
+      "value": "20px",
+      "resolved": "20px",
+      "kind": "length",
+      "selector": ":root",
+      "context": ""
+    }
+  ],
+  "colours": [
+    {
+      "hex": "#E4E7EB",
+      "uses": {
+        "text": 0,
+        "background": 0,
+        "border": 26,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 26,
+      "names": [
+        "--line"
+      ]
+    },
+    {
+      "hex": "#1F2933",
+      "uses": {
+        "text": 20,
+        "background": 0,
+        "border": 0,
+        "outline": 0,
+        "icon": 4
+      },
+      "count": 24,
+      "names": [
+        "--text"
+      ]
+    },
+    {
+      "hex": "#FFFFFF",
+      "uses": {
+        "text": 1,
+        "background": 7,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 8,
+      "names": [
+        "--card"
+      ]
+    },
+    {
+      "hex": "#9AA5B1",
+      "uses": {
+        "text": 0,
+        "background": 0,
+        "border": 8,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 8,
+      "names": []
+    },
+    {
+      "hex": "#52606D",
+      "uses": {
+        "text": 5,
+        "background": 0,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 5,
+      "names": [
+        "--muted"
+      ]
+    },
+    {
+      "hex": "#0F766E",
+      "uses": {
+        "text": 1,
+        "background": 1,
+        "border": 0,
+        "outline": 0,
+        "icon": 2
+      },
+      "count": 4,
+      "names": [
+        "--brand"
+      ]
+    },
+    {
+      "hex": "#14532D",
+      "uses": {
+        "text": 2,
+        "background": 0,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 2,
+      "names": []
+    },
+    {
+      "hex": "#E3F5E8",
+      "uses": {
+        "text": 0,
+        "background": 2,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 2,
+      "names": []
+    },
+    {
+      "hex": "#D9F2EE",
+      "uses": {
+        "text": 0,
+        "background": 1,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 1,
+      "names": [
+        "--brand-soft"
+      ]
+    },
+    {
+      "hex": "#8A1C1C",
+      "uses": {
+        "text": 1,
+        "background": 0,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 1,
+      "names": []
+    },
+    {
+      "hex": "#FDECEC",
+      "uses": {
+        "text": 0,
+        "background": 1,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 1,
+      "names": []
+    },
+    {
+      "hex": "#EEF2F6",
+      "uses": {
+        "text": 0,
+        "background": 1,
+        "border": 0,
+        "outline": 0,
+        "icon": 0
+      },
+      "count": 1,
+      "names": []
+    }
+  ],
+  "translucent_colours": [],
+  "unparsed_colours": [],
+  "type": {
+    "families": [
+      {
+        "family": "sans-serif",
+        "characters": 329
+      },
+      {
+        "family": "Fictional Serif",
+        "characters": 15
+      },
+      {
+        "family": "monospace",
+        "characters": 10
+      }
+    ],
+    "styles": [
+      {
+        "family": "sans-serif",
+        "size": "13px",
+        "weight": "400",
+        "line_height": "18.85px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "p",
+        "characters": 73
+      },
+      {
+        "family": "sans-serif",
+        "size": "14px",
+        "weight": "400",
+        "line_height": "20.3px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "td",
+        "characters": 73
+      },
+      {
+        "family": "sans-serif",
+        "size": "16px",
+        "weight": "700",
+        "line_height": "23.2px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "h3",
+        "characters": 64
+      },
+      {
+        "family": "sans-serif",
+        "size": "13px",
+        "weight": "400",
+        "line_height": "18.85px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "footer",
+        "characters": 47
+      },
+      {
+        "family": "\"Fictional Serif\", serif",
+        "size": "26px",
+        "weight": "700",
+        "line_height": "37.7px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "h1",
+        "characters": 15
+      },
+      {
+        "family": "sans-serif",
+        "size": "12px",
+        "weight": "400",
+        "line_height": "17.4px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "span",
+        "characters": 15
+      },
+      {
+        "family": "sans-serif",
+        "size": "14px",
+        "weight": "700",
+        "line_height": "20.3px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "th",
+        "characters": 15
+      },
+      {
+        "family": "sans-serif",
+        "size": "15px",
+        "weight": "400",
+        "line_height": "21.75px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "a",
+        "characters": 14
+      },
+      {
+        "family": "monospace",
+        "size": "13px",
+        "weight": "400",
+        "line_height": "18.85px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "code",
+        "characters": 10
+      },
+      {
+        "family": "sans-serif",
+        "size": "12px",
+        "weight": "600",
+        "line_height": "17.4px",
+        "letter_spacing": "0.48px",
+        "text_transform": "none",
+        "tag": "h2",
+        "characters": 9
+      },
+      {
+        "family": "sans-serif",
+        "size": "15px",
+        "weight": "600",
+        "line_height": "21.75px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "button",
+        "characters": 8
+      },
+      {
+        "family": "sans-serif",
+        "size": "15px",
+        "weight": "400",
+        "line_height": "21.75px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "button",
+        "characters": 6
+      },
+      {
+        "family": "sans-serif",
+        "size": "15px",
+        "weight": "600",
+        "line_height": "21.75px",
+        "letter_spacing": "normal",
+        "text_transform": "none",
+        "tag": "a",
+        "characters": 5
+      }
+    ],
+    "web_fonts_declared": [],
+    "rendered": [
+      {
+        "kind": "button",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 6
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "input",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 12
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "heading",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 23
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "heading",
+        "asked_for_first": "Fictional Serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Serif",
+            "custom_font": false,
+            "glyphs": 15
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "table_cell",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 23
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "badge",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 4
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "nav_item",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 7
+          }
+        ],
+        "asked_for_font_was_used": false
+      },
+      {
+        "kind": "card",
+        "asked_for_first": "sans-serif",
+        "drawn_with": [
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 30
+          },
+          {
+            "family": "Liberation Sans",
+            "custom_font": false,
+            "glyphs": 23
+          }
+        ],
+        "asked_for_font_was_used": false
+      }
+    ]
+  },
+  "radii": [
+    {
+      "value": "6px",
+      "count": 5
+    },
+    {
+      "value": "4px",
+      "count": 3
+    },
+    {
+      "value": "20px",
+      "count": 2
+    },
+    {
+      "value": "3px",
+      "count": 1
+    }
+  ],
+  "shadows": [
+    {
+      "value": "rgba(31, 41, 51, 0.12) 0px 1px 3px 0px",
+      "count": 3
+    }
+  ],
+  "padding": [
+    {
+      "value": "8px",
+      "count": 32
+    },
+    {
+      "value": "12px",
+      "count": 28
+    },
+    {
+      "value": "16px",
+      "count": 18
+    },
+    {
+      "value": "2px",
+      "count": 6
+    },
+    {
+      "value": "10px",
+      "count": 4
+    },
+    {
+      "value": "24px",
+      "count": 2
+    },
+    {
+      "value": "1px",
+      "count": 2
+    },
+    {
+      "value": "4px",
+      "count": 2
+    }
+  ],
+  "gap": [
+    {
+      "value": "8px",
+      "count": 3
+    },
+    {
+      "value": "12px",
+      "count": 1
+    },
+    {
+      "value": "16px",
+      "count": 1
+    }
+  ],
+  "components": [
+    {
+      "id": 1,
+      "kind": "button",
+      "count": 1,
+      "text": "Filter",
+      "tag": "button",
+      "width": 67,
+      "height": 38,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(154, 165, 177)",
+        "borderTopWidth": "1px",
+        "borderTopStyle": "solid",
+        "borderTopLeftRadius": "20px",
+        "paddingTop": "0px",
+        "paddingRight": "16px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "auto",
+        "disabled": false
+      },
+      "screenshot": "01_button.png",
+      "states": {
+        "hover": {},
+        "keyboard_focus": {
+          "outlineStyle": [
+            "none",
+            "auto"
+          ],
+          "outlineWidth": [
+            "0px",
+            "1px"
+          ],
+          "outlineColor": [
+            "rgb(31, 41, 51)",
+            "rgb(16, 16, 16)"
+          ]
+        }
+      },
+      "selector": {
+        "selector": ".btn-quiet",
+        "jaccard": 1,
+        "matches": 1,
+        "group": 1
+      }
+    },
+    {
+      "id": 2,
+      "kind": "button",
+      "count": 1,
+      "text": "New task",
+      "tag": "button",
+      "width": 97,
+      "height": 38,
+      "style": {
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(15, 118, 110)",
+        "borderTopColor": "rgb(255, 255, 255)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "20px",
+        "paddingTop": "0px",
+        "paddingRight": "16px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "600",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "auto",
+        "disabled": false
+      },
+      "screenshot": "02_button.png",
+      "states": {
+        "hover": {},
+        "keyboard_focus": {
+          "outlineStyle": [
+            "none",
+            "auto"
+          ],
+          "outlineWidth": [
+            "0px",
+            "1px"
+          ],
+          "outlineColor": [
+            "rgb(255, 255, 255)",
+            "rgb(16, 16, 16)"
+          ]
+        }
+      },
+      "selector": {
+        "selector": ".btn-primary",
+        "jaccard": 1,
+        "matches": 1,
+        "group": 1
+      }
+    },
+    {
+      "id": 3,
+      "kind": "link",
+      "count": 2,
+      "text": "Backlog",
+      "tag": "a",
+      "width": 199,
+      "height": 38,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "6px",
+        "paddingTop": "8px",
+        "paddingRight": "10px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "note": "could not measure: Locator.scroll_into_view_if_needed: Timeout 2000ms exceeded.",
+      "selector": {
+        "selector": "a",
+        "jaccard": 0.67,
+        "matches": 3,
+        "group": 2
+      }
+    },
+    {
+      "id": 4,
+      "kind": "link",
+      "count": 1,
+      "text": "Board",
+      "tag": "a",
+      "width": 199,
+      "height": 38,
+      "style": {
+        "color": "rgb(15, 118, 110)",
+        "backgroundColor": "rgb(217, 242, 238)",
+        "borderTopColor": "rgb(15, 118, 110)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "6px",
+        "paddingTop": "8px",
+        "paddingRight": "10px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "600",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "note": "could not measure: Locator.scroll_into_view_if_needed: Timeout 2000ms exceeded.",
+      "selector": {
+        "selector": "a",
+        "jaccard": 0.33,
+        "matches": 3,
+        "group": 1
+      }
+    },
+    {
+      "id": 5,
+      "kind": "input",
+      "count": 1,
+      "text": "Search tasks",
+      "tag": "input",
+      "width": 220,
+      "height": 38,
+      "style": {
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "borderTopColor": "rgb(154, 165, 177)",
+        "borderTopWidth": "1px",
+        "borderTopStyle": "solid",
+        "borderTopLeftRadius": "6px",
+        "paddingTop": "0px",
+        "paddingRight": "12px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "auto",
+        "disabled": false
+      },
+      "screenshot": "05_input.png",
+      "states": {
+        "hover": {},
+        "keyboard_focus": {
+          "outlineStyle": [
+            "none",
+            "auto"
+          ],
+          "outlineWidth": [
+            "0px",
+            "1px"
+          ],
+          "outlineColor": [
+            "rgb(0, 0, 0)",
+            "rgb(16, 16, 16)"
+          ]
+        }
+      },
+      "selector": {
+        "selector": "input",
+        "jaccard": 1,
+        "matches": 1,
+        "group": 1
+      }
+    },
+    {
+      "id": 6,
+      "kind": "heading",
+      "count": 3,
+      "text": "Write the release notes",
+      "tag": "h3",
+      "width": 346,
+      "height": 23,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "fontFamily": "sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "700",
+        "lineHeight": "23.2px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "23.1875px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "06_heading.png",
+      "selector": {
+        "selector": "h3",
+        "jaccard": 1,
+        "matches": 3,
+        "group": 3
+      }
+    },
+    {
+      "id": 7,
+      "kind": "heading",
+      "count": 1,
+      "text": "Workspace",
+      "tag": "h2",
+      "width": 183,
+      "height": 17,
+      "style": {
+        "color": "rgb(82, 96, 109)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(82, 96, 109)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "fontFamily": "sans-serif",
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "lineHeight": "17.4px",
+        "letterSpacing": "0.48px",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "17.3906px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "07_heading.png",
+      "selector": {
+        "selector": "h2",
+        "jaccard": 1,
+        "matches": 1,
+        "group": 1
+      }
+    },
+    {
+      "id": 8,
+      "kind": "heading",
+      "count": 1,
+      "text": "Team task board",
+      "tag": "h1",
+      "width": 752,
+      "height": 38,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "fontFamily": "\"Fictional Serif\", serif",
+        "fontSize": "26px",
+        "fontWeight": "700",
+        "lineHeight": "37.7px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "37.6875px",
+        "minHeight": "auto",
+        "disabled": false
+      },
+      "screenshot": "08_heading.png",
+      "selector": {
+        "selector": "h1",
+        "jaccard": 1,
+        "matches": 1,
+        "group": 1
+      }
+    },
+    {
+      "id": 9,
+      "kind": "table_cell",
+      "count": 6,
+      "text": "Write the release notes",
+      "tag": "td",
+      "width": 640,
+      "height": 37,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "0px",
+        "paddingTop": "8px",
+        "paddingRight": "12px",
+        "fontFamily": "sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "20.3px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "37.2969px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "09_table_cell.png",
+      "selector": {
+        "selector": "td",
+        "jaccard": 0.67,
+        "matches": 9,
+        "group": 6
+      }
+    },
+    {
+      "id": 10,
+      "kind": "table_cell",
+      "count": 3,
+      "text": "Task",
+      "tag": "th",
+      "width": 640,
+      "height": 37,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "0px",
+        "paddingTop": "8px",
+        "paddingRight": "12px",
+        "fontFamily": "sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "20.3px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "36.7969px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "10_table_cell.png",
+      "selector": {
+        "selector": "th",
+        "jaccard": 1,
+        "matches": 3,
+        "group": 3
+      }
+    },
+    {
+      "id": 11,
+      "kind": "table_cell",
+      "count": 3,
+      "text": "Run make check",
+      "tag": "td",
+      "width": 640,
+      "height": 38,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "0px",
+        "paddingTop": "8px",
+        "paddingRight": "12px",
+        "fontFamily": "sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "20.3px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "37.8438px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "11_table_cell.png",
+      "selector": {
+        "selector": "td",
+        "jaccard": 0.33,
+        "matches": 9,
+        "group": 3
+      }
+    },
+    {
+      "id": 12,
+      "kind": "badge",
+      "count": 2,
+      "text": "Done",
+      "tag": "span",
+      "width": 45,
+      "height": 21,
+      "style": {
+        "color": "rgb(20, 83, 45)",
+        "backgroundColor": "rgb(227, 245, 232)",
+        "borderTopColor": "rgb(20, 83, 45)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "4px",
+        "paddingTop": "2px",
+        "paddingRight": "8px",
+        "fontFamily": "sans-serif",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "17.4px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "21.3906px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "12_badge.png",
+      "selector": {
+        "selector": ".done",
+        "jaccard": 1,
+        "matches": 2,
+        "group": 2
+      }
+    },
+    {
+      "id": 13,
+      "kind": "badge",
+      "count": 1,
+      "text": "Blocked",
+      "tag": "span",
+      "width": 59,
+      "height": 21,
+      "style": {
+        "color": "rgb(138, 28, 28)",
+        "backgroundColor": "rgb(253, 236, 236)",
+        "borderTopColor": "rgb(138, 28, 28)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "4px",
+        "paddingTop": "2px",
+        "paddingRight": "8px",
+        "fontFamily": "sans-serif",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "17.4px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "21.3906px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "13_badge.png",
+      "selector": {
+        "selector": "span.badge",
+        "jaccard": 0.33,
+        "matches": 3,
+        "group": 1
+      }
+    },
+    {
+      "id": 14,
+      "kind": "nav_item",
+      "count": 2,
+      "text": "Backlog",
+      "tag": "a",
+      "width": 199,
+      "height": 38,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(31, 41, 51)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "6px",
+        "paddingTop": "8px",
+        "paddingRight": "10px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "14_nav_item.png",
+      "states": {
+        "hover": {
+          "backgroundColor": [
+            "rgba(0, 0, 0, 0)",
+            "rgb(237, 242, 247)"
+          ]
+        },
+        "keyboard_focus": {
+          "outlineStyle": [
+            "none",
+            "auto"
+          ],
+          "outlineWidth": [
+            "0px",
+            "1px"
+          ],
+          "outlineColor": [
+            "rgb(31, 41, 51)",
+            "rgb(16, 16, 16)"
+          ],
+          "outlineOffset": [
+            "0px",
+            "1px"
+          ]
+        }
+      },
+      "selector": {
+        "selector": "a",
+        "jaccard": 0.67,
+        "matches": 3,
+        "group": 2
+      }
+    },
+    {
+      "id": 15,
+      "kind": "nav_item",
+      "count": 1,
+      "text": "Board",
+      "tag": "a",
+      "width": 199,
+      "height": 38,
+      "style": {
+        "color": "rgb(15, 118, 110)",
+        "backgroundColor": "rgb(217, 242, 238)",
+        "borderTopColor": "rgb(15, 118, 110)",
+        "borderTopWidth": "0px",
+        "borderTopStyle": "none",
+        "borderTopLeftRadius": "6px",
+        "paddingTop": "8px",
+        "paddingRight": "10px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "600",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "none",
+        "height": "38px",
+        "minHeight": "0px",
+        "disabled": false
+      },
+      "screenshot": "15_nav_item.png",
+      "states": {
+        "hover": {},
+        "keyboard_focus": {
+          "outlineStyle": [
+            "none",
+            "auto"
+          ],
+          "outlineWidth": [
+            "0px",
+            "1px"
+          ],
+          "outlineColor": [
+            "rgb(15, 118, 110)",
+            "rgb(16, 16, 16)"
+          ],
+          "outlineOffset": [
+            "0px",
+            "1px"
+          ]
+        }
+      },
+      "selector": {
+        "selector": "a",
+        "jaccard": 0.33,
+        "matches": 3,
+        "group": 1
+      }
+    },
+    {
+      "id": 16,
+      "kind": "card",
+      "count": 3,
+      "text": "Write the release notes\n\nDue Friday. Owner: Ana.\n\nBlocked",
+      "tag": "div",
+      "width": 380,
+      "height": 120,
+      "style": {
+        "color": "rgb(31, 41, 51)",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "borderTopColor": "rgb(228, 231, 235)",
+        "borderTopWidth": "1px",
+        "borderTopStyle": "solid",
+        "borderTopLeftRadius": "6px",
+        "paddingTop": "16px",
+        "paddingRight": "16px",
+        "fontFamily": "sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "21.75px",
+        "letterSpacing": "normal",
+        "textTransform": "none",
+        "textDecorationLine": "none",
+        "boxShadow": "rgba(31, 41, 51, 0.12) 0px 1px 3px 0px",
+        "height": "120px",
+        "minHeight": "120px",
+        "disabled": false
+      },
+      "screenshot": "16_card.png",
+      "selector": {
+        "selector": ".card",
+        "jaccard": 1,
+        "matches": 3,
+        "group": 3
+      }
+    }
+  ],
+  "extra": {
+    "codeFonts": [
+      "monospace"
+    ],
+    "selectedBackgrounds": [
+      {
+        "value": "rgb(217, 242, 238)",
+        "count": 1
+      }
+    ],
+    "icons": {
+      "nav_items": 3,
+      "nav_items_with_icon": 3,
+      "buttons": 2,
+      "buttons_with_icon": 0
+    },
+    "breakpoints": [
+      800
+    ]
+  },
+  "regions": [
+    {
+      "n": 1,
+      "role": "navigation",
+      "label": "Sections",
+      "tag": "nav",
+      "box": [
+        0,
+        0,
+        220,
+        900
+      ],
+      "selector": "nav",
+      "picture": "regions/01_navigation.png"
+    },
+    {
+      "n": 2,
+      "role": "banner",
+      "label": "",
+      "tag": "header",
+      "box": [
+        220,
+        0,
+        1220,
+        63
+      ],
+      "selector": ".top",
+      "picture": "regions/02_banner.png"
+    },
+    {
+      "n": 3,
+      "role": "main",
+      "label": "",
+      "tag": "main",
+      "box": [
+        220,
+        63,
+        1220,
+        318
+      ],
+      "selector": "main",
+      "picture": "regions/03_main.png"
+    },
+    {
+      "n": 4,
+      "role": "contentinfo",
+      "label": "",
+      "tag": "footer",
+      "box": [
+        220,
+        405,
+        1220,
+        51
+      ],
+      "selector": "footer",
+      "picture": "regions/04_contentinfo.png"
+    }
+  ],
+  "structure": {
+    "format": "reqin-site-map/1",
+    "source": "index.html",
+    "document_title": "Team task board",
+    "landmarks": [
+      {
+        "name": "Sections",
+        "tag": "nav",
+        "role": "",
+        "groups": [
+          {
+            "heading": null,
+            "expandable": false,
+            "items": [
+              {
+                "label": "Board",
+                "accessible_name": "",
+                "badge": "",
+                "tag": "a",
+                "role": "",
+                "href": "#board",
+                "current": "page",
+                "selected": false,
+                "disabled": false
+              },
+              {
+                "label": "Backlog",
+                "accessible_name": "",
+                "badge": "",
+                "tag": "a",
+                "role": "",
+                "href": "#backlog",
+                "current": "",
+                "selected": false,
+                "disabled": false
+              },
+              {
+                "label": "Reports",
+                "accessible_name": "",
+                "badge": "",
+                "tag": "a",
+                "role": "",
+                "href": "#reports",
+                "current": "",
+                "selected": false,
+                "disabled": false
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "main": {
+      "present": true,
+      "id": "board",
+      "headings": [],
+      "interactive": 0
+    },
+    "breadcrumb": "",
+    "skip_link": null,
+    "search": {
+      "label": "Search tasks",
+      "type": "search"
+    },
+    "live_regions": [],
+    "current_at_start": [
+      "Board"
+    ],
+    "screens_seen": [],
+    "notes": [
+      "only menu items were followed, once each; controls inside a screen were not"
+    ],
+    "followed": 0,
+    "final_title": "Team task board"
+  },
+  "notes": [
+    "what this browser drew at 1440x900; a second theme, an open menu or anything behind a click or sign-in that was not set up is not read"
+  ],
+  "roles": {
+    "page": {
+      "value": "#F7F5F0",
+      "how": "the page's own background",
+      "confidence": "read"
+    },
+    "ink": {
+      "value": "#1F2933",
+      "how": "the text colour of the page body",
+      "confidence": "read"
+    },
+    "accent": {
+      "value": "#0F766E",
+      "how": "the background of the main button ('New task', 1 on the page)",
+      "confidence": "read"
+    },
+    "accent-text": {
+      "value": "#FFFFFF",
+      "how": "the text colour of that button",
+      "confidence": "read"
+    },
+    "surface": {
+      "value": "#FFFFFF",
+      "how": "the background of the commonest card",
+      "confidence": "read"
+    },
+    "ink-muted": {
+      "value": "#52606D",
+      "how": "the second most used text colour with enough contrast",
+      "confidence": "guess"
+    },
+    "border": {
+      "value": "#E4E7EB",
+      "how": "the border of the commonest card",
+      "confidence": "read"
+    },
+    "border-control": {
+      "value": "#9AA5B1",
+      "how": "the outline of the commonest text box",
+      "confidence": "read"
+    },
+    "hover": {
+      "value": "#EDF2F7",
+      "how": "the background a menu item or button takes under the pointer",
+      "confidence": "read"
+    },
+    "selected": {
+      "value": "#D9F2EE",
+      "how": "the background of the element marked as current or selected",
+      "confidence": "read"
+    },
+    "font-body": {
+      "value": "sans-serif",
+      "how": "the font of the page body",
+      "confidence": "read"
+    },
+    "font-mono": {
+      "value": "monospace",
+      "how": "the font of code elements",
+      "confidence": "read"
+    },
+    "font-statement": {
+      "value": "sans-serif",
+      "how": "the body font: requirement wording would follow the body text",
+      "confidence": "guess"
+    },
+    "size-body": {
+      "value": "15px",
+      "how": "the font size of the page body",
+      "confidence": "read"
+    },
+    "size-small": {
+      "value": "12px",
+      "how": "the smallest text size that carries 3 % of the characters",
+      "confidence": "guess"
+    },
+    "size-title": {
+      "value": "26px",
+      "how": "the size of the page's h1",
+      "confidence": "read"
+    },
+    "radius-control": {
+      "value": "20px",
+      "how": "the corner of the main button",
+      "confidence": "read"
+    },
+    "radius-panel": {
+      "value": "6px",
+      "how": "the corner of the commonest card",
+      "confidence": "read"
+    },
+    "radius-chip": {
+      "value": "4px",
+      "how": "the corner of the commonest badge or chip",
+      "confidence": "read"
+    },
+    "shadow-card": {
+      "value": "rgba(31, 41, 51, 0.12) 0px 1px 3px 0px",
+      "how": "the shadow of the commonest card",
+      "confidence": "read"
+    },
+    "control-height": {
+      "value": "38px",
+      "how": "the height most buttons and text boxes have",
+      "confidence": "read"
+    }
+  }
+}
