@@ -238,7 +238,9 @@ def test_every_mark_the_probe_reads_is_in_the_hooks_document():
 
 def test_every_mark_in_the_hooks_document_exists_in_the_reference_viewer():
     docnames = set()
-    for cell in re.findall(r"^\|\s*((?:`[^`]+`(?:,\s*|\s+and\s+|\s*)?)+)\s*\|", DOC, flags=re.M):
+    # the navigation marks belong to apps with a menu; the reference viewer has one screen (tools/test_probe_navigation_browser.py checks those marks)
+    without_navigation = re.sub(r"## Navigation marks.*?(?=\n## )", "", DOC, flags=re.S)
+    for cell in re.findall(r"^\|\s*((?:`[^`]+`(?:,\s*|\s+and\s+|\s*)?)+)\s*\|", without_navigation, flags=re.M):
         docnames |= set(re.findall(r"`([a-z][a-z0-9-]*)`", cell))
     docnames -= {"loads"}
     vm = viewer_marks()

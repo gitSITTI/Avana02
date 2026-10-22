@@ -38,6 +38,7 @@
           "description": "slot name -> STATIC (text that is part of the design), NONE (decoration), or a field path such as CL.members[].uid; a list when a slot combines several fields",
           "additionalProperties": {"oneOf": [{"$ref": "#/$defs/source"}, {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}}]}
         },
+        "goes_to": {"type": "string", "pattern": "^([a-z][a-z0-9]*(-[a-z0-9]+)*|(sheet|overlay):[a-z][a-z0-9]*(-[a-z0-9]+)*|(none|external|unknown):\\s*\\S.*)$", "description": "where activating this component leads: a screen id from design/navigation.json, sheet:ID, overlay:ID, external: WHAT, none: WHY, or unknown: WHAT IS NEEDED. A nav-item, tab or link must say."},
         "notes": {"type": "string"}
       }
     },

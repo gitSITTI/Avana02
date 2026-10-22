@@ -19,6 +19,11 @@ Once per run it also checks that the page uses the design tokens (declared varia
 dataset nobody has seen before (a canary written fresh for this run) is shown and that nothing from the previous dataset is left on the screen, and that a
 dataset with a changed byte or a missing manifest is refused outright.
 
+An app with more than one screen can also carry the navigation marks (docs/GUI_TEST_HOOKS.md, "Navigation marks"). Then the probe clicks through the menu and checks
+that every item opens its own screen, that exactly that item is marked as the current one, that the breadcrumb and the page title follow, that the data is still on the
+screen after the move, that the keyboard works, and that no count is invented. With --navigation design/navigation.json it also compares the menu, item by item, with
+the map of the prototype. An app with no menu gets one 'not applicable' line for this.
+
 What this does not do: judge whether the screen is attractive, accessible beyond what the hooks expose, or right for a real user. It proves that the screen is
 bound to the dataset and that the listed behaviours hold for these fourteen shapes. Exit status 1 when any check fails. Needs Playwright and Chromium.
 """
@@ -410,6 +415,203 @@ PAINT_JS = """() => {
 }"""
 
 
+# ---------------------------------------------------------------------------------------------------- the menu and the screens it leads to
+_JS_VISIBLE = "const vis = e => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; };"
+_JS_MENU = """() => { %s
+  const q = s => Array.from(document.querySelectorAll('[data-testid="' + s + '"]'));
+  return q('nav-item').map(e => {
+    const g = e.closest('[data-testid="nav-group"]'); const c = e.querySelector('[data-testid="nav-count"]'); const r = e.getBoundingClientRect();
+    const copy = e.cloneNode(true); copy.querySelectorAll('[data-testid="nav-count"]').forEach(x => x.remove());
+    return {screen: e.getAttribute('data-screen'), label: (copy.textContent || '').replace(/\\s+/g, ' ').trim(), count: c ? (c.textContent || '').trim() : null,
+            current: e.getAttribute('aria-current'), group: g ? g.getAttribute('data-group') : null, tag: e.tagName.toLowerCase(), href: e.getAttribute('href'),
+            visible: vis(e), left: r.left, right: r.right};
+  }); }""" % _JS_VISIBLE
+_JS_SCREEN = """() => { %s
+  const shown = Array.from(document.querySelectorAll('[data-testid="screen"]')).filter(vis);
+  const crumb = document.querySelector('[data-testid="breadcrumb"]');
+  return {visible: shown.map(e => e.getAttribute('data-screen')), text: shown.length ? (shown[0].innerText || '').trim() : '', breadcrumb: crumb ? (crumb.textContent || '').trim() : null,
+          title: document.title, state: document.body.getAttribute('data-state')}; }""" % _JS_VISIBLE
+_JS_LANDMARK = """() => { const e = document.querySelector('[data-testid="nav"]'); if (!e) return null;
+  let name = e.getAttribute('aria-label') || '';
+  const by = e.getAttribute('aria-labelledby');
+  if (!name && by) name = by.split(/\\s+/).map(i => { const x = document.getElementById(i); return x ? (x.textContent || '').trim() : ''; }).join(' ').trim();
+  return {tag: e.tagName.toLowerCase(), role: e.getAttribute('role'), name: name.trim()}; }"""
+
+
+def expected_menu(nav: dict) -> dict:
+    """What design/navigation.json says the side bar holds: the groups with their items, the screen titles, the title suffix, whether the narrow layout shows every item."""
+    sb = (nav.get("shell") or {}).get("side_bar") or {}
+    screens = {s["id"]: s for s in nav.get("screens", [])}
+    groups = [{"id": g["id"], "heading": g.get("heading"), "collapsible": bool(g.get("collapsible")), "default_open": bool(g.get("default_open")),
+               "items": [{"screen": i["screen"], "label": i["label"], "count": "count" in i, "title": screens[i["screen"]]["title"]} for i in g.get("items", [])]} for g in sb.get("groups", [])]
+    suffix = ((nav.get("shell") or {}).get("page_title") or {}).get("document_title", "").replace("<screen title>", "")
+    narrow = (sb.get("layout") or {}).get("narrow") or {}
+    return {"label": sb.get("label"), "groups": groups, "items": [i for g in groups for i in g["items"]], "suffix": suffix,
+            "narrow_width": int(str(narrow["at_most_width"]).replace("px", "")) if narrow.get("at_most_width") else None, "narrow_all_visible": bool(narrow.get("all_items_visible")),
+            "workspace": {s["id"] for s in nav.get("screens", []) if s.get("kind") == "workspace"}}
+
+
+def check_navigation(P: Page, R: Results, nav: dict | None = None, scope: str = "navigation"):
+    """The menu of an app with more than one screen. Reads only the navigation marks. With the map (design/navigation.json) the menu is also compared with it."""
+    from playwright.sync_api import TimeoutError as PWTimeout
+    ok = lambda cid, cond, detail="", skipped=False: R.add(scope, cid, cond, detail if not cond or skipped else "", skipped)  # noqa: E731
+    P.pg.set_viewport_size({"width": 1440, "height": 900})
+    if P.count("nav") == 0:
+        ok("nav.present", True, "no element carries the nav mark: a one-screen app has no menu to check", skipped=True)
+        return
+    exp = expected_menu(nav) if nav else None
+    ok("nav.present", P.count("nav") == 1, "%d elements carry the nav mark; there must be exactly one" % P.count("nav"))
+    lm = P.pg.evaluate(_JS_LANDMARK)
+    why = []
+    if lm["tag"] != "nav" and lm["role"] != "navigation":
+        why.append("it is a <%s>, not a <nav> and without role=navigation, so a screen reader does not list it as navigation" % lm["tag"])
+    if not lm["name"]:
+        why.append("it has no accessible name (aria-label)")
+    elif exp and lm["name"] != exp["label"]:
+        why.append("its name is %r; the map says %r" % (lm["name"], exp["label"]))
+    ok("nav.landmark", not why, "; ".join(why))
+
+    items = P.pg.evaluate(_JS_MENU)
+    shown = [(i["screen"], i["label"]) for i in items]
+    ids = [i["screen"] for i in items]
+    problems = []
+    if len(items) < 2:
+        problems.append("%d nav-item marks; a menu has at least two" % len(items))
+    if any(not x for x in ids):
+        problems.append("a nav-item has no data-screen")
+    if len(set(ids)) != len(ids):
+        problems.append("two menu items name the same screen: %s" % sorted({x for x in ids if ids.count(x) > 1}))
+    if exp:
+        want = [(i["screen"], i["label"]) for i in exp["items"]]
+        if shown != want:
+            problems.append("the menu holds %s; the map says %s (the order counts)" % (shown, want))
+    ok("nav.items_listed", not problems, "; ".join(problems))
+    if exp:
+        got_groups = [(g, [i["screen"] for i in items if i["group"] == g]) for g in dict.fromkeys(i["group"] for i in items)]
+        want_groups = [(g["id"], [i["screen"] for i in g["items"]]) for g in exp["groups"]]
+        ok("nav.groups", got_groups == want_groups, "groups on the page %s; in the map %s" % (got_groups, want_groups))
+        closed = [i["screen"] for g in exp["groups"] if not g["collapsible"] or g["default_open"] for i in g["items"] if i["screen"] in ids and not next(x for x in items if x["screen"] == i["screen"])["visible"]]
+        ok("nav.default_open_visible", not closed, "items in a group that starts open (or never folds) are not visible: %s" % closed)
+    else:
+        ok("nav.groups", True, "no --navigation map, so the groups are not compared", skipped=True)
+        ok("nav.default_open_visible", True, "no --navigation map", skipped=True)
+    bad = [i["screen"] for i in items if not (i["tag"] == "button" or (i["tag"] == "a" and i["href"]))]
+    ok("nav.items_are_controls", not bad, "menu items that are not a <button> or an <a href>, so the keyboard cannot reach them: %s" % bad)
+
+    # where the app starts
+    st = P.pg.evaluate(_JS_SCREEN)
+    cur = [i["screen"] for i in items if i["current"] == "page"]
+    why = []
+    if len(st["visible"]) != 1:
+        why.append("%d screen marks are visible at the start; exactly one must be" % len(st["visible"]))
+    if len(cur) != 1:
+        why.append("%d menu items carry aria-current=page at the start; exactly one must" % len(cur))
+    elif len(st["visible"]) == 1 and cur[0] != st["visible"][0]:
+        why.append("the screen showing is %r and the current menu item is %r" % (st["visible"][0], cur[0]))
+    if exp and len(st["visible"]) == 1 and st["visible"][0] not in exp["workspace"]:
+        why.append("the app starts on %r, which the map does not list as a screen with the menu" % st["visible"][0])
+    ok("nav.starts_on_current_screen", not why, "; ".join(why))
+    state_before, first_text, errors_before = st["state"], st["text"], len(P.errors)
+
+    # follow every item
+    titles = {i["screen"]: i["title"] for i in exp["items"]} if exp else {i["screen"]: i["label"] for i in items}
+    wrong_screen, wrong_current, wrong_crumb, wrong_title, same_text, hung = [], [], [], [], [], []
+    seen_crumb = seen_title = False
+    previous, previous_id = st["text"], (st["visible"][0] if len(st["visible"]) == 1 else None)
+    for i in items:
+        sid = i["screen"]
+        try:
+            P.pg.locator(tid("nav-item") + '[data-screen="%s"]' % sid).first.click(timeout=3000)
+            P.pg.wait_for_function("s => { const e = Array.from(document.querySelectorAll('[data-testid=\"screen\"]')).filter(x => { const r = x.getBoundingClientRect(); return r.width > 0 && r.height > 0; });"
+                                   " return e.length === 1 && e[0].getAttribute('data-screen') === s; }", arg=sid, timeout=3000)
+        except PWTimeout:
+            hung.append(sid)
+        P.pg.wait_for_timeout(120)
+        now = P.pg.evaluate(_JS_SCREEN)
+        menu = P.pg.evaluate(_JS_MENU)
+        if sid in hung:
+            wrong_screen.append("%s -> %s" % (sid, now["visible"] or "no screen"))
+            continue
+        marked = [m["screen"] for m in menu if m["current"] == "page"]
+        if marked != [sid]:
+            wrong_current.append("%s -> %s" % (sid, marked or "nothing"))
+        if now["breadcrumb"] is not None:
+            seen_crumb = True
+            if titles[sid] not in now["breadcrumb"]:
+                wrong_crumb.append("%s: %r lacks %r" % (sid, now["breadcrumb"], titles[sid]))
+        if exp and exp["suffix"]:
+            seen_title = True
+            if now["title"] != titles[sid] + exp["suffix"]:
+                wrong_title.append("%s: %r, the map says %r" % (sid, now["title"], titles[sid] + exp["suffix"]))
+        if now["text"] == previous and sid != previous_id:
+            same_text.append(sid)
+        previous, previous_id = now["text"], sid
+    ok("nav.each_item_opens_its_screen", not wrong_screen, "after a click the screen showing was not the item's: %s" % wrong_screen[:5])
+    ok("nav.each_item_marks_itself_current", not wrong_current, "after a click, the item marked aria-current=page was not the one clicked: %s" % wrong_current[:5])
+    ok("nav.each_screen_has_its_own_content", not same_text, "these screens show exactly what the screen before them showed, so the menu changes the highlight and not the page: %s" % same_text[:5])
+    if seen_crumb:
+        ok("nav.breadcrumb_follows", not wrong_crumb, "; ".join(wrong_crumb[:3]))
+    else:
+        ok("nav.breadcrumb_follows", True, "no breadcrumb mark", skipped=True)
+    if seen_title:
+        ok("nav.page_title_follows", not wrong_title, "; ".join(wrong_title[:3]))
+    else:
+        ok("nav.page_title_follows", True, "no --navigation map, or it has no page title rule", skipped=True)
+    end = P.pg.evaluate(_JS_SCREEN)
+    ok("nav.keeps_the_dataset", end["state"] == state_before and len(P.errors) == errors_before,
+       "after the clicks the page state is %r (was %r) and %d new errors appeared: %s" % (end["state"], state_before, len(P.errors) - errors_before, "; ".join(P.errors[errors_before:errors_before + 2])))
+    home = st["visible"][0] if len(st["visible"]) == 1 else None
+    if home in ids and not hung:
+        try:
+            P.pg.locator(tid("nav-item") + '[data-screen="%s"]' % home).first.click(timeout=3000)
+        except PWTimeout:
+            pass
+        P.pg.wait_for_timeout(200)
+        back = P.pg.evaluate(_JS_SCREEN)
+        ok("nav.round_trip", back["visible"] == [home] and back["text"] == first_text, "coming back to %r after visiting every other screen shows %s than it did the first time" % (home, "another screen" if back["visible"] != [home] else "different content"))
+    else:
+        ok("nav.round_trip", True, "the screen the app starts on is not a menu item, or an item did not open (see above)", skipped=True)
+
+    # the keyboard
+    menu = P.pg.evaluate(_JS_MENU)
+    target = next((m["screen"] for m in reversed(menu) if m["current"] != "page"), None)
+    if target and not hung:
+        loc = P.pg.locator(tid("nav-item") + '[data-screen="%s"]' % target).first
+        loc.focus()
+        focused = P.pg.evaluate("document.activeElement && document.activeElement.closest('[data-testid=\"nav-item\"]') ? document.activeElement.closest('[data-testid=\"nav-item\"]').getAttribute('data-screen') : null")
+        P.pg.keyboard.press("Enter")
+        P.pg.wait_for_timeout(250)
+        after = P.pg.evaluate(_JS_SCREEN)
+        ok("nav.keyboard", focused == target and after["visible"] == [target], "focus went to %r (wanted %r); after Enter the screen showing is %s" % (focused, target, after["visible"]))
+    else:
+        ok("nav.keyboard", True, "no item to try", skipped=True)
+
+    # counts
+    menu = P.pg.evaluate(_JS_MENU)
+    why = []
+    for m in menu:
+        if m["count"] is None:
+            continue
+        if not re.fullmatch(r"[0-9]+", m["count"]):
+            why.append("%s shows %r, which is not a whole number" % (m["screen"], m["count"]))
+        elif m["count"] == "0":
+            why.append("%s shows 0: a menu count that nothing produces is left out, not shown as 0" % m["screen"])
+        if exp and not next((x for x in exp["items"] if x["screen"] == m["screen"]), {"count": False})["count"]:
+            why.append("%s carries a count the map does not give it" % m["screen"])
+    ok("nav.count_not_invented", not why, "; ".join(why))
+
+    # a narrow window
+    if exp and exp["narrow_all_visible"] and exp["narrow_width"]:
+        w = min(390, exp["narrow_width"])
+        P.pg.set_viewport_size({"width": w, "height": 800})
+        P.pg.wait_for_timeout(150)
+        cut = [m["screen"] for m in P.pg.evaluate(_JS_MENU) if not m["visible"] or m["left"] < -1 or m["right"] > w + 1]
+        ok("nav.narrow_shows_every_item@%d" % w, not cut, "at %d px wide these items are hidden or cut off: %s" % (w, cut))
+        P.pg.set_viewport_size({"width": 1440, "height": 900})
+    else:
+        ok("nav.narrow_shows_every_item", True, "the map does not say the narrow layout shows every item", skipped=True)
+
+
 def check_tokens(P: Page, R: Results, tokens_css: Path):
     import colour as C
     import conform as CF
@@ -530,7 +732,7 @@ def make_canary_texts(tag: str) -> list:
 
 
 # ---------------------------------------------------------------------------------------------------- main
-def run(app: str, datasets: str, only: list[str] | None = None, load_via: str = "url", tokens: str | None = None, widths=WIDTHS, extras: bool = True) -> Results:
+def run(app: str, datasets: str, only: list[str] | None = None, load_via: str = "url", tokens: str | None = None, widths=WIDTHS, extras: bool = True, navigation: str | None = None) -> Results:
     from playwright.sync_api import sync_playwright
     root = Path(datasets).resolve()
     index = json.loads((root / "index.json").read_text(encoding="utf-8"))
@@ -558,6 +760,11 @@ def run(app: str, datasets: str, only: list[str] | None = None, load_via: str = 
                 P.open(["datasets/" + e["folders"][0]])
                 check_tokens(P, R, Path(tokens))
                 first_tokens_done = True
+        nav = json.loads(Path(navigation).read_text(encoding="utf-8")) if navigation else None
+        P.pg.set_viewport_size({"width": 1440, "height": 900})
+        P.open(["datasets/" + f for f in entries[0]["folders"]])
+        if P.state() == "ready":
+            check_navigation(P, R, nav)
         if extras:
             template = None
             for e in entries:
@@ -579,6 +786,8 @@ def report(R: Results) -> int:
             print("\n" + scope)
         mark = "-" if r["skipped"] else ("ok" if r["ok"] else "FAIL")
         line = "  %-4s %s" % (mark, r["check"])
+        if r["skipped"] and r["detail"]:
+            line += "  (not applicable: %s)" % r["detail"]
         if not r["ok"] and not r["skipped"]:
             line += "\n         " + r["detail"]
         print(line)
@@ -596,9 +805,10 @@ def main(argv=None) -> int:
     ap.add_argument("--load-via", choices=("url", "files"), default="url", help="url: ?dataset=FOLDER (default); files: the folder input")
     ap.add_argument("--tokens", default=str(serve.TOKENS), help="design tokens to check the page's colours and fonts against; 'none' skips that check")
     ap.add_argument("--no-extras", action="store_true", help="skip the canary and the corrupted-dataset checks")
+    ap.add_argument("--navigation", metavar="FILE", help="design/navigation.json: also compare the menu with the map of the prototype (without it, an app that has a menu gets the structure checks only)")
     ap.add_argument("--json", metavar="FILE")
     a = ap.parse_args(argv)
-    R = run(a.app, a.datasets, [s.strip().lower() for s in a.only.split(",")] if a.only else None, a.load_via, None if a.tokens == "none" else a.tokens, extras=not a.no_extras)
+    R = run(a.app, a.datasets, [s.strip().lower() for s in a.only.split(",")] if a.only else None, a.load_via, None if a.tokens == "none" else a.tokens, extras=not a.no_extras, navigation=a.navigation)
     if a.json:
         Path(a.json).write_text(json.dumps({"format": "reqin-gui-probe/1", "app": os.path.basename(os.path.normpath(a.app)), "checks": R.rows}, indent=1) + "\n", encoding="utf-8")
     return report(R)

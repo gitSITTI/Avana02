@@ -1,0 +1,209 @@
+{
+  "format": "reqin-navigation/1",
+  "about": "How the product's screens, menus and content relate: which screens exist, what the menus hold and where each item goes, what the top bar does, which control on which screen leads to which other screen and what it carries along, and which part of docs/SCREEN_DATA_MAP.md says where each screen's content comes from. Read it BEFORE you build a menu or a screen from a picture: a picture shows the words in a menu and not where they lead. tools/gui_checks/check_navigation.py checks it (and, with --prototype, checks it against the prototype's source); docs/NAVIGATION_MAP.md is generated from it. Everything here is made up: the sample project is invented.",
+  "product": "Requirements Consolidator",
+  "start": "open",
+  "screens": [
+    {
+      "id": "open",
+      "title": "Open a requirements project",
+      "kind": "entry",
+      "data_map": ["4.1"],
+      "part": "10_open.html",
+      "note": "The first screen. No side bar and no top bar: they belong to the workspace."
+    },
+    {
+      "id": "import",
+      "title": "Map fields and choose scope",
+      "kind": "entry",
+      "data_map": ["4.2", "4.3"],
+      "part": "20_import.html",
+      "steps": [
+        {"id": "verify", "title": "Check statements found in a document", "data_map": ["4.2"], "only_when": "the source is a Word or PDF document"},
+        {"id": "map", "title": "Map fields and choose scope", "data_map": ["4.3"]}
+      ],
+      "note": "A step bar runs along the top: for a document, 1 Source, 2 Verify statements, 3 Map fields / choose scope / prepare, 4 Workspace; for any other source, 1 Source, 2 Map fields / choose scope / prepare, 3 Workspace. No side bar."
+    },
+    {"id": "home", "title": "Home", "kind": "workspace", "data_map": ["4.5"], "part": "35_home.html"},
+    {"id": "review", "title": "Review queue", "kind": "workspace", "data_map": ["4.7"], "part": "50_review.html",
+      "note": "The queue and one cluster at a time. 'Line up the words' (4.8) is a sheet opened from a cluster, listed under sheets."},
+    {"id": "explorer", "title": "All requirements", "kind": "workspace", "data_map": ["4.9"], "part": "60_explorer.html"},
+    {"id": "overview", "title": "Overview", "kind": "workspace", "data_map": ["4.6"], "part": "40_overview.html"},
+    {"id": "vee", "title": "The V", "kind": "workspace", "data_map": ["4.10"], "part": "62_vee.html"},
+    {"id": "results", "title": "Results and grade", "kind": "workspace", "data_map": ["4.11"], "part": "65_results.html"},
+    {"id": "methods", "title": "Methods and metrics", "kind": "workspace", "data_map": ["4.13"], "part": "70_methods.html"},
+    {"id": "gold", "title": "Label pairs", "kind": "workspace", "data_map": ["4.12"], "part": "68_gold.html"},
+    {"id": "audit", "title": "Decisions and audit", "kind": "workspace", "data_map": ["4.14"], "part": "80_audit.html"},
+    {"id": "policy", "title": "Sign-off policy", "kind": "workspace", "data_map": ["4.15"], "part": "85_policy.html"},
+    {"id": "ai", "title": "AI use", "kind": "workspace", "data_map": ["4.16"], "part": "86_ai.html"},
+    {"id": "export", "title": "Export to documents", "kind": "workspace", "data_map": ["4.17"], "part": "87_export.html"}
+  ],
+  "sheets": [
+    {
+      "id": "align",
+      "title": "Line up the words",
+      "data_map": ["4.8"],
+      "part": "55_align_sheet.html",
+      "opened_from": ["review"],
+      "note": "A sheet over a cluster, not a screen: the screen behind it and the side bar stay. Closing it returns focus to the button that opened it."
+    }
+  ],
+  "overlays": [
+    {
+      "id": "glossary",
+      "title": "Glossary and help",
+      "data_map": ["4.4"],
+      "opened_by": ["side_bar.foot[Glossary and help]", "top_bar.shortcuts[Glossary and help]"],
+      "closed_by": "its own 'Close glossary' button",
+      "where": "a panel at the top of the content area, above the screen that was showing; the screen stays where it was"
+    },
+    {
+      "id": "assistant",
+      "title": "The assistant",
+      "data_map": ["4.18"],
+      "opened_by": ["top_bar.shortcuts[Ask the assistant]"],
+      "closed_by": "the same top-bar button (now labelled 'Hide the assistant'), the 'Close the assistant' button inside it, or 'Close project'",
+      "where": "a panel beside the content, named 'Assistant' for a screen reader, on any workspace screen"
+    }
+  ],
+  "shell": {
+    "applies_to": "every screen whose kind is workspace",
+    "data_map": ["4.4"],
+    "skip_link": {"label": "Skip to the main content", "moves_focus_to": "the content area"},
+    "side_bar": {
+      "label": "Main",
+      "groups": [
+        {
+          "id": "top",
+          "heading": null,
+          "collapsible": false,
+          "items": [
+            {"screen": "home", "label": "Home", "icon": "home"},
+            {"screen": "review", "label": "Review queue", "icon": "queue",
+              "count": {"what": "clusters waiting for the person signed in (the same number as the main button on Home)", "sources": ["CMP.counts.clusters", "WORK"], "no_producer": "show no count, not 0"}},
+            {"screen": "explorer", "label": "All requirements", "icon": "table"}
+          ]
+        },
+        {
+          "id": "progress",
+          "heading": "Progress and evidence",
+          "collapsible": true,
+          "default_open": true,
+          "items": [
+            {"screen": "overview", "label": "Overview", "icon": "chart"},
+            {"screen": "vee", "label": "The V", "icon": "vee"},
+            {"screen": "results", "label": "Results and grade", "icon": "medal"},
+            {"screen": "methods", "label": "Methods and metrics", "icon": "flask"},
+            {"screen": "gold", "label": "Label pairs", "icon": "tag"},
+            {"screen": "audit", "label": "Decisions and audit", "icon": "clock"}
+          ]
+        },
+        {
+          "id": "output",
+          "heading": "Policy and output",
+          "collapsible": true,
+          "default_open": true,
+          "items": [
+            {"screen": "policy", "label": "Sign-off policy", "icon": "shield"},
+            {"screen": "ai", "label": "AI use", "icon": "spark"},
+            {"screen": "export", "label": "Export to documents", "icon": "export"}
+          ]
+        }
+      ],
+      "foot": [
+        {"label": "Glossary and help", "icon": "book", "opens": "glossary"},
+        {"label": "Close project", "icon": "exit", "goes_to": "open", "also": "closes the assistant"}
+      ],
+      "layout": {
+        "wide": "a column 256px wide down the left, kept at the top of the window, scrolling by itself when it is taller than the window",
+        "narrow": {"at_most_width": "900px", "what": "a full-width wrapping row above the content, not kept at the top; the group headings are hidden and every item is shown whether its group was folded or not; the project card is hidden", "all_items_visible": true},
+        "how_known": "read from the prototype's styles in prototype/parts/m/00_head.html; not run in a browser for this map"
+      },
+      "current": "The item whose screen is showing carries aria-current=page. Nothing is current on a screen that has no item (none in this product: every workspace screen has one).",
+      "prototype_only": ["the project card above the menu", "the 'Signed in as' card", "'Demo only' lens preview", "'Demo only' switch person", "'Demo only' simulate a teammate"],
+      "prototype_only_labels": ["^(Sam|Priya|Jordan|Casey|Morgan|Lee)[A-Z a-z]", "^A teammate ", "^The source drifts", "^My own lens$", "^(Systems|Process|UX|New)[A-Za-z ]* lens$"],
+      "note": "Group headings are buttons that fold their items (aria-expanded). The count is on one item only."
+    },
+    "top_bar": {
+      "breadcrumb": ["the project name", "the title of the screen showing"],
+      "project_name": "not in any dataset: WORK or STATIC (docs/SCREEN_DATA_MAP.md 4.4)",
+      "chips": [
+        {"what": "scope", "sources": ["DS.fields.allocation"]},
+        {"what": "baseline", "sources": ["DS.fields.baseline"]}
+      ],
+      "search": {
+        "label": "Search requirements",
+        "over": ["DS.uid", "DS.text"],
+        "when_text_entered": {"goes_to": "review", "carries": "the text as the search, the All tab, every filter cleared, page one"},
+        "when_emptied": "stays on the screen showing and clears the search"
+      },
+      "shortcuts": [
+        {"label": "The V", "goes_to": "vee"},
+        {"label": "Glossary and help", "opens": "glossary"},
+        {"label": "Decisions and audit", "goes_to": "audit"},
+        {"label": "Ask the assistant", "toggles": "assistant"}
+      ],
+      "prototype_only": ["the avatars of teammates on the project"]
+    },
+    "frame": ["The draft bar under the top bar, on every workspace screen: words only, not data (4.4)"],
+    "page_title": {"document_title": "<screen title> · Requirements Consolidator", "announce": "when the screen changes, a polite live region says 'Now showing: <screen title>', and the document title changes with it"}
+  },
+  "flows": [
+    {"from": ["open", "home"], "to": "import", "control": "choosing a way in: a source card, a recent import, the sample, a ReqIF file, a dropped file, or one of the three 'Bring in requirements' cards on Home", "carries": "the chosen source type; the import starts at its first step", "evidence": "c1.js goImport"},
+    {"from": ["import"], "to": "open", "control": "the first step in the step bar, or 'Back' on the map step when the source is not a document", "carries": "nothing", "evidence": "c1.js valsImport"},
+    {"from": ["import"], "to": "home", "control": "'Confirm mapping and import'", "carries": "the scope chosen: everything, or one allocation as a pilot", "evidence": "c1.js valsImport"},
+    {"from": ["import"], "to": "open", "control": "'Back' on the verify step", "carries": "nothing", "evidence": "c1.js valsVerify"},
+
+    {"from": "workspace", "to": "review", "control": "the top bar's search, once text is entered", "carries": "the text as the search; the All tab; filters cleared", "evidence": "c1.js valsShell"},
+    {"from": "workspace", "to": "audit", "control": "the clock button in the top bar", "carries": "nothing", "evidence": "c1.js valsShell"},
+    {"from": "workspace", "to": "open", "control": "'Close project' at the foot of the side bar", "carries": "nothing; the assistant is closed", "evidence": "c1.js valsShell"},
+    {"from": "workspace", "to": "vee", "control": "the small V in the top bar; also 'Open the V' on Home and on Results", "carries": "nothing", "evidence": "c3.js valsVeeStrip"},
+    {"from": "workspace", "to": "review", "control": "the button that uses a draft the assistant wrote", "carries": "the draft as the person's own wording in the Resolve panel of the cluster the assistant is about; nothing is recorded until the person records the decision", "evidence": "c3.js valsAssist"},
+
+    {"from": ["home"], "to": "review", "control": "the main button ('Review the next cluster' / 'Look at the next cluster')", "carries": "the first cluster waiting for this person, else the first undecided, else the first; the tab that lists this person's clusters", "evidence": "c1.js startReviewFor"},
+    {"from": ["home"], "to": "review", "control": "a bar in 'Open clusters by allocation'; a row in 'Latest activity' that names a cluster", "carries": "that allocation as a filter with status Open, or that cluster selected; the All tab", "evidence": "c1.js valsHome"},
+    {"from": ["home"], "to": "ai", "control": "'AI use' in the security band", "carries": "nothing", "evidence": "c1.js valsHome"},
+    {"from": ["home"], "to": "overview", "control": "'Open the overview'", "carries": "nothing", "evidence": "c1.js valsHome"},
+    {"from": ["home"], "to": "open", "control": "'See all six sources'", "carries": "nothing", "evidence": "c1.js valsHome"},
+    {"from": ["home"], "to": "audit", "control": "'Open the log'", "carries": "nothing", "evidence": "c1.js valsHome"},
+    {"from": ["home"], "to": "home", "control": "the 'Your work is kept' panel: show the work another tab saved", "carries": "the saved work replaces what was showing; a message says so", "evidence": "c7.js keepTakeOther"},
+    {"from": ["home"], "to": "home", "control": "the 'Your work is kept' panel: load the saved work that was read in", "carries": "the saved work replaces what was showing; a message says so", "evidence": "c7.js keepApply"},
+    {"from": ["home"], "to": "open", "control": "the 'Your work is kept' panel: 'Start over'", "carries": "everything kept in this browser is removed", "evidence": "c7.js keepStartOver"},
+
+    {"from": ["overview"], "to": "review", "control": "'Start with the safest cluster' and 'Open CL-050'", "carries": "the first waiting cluster, or a named one; the prototype types the id CL-050 into its source: a screen built from a dataset must pick a real cluster (4.6)", "evidence": "c1.js valsOverview"},
+    {"from": ["overview"], "to": "explorer", "control": "'See all requirements on a map'", "carries": "nothing", "evidence": "c1.js valsOverview"},
+    {"from": ["overview"], "to": "results", "control": "'See results and grade'", "carries": "nothing", "evidence": "c1.js valsOverview"},
+
+    {"from": ["review"], "to": "ai", "control": "'Open AI use' in the banner shown when AI is held back for a cluster", "carries": "nothing", "evidence": "c2.js valsDetail"},
+
+    {"from": ["explorer"], "to": "review", "control": "'Open its cluster' on a selected requirement", "carries": "that cluster selected; the All tab", "evidence": "c3.js valsExplorer"},
+    {"from": ["explorer"], "to": "review", "control": "'Open CLUSTER' beside 'Take it out of CLUSTER' in the single-requirement panel", "carries": "that cluster selected; the All tab", "evidence": "c5.js valsSingle"},
+
+    {"from": ["vee"], "to": "review", "control": "the button that opens the undecided clusters of a level of the V", "carries": "that level as a filter; status Undecided; the All tab", "evidence": "c3.js valsVee"},
+    {"from": ["vee"], "to": "explorer", "control": "'See the gaps' on a level", "carries": "that level as a filter and the gaps-only switch on", "evidence": "c3.js valsVee"},
+    {"from": ["vee"], "to": "export", "control": "'Open Export'", "carries": "nothing", "evidence": "c3.js valsVee"},
+
+    {"from": ["results"], "to": "review", "control": "a count, a cluster or a requirement named in the grade panels, for example what would raise the grade", "carries": "a filter, or that cluster selected; the All tab", "evidence": "c3.js valsResults"},
+    {"from": ["results"], "to": "explorer", "control": "a requirement named in the grade panels", "carries": "that requirement selected; filters cleared", "evidence": "c3.js valsResults"},
+    {"from": ["results"], "to": "methods", "control": "'See what the AI adds'", "carries": "nothing", "evidence": "c3.js valsResults"},
+    {"from": ["results"], "to": "export", "control": "'Go to export'", "carries": "nothing", "evidence": "c3.js valsResults"},
+
+    {"from": ["methods"], "to": "gold", "control": "'Label pairs'", "carries": "nothing", "evidence": "c4.js valsGoldPanel"},
+    {"from": ["gold"], "to": "methods", "control": "'See the measured scores'", "carries": "nothing", "evidence": "c4.js valsGold"},
+
+    {"from": ["audit"], "to": "review", "control": "'Open' on an event whose target is a cluster", "carries": "that cluster selected; the All tab", "evidence": "c3.js valsAudit"},
+    {"from": ["audit"], "to": "explorer", "control": "'Open' on an event whose target is a requirement", "carries": "that requirement selected; filters cleared", "evidence": "c3.js valsAudit"},
+
+    {"from": ["ai"], "to": "review", "control": "'Open CLUSTER in the review queue' on a group held back from AI", "carries": "that cluster selected; the All tab", "evidence": "c8.js valsAi"},
+    {"from": ["export"], "to": "review", "control": "a cluster named in the list of what needs attention before export", "carries": "that cluster selected; the All tab", "evidence": "c3.js valsExport"}
+  ],
+  "not_navigation": [
+    {"evidence": "c7.js keepProbe", "why": "a self-check that draws every screen to prove saved work can be shown; no person triggers it as a move"}
+  ],
+  "notes": [
+    "A screen's name (the menu label, the breadcrumb, the document title) is not always the heading inside the screen. Read from the running prototype's sample project: nine screens repeat their name as the heading; Home's heading is a sentence with a count taken from the data; the Review queue's is the name of the cluster showing; The V's is 'The engineering V'. A rebuild puts the name in the menu, the breadcrumb and the title, and lets the heading be what the screen needs. Do not take a screen's name from its heading in a picture.",
+    "A screen's content is described by its data_map sections in docs/SCREEN_DATA_MAP.md. A menu item's words are STATIC; only the count on 'Review queue' is data.",
+    "'from' was read from the code by one agent: the checks confirm which screens each piece of code can lead to, not which screen that code is shown on.",
+    "In the prototype a menu item changes only which screen shows. A cluster selected or a filter set earlier is still set when you come back to that screen (read from the code, not run). Say in your report if you keep or clear that state differently."
+  ]
+}

@@ -22,6 +22,7 @@ fail, and say what you did not check.**
 | `design/reference_viewer/` | A small plain screen that passes every check below | Read `design/reference_viewer/viewer.js` and its README before you write yours. Copy its behaviour (loading, refusing, windowing, "not provided", textContent only), not its look |
 | `design/ui_from_image/SKILL.md` | How to go from a picture to components in the target's own look, with scripts and gates | Use it when you are given a picture |
 | `tools/gui_checks/` and `docs/GUI_TEST_HOOKS.md` | The scan of the source (`tools/gui_checks/hardcode_scan.py`), the probe (`tools/gui_checks/probe.py`: a real browser against the fourteen test datasets), a local server (`tools/gui_checks/serve.py`), the status checker (`tools/gui_checks/check_status.py`), and the marks (`data-testid`) a screen carries so one probe can check any screen | Your screen carries the marks and passes both checks |
+| `design/navigation.json` and `docs/NAVIGATION_MAP.md` | Which screens exist, what each menu holds and in what order, where every control leads and what it carries along, which part of the data map fills each screen, and where a screen's name differs from its heading | Read it before you build any menu, tab or button that moves the person. A picture shows a menu's words and never where they lead. `python3 tools/gui_checks/check_navigation.py` checks the map against the prototype's source |
 | `prototype/` | A clickable picture of the product with a synthetic sample. The page `prototype/project/Main.dc.html` is generated, about 780 KB, and every number and name in it is typed in | **Never copy markup, styles or data from it.** It uses variables a runtime injects and literal colours, which is exactly what makes a copy come out with the wrong look, and its numbers are the sample's. Read `prototype/parts/` to see what a screen contains and in what order, and `docs/GUI_DESIGN_GUIDE.md` for why |
 
 ## Why earlier attempts went wrong (so you do not repeat them)
@@ -35,6 +36,9 @@ fail, and say what you did not check.**
 4. **Some ideas have no producer yet** (the screen needs comparison output or saved work that no code supplies to the screen). Build the empty state and say so on
    the screen and in your report; never invent a plausible value.
 5. **Several agents worked at once with no shared definition** of what each piece takes and gives. See "When more than one agent works".
+6. **The menus, and the screens they lead to, were guessed from a picture.** A picture shows the words in a menu; it does not show the groups that fold, the order, the screen each item
+   opens, what a button on one screen carries to another, or that a screen's name is not the heading inside it. `design/navigation.json` says all of that, and the probe's `nav.*` checks
+   (`docs/GUI_TEST_HOOKS.md`, "Navigation marks") click through your menu and fail when an item opens another screen than its label names.
 
 ## Build in three layers, so a change of look never touches the data code
 
@@ -45,7 +49,8 @@ fail, and say what you did not check.**
 
 ## Steps. Each has a gate: do not go on until it holds.
 
-0. **Choose the one screen or part.** Write down which rows of `docs/SCREEN_DATA_MAP.md` it uses, and which of them have no producer. *Gate:* you can name them.
+0. **Choose the one screen or part.** Write down which rows of `docs/SCREEN_DATA_MAP.md` it uses, and which of them have no producer; and from `docs/NAVIGATION_MAP.md` where the person
+   comes from, where each control on it leads, and whether it has a menu item. *Gate:* you can name them.
 1. **Get the datasets.** `reqin make-datasets DIR --size 5000`. Open F1 (minimal), F2 (everything), F6 (extracted from prose), F12 (empty) and look at their files.
    `python3 tools/gui_checks/datapaths.py --json paths.json` lists every real field path. *Gate:* you have seen what a record, a link and a rejected record look like.
 2. **Read the look.** The tokens, and if the screen must match an existing page, `design/ui_from_image/SKILL.md` step 1. *Gate:* you can say what the primary button,
@@ -57,6 +62,7 @@ fail, and say what you did not check.**
 5. **Build the components and the screen from tokens,** one component at a time, and put the screen's marks on it (`docs/GUI_TEST_HOOKS.md`).
 6. **Run the two checks.**
    `python3 tools/gui_checks/hardcode_scan.py YOUR_APP` and `python3 tools/gui_checks/probe.py --app YOUR_APP --datasets DIR`.
+   An app with a menu carries the navigation marks and is run with `--navigation design/navigation.json`; an app with one screen needs neither.
    *Gate:* 0 errors and 0 failed. Do not edit the probe, the hooks document or the datasets to make a check pass. If you believe a check is wrong, say which and why
    in your report and leave it as it is.
 7. **Break your own screen on purpose,** one way at a time (a count typed in, a field dropped, a hook removed), and see that a check fails for each. A check you have
