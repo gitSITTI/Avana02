@@ -77,13 +77,22 @@ load one). Show an empty state when there is nothing, and say "not provided by t
 and 320 px wide. Then compare the built screenshot with the picture for structure.
 *Gate:* say what you checked and what you did not. A screen that was only looked at is "looked at", not "verified".
 
+**8. Lock the look once the person has approved it.**
+`python3 tools/gui_checks/golden.py shot --app APP --datasets DIR --dataset F02_everything --width 1440 --out shots/home-1440.png` (and again at 390), then show the pictures.
+Only when the person says the look is right: `python3 tools/gui_checks/golden.py approve home-1440 shots/home-1440.png`. From then on, any change to that screen must pass
+`python3 tools/gui_checks/golden.py compare-all --shots shots/`; a failure means the look moved, so put it back or ask for a new approval. You never approve your own work.
+*Gate:* the pictures were looked at by a person before `approve`; `compare-all` passes on the unchanged screen. The gate is about drift, not quality, and it is per machine (see `docs/GUI_TEST_HOOKS.md`).
+
 ## Rules that keep a run from wasting time
 
 - **Never copy markup from a design-tool export** (a "canvas" page, a runtime-injected variable, inline styles with literal colours). Read it for structure; build from tokens.
 - **Never read a colour off pixels when a token exists.** Pixels are a few steps off after compression and anti-aliasing; the palette tool merges those, and `conform.py` snaps to the token.
 - **Do the cheap checks first.** Steps 1, 3 and 4 take seconds and catch most of what goes wrong. Do not start building before they pass.
-- **Stop, report and ask** when the target has no token for something the picture needs, when a field has no producer in the data map, or when a step's gate does not hold after
-  two tries. Say what you tried. Do not loop.
+- **Fix, route, keep going.** A gate that fails: read what it says, fix the cause (a wrong box, a wrong token name, a missing mark) and run it again. After two tries at the same
+  approach, change the approach or cut the problem smaller; never repeat it. When the target has no token for something the picture needs, or a field has no producer in the data
+  map, that is a decision or a gap, not a reason to stop: write it in the spec (a question for the person, or STATIC / an empty state with the reason), build everything that does
+  not depend on it, and put the question in one list with your others at the end. Stop only for what only the person can do (there is no picture or design language, a sign-in,
+  something irreversible, a taste call you cannot settle from the files) or when no independent work is left. Never end a turn on a report while independent work remains.
 - **One writer per file.** If several agents work at once, split by component or screen, give each its own files, and merge only what passes the checks.
 - **Claim what a check shows and no more.** "The colours are the target's" is true after step 7; "it looks right" is an opinion until someone looks.
 

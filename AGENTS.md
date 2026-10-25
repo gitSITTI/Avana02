@@ -16,6 +16,9 @@ A research prototype for a **requirements consolidator**: it reads requirements 
 6. **No secrets in files.** Credentials come from environment variables. Gitleaks and a private-term check run before every commit and in CI ([`docs/SECRET_SCANNING.md`](docs/SECRET_SCANNING.md)); do not work around them.
 7. **AI comes late and answers are drafts.** Anything that would send requirement text to a model must go through the gate (`reqin/src/reqin/aigate.py`, `prototype/parts/aigate.js`) or the gateway (`reqin/src/reqin/gateway/`). Never add a call that bypasses them, and never make a draft look decided.
 8. **Keep it self-hosted and small.** Standard library first; a new dependency needs a reason. The prototype page makes no request to any outside host (a test checks). No telemetry. Python 3.11 or newer.
+9. **Fix before you report.** A problem you can fix (a file, a config, a test, a script, a dependency, a bug in your own files) is yours to fix: fix it and carry on; do not stop to tell anyone. When a gate fails, read what it says, fix the cause and run it again; after two tries at the same approach, change the approach or cut the problem smaller instead of repeating it. When the cause is not yours (another agent's files, a missing token or producer, a decision), write it down as a blocker (what is blocked, what you tried, what is needed) and **carry on with every part that does not depend on it**. Stop only for what only the owner can do: a sign-in or credential you cannot get, anything irreversible or destructive, spending money, a taste or scope decision, a push or a change to a secret or CI setting (rule 2), real data (rule 1), or when no independent work is left. Never end a turn on a blocker report while independent work remains, and never loop on one failing step. Put questions for the owner in one list, not one at a time.
+10. **Do not invent to fill a gap.** No new sample data, screens, fields or "connections" to make a screen look complete or to satisfy a check. What a screen shows comes from the canonical dataset through its view model; a gap is an empty state and a line in your report, never a plausible value (`docs/agent_prompts/build_the_gui.md`). A screen that needs data the schema lacks is a request to change the schema, not a reason to extend the screen.
+11. **An approved screen does not drift.** Once the owner has approved how a screen looks, it is recorded (`python3 tools/gui_checks/golden.py approve`); after that, any change to that screen must pass `golden.py compare`, and a changed look needs the owner's approval again. You never approve your own work. The gate and its limits: [`docs/GUI_TEST_HOOKS.md`](docs/GUI_TEST_HOOKS.md).
 
 ## Where things are
 
@@ -45,6 +48,7 @@ Set up once: `python3 -m venv .venv && . .venv/bin/activate && pip install -e "r
 | A board, or `excalidraw_generator/` | `cd excalidraw_generator && python3 build_all.py --out ../excalidraw && python3 validate.py ../excalidraw/*.excalidraw`, then render and **look at the picture** (`python3 render_previews.py`) |
 | A board written as JSON | `python3 excalidraw_generator/board_spec.py build spec.json out.excalidraw --strict --png out.png --scale 2`, then look at `out.png` |
 | A real screen (a new one, or a restyle) | `python3 tools/gui_checks/hardcode_scan.py APP` and `python3 tools/gui_checks/probe.py --app APP --datasets DIR` (`DIR` from `reqin make-datasets DIR --size 5000`); both must pass. The steps are in [`docs/agent_prompts/build_the_gui.md`](docs/agent_prompts/build_the_gui.md) |
+| A screen the owner has already approved | the two checks above, then `python3 tools/gui_checks/golden.py shot ...` and `python3 tools/gui_checks/golden.py compare-all --shots DIR`; a failure means the look changed, so either put it back or ask the owner to approve the new look |
 | The prototype | `cd prototype && python3 build.py && node verify.js project/Main.dc.html` (must end `ISSUES 0`), then the browser tests for the page you touched (`python3 run_browser_tests.py`), then `python3 shots.py` and look |
 | Markdown or any file in `tools/` | `python3 -m pytest -q tools` |
 | A rule in a mutation script's target | `python3 tools/mutation/<name>.py --patterns` (does every change still match?) and, for the part you changed, `python3 tools/mutation/<name>.py <part of a name>` |
@@ -58,8 +62,10 @@ You can still make useful changes. For a board, write it as JSON in the format `
 ## Several agents on one task
 
 Start with one. Split only when the pieces are independent and a single agent has first written the shared definition (what each screen takes and gives, who owns which
-file). One writer per file; each agent hands back its files and a status file that `python3 tools/gui_checks/check_status.py` accepts ("done" needs commands run and a list
-of what was not checked); an agent whose gate fails twice stops and reports instead of looping; work is merged one piece at a time and only when the checks pass on it.
+file). One writer per file; **each agent works in its own git worktree on its own branch** (`git worktree add ../NAME -b agent/NAME`), so two agents never share a checkout or a branch and
+nobody pushes `main`; each agent hands back its files and a status file that `python3 tools/gui_checks/check_status.py` accepts ("done" needs commands run and a list
+of what was not checked); an agent whose gate fails twice changes its approach, and if the cause is not in its own files it records a blocker and takes the next piece instead of looping or going quiet (rule 9);
+work is merged one piece at a time and only when the checks pass on it.
 The full protocol is in [`docs/agent_prompts/build_the_gui.md`](docs/agent_prompts/build_the_gui.md).
 
 ## Porting to another language or provider

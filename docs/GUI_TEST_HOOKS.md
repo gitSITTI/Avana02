@@ -123,6 +123,32 @@ summary.
 | `canary.*` | a dataset written fresh for this run (so nothing could have been typed in beforehand) is not shown completely: rows, statements, warning, link kind, rejected reason, other field, counts. `canary.nothing_left_over`: part of the dataset opened before is still on the screen |
 | `refuses.flipped`, `.no_manifest`, `.wrong_count` | a dataset with one byte changed, no manifest, or a wrong count is shown instead of refused |
 
+## The drift gate: does the screen still look like what the owner approved?
+
+The probe shows that a screen is bound to its data. It cannot show that the screen kept its layout while an agent was making it show some data: a screen can pass every probe
+check and still have grown a panel, lost a column or moved. A picture the owner approved, compared with a picture of the change, can show that. `tools/gui_checks/golden.py` does
+it in four steps:
+
+```
+python3 tools/gui_checks/golden.py shot --app my_app/ --datasets DIR --dataset F02_everything --width 1440 --out shots/home-1440.png     (and again with --width 390)
+python3 tools/gui_checks/golden.py approve home-1440 shots/home-1440.png          a person has looked at the picture and said yes; nobody else runs this
+python3 tools/gui_checks/golden.py compare home-1440 shots/home-1440.png --diff diff.png
+python3 tools/gui_checks/golden.py compare-all --shots shots/                       the merge gate: every approved screen, every picture
+```
+
+- **Who approves.** The owner. An agent never approves its own work and never edits the approved pictures or `golden.py` to make a gate pass. A changed look is a request to the
+  owner, with the `--diff` picture (the changes in red) attached.
+- **What counts as a change.** A pixel counts when any colour channel moved by more than 24 of 255, which keeps anti-aliasing and compression out. The gate fails when more than 1 %
+  of the pixels changed (`--tolerance`), when the size differs, or when an approved screen has no picture in `compare-all` (a screen that was not photographed was not checked).
+- **What to photograph.** One picture is one dataset, one width and one state. Take the ones that matter: the empty screen, a full dataset, and the narrow width.
+- **Why it is not a comparison with the design board.** A board or a wireframe is not made of the same pixels as a built screen, so it can never match pixel for pixel. The board is the
+  reference for structure and intent; the first built version, once the owner has approved it, is the reference for pixels.
+
+What it does not do: judge whether a screen is good, clear or accessible. Approved pictures depend on the machine's fonts and renderer, so they are made and checked in the same place
+(one machine, or one container image) and are **not committed here**: a picture made elsewhere will differ. It sees only the window at the states and widths you photographed. Chromium
+only. It needs Pillow, and `shot` needs Playwright and Chromium (`design/ui_from_image/requirements.txt`). Its tests are `tools/test_golden.py` (pictures drawn for the test) and
+`tools/test_golden_browser.py` (the reference viewer in Chromium: two pictures of one screen are identical; a real change to its stylesheet fails the gate).
+
 ## What the probe does not do
 
 It shows that the screen is bound to the dataset and that the behaviours in the table hold for these fourteen shapes in one browser (Chromium). It does not

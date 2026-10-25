@@ -35,6 +35,11 @@ fail, and say what you did not check.**
 4. **Some ideas have no producer yet** (the screen needs comparison output or saved work that no code supplies to the screen). Build the empty state and say so on
    the screen and in your report; never invent a plausible value.
 5. **Several agents worked at once with no shared definition** of what each piece takes and gives. See "When more than one agent works".
+6. **An agent stopped to report something it could have fixed,** and nothing moved until a person read the report. The rule is in `AGENTS.md` (rule 9): fix what is yours, write down
+   what is not (what is blocked, what you tried, what is needed), carry on with every part that does not depend on it, and stop only for what only the owner can do.
+7. **To satisfy a check or fill a gap, the agent invented sample data and then grew the screen to show it.** The rule is in `AGENTS.md` (rule 10): an empty state and a line in the
+   report, never a new dataset, a new field or a new panel. The screen takes the datasets it is given.
+8. **The look drifted while the data was being bound.** The probe says the screen shows the data; it does not say the screen still looks like what the owner approved. Step 9 does.
 
 ## Build in three layers, so a change of look never touches the data code
 
@@ -62,6 +67,10 @@ fail, and say what you did not check.**
 7. **Break your own screen on purpose,** one way at a time (a count typed in, a field dropped, a hook removed), and see that a check fails for each. A check you have
    not seen fail is not evidence. Put the screen back.
 8. **Look at it.** Take a screenshot at 1440 and at 390 px wide and open both. The probe cannot tell you whether it is clear. Say that you looked, not that it is good.
+9. **Lock the look, but only when the owner has approved it.** `python3 tools/gui_checks/golden.py shot --app YOUR_APP --datasets DIR --dataset F02_everything --width 1440 --out shots/home-1440.png`
+   (and at 390), show the pictures to the owner, and if they say yes: `python3 tools/gui_checks/golden.py approve home-1440 shots/home-1440.png`. If the screen was approved before you
+   started, take the same pictures and run `python3 tools/gui_checks/golden.py compare-all --shots shots/`. *Gate:* it passes, or the owner has approved the new look. You never approve
+   your own work, and you do not edit `tools/gui_checks/golden.py` or the approved pictures to make it pass. The limits (per machine, one browser, drift not quality) are in `docs/GUI_TEST_HOOKS.md`.
 
 ## When more than one agent works
 
@@ -74,9 +83,12 @@ done by a single agent, because everything below depends on a shared definition.
 - **A finished piece is files plus a status file,** `status.json`, written as the contract `reqin-agent-status/1` and checked with
   `python3 tools/gui_checks/check_status.py status.json`: who, which task, `done`, `partial` or `blocked`, the files, every command run with its exit code, what was
   not checked, and what it is blocked on. A message that says "done" with no status file is not done.
-- **Budgets and stopping.** Give each agent a limit (a number of steps or a time). An agent whose gate does not hold after two tries stops, reports what it tried, and
-  does not loop. A tool or service that does not answer is reported once, not retried in a loop. An agent that has produced no file and no status within its limit is
-  stopped and its work taken back.
+- **Own checkout, own branch.** Each agent works in its own git worktree on its own branch (`git worktree add ../NAME -b agent/NAME`). Two agents never share a working folder or a
+  branch; git refuses to check one branch out twice, so a clash fails at once instead of corrupting work. Nobody pushes `main`; the lead agent merges one branch at a time.
+- **Budgets and blockers.** Give each agent a limit (a number of steps or a time). A gate that does not hold after two tries means: change the approach, and if the cause is not in the
+  agent's own files, put a blocker in its status file (`blocked` or `partial`: what is blocked, what it tried, what is needed) and take the next piece. An agent does not loop on one
+  step, does not stop while it has independent work, and does not go quiet. A tool or service that does not answer is reported once, not retried in a loop. An agent that has produced no
+  file and no status within its limit is stopped and its work taken back. Questions for the owner go in one list, not one at a time.
 - **Merging is a gate, not a vote.** Bring in one piece at a time. A piece goes in only when the scan and the probe pass on it, and the probe is run again
   after each merge. When two pieces disagree, the contract file decides; if it does not, the person decides.
 
@@ -106,6 +118,7 @@ An agent with a small window: work on one screen and one component at a time, re
 3. You looked at screenshots at 1440 and 390 px.
 4. Every part of the screen that has no producer says so on the screen, and the list is in your report.
 5. `git status` shows only the files you meant to change.
+6. If the owner had approved the look of this screen, `golden.py compare-all` passes or the owner has approved the new look. If nobody has approved it yet, your report says so.
 
 ## Report
 
