@@ -36,7 +36,7 @@ guard:no-real-data:
   extends: .python
   stage: guard
   script:
-    - pip install pytest
+    - pip install pytest "pillow>=10" "numpy>=1.26"
     - python -m pytest -q tools
     - python tools/check_no_real_data.py
 

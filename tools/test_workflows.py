@@ -93,6 +93,17 @@ def browser_job_problems(code: list[str]) -> list[str]:
     return bad
 
 
+def guard_job_problems(code: list[str]) -> list[str]:
+    """The guard job runs `pytest tools`. Several tests in it need Pillow and numpy and skip themselves when they are missing, so a lost install would not fail anything."""
+    job = "\n".join(job_lines(code, "guard"))
+    if not job:
+        return ["the workflow has no `guard` job"]
+    installs = re.search(r"run:\s*pip install (.+)", job)
+    if not installs or not all(lib in installs.group(1).lower() for lib in ("pillow", "numpy")):
+        return ["the `guard` job does not `pip install` pillow and numpy, so the picture tests would be skipped without a sound"]
+    return []
+
+
 def problems(text: str, repo: Path = REPO) -> list[str]:
     raw = text.splitlines()
     code = code_lines(text)
@@ -121,6 +132,7 @@ def problems(text: str, repo: Path = REPO) -> list[str]:
 
     bad += secret_scan_problems(code)
     bad += browser_job_problems(code)
+    bad += guard_job_problems(code)
 
     extra = set(re.findall(r"secrets\.([A-Za-z0-9_]+)", body)) - ALLOWED_SECRETS
     if extra:
@@ -216,6 +228,8 @@ MUTATIONS = [
     ("DENYLIST_OPTIONAL must be set only for pull requests from forks", lambda t: re.sub(r"DENYLIST_OPTIONAL: .*", "DENYLIST_OPTIONAL: '1'", t, count=1)),
     ("must reach only the step", lambda t: t.replace('REQUIRE_GITLEAKS: "1"', "REQUIRE_GITLEAKS: ${{ secrets.DENYLIST }}", 1)),
     ("has no `secrets` job", lambda t: t.replace("\n  secrets:\n", "\n  secretz:\n", 1)),
+    ("does not `pip install` pillow and numpy", lambda t: t.replace('pip install pytest "pillow>=10" "numpy>=1.26"', "pip install pytest", 1)),
+    ("has no `guard` job", lambda t: t.replace("\n  guard:\n", "\n  gard:\n", 1)),
     ("spans several lines", lambda t: t.replace("      - run: pip install pytest\n", "      - run: |\n          pip install pytest\n", 1)),
     ("has no `prototype-browser` job", lambda t: t.replace("\n  prototype-browser:\n", "\n  prototype-brwsr:\n", 1)),
     ("does not run `python run_browser_tests.py`", lambda t: t.replace("run: python run_browser_tests.py", "run: python run_browser_test.py", 1)),

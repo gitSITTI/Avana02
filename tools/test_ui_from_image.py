@@ -280,6 +280,7 @@ def test_conform_refuses_a_file_that_is_not_a_palette(tmp_path):
 
 @pytest.fixture(scope="module")
 def real_paths(tmp_path_factory):
+    pytest.importorskip("yaml", reason="reqin needs pyyaml; the guard job installs only pytest, pillow and numpy, so these tests run where reqin is installed")
     import datapaths
     found = datapaths.collect(datapaths.generate(tmp_path_factory.mktemp("paths")))
     return {k: sorted(v) for k, v in found.items()}
@@ -430,6 +431,8 @@ def test_every_command_the_skill_tells_an_agent_to_run_exists_with_those_flags()
             assert script.is_file(), f"{parts[1]} does not exist"
             sub = [parts[2]] if script.name == "frames.py" and len(parts) > 2 and not parts[2].startswith("-") else []
             helped = subprocess.run([sys.executable, str(script), *sub, "--help"], capture_output=True, text=True)
+            if helped.returncode != 0 and "needs Playwright" in helped.stderr:
+                continue    # the script exists (checked above); its flags are checked wherever Playwright is installed (the guard job has none)
             assert helped.returncode == 0, helped.stderr[-300:]
             for flag in re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", cmd):
                 assert flag in helped.stdout, f"{cmd!r}: {flag} is not a flag of {script.name} {' '.join(sub)}"
