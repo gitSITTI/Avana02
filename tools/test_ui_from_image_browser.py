@@ -103,7 +103,10 @@ def test_hover_and_keyboard_focus_changes_are_measured(result):
     btn = next(c for c in result["components"] if c["kind"] == "button")
     assert btn["states"]["hover"]["backgroundColor"] == ["rgb(11, 110, 110)", "rgb(9, 79, 79)"]
     foc = btn["states"]["keyboard_focus"]
-    assert foc["outlineStyle"] == ["none", "solid"] and foc["outlineWidth"] == ["0px", "3px"]
+    assert foc["outlineStyle"] == ["none", "solid"]
+    # Older Chromium reported the width as 0px while the style was none, so the width showed up as a change (0px to 3px). Chromium 153 reports 3px either way, so the
+    # width is not listed as a change at all. In both cases the ring is 3px wide once the button has keyboard focus; what must change is the style.
+    assert foc.get("outlineWidth", ["3px", "3px"])[-1] == "3px"
     inp = next(c for c in result["components"] if c["kind"] == "input")
     assert inp["states"]["keyboard_focus"]["outlineStyle"] == ["none", "solid"]       # the design system's own ring from tokens.css
 

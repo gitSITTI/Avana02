@@ -36,7 +36,7 @@ jobs:
   guard:
     name: guard (no real data, licence, pictures, links)
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -44,8 +44,11 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - run: pip install pytest "pillow>=10" "numpy>=1.26"
-      - run: python -m pytest -q tools
+      # Everything the tests in tools/ can use, so none of them skips for want of a library: Pillow and numpy (the picture tests, the drift gate), reqin and its
+      # pyyaml (the dataset tests), and Playwright with Chromium at the pinned version (the browser tests). tools/test_ci_installs_test_dependencies.py fails if one goes missing.
+      - run: pip install -r prototype/requirements-test.txt -e "reqin[test]" "pillow>=10" "numpy>=1.26"
+      - run: python -m playwright install --with-deps chromium
+      - run: python -m pytest -q -rs tools
       - run: python tools/check_no_real_data.py
         env:
           FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
@@ -182,9 +185,6 @@ jobs:
       - run: python -m playwright install --with-deps chromium
       - run: python run_browser_tests.py
         working-directory: prototype
-      # The drift gate (tools/gui_checks/golden.py) compares pictures with Pillow; its browser test takes real pictures of the reference viewer.
-      - run: pip install -e "reqin[test]" "pillow>=10" "numpy>=1.26"
-      - run: python -m pytest -q -rs tools/test_golden_browser.py
 
   # 3c-2. The same page in Firefox and WebKit, five of the test files at one width: opening a project, the first screens and the wording comparison, the trace map
   #       downloads, keeping the work (storage, saving and loading a file) and the accessibility scan. The tests were written and run against Chromium only, so

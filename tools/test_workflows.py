@@ -93,14 +93,23 @@ def browser_job_problems(code: list[str]) -> list[str]:
     return bad
 
 
+def replace_last(text: str, old: str, new: str) -> str:
+    """Replace the last occurrence of `old`. The guard job (first in the file) and the browser job both run `playwright install`; some breaks mean the later one."""
+    i = text.rfind(old)
+    return text if i < 0 else text[:i] + new + text[i + len(old):]
+
+
 def guard_job_problems(code: list[str]) -> list[str]:
-    """The guard job runs `pytest tools`. Several tests in it need Pillow and numpy and skip themselves when they are missing, so a lost install would not fail anything."""
+    """The guard job runs `pytest tools`. Many tests in it skip themselves when a library is missing (Pillow, numpy, pyyaml through reqin, Playwright), so a lost install fails nothing."""
     job = "\n".join(job_lines(code, "guard"))
     if not job:
         return ["the workflow has no `guard` job"]
     installs = re.search(r"run:\s*pip install (.+)", job)
-    if not installs or not all(lib in installs.group(1).lower() for lib in ("pillow", "numpy")):
-        return ["the `guard` job does not `pip install` pillow and numpy, so the picture tests would be skipped without a sound"]
+    wanted = ("pillow", "numpy", "reqin", "prototype/requirements-test.txt")
+    if not installs or not all(lib in installs.group(1).lower() for lib in wanted):
+        return ["the `guard` job does not `pip install` pillow, numpy, reqin and the pinned Playwright, so those tests would be skipped without a sound"]
+    if not re.search(r"run:\s*python -m playwright install\b.*\bchromium", job):
+        return ["the `guard` job does not run `python -m playwright install ... chromium`, so the browser tests would be skipped without a sound"]
     return []
 
 
@@ -228,13 +237,14 @@ MUTATIONS = [
     ("DENYLIST_OPTIONAL must be set only for pull requests from forks", lambda t: re.sub(r"DENYLIST_OPTIONAL: .*", "DENYLIST_OPTIONAL: '1'", t, count=1)),
     ("must reach only the step", lambda t: t.replace('REQUIRE_GITLEAKS: "1"', "REQUIRE_GITLEAKS: ${{ secrets.DENYLIST }}", 1)),
     ("has no `secrets` job", lambda t: t.replace("\n  secrets:\n", "\n  secretz:\n", 1)),
-    ("does not `pip install` pillow and numpy", lambda t: t.replace('pip install pytest "pillow>=10" "numpy>=1.26"', "pip install pytest", 1)),
+    ("does not `pip install` pillow, numpy, reqin and the pinned Playwright", lambda t: t.replace('pip install -r prototype/requirements-test.txt -e "reqin[test]" "pillow>=10" "numpy>=1.26"', "pip install pytest", 1)),
+    ("does not run `python -m playwright install", lambda t: t.replace("      - run: python -m playwright install --with-deps chromium\n      - run: python -m pytest -q -rs tools\n", "      - run: python -m pytest -q -rs tools\n", 1)),
     ("has no `guard` job", lambda t: t.replace("\n  guard:\n", "\n  gard:\n", 1)),
     ("spans several lines", lambda t: t.replace("      - run: pip install pytest\n", "      - run: |\n          pip install pytest\n", 1)),
     ("has no `prototype-browser` job", lambda t: t.replace("\n  prototype-browser:\n", "\n  prototype-brwsr:\n", 1)),
     ("does not run `python run_browser_tests.py`", lambda t: t.replace("run: python run_browser_tests.py", "run: python run_browser_test.py", 1)),
     ("does not run `npm ci`", lambda t: t.replace("      - run: npm ci\n        working-directory: prototype/vendor\n", "", 1)),
-    ("does not run `playwright install`", lambda t: t.replace("run: python -m playwright install --with-deps chromium", "run: python -m pip --version", 1)),
+    ("does not run `playwright install`", lambda t: replace_last(t, "run: python -m playwright install --with-deps chromium", "run: python -m pip --version")),   # the browser job comes after the guard job, which also installs it
     ("has no `prototype-other-browsers` job", lambda t: t.replace("\n  prototype-other-browsers:\n", "\n  prototype-other-brwsrs:\n", 1)),
     ("does not run `browser: [firefox, webkit]`", lambda t: t.replace("browser: [firefox, webkit]", "browser: [firefox]", 1)),
     ("does not run `continue-on-error: true`", lambda t: t.replace("    continue-on-error: true\n    timeout-minutes: 60\n    strategy:", "    timeout-minutes: 60\n    strategy:", 1)),

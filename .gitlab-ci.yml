@@ -35,8 +35,10 @@ variables:
 guard:no-real-data:
   extends: .python
   stage: guard
+  variables:
+    CI_GUARD_NO_BROWSER: "1"      # a slim Python image has no Chromium; the browser tests in tools/ run in prototype:browser below
   script:
-    - pip install pytest "pillow>=10" "numpy>=1.26"
+    - pip install -e "reqin[test]" "pillow>=10" "numpy>=1.26"
     - python -m pytest -q tools
     - python tools/check_no_real_data.py
 
@@ -136,6 +138,10 @@ prototype:browser:
     - pip install -r prototype/requirements-test.txt
     - cd prototype
     - python run_browser_tests.py
+    # The browser tests in tools/ (the probe, the picture scripts, the drift gate) need Pillow, numpy and reqin as well as Playwright and Chromium, which this image has.
+    - cd ..
+    - pip install -e "reqin[test]" "pillow>=10" "numpy>=1.26"
+    - python -m pytest -q -rs tools/test_golden_browser.py tools/test_gui_checks_browser.py tools/test_ui_from_image_browser.py
 
 # 3c-2. The same page in Firefox and WebKit (the Playwright image has all three), five of the test files at one width. The tests were written and run against
 #       Chromium only, so the job is allowed to fail: a red result is something to look at, not a broken build. It has not run on GitLab, and the tests have

@@ -24,7 +24,7 @@ It is NOT stored in the repository, because that would publish the very names it
                            and every branch and tag name (default: all refs)
       ci                   tree + history; fails when there is no list, unless DENYLIST_OPTIONAL=1 (pull requests from forks)
 
-What it prints: file and line locations. Never a term and never the text around one. On GitHub Actions and GitLab CI the log
+What it prints: file and line locations, with any part of a location that matches a term (a file or branch name) replaced by [term]. Never a term and never the text around one. On GitHub Actions and GitLab CI the log
 may be public, so there it prints only a count. Run `tree` and `history` locally to find the places.
 
 It catches the terms you listed. It does not know what you forgot, and it skips binary files (images, PDFs, archives).
@@ -53,6 +53,10 @@ class Terms:
 
     def hit(self, text: str) -> bool:
         return bool(self.rx and self.rx.search(text))
+
+    def mask(self, text: str) -> str:
+        """The text with every match replaced, so a location that contains a term (a file name, a branch) never prints it."""
+        return self.rx.sub("[term]", text) if self.rx else text
 
 
 def pattern_for(line: str) -> str | None:
@@ -98,11 +102,12 @@ def is_binary(data: bytes) -> bool:
 
 
 class Notes:
-    def __init__(self) -> None:
+    def __init__(self, terms: Terms | None = None) -> None:
         self.items: list[str] = []
+        self.terms = terms
 
     def add(self, where: str) -> None:
-        self.items.append(where)
+        self.items.append(self.terms.mask(where) if self.terms else where)
 
     def text(self, terms: Terms, label: str, data: bytes) -> None:
         if is_binary(data):
@@ -212,7 +217,7 @@ def main(argv: list[str]) -> int:
         else:
             print("denylist: no term list found (DENYLIST_TERMS, DENYLIST_FILE or ./.denylist), so the private-term check did not run.", file=sys.stderr)
         return 0
-    notes = Notes()
+    notes = Notes(terms)
     if mode == "staged":
         check_staged(terms, notes)
     elif mode == "message":
